@@ -1,6 +1,6 @@
 # Get the derivative vector of a Bezier Curve at parametric t
 #   Ref https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Derivative
-function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t)
+function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
 	P = bz.controls
 	N = length(bz.controls)
 	
