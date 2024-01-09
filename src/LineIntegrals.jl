@@ -7,4 +7,7 @@ module LineIntegrals
 
     include("integrate.jl")
     export integrate
+
+    include("utils.jl")
+    export derivative
 end
