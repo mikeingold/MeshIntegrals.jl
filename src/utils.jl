@@ -12,5 +12,5 @@ function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
 	sigma(i) = b(i,N-1)(t) .* (P[i+2] - P[i+1])
 	
 	# Derivative of curve
-	return N .* sum(sigma, 0:order-1)
+	return N .* sum(sigma, 0:N-1)
 end
