@@ -8,7 +8,7 @@ function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
 	bc(n,i) = factorial(n) / (factorial(i)*factorial(n-i))
 	
 	# Bernstein basis polynomials
-	b(i,n) = t -> bn(n,i) * t^i * (1-t)^(n-i)
+	b(i,n) = t -> bc(n,i) * t^i * (1-t)^(n-i)
 	
 	# Term to be summed
 	sigma(i) = b(i,N-1)(t) .* (P[i+2] - P[i+1])
