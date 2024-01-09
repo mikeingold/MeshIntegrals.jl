@@ -1,4 +1,5 @@
 module LineIntegrals
+    using LinearAlgebra
     using Meshes
     using QuadGK
 
