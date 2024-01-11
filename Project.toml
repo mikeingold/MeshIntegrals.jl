@@ -1,7 +1,7 @@
 name = "LineIntegrals"
 uuid = "2c651c0d-f5be-416b-b771-ab860150eb63"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
