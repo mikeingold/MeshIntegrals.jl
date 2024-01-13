@@ -7,12 +7,12 @@ This represents a line segment that traverses a surface in space, defined by a
 segment with start and end points and a vector pointing in the direction of
 the local surface normal.
 """
-struct SurfacePathSegment{Dim,T}
+struct SurfacePathSegment{Dim,T} <: SurfacePathElement{Dim,T}
     segment::Meshes.Segment{Dim,T}
     normal::Meshes.Vec{Dim,T}
 end
 
-# struct SurfacePathBezierCurve{Dim,T} <: SurfacePathElement{Dim,T} end
+# TODO struct SurfacePathBezierCurve{Dim,T} <: SurfacePathElement{Dim,T} end
 
 """
     SurfaceTrajectory
@@ -23,6 +23,7 @@ defined by an ordered collection of SurfacePathElements.
 struct SurfaceTrajectory{Dim,T}
     path::Vector{SurfacePathElement{Dim,T}}
 end
+# TODO fix bug where constructor on Vector{SurfacePathSegment} fails
 
 # Additional constructor for separate vectors
 function SurfaceTrajectory(
