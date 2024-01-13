@@ -23,7 +23,7 @@ end
 # INTEGRALs OF f(position, normal)
 
 # Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceSegment
-function integrate(ss::SurfaceSegment{Dim,T}, f) where {Dim,T}
+function integrate(ss::SurfacePathSegment{Dim,T}, f) where {Dim,T}
 	# Verify that the provided function has the correct method available
 	if !hasmethod(f, (Point{Dim,T}, Vec{Dim,T}))
 		error("The provided Function f has no method f(::Point{Dim,T})")
