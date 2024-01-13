@@ -24,8 +24,10 @@ struct SurfaceTrajectory{Dim,T}
     path::Vector{SurfacePathElement{Dim,T}}
 end
 
-# TODO abstract this to enable different types
-function SurfaceTrajectory(segs, norms)
+# Additional constructor for separate vectors
+function SurfaceTrajectory(
+    segs::Vector{S}, norms::Vector{N}
+) where {S<:SurfacePathElement, N<:Meshes.Vec}
     # Convert all corresponding (Segments, Normals) into SurfaceSegments
     path = map(SurfacePathSegment, Iterators.zip(segs,norms))
     return SurfaceTrajectory(path)
