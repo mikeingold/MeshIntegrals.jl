@@ -20,7 +20,7 @@ end
 This represents a path that traverses a surface in space, where the path is
 defined by an ordered collection of SurfacePathElements.
 """
-struct SurfaceTrajectory{Dim,T}
+struct SurfaceTrajectory{E<:SurfacePathElement{Dim,T}}
     path::Vector{SurfacePathElement{Dim,T}}
 end
 # TODO fix bug where constructor on Vector{SurfacePathSegment} fails

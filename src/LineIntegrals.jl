@@ -3,7 +3,7 @@ module LineIntegrals
     using Meshes
     using QuadGK
 
-    include("structs.jl")
+    include("trajectory.jl")
     export SurfacePathElement, SurfacePathSegment, SurfaceTrajectory
 
     include("integrate.jl")
