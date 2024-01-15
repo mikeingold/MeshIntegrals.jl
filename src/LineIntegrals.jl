@@ -3,12 +3,12 @@ module LineIntegrals
     using Meshes
     using QuadGK
 
-    include("trajectory.jl")
-    export SurfacePathElement, SurfacePathSegment, SurfaceTrajectory
+    #include("trajectory.jl")
+    #export SurfacePathElement, SurfacePathSegment, SurfaceTrajectory
 
     include("integrate.jl")
-    export integrate
+    export integral
 
     include("utils.jl")
-    export derivative
+    export derivative, unitdirection
 end

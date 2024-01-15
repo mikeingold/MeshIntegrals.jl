@@ -27,15 +27,15 @@ end
 ################################################################################
 
 # Integrate f(::Point{Dim,T}) over an arbitrary geometry construct
-function integrate(f::F, path::Vector{<:Meshes.Geometry{Dim,T}}; kwargs...) where {F<:Function,Dim,T}
+function integral(f::F, path::Vector{<:Meshes.Geometry{Dim,T}}; kwargs...) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 
-	return sum(line -> integrate(f, line; kwargs...), path)
+	return sum(line -> integral(f, line; kwargs...), path)
 end
 
 # Integrate f(::Point{Dim,T}) over a Segment
-function integrate(f::F, segment::Meshes.Segment{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+function integral(f::F, segment::Meshes.Segment{Dim,T}; kwargs...) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 	
@@ -43,23 +43,23 @@ function integrate(f::F, segment::Meshes.Segment{Dim,T}; kwargs...) where {F<:Fu
 end
 
 # Integrate f(::Point{Dim,T}) over a Rope (an open Chain)
-function integrate(f::F, rope::Meshes.Rope{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+function integral(f::F, rope::Meshes.Rope{Dim,T}; kwargs...) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 	
-    sum(segment -> integrate(f, segment; kwargs...), segments(rope))
+    sum(segment -> integral(f, segment; kwargs...), segments(rope))
 end
 
 # Integrate f(::Point{Dim,T}) over a Ring (a closed Chain)
-function integrate(f::F, ring::Meshes.Ring{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+function integral(f::F, ring::Meshes.Ring{Dim,T}; kwargs...) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 	
-    sum(segment -> integrate(f, segment; kwargs...), segments(ring))
+    sum(segment -> integral(f, segment; kwargs...), segments(ring))
 end
 
 # Integrate f(::Point{Dim,T}) over a BezierCurve
-function integrate(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) where {F<:Function,Dim,T,V}
+function integral(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) where {F<:Function,Dim,T,V}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 	
@@ -88,12 +88,13 @@ function QuadGK.quadgk(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) wher
     return quadgk(t -> len * f(curve(t)), 0, 1; kwargs...)
 end
 
+#=
+Notice: Temporarily disabled until concept is reconsidered
 ################################################################################
 #                       INTEGRALS OF f(position, normal)
 ################################################################################
-
 # Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceSegment
-function integrate(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T}
+function integral(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_pointvec(f,Dim,T)
 	
@@ -101,9 +102,10 @@ function integrate(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T
 end
 
 # Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceTrajectory
-function integrate(f::F, traj::SurfaceTrajectory{Dim,T}) where {F<:Function,Dim,T}
+function integral(f::F, traj::SurfaceTrajectory{Dim,T}) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_pointvec(f,Dim,T)
 	
-    return sum(ss -> integrate(ss,f), traj.path)
+    return sum(ss -> integral(ss,f), traj.path)
 end
+=#

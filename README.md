@@ -1,7 +1,8 @@
 # LineIntegrals.jl
 
-The goal of this project is to provide a simple interface for computing line integrals
-using geometric representations from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
+This package implements methods for computing line integrals using the adaptive
+Gauss-Kronrod quadrature solver from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
+and the geometric polytopes representations from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
 
 Verified to work with
 - Meshes geometries with Unitful coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
