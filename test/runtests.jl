@@ -32,11 +32,9 @@ using Test
     )
 
     @testset "QuadGK Methods" begin
-        # QuadGK.quadgk(f, ::Meshes.Segment)
-        @test quadgk(f, seg_ne)[1] ≈ sqrt(2)
-
-        # QuadGK.quadgk(f, ::Meshes.BezierCurve)
-        @test isapprox(quadgk(f, unit_circle)[1], 2pi; atol=0.15)
+        f(::Point{Dim,T}) where {Dim,T} = 1.0
+        @test quadgk(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
+        @test isapprox(quadgk(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
     end
 
     @testset "Caught Errors" begin
