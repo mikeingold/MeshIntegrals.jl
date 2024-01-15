@@ -1,6 +1,6 @@
 using LineIntegrals
 using Meshes
-using QuadQK
+using QuadGK
 using Unitful
 using Test
 
