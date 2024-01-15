@@ -1,7 +1,7 @@
 name = "LineIntegrals"
 uuid = "2c651c0d-f5be-416b-b771-ab860150eb63"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
