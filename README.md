@@ -10,8 +10,8 @@ Status of Integration Methods:
 | Function Output Type | Geometry | Implemented | Has Test |
 |:---:|:---:|:---:|:---:|
 | `Float64`, `Vector{Float64}` | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
-| `Float64`, `Vector{Float64}` | `Meshes.Ring` | :white_check_mark: | :x: |
-| `Float64`, `Vector{Float64}` | `Meshes.Rope` | :white_check_mark: | :x: |
+| `Float64`, `Vector{Float64}` | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
+| `Float64`, `Vector{Float64}` | `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
 | `Float64`, `Vector{Float64}` | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
 | `Float64`, `Vector{Float64}` | `Vector{<:Meshes.Geometry}` | :white_check_mark: | :white_check_mark: |
 
