@@ -45,7 +45,7 @@ end
 # Integrate f(::Point{Dim,T}) over a BezierCurve
 function integrate(f::F, curve::Meshes.BezierCurve{Dim,T,V}) where {F<:Function,Dim,T,V}
 	# Validate the provided integrand function
-	_validate_integrand_point(f)
+	_validate_integrand_point(f,Dim,T)
 	
     return length(curve) * quadgk(t -> f(curve(t)), 0, 1)[1]
 end
