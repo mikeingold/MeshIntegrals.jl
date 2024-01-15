@@ -6,7 +6,9 @@ using geometric representations from [**Meshes.jl**](https://github.com/JuliaGeo
 ## Roadmap to General
 
 Status of Integration Methods:
+
 | Function Output Type | Geometry | Implemented | Has Test |
+|:---:|:---:|:---:|:---:|
 | `Float64` | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
 | `Float64` | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
 | `Float64` | `Vector{<:Meshes.Geometry}` | :white_check_mark: | :white_check_mark: |
