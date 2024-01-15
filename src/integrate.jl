@@ -63,7 +63,7 @@ function integrate(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T
 end
 
 # Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceTrajectory
-function integrate(f::F, traj::SurfaceTrajectory)
+function integrate(f::F, traj::SurfaceTrajectory{Dim,T}) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_pointvec(f,Dim,T)
 	
