@@ -30,6 +30,24 @@ using Test
         [Point(cos(t), sin(t), 0.0) for t in range(0, 2pi, length=361)]
     )
 
+    @testset "QuadGK Methods" begin
+        # QuadGK.quadgk(f, ::Meshes.Segment)
+        @test quadgk(f, seg_ne)[1] ≈ sqrt(2)
+
+        # QuadGK.quadgk(f, ::Meshes.BezierCurve)
+        @test isapprox(quadgk(f, unit_circle)[1], 2pi; atol=0.15)
+    end
+
+    @testset "Caught Errors" begin
+        # Catch wrong method signature: f(x,y,z) vs f(::Point)
+        fvec(x,y,z) = x*y*z
+        @test_throws ErrorException integrate(fvec, seg_ne)          # Meshes.Segment
+        @test_throws ErrorException integrate(fvec, rect_traj_segs)  # Vector{::Meshes.Segment}
+        @test_throws ErrorException integrate(fvec, rect_traj_ring)  # Meshes.Ring
+        @test_throws ErrorException integrate(fvec, rect_traj_rope)  # Meshes.Rope
+        @test_throws ErrorException integrate(fvec, unit_circle)     # Meshes.BezierCurve
+    end
+
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
 
