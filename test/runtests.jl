@@ -1,5 +1,6 @@
 using LineIntegrals
 using Meshes
+using QuadQK
 using Unitful
 using Test
 
@@ -50,40 +51,20 @@ using Test
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
-
-        # integrate(f, ::Meshes.Segment)
-        @test integrate(f, seg_ne) ≈ sqrt(2)
-
-        # integrate(f, ::Vector{Meshes.Segment})
-        @test integrate(f, rect_traj_segs) ≈ 4sqrt(2)
-
-        # integate(f, ::Meshes.Ring)
-        @test integrate(f, rect_traj_ring) ≈ 4sqrt(2)
-
-        # integate(f, ::Meshes.Rope)
-        @test integrate(f, rect_traj_rope) ≈ 4sqrt(2)
-
-        # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), 2pi; atol=0.15)
+        @test integrate(f, seg_ne) ≈ sqrt(2)                         # Meshes.Segment
+        @test integrate(f, rect_traj_segs) ≈ 4sqrt(2)                # Vector{::Meshes.Segment}
+        @test integrate(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
+        @test integrate(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
+        @test isapprox(integrate(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
     end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0, 1.0, 1.0]
-
-        # integrate(f, ::Meshes.Segment)
-        @test integrate(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)]
-
-        # integrate(f, ::Vector{Meshes.Segment})
-        @test integrate(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]
-
-        # integate(f, ::Meshes.Ring)
-        @test integrate(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]
-
-        # integate(f, ::Meshes.Rope)
-        @test integrate(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]
-
-        # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π]; atol=0.15)
+        @test integrate(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)]                # Meshes.Segment
+        @test integrate(f, rect_traj_segs) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Vector{::Meshes.Segment}
+        @test integrate(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
+        @test integrate(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
+        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
     end
 end
 
@@ -112,39 +93,19 @@ end
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0u"Ω/m"
-
-        # integrate(f, ::Meshes.Segment)
-        @test integrate(f, seg_ne) ≈ sqrt(2)*u"Ω"
-
-        # integrate(f, ::Vector{Meshes.Segment})
-        @test integrate(f, rect_traj_segs) ≈ 4sqrt(2)*u"Ω"
-
-        # integate(f, ::Meshes.Ring)
-        @test integrate(f, rect_traj_ring) ≈ 4sqrt(2)*u"Ω"
-
-        # integate(f, ::Meshes.Rope)
-        @test integrate(f, rect_traj_rope) ≈ 4sqrt(2)*u"Ω"
-
-        # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), 2π*u"Ω"; atol=0.15u"Ω")
+        @test integrate(f, seg_ne) ≈ sqrt(2)*u"Ω"                            # Meshes.Segment
+        @test integrate(f, rect_traj_segs) ≈ 4sqrt(2)*u"Ω"                   # Vector{::Meshes.Segment}
+        @test integrate(f, rect_traj_ring) ≈ 4sqrt(2)*u"Ω"                   # Meshes.Ring
+        @test integrate(f, rect_traj_rope) ≈ 4sqrt(2)*u"Ω"                   # Meshes.Rope
+        @test isapprox(integrate(f, unit_circle), 2π*u"Ω"; atol=0.15u"Ω")    # Meshes.BezierCurve
     end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0u"Ω/m", 1.0u"Ω/m", 1.0u"Ω/m"]
-
-        # integrate(f, ::Meshes.Segment)
-        @test integrate(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"
-
-        # integrate(f, ::Vector{Meshes.Segment})
-        @test integrate(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"
-
-        # integate(f, ::Meshes.Ring)
-        @test integrate(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"
-
-        # integate(f, ::Meshes.Rope)
-        @test integrate(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"
-
-        # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π] .* u"Ω"; atol=0.15u"Ω")
+        @test integrate(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"                  # Meshes.Segment
+        @test integrate(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"    # Vector{::Meshes.Segment}
+        @test integrate(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"     # Meshes.Ring
+        @test integrate(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* u"Ω"     # Meshes.Rope
+        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π] .* u"Ω"; atol=0.15u"Ω")    # Meshes.BezierCurve
     end
 end

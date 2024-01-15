@@ -1,5 +1,6 @@
 [deps]
 LineIntegrals = "2c651c0d-f5be-416b-b771-ab860150eb63"
 Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
+QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"

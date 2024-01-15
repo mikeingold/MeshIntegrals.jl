@@ -8,19 +8,19 @@ Verified to work with
 - Functions that map to Real-valued scalars and vectors
 - Functions that map to Real-valued Unitful scalars and vectors
 
+Implements `QuadGK.quadgk` methods for
+- `quadgk(f, ::Meshes.Segment)`
+- `quadgk(f, ::Meshes.BezierCurve)`
+
 ## Roadmap to General
 
-Planned tests to integrate
+Roadmap:
+- [ ] Docstrings available for all exports
+- [ ] Expand README documentation to include usage examples, logo
+- [ ] Request registration in General
+- [ ] Implement Documenter documentation
+- [ ] Complete implementation of `SurfaceTrajectory` concept
+
+Planned tests
 - `f: Point -> Complex`
 - Integrate with DynamicQuantities.jl
-
-Roadmap to release in General:
-- Docstrings available for all exports
-- Request registration in General
-
-Later plans:
-- Implement Documenter
-- Add logo
-- Add a method for passing through `kwargs` to `quadgk`
-- Consider adding `quadgk(f,::Geometry)` for full control and outputs
-- Complete implementation of `SurfaceTrajectory` stuff
