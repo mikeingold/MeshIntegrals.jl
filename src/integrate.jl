@@ -26,6 +26,14 @@ end
 #                         INTEGRALS OF f(position)
 ################################################################################
 
+# Integrate f(::Point{Dim,T}) over an arbitrary geometry construct
+function integrate(f::F, path::Vector{<:Meshes.Geometry{Dim,T}}) where {F<:Function,Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+
+	return sum(line -> integrate(f,line), path)
+end
+
 # Integrate f(::Point{Dim,T}) over a Segment
 function integrate(f::F, segment::Meshes.Segment{Dim,T}) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
