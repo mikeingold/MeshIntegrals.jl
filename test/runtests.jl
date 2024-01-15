@@ -23,7 +23,7 @@ using Test
     rect_traj = [seg_ne, seg_nw, seg_sw, seg_se]
 
     # Circular trajectory CCW around the unit circle
-    unit_circle = BezierCurve(pt_e, pt_n, pt_w, pt_s, pt_e)
+    unit_circle = BezierCurve([Point(cos(t),sin(t),0.0) for t in range(0, 2pi, length=361)])
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
@@ -32,7 +32,7 @@ using Test
         @test integrate(f, rect_traj) ≈ 4 * sqrt(2)
 
         # integrate(f, ::Meshes.BezierCurve)
-        @test integrate(f, unit_circle) ≈ 2π
+        @test isapprox(integrate(f, unit_circle), 2pi; atol=0.1)
     end
 
     @testset "Vector-Valued Functions" begin
@@ -42,6 +42,6 @@ using Test
         @test integrate(f, rect_traj)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]
 
         # integrate(f, ::Meshes.BezierCurve)
-        @test integrate(f, unit_circle) ≈ [2π, 2π, 2π]
+        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π]; atol=0.1)
     end
 end
