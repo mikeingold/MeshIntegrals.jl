@@ -1,4 +1,6 @@
-# INTEGRALS OF f(position)
+################################################################################
+#                              HELPER FUNCTIONS
+################################################################################
 
 # Validate that f is a f(::Point)
 function _validate_integrand_point(f,Dim,T)
@@ -20,6 +22,10 @@ function _validate_integrand_pointvec(f,Dim,T)
 	return nothing
 end
 
+################################################################################
+#                         INTEGRALS OF f(position)
+################################################################################
+
 # Integrate f(::Point{Dim,T}) over a Segment
 function integrate(f::F, segment::Meshes.Segment{Dim,T}) where {F<:Function,Dim,T}
 	# Validate the provided integrand function
@@ -36,7 +42,9 @@ function integrate(f::F, curve::Meshes.BezierCurve{Dim,T,V}) where {F<:Function,
     return length(curve) * quadgk(t -> f(curve(t)), 0, 1)[1]
 end
 
-# INTEGRALs OF f(position, normal)
+################################################################################
+#                       INTEGRALS OF f(position, normal)
+################################################################################
 
 # Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceSegment
 function integrate(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T}
