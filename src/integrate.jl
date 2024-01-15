@@ -42,6 +42,22 @@ function integrate(f::F, segment::Meshes.Segment{Dim,T}) where {F<:Function,Dim,
     return length(segment) * quadgk(t -> f(segment(t)), 0, 1)[1]
 end
 
+# Integrate f(::Point{Dim,T}) over a Rope (an open Chain)
+function integrate(f::F, rope::Meshes.Rope{Dim,T}) where {F<:Function,Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+	
+    sum(segment -> integrate(f,segment), segments(rope))
+end
+
+# Integrate f(::Point{Dim,T}) over a Ring (a closed Chain)
+function integrate(f::F, ring::Meshes.Ring{Dim,T}) where {F<:Function,Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+	
+    sum(segment -> integrate(f,segment), segments(ring))
+end
+
 # Integrate f(::Point{Dim,T}) over a BezierCurve
 function integrate(f::F, curve::Meshes.BezierCurve{Dim,T,V}) where {F<:Function,Dim,T,V}
 	# Validate the provided integrand function
