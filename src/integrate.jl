@@ -79,6 +79,24 @@ function QuadGK.quadgk(f::F, segment::Meshes.Segment{Dim,T}; kwargs...) where {F
 	return quadgk(t -> len * f(segment(t)), 0, 1; kwargs...)
 end
 
+# Implement QuadGK.quadgk over a Meshes.Ring
+function QuadGK.quadgk(f::F, ring::Meshes.Ring{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+
+	chunks = map(segment -> quadgk(f, segment; kwargs...), segments(ring))
+	return reduce(.+, chunks)
+end
+
+# Implement QuadGK.quadgk over a Meshes.Rope
+function QuadGK.quadgk(f::F, rope::Meshes.Rope{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+
+	chunks = map(segment -> quadgk(f, segment; kwargs...), segments(rope))
+	return reduce(.+, chunks)
+end
+
 # Implement QuadGK.quadgk over a Meshes.BezierCurve
 function QuadGK.quadgk(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) where {F<:Function,Dim,T,V}
 	# Validate the provided integrand function

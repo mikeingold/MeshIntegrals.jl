@@ -11,6 +11,8 @@ Verified to work with
 
 Implements `QuadGK.quadgk` methods for
 - `quadgk(f, ::Meshes.Segment)`
+- `quadgk(f, ::Meshes.Ring)`
+- `quadgk(f, ::Meshes.Rope)`
 - `quadgk(f, ::Meshes.BezierCurve)`
 
 ## Roadmap to General
@@ -25,3 +27,4 @@ Roadmap:
 Planned tests
 - `f: Point -> Complex`
 - Integrate with DynamicQuantities.jl
+- `Quadgk.quadgk(f, ::Vector{<:Meshes.Geometry})`
