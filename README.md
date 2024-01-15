@@ -3,26 +3,24 @@
 The goal of this project is to provide a simple interface for computing line integrals
 using geometric representations from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
 
+Verified to work with
+- Meshes geometries with Unitful coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
+- Functions that map to Real-valued scalars and vectors
+- Functions that map to Real-valued Unitful scalars and vectors
+
 ## Roadmap to General
 
-Status of Integration Methods:
-
-| Function Output Type | Geometry | Implemented | Has Test |
-|:---:|:---:|:---:|:---:|
-| `Float64`, `Vector{Float64}` | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
-| `Float64`, `Vector{Float64}` | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
-| `Float64`, `Vector{Float64}` | `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
-| `Float64`, `Vector{Float64}` | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Float64`, `Vector{Float64}` | `Vector{<:Meshes.Geometry}` | :white_check_mark: | :white_check_mark: |
+Planned tests to integrate
+- `f: Point -> Complex`
+- Integrate with DynamicQuantities.jl
 
 Roadmap to release in General:
 - Docstrings available for all exports
 - Request registration in General
 
 Later plans:
-- Implement Documenter for docs
+- Implement Documenter
 - Add logo
-- Test with DynamicQuantities.jl
 - Add a method for passing through `kwargs` to `quadgk`
 - Consider adding `quadgk(f,::Geometry)` for full control and outputs
 - Complete implementation of `SurfaceTrajectory` stuff
