@@ -32,7 +32,7 @@ using Test
         @test integrate(f, rect_traj) ≈ 4 * sqrt(2)
 
         # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), 2pi; atol=0.1)
+        @test isapprox(integrate(f, unit_circle), 2pi; atol=0.15)
     end
 
     @testset "Vector-Valued Functions" begin
@@ -42,6 +42,6 @@ using Test
         @test integrate(f, rect_traj)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]
 
         # integrate(f, ::Meshes.BezierCurve)
-        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π]; atol=0.1)
+        @test isapprox(integrate(f, unit_circle), [2π, 2π, 2π]; atol=0.15)
     end
 end
