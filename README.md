@@ -16,11 +16,13 @@ Status of Integration Methods:
 | `Float64`, `Vector{Float64}` | `Vector{<:Meshes.Geometry}` | :white_check_mark: | :white_check_mark: |
 
 Roadmap to release in General:
-- [ ] Solidify API: e.g. `integrate(f, line)`
-- [ ] Docstrings available for all exports
-- [ ] Test integral results over a Unitful geometry, verify dimensionality, e.g. `Ohms/m` * `m`
+- Docstrings available for all exports
+- Request registration in General
 
 Later plans:
-- [ ] Implement Documenter for docs
-- [ ] Complete implementation of `SurfaceTrajectory` stuff
-- [ ] Add logo
+- Implement Documenter for docs
+- Add logo
+- Test with DynamicQuantities.jl
+- Add a method for passing through `kwargs` to `quadgk`
+- Consider adding `quadgk(f,::Geometry)` for full control and outputs
+- Complete implementation of `SurfaceTrajectory` stuff
