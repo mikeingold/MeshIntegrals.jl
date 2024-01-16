@@ -106,6 +106,14 @@ function QuadGK.quadgk(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) wher
     return quadgk(t -> len * f(curve(t)), 0, 1; kwargs...)
 end
 
+# Implement QuadGK/quadgk(f, pts...)
+function QuadGK.quadgk(f, pts::Meshes.Point{Dim,T}...; kwargs...) where {Dim,T}
+	# Validate the provided integrand function
+	_validate_integrand_point(f,Dim,T)
+	rope = Meshes.Rope(pts)
+	return quadgk(f, rope; kwargs...)
+end
+
 #=
 Notice: Temporarily disabled until concept is reconsidered
 ################################################################################
