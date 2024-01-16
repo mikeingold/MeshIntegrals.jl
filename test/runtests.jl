@@ -34,8 +34,8 @@ using Test
     @testset "QuadGK Methods" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
         @test quadgk(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
-        @test quadgk(f, rect_traj_ring)[1] ≈ sqrt(2)                # Meshes.Ring
-        @test quadgk(f, rect_traj_rope)[1] ≈ sqrt(2)                # Meshes.Rope
+        @test quadgk(f, rect_traj_ring)[1] ≈ 4sqrt(2)                # Meshes.Ring
+        @test quadgk(f, rect_traj_rope)[1] ≈ 4sqrt(2)                # Meshes.Rope
         @test isapprox(quadgk(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
     end
 
