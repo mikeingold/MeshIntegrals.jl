@@ -18,6 +18,7 @@ Implements `QuadGK.quadgk` methods for
 ## Roadmap to General
 
 Roadmap:
+- [ ] Implement `quadgk` for: `Vararg` of `Point`s, `Vector{<:Geometry}`
 - [ ] Docstrings available for all exports
 - [ ] Expand README documentation to include usage examples, logo
 - [ ] Request registration in General
@@ -27,4 +28,3 @@ Roadmap:
 Planned tests
 - `f: Point -> Complex`
 - Integrate with DynamicQuantities.jl
-- `Quadgk.quadgk(f, ::Vector{<:Meshes.Geometry})`

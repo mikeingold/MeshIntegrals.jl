@@ -102,7 +102,7 @@ function QuadGK.quadgk(f::F, curve::Meshes.BezierCurve{Dim,T,V}; kwargs...) wher
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
 
-	len = length(segment)
+	len = length(curve)
     return quadgk(t -> len * f(curve(t)), 0, 1; kwargs...)
 end
 
