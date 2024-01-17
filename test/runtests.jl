@@ -116,6 +116,10 @@ end
     end
 end
 
+#=
+Section Disabled: errors due to bug in Meshes-DynamicQuantities composition
+See https://github.com/SymbolicML/DynamicQuantities.jl/issues/76
+
 @testset "Integrate with DynamicQuantities" begin
     m = DynamicQuantities.m
     Ω = DynamicQuantities.Ω
@@ -160,3 +164,4 @@ end
         @test isapprox(integral(f, unit_circle), [2π, 2π, 2π] .* Ω; atol=0.15Ω)    # Meshes.BezierCurve
     end
 end
+=#

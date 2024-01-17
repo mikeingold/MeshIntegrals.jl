@@ -5,9 +5,12 @@ Gauss-Kronrod quadrature solver from [**QuadGK.jl**](https://github.com/JuliaMat
 and the geometric 1-Dim polytopes representations from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
 
 Verified to work with
-- Meshes.jl geometries with Unitful coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
+- Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Functions that map to Real-valued scalars and vectors
 - Functions that map to Real-valued Unitful scalars and vectors
+
+Currently does not work with
+- Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")` (see [Issue](https://github.com/SymbolicML/DynamicQuantities.jl/issues/76))
 
 Implements `QuadGK.quadgk` methods for
 - `quadgk(f, ::Meshes.Point...) `
@@ -28,4 +31,3 @@ Roadmap:
 
 Planned tests
 - `f: Point -> Complex`
-- Also composes with DynamicQuantities.jl?
