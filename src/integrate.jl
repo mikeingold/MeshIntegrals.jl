@@ -110,7 +110,7 @@ end
 function QuadGK.quadgk(f, pts::Meshes.Point{Dim,T}...; kwargs...) where {Dim,T}
 	# Validate the provided integrand function
 	_validate_integrand_point(f,Dim,T)
-	rope = Meshes.Rope(pts)
+	rope = Meshes.Rope(pts...)
 	return quadgk(f, rope; kwargs...)
 end
 
