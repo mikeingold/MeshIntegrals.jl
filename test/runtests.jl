@@ -71,7 +71,11 @@ using Test
     end
 end
 
-@testset "Integrate with Unitful" begin
+################################################################################
+#                             Tests -- Unitful.jl
+################################################################################
+
+@testset "Integrate with Unitful.jl" begin
     m = Unitful.m
     Ω = Unitful.Ω
 
@@ -116,11 +120,11 @@ end
     end
 end
 
-#=
-Section Disabled: errors due to bug in Meshes-DynamicQuantities composition
-See https://github.com/SymbolicML/DynamicQuantities.jl/issues/76
+################################################################################
+#                             Tests -- DynamicQuantities.jl
+################################################################################
 
-@testset "Integrate with DynamicQuantities" begin
+@testset "Integrate with DynamicQuantities.jl" begin
     m = DynamicQuantities.m
     Ω = DynamicQuantities.Ω
 
@@ -164,4 +168,3 @@ See https://github.com/SymbolicML/DynamicQuantities.jl/issues/76
         @test isapprox(integral(f, unit_circle), [2π, 2π, 2π] .* Ω; atol=0.15Ω)    # Meshes.BezierCurve
     end
 end
-=#
