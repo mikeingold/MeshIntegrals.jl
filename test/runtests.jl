@@ -161,10 +161,10 @@ end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0Ω/m, 1.0Ω/m, 1.0Ω/m]
-        @test integral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)] .* Ω                  # Meshes.Segment
-        @test integral(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω    # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), [2π, 2π, 2π] .* Ω; atol=0.15Ω)    # Meshes.BezierCurve
+        @test all(isapprox.(integral(f, seg_ne), sqrt(2)*Ω))                # Meshes.Segment
+        @test all(isapprox.(integral(f, rect_traj_segs), 4sqrt(2)*Ω))       # Vector{::Meshes.Segment}
+        @test all(isapprox.(integral(f, rect_traj_ring), 4sqrt(2)*Ω))       # Meshes.Ring
+        @test all(isapprox.(integral(f, rect_traj_rope), 4sqrt(2)*Ω))       # Meshes.Rope
+        @test all(isapprox.(integral(f, unit_circle), 2π*Ω; atol=0.15Ω))    # Meshes.BezierCurve
     end
 end
