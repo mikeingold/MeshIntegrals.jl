@@ -156,7 +156,8 @@ end
         @test integral(f, rect_traj_segs) ≈ 4sqrt(2)*Ω                # Vector{::Meshes.Segment}
         @test integral(f, rect_traj_ring) ≈ 4sqrt(2)*Ω                # Meshes.Ring
         @test integral(f, rect_traj_rope) ≈ 4sqrt(2)*Ω                # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), 2π*Ω; atol=0.15Ω)    # Meshes.BezierCurve
+        @test isapprox(integral(f, unit_circle), 2π*Ω; atol=0.15)    # Meshes.BezierCurve
+              # TODO change 0.15 => 0.15Ω once DynamicQuantities PR approved
     end
 
     @testset "Vector-Valued Functions" begin
@@ -165,6 +166,7 @@ end
         @test all(isapprox.(integral(f, rect_traj_segs), 4sqrt(2)*Ω))       # Vector{::Meshes.Segment}
         @test all(isapprox.(integral(f, rect_traj_ring), 4sqrt(2)*Ω))       # Meshes.Ring
         @test all(isapprox.(integral(f, rect_traj_rope), 4sqrt(2)*Ω))       # Meshes.Rope
-        @test all(isapprox.(integral(f, unit_circle), 2π*Ω; atol=0.15Ω))    # Meshes.BezierCurve
+        @test all(isapprox.(integral(f, unit_circle), 2π*Ω; atol=0.15))    # Meshes.BezierCurve
+             # TODO change 0.15 => 0.15Ω once DynamicQuantities PR approved
     end
 end
