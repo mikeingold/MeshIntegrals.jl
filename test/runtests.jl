@@ -78,7 +78,7 @@ using Test
 
         # Test handling of complex functions
         # Treat xy-plane like the complex-plane: x + iy
-        fc(p::Point) = fc(p.coords[1], p.coords[2])
+        fc(p::Point) = fc(complex(p.coords[1],p.coords[2]))
         fc(z::Complex) = 1/z
         @test quadgk(fc, seg_ne)[1] ≈ quadgk(fc, complex(1,0), complex(0,1))[1]
     end
