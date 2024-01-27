@@ -11,7 +11,7 @@ function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     end
 
     # Generator for Bernstein polynomial functions
-    B(i,n) = t -> binomial(n,i) * t^i * (1-t)^(n-i)
+    B(i,n) = t -> binomial(BigInt(n),i) * t^i * (1-t)^(n-i)
 
     # Derivative = N Σ_{i=0}^{N-1} sigma(i)
     #   P indices adjusted for Julia 1-based array indexing
