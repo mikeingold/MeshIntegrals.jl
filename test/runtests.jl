@@ -69,6 +69,19 @@ using Test
         @test integral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
         @test isapprox(integral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
     end
+
+    @testset "Results Consistent with QuadGK" begin
+        # Test handling of real-valued functions
+        fr(x) = exp(-x)
+        fr(p::Point) = fr(p.coords[1])
+        @test quadgk(fr, Point(0,0), Point(100,0))[1] ≈ quadgk(fr, 0, 100)[1]
+
+        # Test handling of complex functions
+        # Treat xy-plane like the complex-plane: x + iy
+        fc(p::Point) = fc(p.coords[1], p.coords[2])
+        fc(z::Complex) = 1/z
+        @test quadgk(fc, seg_ne)[1] ≈ quadgk(fc, complex(1,0), complex(0,1))[1]
+    end
 end
 
 ################################################################################
