@@ -39,3 +39,11 @@ fr(p) = fr(p.coords...)
 quadgk(fr, unit_circle)
     # (5.551055333711397, 1.1102230246251565e-16)
 ```
+
+# Work in Progress
+
+- Implementing `integrate` methods that leverage FastGaussQuadrature.jl internally
+    - Currently working for `integrate(f, ::Segment)` where f yields a scalar
+    - Need to tweak to get this working for vector-valued outputs
+- Need to troubleshoot functions of complex variables
+    - Currently failing a test. Not sure if math error on my part or calculating incorrectly.
