@@ -35,11 +35,22 @@ function integral(f::F, path::Vector{<:Meshes.Geometry{Dim,T}}; kwargs...) where
 end
 
 # Integrate f(::Point{Dim,T}) over a Segment
-function integral(f::F, segment::Meshes.Segment{Dim,T}; kwargs...) where {F<:Function,Dim,T}
+function integral(
+    f::F, segment::Meshes.Segment{Dim,T};
+    evals::Int64=100
+) where {F<:Function,Dim,T}
     # Validate the provided integrand function
     _validate_integrand_point(f,Dim,T)
 
-    return length(segment) * quadgk(t -> f(segment(t)), 0, 1; kwargs...)[1]
+    # Map x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+
+    # Compute Gauss-Legendre nodes/weights over [-1,1]
+    xs, ws = gausslegendre(evals)
+
+    # Integrate f along the line and apply a domain-correction
+    #   factor to account for change of variables: [-1,1] ↦ [0, length]
+    return 0.5 * length(segment) * dot(ws, f.(segment.(t.(xs))))
 end
 
 # Integrate f(::Point{Dim,T}) over a Rope (an open Chain)
