@@ -38,11 +38,4 @@ fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 quadgk(fr, unit_circle)
     # (5.551055333711397, 1.1102230246251565e-16)
-
-# Complex function
-#   Treat the xy-plane as the complex plane: x + iy
-fc(z::Complex) = 1/z
-fc(p) = fc(complex(p.coords[1],p.coords[2]))
-quadgk(fc, unit_circle)
-    # (-0.017331713663560157 + 0.0im, 4.585229184817946e-12)
 ```
