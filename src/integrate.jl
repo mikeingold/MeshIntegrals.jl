@@ -81,6 +81,7 @@ end
 #   Allocations:
 #     segments(rope)
 #     integral(f, segment)
+# TODO implement internal use _in-place methods with cached memory for performance
 function integral(
     f::F,
     rope::Meshes.Rope{Dim,T};
@@ -105,6 +106,18 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     return sum(segment -> integral(f, segment; n=n), segments(ring))
+end
+
+# Integrate f(::Point{Dim,T}) over an arbitrary geometry construct
+function integral(
+    f::F,
+    path::Vector{<:Meshes.Geometry{Dim,T}};
+    n::Int64=100
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    return sum(section -> integral(f, section; n=n), path)
 end
 
 
@@ -172,7 +185,7 @@ function QuadGK.quadgk(
 ) where {Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
-    
+
     rope = Meshes.Rope(pts...)
     return quadgk(f, rope; kwargs...)
 end
