@@ -113,25 +113,3 @@ function QuadGK.quadgk(f, pts::Meshes.Point{Dim,T}...; kwargs...) where {Dim,T}
     rope = Meshes.Rope(pts...)
     return quadgk(f, rope; kwargs...)
 end
-
-#=
-Notice: Temporarily disabled until concept is reconsidered
-################################################################################
-#                       INTEGRALS OF f(position, normal)
-################################################################################
-# Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceSegment
-function integral(f::F, ss::SurfacePathSegment{Dim,T}) where {F<:Function,Dim,T}
-    # Validate the provided integrand function
-    _validate_integrand_pointvec(f,Dim,T)
-
-    return length(ss.segment) * quadgk(t -> f(ss.segment(t),ss.normal), 0, 1)[1]
-end
-
-# Integrate f(::Point{Dim,T}, ::Vec{Dim,T}) over a SurfaceTrajectory
-function integral(f::F, traj::SurfaceTrajectory{Dim,T}) where {F<:Function,Dim,T}
-    # Validate the provided integrand function
-    _validate_integrand_pointvec(f,Dim,T)
-
-    return sum(ss -> integral(ss,f), traj.path)
-end
-=#
