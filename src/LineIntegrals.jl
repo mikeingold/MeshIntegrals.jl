@@ -4,9 +4,6 @@ module LineIntegrals
     using Meshes
     using QuadGK
 
-    #include("trajectory.jl")
-    #export SurfacePathElement, SurfacePathSegment, SurfaceTrajectory
-
     include("integrate.jl")
     export integral
 

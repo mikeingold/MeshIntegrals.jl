@@ -1,10 +1,12 @@
 # LineIntegrals.jl
 
-This package implements methods for computing line integrals using the adaptive
-Gauss-Kronrod quadrature solver from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
-and the geometric 1-Dim polytopes representations from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
+This package implements methods for computing line integrals along geometric 1-Dim polytopes
+from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl). Two sets of methods are
+currently implemented:
+- `LineIntegrals.integral(f, geometry)` uses Gauss-Legendre quadratures from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl)
+- `QuadGK.quadgk(f, geometry)` is exported using the adaptive Gauss-Kronrod quadrature from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
 
-Verified to work with
+All methods are verified to work with
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Any `f(::Meshes.Point)` that maps to a value type that QuadGK can integrate, including:
@@ -36,14 +38,18 @@ unit_circle = BezierCurve(
 # Real function
 fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
-quadgk(fr, unit_circle)
-    # (5.551055333711397, 1.1102230246251565e-16)
+
+@btime integral(fr, unit_circle)
+# 32.074 ms (54831 allocations: 232.07 MiB)
+# 5.552409879120829
+
+@btime quadgk(fr, unit_circle)
+# 44.874 ms (78229 allocations: 331.95 MiB)
+# (5.551055333711397, 1.1102230246251565e-16)
 ```
 
 # Work in Progress
 
-- Implementing `integrate` methods that leverage FastGaussQuadrature.jl internally
-    - Currently working for `integrate(f, ::Segment)` where f yields a scalar
-    - Need to tweak to get this working for vector-valued outputs
 - Need to troubleshoot functions of complex variables
     - Currently failing a test. Not sure if math error on my part or calculating incorrectly.
+- Want to implement internal `_integrate!` methods that make use of cache vectors to reduce allocations
