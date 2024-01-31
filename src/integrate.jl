@@ -17,7 +17,7 @@ function integral end
 
 
 ################################################################################
-#                              integral METHODS
+#                                  HELPERS
 ################################################################################
 
 # Validate that f has a method defined for f(::Point)
@@ -29,7 +29,7 @@ function integral end
     return nothing
 end
 
-# Pre-calculate common 
+# Pre-calculate common node/weight settings
 _cached_gausslegendre = Dict{Int64, Tuple{Vector{Float64},Vector{Float64}}}(
       10 => gausslegendre(10),
      100 => gausslegendre(100),
@@ -43,6 +43,10 @@ function _gausslegendre(n::Int64)
         return gausslegendre(n)
     end
 end
+
+################################################################################
+#                              integral METHODS
+################################################################################
 
 # Integrate f(::Point{Dim,T}) over a Segment
 #   Allocations:
@@ -89,7 +93,8 @@ function integral(
     fx(x) = f(curve(t(x)))
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(curve) * sum(w .* fx(x) for (w,x) in zip(ws, xs))
+    return 0.5 * length(curve) * mapreduce((w,x) -> w .* fx(x), +, ws, xs)
+    #return 0.5 * length(curve) * sum(w .* fx(x) for (w,x) in zip(ws, xs))
 end
 
 # Integrate f(::Point{Dim,T}) over a Rope (an open Chain)
