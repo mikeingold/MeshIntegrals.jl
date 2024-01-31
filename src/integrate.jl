@@ -29,6 +29,21 @@ function integral end
     return nothing
 end
 
+# Pre-calculate common 
+_cached_gausslegendre = Dict{Int64, Tuple{Vector{Float64},Vector{Float64}}}(
+      10 => gausslegendre(10),
+     100 => gausslegendre(100),
+    1000 => gausslegendre(1000),
+)
+
+function _gausslegendre(n::Int64)
+    if haskey(_cached_gausslegendre, n)
+        return _cached_gausslegendre[n]
+    else
+        return gausslegendre(n)
+    end
+end
+
 # Integrate f(::Point{Dim,T}) over a Segment
 #   Allocations:
 #     gausslegendre: 2n * sizeof(Float64)
@@ -41,7 +56,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(n)
+    xs, ws = _gausslegendre(n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = 0.5x + 0.5
@@ -65,7 +80,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(n)
+    xs, ws = _gausslegendre(n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = 0.5x + 0.5
