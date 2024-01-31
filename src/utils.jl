@@ -14,18 +14,10 @@ function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     P = bz.controls
     N = degree(bz)
 
-    # Ensure that this implementation is tractible: limited by ability to calculate
-    #   binomial(N, N/2) without overflow. It's possible to extend this range by
-    #   converting N to a BigInt, but this results in always returning BigFloat's.
-    N <= 1028 || error("This algorithm overflows for curves with ⪆1000 control points.")
-
-    # Generator for Bernstein polynomial functions
-    B(i,n) = t -> binomial(Int128(n),i) * t^i * (1-t)^(n-i)
-
-    # Derivative = N Σ_{i=0}^{N-1} sigma(i)
-    #   P indices adjusted for Julia 1-based array indexing
-    sigma(i) = B(i,N-1)(t) .* (P[(i+1)+1] - P[(i)+1])
-    return N .* sum(sigma, 0:N-1)    # ::Vec{Dim,T}
+    # For bz := ∑_{i=0}^{N-1} a_i B_i^N
+    # bz' := N ∑_{i=0}^{N-1} b_i B_i^{N-1},
+    # where b_i := a_{i+1}-a_i.
+    BezierCurve(N*(P[2:end].-P[1:end-1]))(t)
 end
 
 """
