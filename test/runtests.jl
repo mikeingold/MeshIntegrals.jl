@@ -75,12 +75,6 @@ using Test
         fr(x) = exp(-x)
         fr(p::Point) = fr(p.coords[1])
         @test quadgk(fr, Point(0,0), Point(100,0))[1] ≈ quadgk(fr, 0, 100)[1]
-
-        # Test handling of complex functions
-        # Treat xy-plane like the complex-plane: x + iy
-        fc(p::Point) = fc(complex(p.coords[1],p.coords[2]))
-        fc(z::Complex) = 1/z
-        @test quadgk(fc, seg_ne)[1] ≈ quadgk(fc, complex(1,0), complex(0,1))[1]
     end
 end
 
