@@ -25,6 +25,7 @@ Implements `QuadGK.quadgk` methods for
 ## Example Usage
 
 ```julia
+using BenchmarkTools
 using Meshes
 using QuadGK
 using LineIntegrals
@@ -39,9 +40,13 @@ unit_circle = BezierCurve(
 fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 
-@btime integral(fr, unit_circle)
-# 32.074 ms (54831 allocations: 232.07 MiB)
-# 5.552409879120829
+@btime integral(fr, unit_circle)  # default n=100
+# 9.970 ms (18831 allocations: 78.40 MiB)
+# 5.55240987912083
+
+@btime integral(fr, unit_circle, n=10_000)
+# 16.932 ms (18835 allocations: 78.69 MiB)
+# 5.551055240210768
 
 @btime quadgk(fr, unit_circle)
 # 44.874 ms (78229 allocations: 331.95 MiB)
@@ -52,4 +57,3 @@ fr(p) = fr(p.coords...)
 
 - Need to troubleshoot functions of complex variables
     - Currently failing a test. Not sure if math error on my part or calculating incorrectly.
-- Want to implement internal `_integrate!` methods that make use of cache vectors to reduce allocations
