@@ -76,6 +76,18 @@ using Test
         fr(p::Point) = fr(p.coords[1])
         @test quadgk(fr, Point(0,0), Point(100,0))[1] ≈ quadgk(fr, 0, 100)[1]
     end
+
+    @testset "Contour Integrals on the Complex-Domain" begin
+        fc(z::Complex) = 1/z
+        fc(p::Point{1,ComplexF64}) = fc(p.coords[1])
+
+        # Construct a unit circle on the complex domain
+        unit_circle_complex = Meshes.BezierCurve(
+            [Point{1,ComplexF64}(cos(t) + sin(t)*im) for t in range(0,2pi,length=361)]
+        )
+
+        @test integral(fc, unit_circle_complex, n=1000) ≈ 2π*im
+    end
 end
 
 ################################################################################
