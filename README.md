@@ -9,7 +9,7 @@ currently implemented:
 All methods are verified to work with
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
-- Any `f(::Meshes.Point)` that maps to a value type that QuadGK can integrate, including:
+- Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that QuadGK can integrate, including:
     - Real or complex-valued scalars
     - Real or complex-valued vectors
     - Dimensionful scalars or vectors from Unitful.jl
@@ -55,5 +55,13 @@ fr(p) = fr(p.coords...)
 
 # Work in Progress
 
-- Need to troubleshoot functions of complex variables
-    - Currently failing a test. Not sure if math error on my part or calculating incorrectly.
+- Test complex-domain integration along `Point{1,Complex}`
+    - Does `BezierCurve{1,Complex}` work?
+- Implement Aqua.jl tests
+- Register in General
+    - Submit PR to Meshes.jl for an extension containing these `QuadGK.quadgk` methods
+    - Won't register until type piracy concerns resolved
+    - Rename to something more general like GeometricIntegrals?
+- Longer-term goals
+    - Surface integration of 2D features, e.g. `integral(f, ::Triangle)`
+    - Volumetric integration of 3D features, e.g. `integral(f, ::Ball)`
