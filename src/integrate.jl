@@ -43,7 +43,7 @@ function integral(
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = 0.5x + 0.5
-    point(x) = segment(t(x), alg)
+    point(x) = segment(t(x))
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
     return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
