@@ -55,7 +55,6 @@ fr(p) = fr(p.coords...)
 
 # Work in Progress
 
-- Investigate whether/how to implement `alg` keyword argument for `quadgk(f, ::BezierCurve)` in keeping with same new option for `integral`
 - Implement Aqua.jl tests
 - Register in General
     - Submit PR to Meshes.jl for an extension containing these `QuadGK.quadgk` methods
