@@ -41,23 +41,23 @@ fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 
 @btime integral(fr, unit_circle)  # default n=100
-# 9.970 ms (18831 allocations: 78.40 MiB)
-# 5.55240987912083
+    # 9.970 ms (18831 allocations: 78.40 MiB)
+    # 5.55240987912083
 
 @btime integral(fr, unit_circle, n=10_000)
-# 16.932 ms (18835 allocations: 78.69 MiB)
-# 5.551055240210768
+    # 16.932 ms (18835 allocations: 78.69 MiB)
+    # 5.551055240210768
 
 @btime quadgk(fr, unit_circle)
-# 44.874 ms (78229 allocations: 331.95 MiB)
-# (5.551055333711397, 1.1102230246251565e-16)
+    # 9.871 ms (18829 allocations: 78.40 MiB)
+    # (5.551055333711397, 1.609823385706477e-15)
 ```
 
 # Work in Progress
 
 - Implement Aqua.jl tests
-- Register in General
-    - Submit PR to Meshes.jl for an extension containing these `QuadGK.quadgk` methods
+- Register in General?
+    - Submit PR to Meshes.jl for an extension containing these `QuadGK.quadgk` methods?
     - Won't register until type piracy concerns resolved
     - Rename to something more general like GeometricIntegrals?
 - Longer-term goals
