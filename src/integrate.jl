@@ -164,7 +164,7 @@ especially for curves with a large number of control points.
 function QuadGK.quadgk(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V};
-    alg::Meshes.BezierEvalMethod=Meshes.Horner()
+    alg::Meshes.BezierEvalMethod=Meshes.Horner(),
     kwargs...
 ) where {F<:Function,Dim, T, V}
     # Validate the provided integrand function
