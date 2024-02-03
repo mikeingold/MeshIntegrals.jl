@@ -1,6 +1,15 @@
 ################################################################################
-#                               API/DOCSTRINGS
+#                              integral METHODS
 ################################################################################
+
+# Validate that f has a method defined for f(::Point)
+@inline function _validate_integrand(f,Dim,T)
+    if !hasmethod(f, (Point{Dim,T},))
+        error("The provided Function f must have a method f(::Point{$Dim,$T})")
+    end
+
+    return nothing
+end
 
 """
     integral(f, geometry; n=100)
@@ -14,20 +23,6 @@ to have some periodic content then `n` should (at a minimum) be greater than
 the expected number of periods, e.g. `length(geometry)/lambda`.
 """
 function integral end
-
-
-################################################################################
-#                              integral METHODS
-################################################################################
-
-# Validate that f has a method defined for f(::Point)
-@inline function _validate_integrand(f,Dim,T)
-    if !hasmethod(f, (Point{Dim,T},))
-        error("The provided Function f must have a method f(::Point{$Dim,$T})")
-    end
-
-    return nothing
-end
 
 # Integrate f(::Point{Dim,T}) over a Segment
 function integral(
