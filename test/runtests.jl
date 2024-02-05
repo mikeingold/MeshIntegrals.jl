@@ -34,12 +34,15 @@ using Test
 
     @testset "QuadGK Methods" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test quadgk(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
-        @test quadgk(f, rect_traj_ring)[1] ≈ 4sqrt(2)               # Meshes.Ring
-        @test quadgk(f, rect_traj_rope)[1] ≈ 4sqrt(2)               # Meshes.Rope
-        @test isapprox(quadgk(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
-        @test quadgk(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)    # Varargs of Meshes.Point
-        @test quadgk(t -> exp(-t), 0, 10, 100)[1] ≈ 1    # Verify compatibility with generic Vararg{T} method
+        @test LineIntegrals.quadgk(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
+        @test LineIntegrals.quadgk(f, rect_traj_ring)[1] ≈ 4sqrt(2)               # Meshes.Ring
+        @test LineIntegrals.quadgk(f, rect_traj_rope)[1] ≈ 4sqrt(2)               # Meshes.Rope
+        @test isapprox(LineIntegrals.quadgk(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
+        @test LineIntegrals.quadgk(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)    # Varargs of Meshes.Point
+
+        # This test is useful if these quadgk methods are exported as QuadGK.quadgk methods
+        #   to ensure they don't clash with non-Meshes methods.
+        # @test quadgk(t -> exp(-t), 0, 10, 100)[1] ≈ 1    # Verify compatibility with generic Vararg{T} method
     end
 
     @testset "Caught Errors" begin
@@ -74,10 +77,10 @@ using Test
         # Test handling of real-valued functions
         fr(x) = exp(-x)
         fr(p::Point) = fr(p.coords[1])
-        @test quadgk(fr, Point(0,0), Point(100,0))[1] ≈ quadgk(fr, 0, 100)[1]
+        @test LineIntegrals.quadgk(fr, Point(0,0), Point(100,0))[1] ≈ QuadGK.quadgk(fr, 0, 100)[1]
     end
 
-    @testset "Contour Integrals on the Complex-Domain" begin
+    @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
         fc(z::Complex) = 1/z
         fc(p::Point{1,ComplexF64}) = fc(p.coords[1])
 
@@ -86,6 +89,9 @@ using Test
             [Point{1,ComplexF64}(cos(t) + sin(t)*im) for t in range(0,2pi,length=361)]
         )
 
+        # 2πi Res_{z=0}(1/z) = \int_C (1/z) dz
+        # Res_{z=0}(1/z) = 1
+        # ∴ \int_C (1/z) dz = 2πi
         @test integral(fc, unit_circle_complex, n=1000) ≈ 2π*im
     end
 end
@@ -142,6 +148,11 @@ end
 ################################################################################
 #                             Tests -- DynamicQuantities.jl
 ################################################################################
+
+# TODO once these tests work identically to Unitful tests, consolidate them into
+#   a single abstracted test loop
+# for Package in (Unitful, DynamicQuantities)
+#   @testset "Integrate with $Package"
 
 @testset "Integrate with DynamicQuantities.jl" begin
     m = DynamicQuantities.m

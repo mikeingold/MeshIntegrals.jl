@@ -122,16 +122,16 @@ end
 
 
 ################################################################################
-#                       QuadGK.quadgk Methods
+#                            quadgk Methods
 ################################################################################
 
 """
     quadgk(f, segment::Segment; kws...)
 
-Like [`quadgk`](@ref), but integrates along the domain of a Segment. All standard
-[`quadgk`](@ref) keyword arguments remain available.
+Like [`QuadGK.quadgk`](@ref), but integrates along the domain of a Segment. All standard
+[`QuadGK.quadgk`](@ref) keyword arguments remain available.
 """
-function QuadGK.quadgk(
+function quadgk(
     f::F,
     segment::Meshes.Segment{Dim,T};
     kwargs...
@@ -141,14 +141,14 @@ function QuadGK.quadgk(
 
     len = length(segment)
     point(t) = segment(t)
-    return quadgk(t -> len * f(point(t)), 0, 1; kwargs...)
+    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; kwargs...)
 end
 
 """
     quadgk(f, curve::BezierCurve; alg=Horner(), kws...)
 
-Like [`quadgk`](@ref), but integrates along the domain of a Bezier curve. All
-standard [`quadgk`](@ref) keyword arguments remain available.
+Like [`QuadGK.quadgk`](@ref), but integrates along the domain of a Bezier curve. All
+standard [`QuadGK.quadgk`](@ref) keyword arguments remain available.
 
 By default this uses Horner's method to improve performance when parameterizing
 the `curve` at the expense of a small loss of precision. Additional accuracy
@@ -156,7 +156,7 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 `alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
 especially for curves with a large number of control points.
 """
-function QuadGK.quadgk(
+function quadgk(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V};
     alg::Meshes.BezierEvalMethod=Meshes.Horner(),
@@ -167,17 +167,17 @@ function QuadGK.quadgk(
 
     len = length(curve)
     point(t) = curve(t, alg)
-    return quadgk(t -> len * f(point(t)), 0, 1; kwargs...)
+    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; kwargs...)
 end
 
 """
     quadgk(f, points::Point...; kws...)
 
-Like [`quadgk`](@ref), but integrates along a domain befined by the linear
-segments formed between a series of Points. All standard [`quadgk`](@ref)
+Like [`QuadGK.quadgk`](@ref), but integrates along a domain befined by the linear
+segments formed between a series of Points. All standard [`QuadGK.quadgk`](@ref)
 keyword arguments remain available.
 """
-function QuadGK.quadgk(
+function quadgk(
     f,
     pts::Meshes.Point{Dim,T}...;
     kwargs...
@@ -193,10 +193,10 @@ end
 """
     quadgk(f, ring::Ring; kws...)
 
-Like [`quadgk`](@ref), but integrates along the domain of a Ring. All standard
-[`quadgk`](@ref) keyword arguments remain available.
+Like [`QuadGK.quadgk`](@ref), but integrates along the domain of a Ring. All standard
+[`QuadGK.quadgk`](@ref) keyword arguments remain available.
 """
-function QuadGK.quadgk(
+function quadgk(
     f::F,
     ring::Meshes.Ring{Dim,T};
     kwargs...
@@ -212,10 +212,10 @@ end
 """
     quadgk(f, rope::Rope; kws...)
 
-Like [`quadgk`](@ref), but integrates along the domain of a Rope. All standard
-[`quadgk`](@ref) keyword arguments remain available.
+Like [`QuadGK.quadgk`](@ref), but integrates along the domain of a Rope. All standard
+[`QuadGK.quadgk`](@ref) keyword arguments remain available.
 """
-function QuadGK.quadgk(
+function quadgk(
     f::F,
     rope::Meshes.Rope{Dim,T};
     kwargs...

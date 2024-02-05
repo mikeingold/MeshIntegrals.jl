@@ -27,7 +27,6 @@ Implements `QuadGK.quadgk` methods for
 ```julia
 using BenchmarkTools
 using Meshes
-using QuadGK
 using LineIntegrals
 
 # Construct a path that approximates a unit circle on the xy-plane
@@ -48,7 +47,7 @@ fr(p) = fr(p.coords...)
     # 16.932 ms (18835 allocations: 78.69 MiB)
     # 5.551055240210768
 
-@btime quadgk(fr, unit_circle)
+@btime LineIntegrals.quadgk(fr, unit_circle)
     # 9.871 ms (18829 allocations: 78.40 MiB)
     # (5.551055333711397, 1.609823385706477e-15)
 ```
@@ -57,8 +56,6 @@ fr(p) = fr(p.coords...)
 
 - Implement Aqua.jl tests
 - Register in General?
-    - Submit PR to Meshes.jl for an extension containing these `QuadGK.quadgk` methods?
-    - Won't register until type piracy concerns resolved
     - Rename to something more general like GeometricIntegrals?
 - Longer-term goals
     - Surface integration of 2D features, e.g. `integral(f, ::Triangle)`

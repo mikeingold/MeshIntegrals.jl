@@ -6,6 +6,7 @@ module LineIntegrals
 
     include("integrate.jl")
     export integral
+    # non-exported API: quadgk
 
     include("utils.jl")
     export derivative, unitdirection
