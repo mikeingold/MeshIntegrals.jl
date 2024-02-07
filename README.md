@@ -3,13 +3,13 @@
 This package implements methods for computing line integrals along geometric 1-Dim polytopes
 from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl). Two sets of methods are
 currently implemented:
-- `LineIntegrals.integral(f, geometry)` uses Gauss-Legendre quadratures from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl)
-- `QuadGK.quadgk(f, geometry)` is exported using the adaptive Gauss-Kronrod quadrature from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
+- `integral(f, geometry)` uses Gauss-Legendre quadratures from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl)
+- `quadgk(f, geometry)` using the adaptive Gauss-Kronrod quadrature rule from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
 
 All methods are verified to work with
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
-- Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that QuadGK can integrate, including:
+- Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that **QuadGK.jl** can integrate, including:
     - Real or complex-valued scalars
     - Real or complex-valued vectors
     - Dimensionful scalars or vectors from Unitful.jl
@@ -56,7 +56,7 @@ fr(p) = fr(p.coords...)
 
 - Implement Aqua.jl tests
 - Register in General?
-    - Rename to something more general like GeometricIntegrals?
+    - Rename ideas: MeshesIntegrals? SpatialIntegrals?
 - Longer-term goals
-    - Surface integration of 2D features, e.g. `integral(f, ::Triangle)`
-    - Volumetric integration of 3D features, e.g. `integral(f, ::Ball)`
+    - Surface integration of 2D features, e.g. `surfaceintegral(f, ::Triangle)`
+    - Volumetric integration of 3D features, e.g. `volumeintegral(f, ::Ball)`
