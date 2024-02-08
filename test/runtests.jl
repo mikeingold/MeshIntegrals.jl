@@ -9,7 +9,7 @@ using Test
 #                             Tests -- Integrals
 ################################################################################
 
-@testset "Integrate" beginDim
+@testset "Integrate" begin
     # Points on unit circle at axes
     pt_e = Point( 1.0,  0.0, 0.0)
     pt_n = Point( 0.0,  1.0, 0.0)
