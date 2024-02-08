@@ -5,8 +5,8 @@ module LineIntegrals
     using QuadGK
 
     include("integrate.jl")
-    export integral
-    # non-exported API: quadgk
+    export lineintegral, surfaceintegral, volumeintegral
+    export quadgk_line, quadgk_surface
 
     include("utils.jl")
     export derivative, unitdirection

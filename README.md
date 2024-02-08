@@ -1,12 +1,29 @@
 # LineIntegrals.jl
 
-This package implements methods for computing line integrals along geometric 1-Dim polytopes
-from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl). Two sets of methods are
-currently implemented:
-- `integral(f, geometry)` uses Gauss-Legendre quadratures from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl)
-- `quadgk(f, geometry)` using the adaptive Gauss-Kronrod quadrature rule from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
+This package implements methods for computing integrals over geometric polytopes
+from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
 
-All methods are verified to work with
+Using Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl):
+- Line integrals
+    - `lineintegral(f, ::Meshes.Point...)`
+    - `lineintegral(f, ::Meshes.Segment)`
+    - `lineintegral(f, ::Meshes.Ring)`
+    - `lineintegral(f, ::Meshes.Rope)`
+    - `lineintegral(f, ::Meshes.BezierCurve)`
+- Surface integrals
+    - `surfaceintegral(g, ::Meshes.Triangle)`
+
+Using the h-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl):
+- Line integrals
+    - `quadgk_line(f, ::Meshes.Point...)`
+    - `quadgk_line(f, ::Meshes.Segment)`
+    - `quadgk_line(f, ::Meshes.Ring)`
+    - `quadgk_line(f, ::Meshes.Rope)`
+    - `quadgk_line(f, ::Meshes.BezierCurve)`
+- Surface integrals
+    - `quadgk_surface(g, ::Meshes.Triangle)`
+
+Methods are tested to ensure compatibility with
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that **QuadGK.jl** can integrate, including:
@@ -14,13 +31,6 @@ All methods are verified to work with
     - Real or complex-valued vectors
     - Dimensionful scalars or vectors from Unitful.jl
     - Dimensionful scalars or vectors from DynamicQuantities.jl
-
-Implements `QuadGK.quadgk` methods for
-- `quadgk(f, ::Meshes.Point...) `
-- `quadgk(f, ::Meshes.Segment)`
-- `quadgk(f, ::Meshes.Ring)`
-- `quadgk(f, ::Meshes.Rope)`
-- `quadgk(f, ::Meshes.BezierCurve)`
 
 ## Example Usage
 
@@ -39,24 +49,27 @@ unit_circle = BezierCurve(
 fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 
-@btime integral(fr, unit_circle)  # default n=100
+@btime lineintegral(fr, unit_circle)  # default n=100
     # 9.970 ms (18831 allocations: 78.40 MiB)
     # 5.55240987912083
 
-@btime integral(fr, unit_circle, n=10_000)
+@btime lineintegral(fr, unit_circle, n=10_000)
     # 16.932 ms (18835 allocations: 78.69 MiB)
     # 5.551055240210768
 
-@btime LineIntegrals.quadgk(fr, unit_circle)
+@btime quadgk_line(fr, unit_circle)
     # 9.871 ms (18829 allocations: 78.40 MiB)
     # (5.551055333711397, 1.609823385706477e-15)
 ```
 
-# Work in Progress
+# Plans and Work in Progress
 
-- Implement Aqua.jl tests
-- Register in General?
+- Register in General
     - Rename ideas: MeshesIntegrals? SpatialIntegrals?
-- Longer-term goals
-    - Surface integration of 2D features, e.g. `surfaceintegral(f, ::Triangle)`
-    - Volumetric integration of 3D features, e.g. `volumeintegral(f, ::Ball)`
+- Implement Aqua.jl tests
+- Implement Documenter docs
+- Implement methods
+    - `Meshes.Circle`: `surfaceintegral`, `quadgk_surface`
+    - `Meshes.Box{Dim,T}`: `surfaceintegral where {2,T}`, `volumeintegral where {>=3,T}`
+    - `Meshes.Ball`: `surfaceintegral`, `volumeintegral`
+    - `Meshes.Sphere`: `surfaceintegral`, `volumeintegral`
