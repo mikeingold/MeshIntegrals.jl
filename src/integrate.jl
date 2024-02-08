@@ -148,19 +148,20 @@ function surfaceintegral(
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x1,x2) = triangle(t(x1), t(x2))
+    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
+    s(u) = 0.5u + 0.5
+    t(v) = 0.5v + 0.5
+    point(xi,xj) = triangle(s(xi), t(xj))
 
     # Determine output type of f at a Point inside the triangle
     # Define an applicable zero value
     fzero = zero(f(point(-0.5,-0.5)))
 
     # Calculate weight-node product
-    function weightednode(((w1,w2), (x1,x2)))
-        if 0 < (t(x1) + t(x2)) < 1
+    function g(((wi,wj), (xi,xj)))
+        if 0 <= (s(x1) + t(x2)) <= 1
             # Valid coordinate (inside triangle)
-            return w1 * w2 * f(point(x1,x2))
+            return wi * wj * f(point(xi,xj))
         else
             # Invalid coordinate (outside triangle)
             return fzero
@@ -169,7 +170,7 @@ function surfaceintegral(
 
     # Calculate 2D Gauss-Legendre integral of f over Barycentric coordinates [-1,1]^2
     # Apply a linear domain-correction factor [-1,1]^2 ↦ area(triangle)
-    return 0.5 * abs(signarea(triangle)) .* sum(weightednode, zip(wws,xxs))
+    return 0.5 * abs(signarea(triangle)) .* sum(g, zip(wws,xxs))
 end
 
 
