@@ -304,7 +304,7 @@ function quadgk_surface(
     f,
     triangle::Meshes.Ngon{3,Dim,T};
     kwargs...
-)
+) where {Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
