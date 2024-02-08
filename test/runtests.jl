@@ -32,6 +32,9 @@ using Test
         [Point(cos(t), sin(t), 0.0) for t in range(0, 2pi, length=361)]
     )
 
+    # Triangle on upper-half-plane
+    triangle = Ngon(pt_e, pt_n, pt_w)
+
     @testset "quadgk_line Methods" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
         @test quadgk_line(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
@@ -58,6 +61,7 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
+        @test surfaceintegral(f, triangle) ≈ 1.0                        # Meshes.Triangle
     end
 
     @testset "Vector-Valued Functions" begin
@@ -67,6 +71,7 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
+        @test surfaceintegral(f, triangle) ≈ [1.0, 1.0, 1.0]                       # Meshes.Triangle
     end
 
     @testset "Results Consistent with QuadGK" begin
