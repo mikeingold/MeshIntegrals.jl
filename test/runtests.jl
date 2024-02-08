@@ -33,16 +33,19 @@ using Test
     )
 
     # Triangle on upper-half-plane
-    triangle = Ngon(pt_e, pt_n, pt_w)
+    triangle3d = Ngon(pt_e, pt_n, pt_w)
+    # TODO debug: Point{3,T} seems to explode on signarea(triangle3d)
+    triangle2d = Ngon(Point(1.0,0.0), Point(0.0,1.0), Point(-1.0,0.0))
 
     @testset "quadgk_line Methods" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test quadgk_line(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
-        @test quadgk_line(f, rect_traj_ring)[1] ≈ 4sqrt(2)               # Meshes.Ring
-        @test quadgk_line(f, rect_traj_rope)[1] ≈ 4sqrt(2)               # Meshes.Rope
-        @test isapprox(quadgk_line(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
-        @test quadgk_line(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)    # Varargs of Meshes.Point
-        @test quadgk_surface(f, triangle) ≈ 1.0                          # Meshes.Triangle
+        @test quadgk_line(f, seg_ne)[1] ≈ sqrt(2)                         # Meshes.Segment
+        @test quadgk_line(f, rect_traj_ring)[1] ≈ 4sqrt(2)                # Meshes.Ring
+        @test quadgk_line(f, rect_traj_rope)[1] ≈ 4sqrt(2)                # Meshes.Rope
+        @test isapprox(quadgk_line(f, unit_circle)[1], 2pi; atol=0.15)    # Meshes.BezierCurve
+        @test quadgk_line(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)  # Varargs of Meshes.Point
+        @test quadgk_surface(f, triangle2d) ≈ 1.0                         # Meshes.Triangle
+        @test quadgk_surface(f, triangle3d) ≈ 1.0                         # Meshes.Triangle
     end
 
     @testset "Caught Errors" begin
@@ -62,7 +65,8 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle), 1.0; atol=1e-3)    # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle2d), 1.0; atol=1e-3)  # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle3d), 1.0; atol=1e-3)  # Meshes.Triangle
     end
 
     @testset "Vector-Valued Functions" begin
@@ -72,7 +76,8 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle), [1.0, 1.0, 1.0]; atol=1e-3)   # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle2d), [1.0, 1.0, 1.0]; atol=1e-3) # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle3d), [1.0, 1.0, 1.0]; atol=1e-3) # Meshes.Triangle
     end
 
     @testset "Results Consistent with QuadGK" begin
@@ -101,6 +106,8 @@ end
 ################################################################################
 #                             Tests -- Unitful.jl
 ################################################################################
+
+# TODO implement triangle surfaceintegral tests
 
 @testset "Integrate with Unitful.jl" begin
     m = Unitful.m
