@@ -308,13 +308,9 @@ function quadgk_surface(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Change of variables: u,v [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(u,v) = triangle(t(u), t(v))
-
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    innerintegral(u) = QuadGK.quadgk(v -> f(point(u,v)), 0, 1-u; kwargs...)
+    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; kwargs...)
     outerintegral = QuadGK.quadgk(innerintegral, 0, 1; kwargs...)
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
