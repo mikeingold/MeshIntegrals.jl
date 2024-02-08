@@ -157,7 +157,7 @@ function surfaceintegral(
     fzero = zero(f(point(-0.5,-0.5)))
 
     # Calculate weight-node product
-    function weightednode((w1,w2), (x1,x2))
+    function weightednode(((w1,w2), (x1,x2)))
         if 0.0 <= (w1 + w2) <= 1.0
             # Valid coordinate (inside triangle)
             return w1 * w2 * f(point(x1,x2))
