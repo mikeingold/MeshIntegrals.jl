@@ -1,4 +1,4 @@
-module LineIntegrals
+module MeshIntegrals
     using FastGaussQuadrature
     using LinearAlgebra
     using Meshes
