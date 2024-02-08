@@ -169,7 +169,7 @@ function surfaceintegral(
 
     # Calculate 2D Gauss-Legendre integral of f over Barycentric coordinates [-1,1]^2
     # Apply a linear domain-correction factor [-1,1]^2 ↦ area(triangle)
-    return 0.25 * abs(signarea(triangle)) .* sum(weightednode, zip(wws,xxs))
+    return 0.5 * abs(signarea(triangle)) .* sum(weightednode, zip(wws,xxs))
 end
 
 
