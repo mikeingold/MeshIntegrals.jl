@@ -170,7 +170,7 @@ function surfaceintegral(
 
     # Calculate 2D Gauss-Legendre integral of f over Barycentric coordinates [-1,1]^2
     # Apply a linear domain-correction factor [-1,1]^2 ↦ area(triangle)
-    return 0.5 * abs(signarea(triangle)) .* sum(g, zip(wws,xxs))
+    return 0.5 * area(triangle) .* sum(g, zip(wws,xxs))
 end
 
 
@@ -316,5 +316,5 @@ function quadgk_surface(
     outerintegral = QuadGK.quadgk(innerintegral, 0, 1; kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2.0 * abs(signarea(triangle)) .* outerintegral
+    return 2.0 * area(triangle) .* outerintegral
 end
