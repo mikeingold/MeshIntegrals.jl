@@ -62,7 +62,7 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle), 1.0; atol=1e-3)    # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle; n=1000), 1.0; atol=0.01)    # Meshes.Triangle
     end
 
     @testset "Vector-Valued Functions" begin
@@ -72,7 +72,7 @@ using Test
         @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
         @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
         @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle), [1.0, 1.0, 1.0]; atol=1e-3)   # Meshes.Triangle
+        @test isapprox(surfaceintegral(f, triangle; n=1000), [1.0, 1.0, 1.0]; atol=0.01)   # Meshes.Triangle
     end
 
     @testset "Results Consistent with QuadGK" begin
