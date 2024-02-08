@@ -9,7 +9,7 @@ using Test
 #                             Tests -- Integrals
 ################################################################################
 
-@testset "Integrate" begin
+@testset "Integrate" beginDim
     # Points on unit circle at axes
     pt_e = Point( 1.0,  0.0, 0.0)
     pt_n = Point( 0.0,  1.0, 0.0)
@@ -32,52 +32,48 @@ using Test
         [Point(cos(t), sin(t), 0.0) for t in range(0, 2pi, length=361)]
     )
 
-    @testset "QuadGK Methods" begin
+    @testset "quadgk_line Methods" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test LineIntegrals.quadgk(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
-        @test LineIntegrals.quadgk(f, rect_traj_ring)[1] ≈ 4sqrt(2)               # Meshes.Ring
-        @test LineIntegrals.quadgk(f, rect_traj_rope)[1] ≈ 4sqrt(2)               # Meshes.Rope
-        @test isapprox(LineIntegrals.quadgk(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
-        @test LineIntegrals.quadgk(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)    # Varargs of Meshes.Point
-
-        # This test is useful if these quadgk methods are exported as QuadGK.quadgk methods
-        #   to ensure they don't clash with non-Meshes methods.
-        # @test quadgk(t -> exp(-t), 0, 10, 100)[1] ≈ 1    # Verify compatibility with generic Vararg{T} method
+        @test quadgk_line(f, seg_ne)[1] ≈ sqrt(2)                        # Meshes.Segment
+        @test quadgk_line(f, rect_traj_ring)[1] ≈ 4sqrt(2)               # Meshes.Ring
+        @test quadgk_line(f, rect_traj_rope)[1] ≈ 4sqrt(2)               # Meshes.Rope
+        @test isapprox(quadgk_line(f, unit_circle)[1], 2pi; atol=0.15)   # Meshes.BezierCurve
+        @test quadgk_line(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)    # Varargs of Meshes.Point
     end
 
     @testset "Caught Errors" begin
         # Catch wrong method signature: f(x,y,z) vs f(::Point)
         fvec(x,y,z) = x*y*z
-        @test_throws ErrorException integral(fvec, seg_ne)          # Meshes.Segment
-        @test_throws ErrorException integral(fvec, rect_traj_segs)  # Vector{::Meshes.Segment}
-        @test_throws ErrorException integral(fvec, rect_traj_ring)  # Meshes.Ring
-        @test_throws ErrorException integral(fvec, rect_traj_rope)  # Meshes.Rope
-        @test_throws ErrorException integral(fvec, unit_circle)     # Meshes.BezierCurve
+        @test_throws ErrorException lineintegral(fvec, seg_ne)          # Meshes.Segment
+        @test_throws ErrorException lineintegral(fvec, rect_traj_segs)  # Vector{::Meshes.Segment}
+        @test_throws ErrorException lineintegral(fvec, rect_traj_ring)  # Meshes.Ring
+        @test_throws ErrorException lineintegral(fvec, rect_traj_rope)  # Meshes.Rope
+        @test_throws ErrorException lineintegral(fvec, unit_circle)     # Meshes.BezierCurve
     end
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test integral(f, seg_ne) ≈ sqrt(2)                         # Meshes.Segment
-        @test integral(f, rect_traj_segs) ≈ 4sqrt(2)                # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
+        @test lineintegral(f, seg_ne) ≈ sqrt(2)                         # Meshes.Segment
+        @test lineintegral(f, rect_traj_segs) ≈ 4sqrt(2)                # Vector{::Meshes.Segment}
+        @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
+        @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
+        @test isapprox(lineintegral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
     end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0, 1.0, 1.0]
-        @test integral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)]                # Meshes.Segment
-        @test integral(f, rect_traj_segs) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
+        @test lineintegral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)]                # Meshes.Segment
+        @test lineintegral(f, rect_traj_segs) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Vector{::Meshes.Segment}
+        @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
+        @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
+        @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
     end
 
     @testset "Results Consistent with QuadGK" begin
         # Test handling of real-valued functions
         fr(x) = exp(-x)
         fr(p::Point) = fr(p.coords[1])
-        @test LineIntegrals.quadgk(fr, Point(0,0), Point(100,0))[1] ≈ QuadGK.quadgk(fr, 0, 100)[1]
+        @test quadgk_line(fr, Point(0,0), Point(100,0))[1] ≈ QuadGK.quadgk(fr, 0, 100)[1]
     end
 
     @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
@@ -92,7 +88,7 @@ using Test
         # 2πi Res_{z=0}(1/z) = \int_C (1/z) dz
         # Res_{z=0}(1/z) = 1
         # ∴ \int_C (1/z) dz = 2πi
-        @test integral(fc, unit_circle_complex, n=1000) ≈ 2π*im
+        @test lineintegral(fc, unit_circle_complex, n=1000) ≈ 2π*im
     end
 end
 
@@ -128,20 +124,20 @@ end
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0Ω/m
-        @test integral(f, seg_ne) ≈ sqrt(2)*Ω                         # Meshes.Segment
-        @test integral(f, rect_traj_segs) ≈ 4sqrt(2)*Ω                # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4sqrt(2)*Ω                # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4sqrt(2)*Ω                # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), 2π*Ω; atol=0.15Ω)    # Meshes.BezierCurve
+        @test lineintegral(f, seg_ne) ≈ sqrt(2)*Ω                         # Meshes.Segment
+        @test lineintegral(f, rect_traj_segs) ≈ 4sqrt(2)*Ω                # Vector{::Meshes.Segment}
+        @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)*Ω                # Meshes.Ring
+        @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)*Ω                # Meshes.Rope
+        @test isapprox(lineintegral(f, unit_circle), 2π*Ω; atol=0.15Ω)    # Meshes.BezierCurve
     end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0Ω/m, 1.0Ω/m, 1.0Ω/m]
-        @test integral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)] .* Ω                  # Meshes.Segment
-        @test integral(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω    # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), [2π, 2π, 2π] .* Ω; atol=0.15Ω)    # Meshes.BezierCurve
+        @test lineintegral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)] .* Ω                  # Meshes.Segment
+        @test lineintegral(f, rect_traj_segs)  ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω    # Vector{::Meshes.Segment}
+        @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Ring
+        @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)] .* Ω     # Meshes.Rope
+        @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π] .* Ω; atol=0.15Ω)    # Meshes.BezierCurve
     end
 end
 
@@ -182,21 +178,21 @@ end
 
     @testset "Scalar-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = 1.0Ω/m
-        @test integral(f, seg_ne) ≈ sqrt(2)*Ω                         # Meshes.Segment
-        @test integral(f, rect_traj_segs) ≈ 4sqrt(2)*Ω                # Vector{::Meshes.Segment}
-        @test integral(f, rect_traj_ring) ≈ 4sqrt(2)*Ω                # Meshes.Ring
-        @test integral(f, rect_traj_rope) ≈ 4sqrt(2)*Ω                # Meshes.Rope
-        @test isapprox(integral(f, unit_circle), 2π*Ω; atol=0.15)    # Meshes.BezierCurve
+        @test lineintegral(f, seg_ne) ≈ sqrt(2)*Ω                         # Meshes.Segment
+        @test lineintegral(f, rect_traj_segs) ≈ 4sqrt(2)*Ω                # Vector{::Meshes.Segment}
+        @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)*Ω                # Meshes.Ring
+        @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)*Ω                # Meshes.Rope
+        @test isapprox(lineintegral(f, unit_circle), 2π*Ω; atol=0.15)    # Meshes.BezierCurve
               # TODO change 0.15 => 0.15Ω once DynamicQuantities PR approved
     end
 
     @testset "Vector-Valued Functions" begin
         f(::Point{Dim,T}) where {Dim,T} = [1.0Ω/m, 1.0Ω/m, 1.0Ω/m]
-        @test all(isapprox.(integral(f, seg_ne), sqrt(2)*Ω))                # Meshes.Segment
-        @test all(isapprox.(integral(f, rect_traj_segs), 4sqrt(2)*Ω))       # Vector{::Meshes.Segment}
-        @test all(isapprox.(integral(f, rect_traj_ring), 4sqrt(2)*Ω))       # Meshes.Ring
-        @test all(isapprox.(integral(f, rect_traj_rope), 4sqrt(2)*Ω))       # Meshes.Rope
-        @test all(isapprox.(integral(f, unit_circle), 2π*Ω; atol=0.15))    # Meshes.BezierCurve
+        @test all(isapprox.(lineintegral(f, seg_ne), sqrt(2)*Ω))                # Meshes.Segment
+        @test all(isapprox.(lineintegral(f, rect_traj_segs), 4sqrt(2)*Ω))       # Vector{::Meshes.Segment}
+        @test all(isapprox.(lineintegral(f, rect_traj_ring), 4sqrt(2)*Ω))       # Meshes.Ring
+        @test all(isapprox.(lineintegral(f, rect_traj_rope), 4sqrt(2)*Ω))       # Meshes.Rope
+        @test all(isapprox.(lineintegral(f, unit_circle), 2π*Ω; atol=0.15))    # Meshes.BezierCurve
              # TODO change 0.15 => 0.15Ω once DynamicQuantities PR approved
     end
 end
