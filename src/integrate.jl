@@ -290,7 +290,8 @@ end
 
 Numerically integrate a given function `f(::Point)` over the surface of a
 `geometry` using the h-adaptive Gauss-Kronrod quadrature rule from QuadGK.jl.
-All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported.
+All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported. Returns
+only the estimated integral value; unable to estimate error for a nested problem.
 """
 function quadgk_surface end
 
@@ -310,8 +311,8 @@ function quadgk_surface(
 
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; kwargs...)
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; kwargs...)
+    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; kwargs...)[1]
+    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * abs(signarea(triangle)) .* outerintegral
