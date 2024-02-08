@@ -1,4 +1,4 @@
-name = "LineIntegrals"
+name = "MeshIntegrals"
 uuid = "2c651c0d-f5be-416b-b771-ab860150eb63"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
 version = "0.7.0"

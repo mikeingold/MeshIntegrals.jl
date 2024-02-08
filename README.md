@@ -1,4 +1,4 @@
-# LineIntegrals.jl
+# MeshIntegrals.jl
 
 This package implements methods for computing integrals over geometric polytopes
 from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
@@ -65,7 +65,6 @@ fr(p) = fr(p.coords...)
 # Plans and Work in Progress
 
 - Register in General
-    - Rename ideas: MeshesIntegrals? SpatialIntegrals?
 - Implement Aqua.jl tests
 - Implement Documenter docs
 - Implement methods

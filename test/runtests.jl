@@ -1,5 +1,5 @@
 using DynamicQuantities
-using LineIntegrals
+using MeshIntegrals
 using Meshes
 using QuadGK
 using Unitful
