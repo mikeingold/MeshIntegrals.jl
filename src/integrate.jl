@@ -159,7 +159,7 @@ function surfaceintegral(
 
     # Calculate weight-node product
     function g(((wi,wj), (xi,xj)))
-        if 0 <= (s(x1) + t(x2)) <= 1
+        if 0 <= (s(xi) + t(xj)) <= 1
             # Valid coordinate (inside triangle)
             return wi * wj * f(point(xi,xj))
         else
