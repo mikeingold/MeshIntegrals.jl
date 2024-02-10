@@ -8,6 +8,39 @@
 end
 
 ################################################################################
+#                         Integration Algorithms
+################################################################################
+
+abstract type IntegrationAlgorithm end
+
+"""
+    GaussLegendre(n)
+
+Numerically integrate using an `n`'th-order Gauss-Legendre quadrature rule. nodes
+and weights are efficiently calculated using FastGaussQuadrature.jl.
+
+So long as the integrand function can be well-approximated by a polynomial of
+order `2n-1`, this method should yield results with 16-digit accuracy in `O(n)`
+time. If the function is know to have some periodic content, then `n` should
+(at a minimum) be greater than the expected number of periods over the geometry,
+e.g. `length(geometry)/lambda`.
+"""
+struct GaussLegendre <: IntegrationAlgorithm
+    n::Int64
+end
+
+"""
+    GaussKronrod(kwargs...)
+
+Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule implemented
+by QuadGK.jl. All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported.
+"""
+struct GaussKronrod <: IntegrationAlgorithm
+    kwargs
+    GaussKronrod(; kwargs...) = new(kwargs)
+end
+
+################################################################################
 #                              lineintegral
 ################################################################################
 
@@ -17,10 +50,7 @@ end
 Numerically integrate a given function `f(::Point)` along a 1D `geometry` using
 a Gauss-Legendre quadrature of order `n`.
 
-So long as `f` can be well-approximated by a polynomial of order `2n-1`, this
-method should yield results with 16-digit accuracy in O(n) time. If `f` is know
-to have some periodic content then `n` should (at a minimum) be greater than
-the expected number of periods, e.g. `length(geometry)/lambda`.
+
 """
 function lineintegral end
 
@@ -254,66 +284,45 @@ function quadgk_line(
     return reduce(.+, chunks)
 end
 
-# Integrate f(::Point{Dim,T}) over a Rope{Dim,T} (an open Chain)
-function quadgk_line(
-    f::F,
-    rope::Meshes.Rope{Dim,T};
-    kwargs...
-) where {F<:Function, Dim, T}
-    # Partition the Rope into Segments, integrate each, sum results
-    chunks = map(segment -> quadgk_line(f, segment; kwargs...), segments(rope))
-    return reduce(.+, chunks)
-end
 
-"""
-    quadgk_line(f, points::Point...; kws...)
-
-Like [`quadgk_line`](@ref), but integrates along a domain befined by the linear
-segments formed between a series of Points.
-"""
-function quadgk_line(
+function lineintegral(
     f,
-    pts::Meshes.Point{Dim,T}...;
-    kwargs...
+    pts::Meshes.Point{Dim,T}...,
+    settings::GaussKronrod
 ) where {Dim, T}
     # Collect Points into a Rope, integrate that
     rope = Meshes.Rope(pts...)
-    return quadgk_line(f, rope; kwargs...)
+    return lineintegral(f, rope, settings)
 end
 
-
 ################################################################################
-#                                quadgk_surface
+#                                Gauss-Kronrod
 ################################################################################
 
-"""
-    quadgk_surface(f, geometry; kws...)
+# Integrate f(::Point{Dim,T}) over a Rope{Dim,T} (an open Chain)
+function lineintegral(
+    f::F,
+    rope::Meshes.Rope{Dim,T},
+    settings::GaussKronrod
+) where {F<:Function, Dim, T}
+    # Partition the Rope into Segments, integrate each, sum results
+    chunks = map(segment -> lineintegral(f, segment, settings), segments(rope))
+    return reduce(.+, chunks)
+end
 
-Numerically integrate a given function `f(::Point)` over the surface of a
-`geometry` using the h-adaptive Gauss-Kronrod quadrature rule from QuadGK.jl.
-All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported. Returns
-only the estimated integral value; unable to estimate error for a nested problem.
-"""
-function quadgk_surface end
-
-"""
-    quadgk_surface(f, triangle::Meshes.Triangle; kws...)
-
-Like [`quadgk_surface`](@ref), but integrates `f` over the surface of a `triangle`
-using a nested integration in the Barycentric coordinate domain.
-"""
-function quadgk_surface(
+# Integrate f(::Point{Dim,T}) over a Triangle{Dim,T}
+function surfaceintegral(
     f,
-    triangle::Meshes.Ngon{3,Dim,T};
-    kwargs...
+    triangle::Meshes.Ngon{3,Dim,T},
+    settings::GaussKronrod
 ) where {Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; kwargs...)[1]
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; kwargs...)[1]
+    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* outerintegral
