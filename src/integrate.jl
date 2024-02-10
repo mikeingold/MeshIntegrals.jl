@@ -14,6 +14,17 @@ end
 abstract type IntegrationAlgorithm end
 
 """
+    GaussKronrod(kwargs...)
+
+Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule implemented
+by QuadGK.jl. All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported.
+"""
+struct GaussKronrod <: IntegrationAlgorithm
+    kwargs
+    GaussKronrod(; kwargs...) = new(kwargs)
+end
+
+"""
     GaussLegendre(n)
 
 Numerically integrate using an `n`'th-order Gauss-Legendre quadrature rule. nodes
@@ -32,39 +43,64 @@ end
 """
     GaussKronrod(kwargs...)
 
-Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule implemented
-by QuadGK.jl. All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported.
+Numerically integrate areas and surfaces using the h-adaptive cubature rule
+implemented by HCubature.jl. All standard [`HCubature.hcubature`](@ref) keyword
+arguments are supported.
 """
-struct GaussKronrod <: IntegrationAlgorithm
+struct HAdaptiveCubature <: IntegrationAlgorithm
     kwargs
-    GaussKronrod(; kwargs...) = new(kwargs)
+    HAdaptiveCubature(; kwargs...) = new(kwargs)
 end
 
 ################################################################################
-#                              lineintegral
+#                        Integral Function Docstrings
 ################################################################################
 
 """
-    lineintegral(f, geometry; n=100)
+    lineintegral(f, geometry, algorithm::IntegrationAlgorithm=GaussKronrod)
 
-Numerically integrate a given function `f(::Point)` along a 1D `geometry` using
-a Gauss-Legendre quadrature of order `n`.
+Numerically integrate a given function `f(::Point)` along a line-like `geometry`
+using a particular `integration algorithm`.
 
-
+Algorithm types available:
+- GaussKronrod
+- GaussLegendre
 """
 function lineintegral end
+
+"""
+    surfaceintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
+
+Numerically integrate a given function `f(::Point)` over a surface `geometry`
+using a particular `integration algorithm`.
+"""
+function surfaceintegral end
+
+"""
+    volumeintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
+
+Numerically integrate a given function `f(::Point)` throughout a volumetric
+`geometry` using a particular `integration algorithm`.
+
+"""
+function volumeintegral end
+
+
+################################################################################
+#                            Gauss-Legendre
+################################################################################
 
 # Integrate f(::Point{Dim,T}) along a Segment{Dim,T}
 function lineintegral(
     f::F,
-    segment::Meshes.Segment{Dim,T};
-    n::Int64=100
+    segment::Meshes.Segment{Dim,T},
+    settings::GaussLegendre
 ) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(n)
+    xs, ws = gausslegendre(settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = 0.5x + 0.5
@@ -75,7 +111,7 @@ function lineintegral(
 end
 
 """
-    lineintegral(f, curve::Meshes.BezierCurve; n=100, alg=Meshes.Horner())
+    lineintegral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
 
 Like [`lineintegral`](@ref) but integrates along the domain defined a `curve`.
 By default this uses Horner's method to improve performance when parameterizing
@@ -86,15 +122,15 @@ especially for curves with a large number of control points.
 """
 function lineintegral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V};
-    n::Int64=100,
+    curve::Meshes.BezierCurve{Dim,T,V},
+    settings::GaussLegendre;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function, Dim, T, V}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(n)
+    xs, ws = gausslegendre(settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = 0.5x + 0.5
@@ -107,56 +143,43 @@ end
 # Integrate f(::Point{Dim,T}) over a Rope{Dim,T} (an open Chain)
 function lineintegral(
     f::F,
-    rope::Meshes.Rope{Dim,T};
-    n::Int64=100
+    rope::Meshes.Rope{Dim,T},
+    settings::GaussLegendre
 ) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    return sum(segment -> lineintegral(f, segment; n=n), segments(rope))
+    return sum(segment -> lineintegral(f, segment, settings), segments(rope))
 end
 
 # Integrate f(::Point{Dim,T}) over a Ring{Dim,T} (a closed Chain)
 function lineintegral(
     f::F,
-    ring::Meshes.Ring{Dim,T};
-    n::Int64=100
+    ring::Meshes.Ring{Dim,T},
+    settings::GaussLegendre
 ) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    return sum(segment -> lineintegral(f, segment; n=n), segments(ring))
+    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
 # Integrate f(::Point{Dim,T}) over an arbitrary geometry in {Dim,T}
 function lineintegral(
     f::F,
-    path::Vector{<:Meshes.Geometry{Dim,T}};
-    n::Int64=100
+    path::Vector{<:Meshes.Geometry{Dim,T}},
+    settings::GaussLegendre
 ) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    return sum(section -> lineintegral(f, section; n=n), path)
+    return sum(section -> lineintegral(f, section, settings), path)
 end
 
 
 ################################################################################
 #                            surfaceintegral
 ################################################################################
-
-"""
-    surfaceintegral(f, geometry; n=100)
-
-Numerically integrate a given function `f(::Point)` over a 2D surface `geometry`
-using a Gauss-Legendre quadrature of order `n`.
-
-So long as `f` can be well-approximated by a polynomial of order `2n-1`, this
-method should yield results with 16-digit accuracy in O(n) time. If `f` is know
-to have some periodic content then `n` should (at a minimum) be greater than
-the expected number of periods, e.g. `length(geometry)/lambda`.
-"""
-function surfaceintegral end
 
 """
     surfaceintegral(f, triangle::Meshes.Triangle; n=100)
@@ -204,39 +227,13 @@ function surfaceintegral(
 end
 
 
-################################################################################
-#                             volumeintegral
-################################################################################
-
-"""
-    volumeintegral(f, geometry; n=100)
-
-Numerically integrate a given function `f(::Point)` throughout a volumetric
-`geometry` using a Gauss-Legendre quadrature of order `n`.
-
-So long as `f` can be well-approximated by a polynomial of order `2n-1`, this
-method should yield results with 16-digit accuracy in O(n) time. If `f` is know
-to have some periodic content then `n` should (at a minimum) be greater than
-the expected number of periods, e.g. `length(geometry)/lambda`.
-"""
-function volumeintegral end
-
 
 ################################################################################
-#                                quadgk_line
+#                                Gauss-Kronrod
 ################################################################################
-
-"""
-    quadgk_line(f, geometry; kws...)
-
-Numerically integrate a given function `f(::Point)` along a 1D `geometry` using
-the h-adaptive Gauss-Kronrod quadrature rule from QuadGK.jl. All standard
-[`QuadGK.quadgk`](@ref) keyword arguments are supported.
-"""
-function quadgk_line end
 
 # Integrate f(::Point{Dim,T}) along a Segment{Dim,T}
-function quadgk_line(
+function lineintegral(
     f::F,
     segment::Meshes.Segment{Dim,T};
     kwargs...
@@ -259,7 +256,7 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 `alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
 especially for curves with a large number of control points.
 """
-function quadgk_line(
+function lineintegral(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V};
     alg::Meshes.BezierEvalMethod=Meshes.Horner(),
@@ -274,7 +271,7 @@ function quadgk_line(
 end
 
 # Integrate f(::Point{Dim,T}) over a Ring{Dim,T} (a closed Chain)
-function quadgk_line(
+function lineintegral(
     f::F,
     ring::Meshes.Ring{Dim,T};
     kwargs...
@@ -283,7 +280,6 @@ function quadgk_line(
     chunks = map(segment -> quadgk_line(f, segment; kwargs...), segments(ring))
     return reduce(.+, chunks)
 end
-
 
 function lineintegral(
     f,
@@ -294,10 +290,6 @@ function lineintegral(
     rope = Meshes.Rope(pts...)
     return lineintegral(f, rope, settings)
 end
-
-################################################################################
-#                                Gauss-Kronrod
-################################################################################
 
 # Integrate f(::Point{Dim,T}) over a Rope{Dim,T} (an open Chain)
 function lineintegral(
