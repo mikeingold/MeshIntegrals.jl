@@ -73,8 +73,6 @@ function lineintegral(
     return lineintegral(f, geometry, GaussKronrod())
 end
 
-include("lineintegral.jl")
-
 """
     surfaceintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
 

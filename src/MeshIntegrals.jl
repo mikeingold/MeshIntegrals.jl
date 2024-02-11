@@ -6,6 +6,7 @@ module MeshIntegrals
     using QuadGK
 
     include("integrate.jl")
+    include("lineintegral.jl")
     export GaussKronrod, GaussLegendre, HAdaptiveCubature
     export lineintegral, surfaceintegral, volumeintegral
 
