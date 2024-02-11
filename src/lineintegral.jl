@@ -73,6 +73,7 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
+#=
 function lineintegral(
     f,
     pts::Meshes.Point{Dim,T}...,
@@ -82,7 +83,7 @@ function lineintegral(
     rope = Meshes.Rope(pts...)
     return lineintegral(f, rope, settings)
 end
-
+=#
 
 ################################################################################
 #                                Gauss-Kronrod
@@ -135,6 +136,7 @@ function lineintegral(
     return reduce(.+, chunks)
 end
 
+#=
 function lineintegral(
     f,
     pts::Meshes.Point{Dim,T}...,
@@ -144,6 +146,7 @@ function lineintegral(
     rope = Meshes.Rope(pts...)
     return lineintegral(f, rope, settings)
 end
+=#
 
 function lineintegral(
     f::F,

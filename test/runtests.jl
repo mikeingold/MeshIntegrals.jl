@@ -40,7 +40,7 @@ using Test
             @test lineintegral(f, rect_traj_ring, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Ring
             @test lineintegral(f, rect_traj_rope, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Rope
             @test lineintegral(f, unit_circle, GaussKronrod()) ≈ 2π                         # Meshes.BezierCurve
-            @test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, GaussKronrod()) ≈ 4sqrt(2)  # Varargs of Meshes.Point
+            #@test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, GaussKronrod()) ≈ 4sqrt(2)  # Varargs of Meshes.Point
             @test lineintegral(f, triangle, GaussKronrod()) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
         end
         @testset "Vector-Valued Functions" begin
