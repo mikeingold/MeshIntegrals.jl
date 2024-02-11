@@ -20,20 +20,20 @@ Methods are tested to ensure compatibility with
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark | Implemented, passes tests |
-| :ballot_box_with_check: | Implemented, untested |
+| :yellow_square: | Implemented, untested |
 | :x: | Not yet implemented |
 
 ### Line Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
-| `Meshes.BezierCurve` | | |
+| `Meshes.BezierCurve` | :yellow_square: | |
 | `Meshes.Box{2,T}` |  | |
 | `Meshes.Circle` | | |
 | `Meshes.Ngon` |  | |
-| `Meshes.Point...` | :ballot_box_with_check: | |
-| `Meshes.Ring` | ballot_box_with_check | |
-| `Meshes.Rope` | :ballot_box_with_check: | |
-| `Meshes.Segment` | :ballot_box_with_check: | |
+| `Meshes.Point...` | :yellow_square: | |
+| `Meshes.Ring` | yellow_square | |
+| `Meshes.Rope` | :yellow_square: | |
+| `Meshes.Segment` | :yellow_square: | |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | Adaptive Cubature |
