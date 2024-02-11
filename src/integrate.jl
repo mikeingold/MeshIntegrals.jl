@@ -66,7 +66,12 @@ Algorithm types available:
 - GaussKronrod
 - GaussLegendre
 """
-function lineintegral end
+function lineintegral(
+    f::F,
+    geometry::G
+) where {F<:Function, G<:Meshes.Geometry}
+    return lineintegral(f, geometry, GaussKronrod())
+end
 
 """
     surfaceintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
@@ -74,7 +79,12 @@ function lineintegral end
 Numerically integrate a given function `f(::Point)` over a surface `geometry`
 using a particular `integration algorithm`.
 """
-function surfaceintegral end
+function surfaceintegral(
+    f::F,
+    geometry::G
+) where {F<:Function, G<:Meshes.Geometry}
+    return surfaceintegral(f, geometry, HAdaptiveCubature())
+end
 
 """
     volumeintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
@@ -83,7 +93,12 @@ Numerically integrate a given function `f(::Point)` throughout a volumetric
 `geometry` using a particular `integration algorithm`.
 
 """
-function volumeintegral end
+function volumeintegral(
+    f::F,
+    geometry::G
+) where {F<:Function, G<:Meshes.Geometry}
+    return volumeintegral(f, geometry, HAdaptiveCubature())
+end
 
 
 ################################################################################
