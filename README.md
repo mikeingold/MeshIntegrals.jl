@@ -19,7 +19,7 @@ Methods are tested to ensure compatibility with
 
 | Symbol | Meaning |
 |--------|---------|
-| :white_check_mark | Implemented, passes tests |
+| :white_check_mark: | Implemented, passes tests |
 | :yellow_square: | Implemented, untested |
 | :x: | Not yet implemented |
 
