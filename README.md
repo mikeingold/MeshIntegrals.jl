@@ -31,7 +31,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.Circle` | :x: | :x: |
 | `Meshes.Ngon` | :x: | :x: |
 | `Meshes.Point...` | :yellow_square: | :yellow_square: |
-| `Meshes.Ring` | yellow_square | :yellow_square: |
+| `Meshes.Ring` | :yellow_square: | :yellow_square: |
 | `Meshes.Rope` | :yellow_square: | :yellow_square: |
 | `Meshes.Segment` | :yellow_square: | :yellow_square: |
 
