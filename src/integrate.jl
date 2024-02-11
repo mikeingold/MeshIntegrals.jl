@@ -164,18 +164,6 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
-# Integrate f(::Point{Dim,T}) over an arbitrary geometry in {Dim,T}
-function lineintegral(
-    f::F,
-    path::Vector{<:Meshes.Geometry{Dim,T}},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return sum(section -> lineintegral(f, section, settings), path)
-end
-
 
 ################################################################################
 #                            surfaceintegral
