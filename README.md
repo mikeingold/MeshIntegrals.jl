@@ -90,6 +90,7 @@ fr(p) = fr(p.coords...)
     - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::HAdaptiveCubature)`
     - Update Example Usage and benchmarks
     - Implement and pass tests for everything implemented
+        - Re-implement all tests for Unitful compatibility
 
 - Implement Aqua.jl tests
 - Implement Documenter docs
