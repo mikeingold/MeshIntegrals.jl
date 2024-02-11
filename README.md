@@ -26,30 +26,31 @@ Methods are tested to ensure compatibility with
 ### Line Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
-| `Meshes.BezierCurve` | :yellow_square: | |
-| `Meshes.Box{2,T}` |  | |
-| `Meshes.Circle` | | |
-| `Meshes.Ngon` |  | |
-| `Meshes.Point...` | :yellow_square: | |
-| `Meshes.Ring` | yellow_square | |
-| `Meshes.Rope` | :yellow_square: | |
-| `Meshes.Segment` | :yellow_square: | |
+| `Meshes.BezierCurve` | :yellow_square: | :yellow_square: |
+| `Meshes.Box{2,T}` | :x: | :x: |
+| `Meshes.Circle` | :x: | :x: |
+| `Meshes.Ngon` | :x: | :x: |
+| `Meshes.Point...` | :yellow_square: | :yellow_square: |
+| `Meshes.Ring` | yellow_square | :yellow_square: |
+| `Meshes.Rope` | :yellow_square: | :yellow_square: |
+| `Meshes.Segment` | :yellow_square: | :yellow_square: |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
-| `Meshes.Ball` | | | |
-| `Meshes.Box{Dim,T}` |  | |
-| `Meshes.Circle` | | |
-| `Meshes.Sphere` | | | |
-| `Meshes.Ngon` |  | |
+| `Meshes.Ball` | :x: | :x: | :x: |
+| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+| `Meshes.Circle` | :x: | :x: | :x: |
+| `Meshes.Sphere` | :x: | :x: | :x: |
+| `Meshes.Ngon` | :x: | :x: | :x: |
+| `Meshes.Triangle` | :yellow_square: | :yellow_square: | :x: |
 
 ### Volume Integrals
-| Geometry | Gauss-Legendre | Gauss-Kronrod | Adaptive Cubature |
-|----------|----------------|---------------|-------------------|
-| `Meshes.Ball` | | | |
-| `Meshes.Box{Dim,T}` |  | |
-| `Meshes.Sphere` | | | |
+| Geometry | Gauss-Legendre | Adaptive Cubature |
+|----------|----------------|---------------|
+| `Meshes.Ball` | :x: | :x: |
+| `Meshes.Box{Dim,T}` | :x: | :x: |
+| `Meshes.Sphere` | :x: | :x: |
 
 # Example Usage
 
