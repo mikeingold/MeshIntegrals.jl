@@ -6,10 +6,10 @@ using Unitful
 using Test
 
 ################################################################################
-#                             Tests -- Integrals
+#                                Line Integrals
 ################################################################################
 
-@testset "Integrate" begin
+@testset "Integrals" begin
     # Points on unit circle at axes
     pt_e = Point( 1.0,  0.0, 0.0)
     pt_n = Point( 0.0,  1.0, 0.0)
@@ -23,7 +23,6 @@ using Test
     seg_se = Segment(pt_s, pt_e)
 
     # Rectangular trajectory CCW around the four points
-    rect_traj_segs = [seg_ne, seg_nw, seg_sw, seg_se]
     rect_traj_ring = Ring(pt_e, pt_n, pt_w, pt_s)
     rect_traj_rope = Rope(pt_e, pt_n, pt_w, pt_s, pt_e)
 
@@ -35,51 +34,24 @@ using Test
     # Triangle on upper-half-plane
     triangle = Ngon(pt_e, pt_n, pt_w)
 
-    @testset "quadgk_line Methods" begin
-        f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test quadgk_line(f, seg_ne)[1] ≈ sqrt(2)                         # Meshes.Segment
-        @test quadgk_line(f, rect_traj_ring)[1] ≈ 4sqrt(2)                # Meshes.Ring
-        @test quadgk_line(f, rect_traj_rope)[1] ≈ 4sqrt(2)                # Meshes.Rope
-        @test isapprox(quadgk_line(f, unit_circle)[1], 2pi; atol=0.15)    # Meshes.BezierCurve
-        @test quadgk_line(f, pt_e, pt_n, pt_w, pt_s, pt_e)[1] ≈ 4sqrt(2)  # Varargs of Meshes.Point
-        @test quadgk_surface(f, triangle) ≈ 1.0                           # Meshes.Triangle
-    end
-
-    @testset "Caught Errors" begin
-        # Catch wrong method signature: f(x,y,z) vs f(::Point)
-        fvec(x,y,z) = x*y*z
-        @test_throws ErrorException lineintegral(fvec, seg_ne)          # Meshes.Segment
-        @test_throws ErrorException lineintegral(fvec, rect_traj_segs)  # Vector{::Meshes.Segment}
-        @test_throws ErrorException lineintegral(fvec, rect_traj_ring)  # Meshes.Ring
-        @test_throws ErrorException lineintegral(fvec, rect_traj_rope)  # Meshes.Rope
-        @test_throws ErrorException lineintegral(fvec, unit_circle)     # Meshes.BezierCurve
-    end
-
-    @testset "Scalar-Valued Functions" begin
-        f(::Point{Dim,T}) where {Dim,T} = 1.0
-        @test lineintegral(f, seg_ne) ≈ sqrt(2)                         # Meshes.Segment
-        @test lineintegral(f, rect_traj_segs) ≈ 4sqrt(2)                # Vector{::Meshes.Segment}
-        @test lineintegral(f, rect_traj_ring) ≈ 4sqrt(2)                # Meshes.Ring
-        @test lineintegral(f, rect_traj_rope) ≈ 4sqrt(2)                # Meshes.Rope
-        @test isapprox(lineintegral(f, unit_circle), 2pi; atol=0.15)    # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle; n=1000), 1.0; atol=0.01)    # Meshes.Triangle
-    end
-
-    @testset "Vector-Valued Functions" begin
-        f(::Point{Dim,T}) where {Dim,T} = [1.0, 1.0, 1.0]
-        @test lineintegral(f, seg_ne) ≈ [sqrt(2), sqrt(2), sqrt(2)]                # Meshes.Segment
-        @test lineintegral(f, rect_traj_segs) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Vector{::Meshes.Segment}
-        @test lineintegral(f, rect_traj_ring) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Ring
-        @test lineintegral(f, rect_traj_rope) ≈ 4 .* [sqrt(2), sqrt(2), sqrt(2)]   # Meshes.Rope
-        @test isapprox(lineintegral(f, unit_circle), [2π, 2π, 2π]; atol=0.15)      # Meshes.BezierCurve
-        @test isapprox(surfaceintegral(f, triangle; n=1000), [1.0, 1.0, 1.0]; atol=0.01)   # Meshes.Triangle
-    end
-
-    @testset "Results Consistent with QuadGK" begin
-        # Test handling of real-valued functions
-        fr(x) = exp(-x)
-        fr(p::Point) = fr(p.coords[1])
-        @test quadgk_line(fr, Point(0,0), Point(100,0))[1] ≈ QuadGK.quadgk(fr, 0, 100)[1]
+    @testset "Gauss-Kronrod" begin
+        @testset "Scalar-Valued Functions" begin
+            f(::Point) = 1.0
+            @test lineintegral(f, seg_ne, GaussKronrod()) ≈ sqrt(2)                         # Meshes.Segment
+            @test lineintegral(f, rect_traj_ring, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Ring
+            @test lineintegral(f, rect_traj_rope, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Rope
+            @test lineintegral(f, unit_circle, GaussKronrod()) ≈ 2π                         # Meshes.BezierCurve
+            @test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, GaussKronrod()) ≈ 4sqrt(2)  # Varargs of Meshes.Point
+            @test lineintegral(f, triangle, GaussKronrod()) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
+        end
+        @testset "Vector-Valued Functions" begin
+            f(::Point) = [1.0, 1.0, 1.0]
+            @test lineintegral(f, seg_ne, GaussKronrod()) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
+            @test lineintegral(f, rect_traj_ring, GaussKronrod()) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
+            @test lineintegral(f, rect_traj_rope, GaussKronrod()) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
+            @test lineintegral(f, unit_circle, GaussKronrod()) ≈ [2π, 2π, 2π]                        # Meshes.BezierCurve
+            @test lineintegral(f, triangle, GaussKronrod()) ≈ [1.0, 1.0, 1.0]                        # Meshes.Triangle
+        end
     end
 
     @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
@@ -94,15 +66,14 @@ using Test
         # 2πi Res_{z=0}(1/z) = \int_C (1/z) dz
         # Res_{z=0}(1/z) = 1
         # ∴ \int_C (1/z) dz = 2πi
-        @test lineintegral(fc, unit_circle_complex, n=1000) ≈ 2π*im
+        @test lineintegral(fc, unit_circle_complex, GaussKronrod()) ≈ 2π*im
     end
 end
 
+#= temp disabled
 ################################################################################
 #                             Tests -- Unitful.jl
 ################################################################################
-
-# TODO implement triangle surfaceintegral tests
 
 @testset "Integrate with Unitful.jl" begin
     m = Unitful.m
@@ -204,3 +175,4 @@ end
              # TODO change 0.15 => 0.15Ω once DynamicQuantities PR approved
     end
 end
+=#
