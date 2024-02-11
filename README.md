@@ -84,5 +84,12 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
+- To ready for 0.8 release:
+    - Implement `surfaceintegral(f, ::Triangle, ::HAdaptiveCubature)`
+    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::GaussLegendre)`
+    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::HAdaptiveCubature)`
+    - Update Example Usage and benchmarks
+    - Implement and pass tests for everything implemented
+
 - Implement Aqua.jl tests
 - Implement Documenter docs
