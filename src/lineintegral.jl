@@ -127,11 +127,11 @@ end
 
 function lineintegral(
     f::F,
-    ring::Meshes.Ring{Dim,T};
-    kwargs...
+    ring::Meshes.Ring{Dim,T},
+    settings::GaussKronrod
 ) where {F<:Function, Dim, T}
     # Partition the Ring into Segments, integrate each, sum results
-    chunks = map(segment -> quadgk_line(f, segment; kwargs...), segments(ring))
+    chunks = map(segment -> lineintegral(f, segment, settings), segments(ring))
     return reduce(.+, chunks)
 end
 
