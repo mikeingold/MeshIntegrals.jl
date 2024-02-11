@@ -114,14 +114,14 @@ dimension of the triangle.
 """
 function surfaceintegral(
     f,
-    triangle::Meshes.Ngon{3,Dim,T};
-    n::Int64 = 100
+    triangle::Meshes.Ngon{3,Dim,T},
+    settings::GaussLegendre
 ) where {Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(n)
+    xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
