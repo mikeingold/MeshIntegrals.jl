@@ -109,9 +109,9 @@ function surfaceintegral(
     f,
     rect::Meshes.Box{2,T},
     settings::GaussLegendre
-) where {Dim, T}
+) where {T}
     # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
+    _validate_integrand(f,2,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = gausslegendre(settings.n)
@@ -135,9 +135,9 @@ function surfaceintegral(
     f,
     box::Meshes.Box{2,T},
     settings::GaussKronrod
-) where {Dim, T}
+) where {T}
     # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
+    _validate_integrand(f,2,T)
 
     # Integrate the box in parametric (u,v)-space
     innerintegral(u) = QuadGK.quadgk(v -> f(box(u,v)), 0, 1; settings.kwargs...)[1]
