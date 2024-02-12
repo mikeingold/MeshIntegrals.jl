@@ -1,27 +1,10 @@
 # MeshIntegrals.jl
 
 This package implements methods for computing integrals over geometric polytopes
-from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl).
-
-Using Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl):
-- Line integrals
-    - `lineintegral(f, ::Meshes.Point...)`
-    - `lineintegral(f, ::Meshes.Segment)`
-    - `lineintegral(f, ::Meshes.Ring)`
-    - `lineintegral(f, ::Meshes.Rope)`
-    - `lineintegral(f, ::Meshes.BezierCurve)`
-- Surface integrals
-    - `surfaceintegral(g, ::Meshes.Triangle)`
-
-Using the h-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl):
-- Line integrals
-    - `quadgk_line(f, ::Meshes.Point...)`
-    - `quadgk_line(f, ::Meshes.Segment)`
-    - `quadgk_line(f, ::Meshes.Ring)`
-    - `quadgk_line(f, ::Meshes.Rope)`
-    - `quadgk_line(f, ::Meshes.BezierCurve)`
-- Surface integrals
-    - `quadgk_surface(g, ::Meshes.Triangle)`
+from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using:
+- Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl)
+- H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl)
+- H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl)
 
 Methods are tested to ensure compatibility with
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
@@ -32,12 +15,49 @@ Methods are tested to ensure compatibility with
     - Dimensionful scalars or vectors from Unitful.jl
     - Dimensionful scalars or vectors from DynamicQuantities.jl
 
-## Example Usage
+# Support Matrix
+
+| Symbol | Meaning |
+|--------|---------|
+| :white_check_mark: | Implemented, passes tests |
+| :yellow_square: | Implemented, untested |
+| :x: | Not yet implemented |
+
+### Line Integrals
+| Geometry | Gauss-Legendre | Gauss-Kronrod |
+|----------|----------------|---------------|
+| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Box{2,T}` | :x: | :x: |
+| `Meshes.Circle` | :x: | :x: |
+| `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Point...` | :x: | :x: |
+| `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
+
+### Surface Integrals
+| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
+|----------|----------------|---------------|-------------------|
+| `Meshes.Ball` | :x: | :x: | :x: |
+| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+| `Meshes.Circle` | :x: | :x: | :x: |
+| `Meshes.Sphere` | :x: | :x: | :x: |
+| `Meshes.Ngon` | :x: | :x: | :x: |
+| `Meshes.Triangle` | :yellow_square: | :yellow_square: | :x: |
+
+### Volume Integrals
+| Geometry | Gauss-Legendre | H-Adaptive Cubature |
+|----------|----------------|---------------|
+| `Meshes.Ball` | :x: | :x: |
+| `Meshes.Box{Dim,T}` | :x: | :x: |
+| `Meshes.Sphere` | :x: | :x: |
+
+# Example Usage
 
 ```julia
 using BenchmarkTools
 using Meshes
-using LineIntegrals
+using MeshIntegrals
 
 # Construct a path that approximates a unit circle on the xy-plane
 #   embedded in 3D space using a Bezier curve
@@ -49,26 +69,29 @@ unit_circle = BezierCurve(
 fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 
-@btime lineintegral(fr, unit_circle)  # default n=100
+@btime lineintegral(fr, unit_circle, GaussLegendre(100))
     # 9.970 ms (18831 allocations: 78.40 MiB)
     # 5.55240987912083
 
-@btime lineintegral(fr, unit_circle, n=10_000)
+@btime lineintegral(fr, unit_circle, GaussLegendre(10_000))
     # 16.932 ms (18835 allocations: 78.69 MiB)
     # 5.551055240210768
 
-@btime quadgk_line(fr, unit_circle)
+@btime lineintegral(fr, unit_circle, GaussKronrod())
     # 9.871 ms (18829 allocations: 78.40 MiB)
     # (5.551055333711397, 1.609823385706477e-15)
 ```
 
 # Plans and Work in Progress
 
-- Register in General
-- Implement Aqua.jl tests
-- Implement Documenter docs
-- Implement methods
-    - `Meshes.Circle`: `surfaceintegral`, `quadgk_surface`
-    - `Meshes.Box{Dim,T}`: `surfaceintegral where {2,T}`, `volumeintegral where {>=3,T}`
-    - `Meshes.Ball`: `surfaceintegral`, `volumeintegral`
-    - `Meshes.Sphere`: `surfaceintegral`, `volumeintegral`
+- Short term:
+    - Implement `surfaceintegral(f, ::Triangle, ::HAdaptiveCubature)`
+    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::GaussLegendre)`
+    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::HAdaptiveCubature)`
+    - Update Example Usage and benchmarks
+    - Re-implement all tests for Unitful compatibility
+
+- Longer term:
+    - Implement Aqua.jl tests
+    - Implement Documenter docs
+    - Implement Monte Carlo integration methods

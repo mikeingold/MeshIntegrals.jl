@@ -1,12 +1,14 @@
 module MeshIntegrals
     using FastGaussQuadrature
+    using HCubature
     using LinearAlgebra
     using Meshes
     using QuadGK
 
     include("integrate.jl")
+    include("lineintegral.jl")
+    export GaussKronrod, GaussLegendre, HAdaptiveCubature
     export lineintegral, surfaceintegral, volumeintegral
-    export quadgk_line, quadgk_surface
 
     include("utils.jl")
     export derivative, unitdirection
