@@ -33,23 +33,25 @@ using Test
     # Triangle on upper-half-plane
     triangle = Ngon(pt_e, pt_n, pt_w)
 
-    @testset "Gauss-Kronrod" begin
-        @testset "Scalar-Valued Functions" begin
-            f(::Point) = 1.0
-            @test lineintegral(f, seg_ne, GaussKronrod()) ≈ sqrt(2)                         # Meshes.Segment
-            @test lineintegral(f, rect_traj_ring, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Ring
-            @test lineintegral(f, rect_traj_rope, GaussKronrod()) ≈ 4sqrt(2)                # Meshes.Rope
-            @test lineintegral(f, unit_circle, GaussKronrod()) ≈ length(unit_circle)        # Meshes.BezierCurve
-            #@test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, GaussKronrod()) ≈ 4sqrt(2)  # Varargs of Meshes.Point
-            @test lineintegral(f, triangle, GaussKronrod()) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
-        end
-        @testset "Vector-Valued Functions" begin
-            f(::Point) = [1.0, 1.0, 1.0]
-            @test lineintegral(f, seg_ne, GaussKronrod()) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
-            @test lineintegral(f, rect_traj_ring, GaussKronrod()) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
-            @test lineintegral(f, rect_traj_rope, GaussKronrod()) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
-            @test lineintegral(f, unit_circle, GaussKronrod()) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
-            @test lineintegral(f, triangle, GaussKronrod()) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
+    for (name,rule) in [("Gauss-Legendre",GaussLegendre(100)), ("Gauss-Kronrod",GaussKronrod())]
+        @testset name begin
+            @testset "Scalar-Valued Functions" begin
+                f(::Point) = 1.0
+                @test lineintegral(f, seg_ne, rule) ≈ sqrt(2)                         # Meshes.Segment
+                @test lineintegral(f, rect_traj_ring, rule) ≈ 4sqrt(2)                # Meshes.Ring
+                @test lineintegral(f, rect_traj_rope, rule) ≈ 4sqrt(2)                # Meshes.Rope
+                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle)        # Meshes.BezierCurve
+                #@test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, rule) ≈ 4sqrt(2)  # Varargs of Meshes.Point
+                @test lineintegral(f, triangle, rule) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
+            end
+            @testset "Vector-Valued Functions" begin
+                f(::Point) = [1.0, 1.0, 1.0]
+                @test lineintegral(f, seg_ne, rule) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
+                @test lineintegral(f, rect_traj_ring, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
+                @test lineintegral(f, rect_traj_rope, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
+                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
+                @test lineintegral(f, triangle, rule) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
+            end
         end
     end
 
