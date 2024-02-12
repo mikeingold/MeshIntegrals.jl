@@ -105,12 +105,54 @@ end
 #                            surfaceintegral
 ################################################################################
 
+function surfaceintegral(
+    f,
+    rect::Meshes.Box{2,T},
+    settings::GaussLegendre
+) where {Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
+    s(u) = 0.5u + 0.5
+    t(v) = 0.5v + 0.5
+    point(xi,xj) = rect(s(xi), t(xj))
+
+    # Calculate weight-node product
+    g(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj))
+
+    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]^2
+    # Apply a linear domain-correction factor [-1,1]^2 ↦ area(rect)
+    return 0.25 * area(rect) .* sum(g, zip(wws,xxs))
+end
+
+function surfaceintegral(
+    f,
+    box::Meshes.Box{2,T},
+    settings::GaussKronrod
+) where {Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Integrate the box in parametric (u,v)-space
+    innerintegral(u) = QuadGK.quadgk(v -> f(box(u,v)), 0, 1; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
+
+    # Apply a linear domain-correction factor 1 ↦ area(box)
+    return area(rect) .* outerintegral
+end
+
 """
-    surfaceintegral(f, triangle::Meshes.Triangle; n=100)
+    surfaceintegral(f, triangle::Meshes.Triangle, ::GaussLegendre)
 
 Like [`surfaceintegral`](@ref) but integrates over the surface of a `triangle`
-using a Gauss-Legendre quadrature rule of order `n` along each Barycentric
-dimension of the triangle.
+using a Gauss-Legendre quadrature rule along each barycentric dimension of the
+triangle.
 """
 function surfaceintegral(
     f,

@@ -33,6 +33,9 @@ using Test
     # Triangle on upper-half-plane
     triangle = Ngon(pt_e, pt_n, pt_w)
 
+    # 2D Box on [-1,1]^2
+    box2d = Box(Point(-1.0,-1.0), Point(1.0,1.0))
+
     for (name,rule) in [("Gauss-Legendre",GaussLegendre(10_000)), ("Gauss-Kronrod",GaussKronrod())]
         @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
@@ -45,7 +48,8 @@ using Test
                 @test lineintegral(f, triangle, rule) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
 
                 # Surface Integrals
-                @test isapprox(surfaceintegral(f, triangle, rule), 1.0; rtol=1e-3)     # Meshes.Triangle
+                @test isapprox(surfaceintegral(f, triangle, rule), 1.0; rtol=1e-3)    # Meshes.Triangle
+                @test isapprox(surfaceintegral(f, box2d, rule), 4.0; rtol=1e-3)       # Meshes.Box{2,T}
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -59,6 +63,7 @@ using Test
 
                 # Surface Integrals
                 @test isapprox(surfaceintegral(f, triangle, rule), [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Triangle
+                @test isapprox(surfaceintegral(f, box2d, rule), [4.0, 4.0, 4.0]; rtol=1e-3)      # Meshes.Box{2,T}
             end
         end
     end
