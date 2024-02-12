@@ -26,17 +26,17 @@ Methods are tested to ensure compatibility with
 ### Line Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
-| `Meshes.BezierCurve` | :yellow_square: | :white_check_mark: |
+| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :x: | :x: |
 | `Meshes.Circle` | :x: | :x: |
-| `Meshes.Ngon` | :yellow_square: | :white_check_mark: |
+| `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Point...` | :x: | :x: |
-| `Meshes.Ring` | :yellow_square: | :white_check_mark: |
-| `Meshes.Rope` | :yellow_square: | :white_check_mark: |
-| `Meshes.Segment` | :yellow_square: | :white_check_mark: |
+| `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
 
 ### Surface Integrals
-| Geometry | Gauss-Legendre | Gauss-Kronrod | Adaptive Cubature |
+| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
 | `Meshes.Ball` | :x: | :x: | :x: |
 | `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
@@ -46,7 +46,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.Triangle` | :yellow_square: | :yellow_square: | :x: |
 
 ### Volume Integrals
-| Geometry | Gauss-Legendre | Adaptive Cubature |
+| Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
 | `Meshes.Ball` | :x: | :x: |
 | `Meshes.Box{Dim,T}` | :x: | :x: |
@@ -84,14 +84,14 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
-- To ready for 0.8 release:
+- Short term:
     - Implement `surfaceintegral(f, ::Triangle, ::HAdaptiveCubature)`
     - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::GaussLegendre)`
     - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::HAdaptiveCubature)`
     - Update Example Usage and benchmarks
-    - Implement and pass tests for everything implemented
-        - Re-implement all tests for Unitful compatibility
+    - Re-implement all tests for Unitful compatibility
 
-- Implement Aqua.jl tests
-- Implement Documenter docs
-- Implement Monte Carlo integration methods
+- Longer term:
+    - Implement Aqua.jl tests
+    - Implement Documenter docs
+    - Implement Monte Carlo integration methods
