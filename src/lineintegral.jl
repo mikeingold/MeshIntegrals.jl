@@ -1,4 +1,35 @@
 ################################################################################
+#                            Common Methods
+################################################################################
+
+function lineintegral(
+    f::F,
+    polygon::Meshes.Ngon,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert polygon to a Ring, integrate that
+    return lineintegral(f, Ring(pointify(polygon)), settings)
+end
+
+function lineintegral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> lineintegral(f, segment, settings), segments(rope))
+end
+
+function lineintegral(
+    f::F,
+    ring::Meshes.Ring{Dim,T},
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
+end
+
+################################################################################
 #                            Gauss-Legendre
 ################################################################################
 
@@ -49,28 +80,6 @@ function lineintegral(
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
     return 0.5 * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
-end
-
-function lineintegral(
-    f::F,
-    rope::Meshes.Rope{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return sum(segment -> lineintegral(f, segment, settings), segments(rope))
-end
-
-function lineintegral(
-    f::F,
-    ring::Meshes.Ring{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
 #=
@@ -126,16 +135,6 @@ function lineintegral(
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 
-function lineintegral(
-    f::F,
-    ring::Meshes.Ring{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Partition the Ring into Segments, integrate each, sum results
-    chunks = map(segment -> lineintegral(f, segment, settings), segments(ring))
-    return reduce(.+, chunks)
-end
-
 #=
 function lineintegral(
     f,
@@ -147,13 +146,3 @@ function lineintegral(
     return lineintegral(f, rope, settings)
 end
 =#
-
-function lineintegral(
-    f::F,
-    rope::Meshes.Rope{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Partition the Rope into Segments, integrate each, sum results
-    chunks = map(segment -> lineintegral(f, segment, settings), segments(rope))
-    return reduce(.+, chunks)
-end
