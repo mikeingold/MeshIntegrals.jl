@@ -34,7 +34,7 @@ using Test
     triangle = Ngon(pt_e, pt_n, pt_w)
 
     for (name,rule) in [("Gauss-Legendre",GaussLegendre(100)), ("Gauss-Kronrod",GaussKronrod())]
-        @testset name begin
+        @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
                 @test lineintegral(f, seg_ne, rule) ≈ sqrt(2)                         # Meshes.Segment
