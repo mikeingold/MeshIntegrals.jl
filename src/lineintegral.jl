@@ -22,7 +22,7 @@ end
 
 function lineintegral(
     f::F,
-    ring::Meshes.Ring{Dim,T},
+    ring::Meshes.Ring,
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Ring into Segments, sum the integrals of those 
