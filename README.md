@@ -26,14 +26,14 @@ Methods are tested to ensure compatibility with
 ### Line Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
-| `Meshes.BezierCurve` | :yellow_square: | :yellow_square: |
+| `Meshes.BezierCurve` | :yellow_square: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :x: | :x: |
 | `Meshes.Circle` | :x: | :x: |
-| `Meshes.Ngon` | :x: | :x: |
+| `Meshes.Ngon` | :yellow_square: | :white_check_mark: |
 | `Meshes.Point...` | :x: | :x: |
-| `Meshes.Ring` | :yellow_square: | :yellow_square: |
-| `Meshes.Rope` | :yellow_square: | :yellow_square: |
-| `Meshes.Segment` | :yellow_square: | :yellow_square: |
+| `Meshes.Ring` | :yellow_square: | :white_check_mark: |
+| `Meshes.Rope` | :yellow_square: | :white_check_mark: |
+| `Meshes.Segment` | :yellow_square: | :white_check_mark: |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | Adaptive Cubature |
@@ -94,3 +94,4 @@ fr(p) = fr(p.coords...)
 
 - Implement Aqua.jl tests
 - Implement Documenter docs
+- Implement Monte Carlo integration methods
