@@ -37,20 +37,28 @@ using Test
         @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
+                # Line Integrals
                 @test lineintegral(f, seg_ne, rule) ≈ sqrt(2)                         # Meshes.Segment
                 @test lineintegral(f, rect_traj_ring, rule) ≈ 4sqrt(2)                # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ 4sqrt(2)                # Meshes.Rope
                 @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle)        # Meshes.BezierCurve
-                #@test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, rule) ≈ 4sqrt(2)  # Varargs of Meshes.Point
                 @test lineintegral(f, triangle, rule) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
+
+                # Surface Integrals
+                @test surfaceintegral(f, triangle, rule) ≈ 1.0           # Meshes.Triangle
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
+
+                # Line Integrals
                 @test lineintegral(f, seg_ne, rule) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
                 @test lineintegral(f, rect_traj_ring, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
                 @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
                 @test lineintegral(f, triangle, rule) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
+
+                # Surface Integrals
+                @test surfaceintegral(f, triangle, rule) ≈ [1.0, 1.0, 1.0]           # Meshes.Triangle
             end
         end
     end
