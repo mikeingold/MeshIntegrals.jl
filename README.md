@@ -89,11 +89,6 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
-- Updates included in v0.8.3:
-    - Implement `lineintegral` on `Box{2,T}`
-    - Fixed incorrect domain correction factors in `surfaceintegral` on `Circle` and `Disk`
-        - Added tests to ensure accuracy for `Circle` and `Disk` and with non-unit-radii
-
 - Short term:
     - Implement all methods in the support matrix above
     - Update Example Usage and benchmarks
