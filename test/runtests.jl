@@ -75,7 +75,7 @@ using Test
                 @test lineintegral(f, unit_bezier, rule) ≈ length(unit_bezier) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
                 @test lineintegral(f, circle, rule) ≈ length(circle) .* [1.0, 1.0, 1.0]        # Meshes.Circle
                 @test lineintegral(f, disk, rule) ≈ length(circle) .* [1.0, 1.0, 1.0]          # Meshes.Disk
-                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d) [1.0, 1.0, 1.0]       # Meshes.Sphere{2,T}
+                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d) .* [1.0, 1.0, 1.0]    # Meshes.Sphere{2,T}
                 @test lineintegral(f, triangle, rule) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
                 @test lineintegral(f, box2d, rule) ≈ [8.0, 8.0, 8.0]                           # Meshes.Box{2,T}
 
