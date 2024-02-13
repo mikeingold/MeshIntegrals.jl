@@ -147,6 +147,48 @@ function surfaceintegral(
     return area(box) .* outerintegral
 end
 
+function surfaceintegral(
+    f,
+    disk::Meshes.Disk{T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,2,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
+    s(u) = 0.5u + 0.5
+    t(v) = 0.5v + 0.5
+    point(xi,xj) = disk(s(xi), t(xj))
+
+    # Calculate weight-node product with curvilinear correction
+    g(((wi,wj), (xρ,xϕ))) = wi * wj * xρ * f(point(xρ,xϕ))
+
+    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
+    # Apply a linear domain-correction factor [-1,1]² ↦ area(disk)
+    return 0.25 * area(disk) .* sum(g, zip(wws,xxs))
+end
+
+function surfaceintegral(
+    f,
+    disk::Meshes.Disk{T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,2,T)
+
+    # Integrate the box in parametric (ρ,ϕ)-space
+    innerintegral(ϕ) = QuadGK.quadgk(ρ -> ρ * f(disk(ρ,ϕ)), 0, 1; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
+
+    # Apply a linear domain-correction factor π ↦ area(disk)
+    return (area(disk) / π) .* outerintegral
+end
+
 """
     surfaceintegral(f, triangle::Meshes.Triangle, ::GaussLegendre)
 
