@@ -20,42 +20,38 @@ Methods are tested to ensure compatibility with
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :green_circle: | Implemented (implicit conversion), passes tests |
 | :yellow_square: | Implemented, untested |
 | :x: | Not yet implemented |
 
 ### Line Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
-| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{2,T}` | :green_circle: | :green_circle: |
-| `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Disk` | :green_circle: | :green_circle: |
-| `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Point...` | :x: | :x: |
-| `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Sphere{2,T}` | :x: | :x: |
+| `Meshes.BezierCurve` | :yellow_square: | :yellow_square: |
+| `Meshes.Box{1,T}` | :x: | :x: |
+| `Meshes.Circle` | :yellow_square: | :yellow_square: |
+| `Meshes.Line` | :x: | :x: |
+| `Meshes.Ring` | :yellow_square: | :yellow_square: |
+| `Meshes.Rope` | :yellow_square: | :yellow_square: |
+| `Meshes.Segment` | :yellow_square: | :yellow_square: |
+| `Meshes.Sphere{2,T}` | :yellow_square: | :yellow_square: |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
-| `Meshes.Ball` | :x: | :x: | :x: |
-| `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :x: |
-| `Meshes.Box{>2,T}` | :x: | :x: | :x: |
-| `Meshes.Circle` | :green_circle: | :green_circle: | :x: |
-| `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Ball{2,T}` | :x: | :x: | :x: |
+| `Meshes.Box{2,T}` | :yellow_square: | :yellow_square: | :x: |
+| `Meshes.CylinderSurface` | :x: | :x: | :x: |
+| `Meshes.Disk` | :yellow_square: | :yellow_square: | :x: |
+| `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
 | `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
-| `Meshes.Ngon` | :x: | :x: | :x: |
-| `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Triangle` | :yellow_square: | :yellow_square: | :x: |
+| `Meshes.Torus` | :x: | :x: | :x: |
 
 ### Volume Integrals
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
-| `Meshes.Ball` | :x: | :x: |
+| `Meshes.Ball{3,T}` | :x: | :x: |
 | `Meshes.Box{Dim,T}` | :x: | :x: |
-| `Meshes.Sphere{3,T}` | :x: | :x: |
 
 # Example Usage
 
