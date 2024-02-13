@@ -28,7 +28,7 @@ Methods are tested to ensure compatibility with
 |----------|----------------|---------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :x: | :x: |
-| `Meshes.Circle` | :x: | :x: |
+| `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Point...` | :x: | :x: |
 | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
@@ -39,11 +39,12 @@ Methods are tested to ensure compatibility with
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
 | `Meshes.Ball` | :x: | :x: | :x: |
-| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+| `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Box{>2,T}` | :x: | :x: | :x: |
 | `Meshes.Circle` | :x: | :x: | :x: |
 | `Meshes.Sphere` | :x: | :x: | :x: |
 | `Meshes.Ngon` | :x: | :x: | :x: |
-| `Meshes.Triangle` | :yellow_square: | :yellow_square: | :x: |
+| `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :x: |
 
 ### Volume Integrals
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
