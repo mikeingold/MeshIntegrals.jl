@@ -4,9 +4,9 @@
 
 function surfaceintegral(
     f::F,
-    circle::Meshes.Circle,
+    circle::C,
     settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
+) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}} , I<:IntegrationAlgorithm}
     # Circle is parametrically 1-dimensional
     # Convert to a Disk, integrate that
     return surfaceintegral(f, Disk(circle.plane, circle.radius), settings)
@@ -44,9 +44,9 @@ end
 
 function surfaceintegral(
     f,
-    disk::Meshes.Disk{T},
+    disk::D,
     settings::GaussLegendre
-) where {T}
+) where {T, D<:Union{Meshes.Disk{T}, Meshes.Sphere{2,T}}}
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
@@ -135,9 +135,9 @@ end
 
 function surfaceintegral(
     f,
-    disk::Meshes.Disk{T},
+    disk::D,
     settings::GaussKronrod
-) where {T}
+) where {T, D<:Union{Meshes.Disk{T}, Meshes.Sphere{2,T}}}
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
