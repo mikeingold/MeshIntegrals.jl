@@ -61,16 +61,16 @@ using Test
         # Torus
 
         # surfaceintegrals should fail on these geometries with paramdims ≠ 1
-        @test_throws MethodError lineintegral(f, bezier)       # BezierCurve
-        @test_throws MethodError lineintegral(f, ball3d)       # Ball{3,T}
-        @test_throws MethodError lineintegral(f, box1d)        # Box{1,T}
-        @test_throws MethodError lineintegral(f, box3d)        # Box{3,T}
-        @test_throws MethodError lineintegral(f, circle)       # Circle
-        @test_throws MethodError lineintegral(f, line_ne)      # Line
-        @test_throws MethodError lineintegral(f, ring_rect)    # Ring
-        @test_throws MethodError lineintegral(f, rope_rect)    # Rope
-        @test_throws MethodError lineintegral(f, seg_ne)       # Segment
-        @test_throws MethodError lineintegral(f, sphere2d)     # Sphere{2,T}
+        @test_throws MethodError surfaceintegral(f, bezier)       # BezierCurve
+        @test_throws MethodError surfaceintegral(f, ball3d)       # Ball{3,T}
+        @test_throws MethodError surfaceintegral(f, box1d)        # Box{1,T}
+        @test_throws MethodError surfaceintegral(f, box3d)        # Box{3,T}
+        @test_throws MethodError surfaceintegral(f, circle)       # Circle
+        @test_throws MethodError surfaceintegral(f, line_ne)      # Line
+        @test_throws MethodError surfaceintegral(f, ring_rect)    # Ring
+        @test_throws MethodError surfaceintegral(f, rope_rect)    # Rope
+        @test_throws MethodError surfaceintegral(f, seg_ne)       # Segment
+        @test_throws MethodError surfaceintegral(f, sphere2d)     # Sphere{2,T}
     end
 
     for (name,rule) in [("Gauss-Legendre",GaussLegendre(10_000)), ("Gauss-Kronrod",GaussKronrod())]
