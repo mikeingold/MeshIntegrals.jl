@@ -1,7 +1,7 @@
 name = "MeshIntegrals"
 uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.8.0"
+version = "0.8.1"
 
 [deps]
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
@@ -24,4 +24,4 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [targets]
-test = ["DynamicQuantities", "Meshes", "Test", "QuadGK", "Unitful"]
+test = ["DynamicQuantities", "Meshes", "Test", "Unitful"]
