@@ -34,8 +34,9 @@ function lineintegral(
     disk::Meshes.Disk,
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
-    # Disk is parametrically 2-dimensional
-    # Convert to a Circle, integrate that
+    # Circle is parametrically 1D, whereas Disk is parametrically 2D
+    # Circle and Disk are both definitionally embedded in 3D-space
+    # Convert to a Circle, integrate its circumference
     return lineintegral(f, Circle(disk.plane, disk.radius), settings)
 end
 
@@ -104,11 +105,33 @@ end
 
 function lineintegral(
     f::F,
-    circle::C,
+    circle::Meshes.Circle{T},
     settings::GaussLegendre
-) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}}}
+) where {F<:Function, T}
     # Validate the provided integrand function
+    # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
+
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = gausslegendre(settings.n)
+
+    # Change of variables: x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+    point(x) = circle(t(x))
+
+    # Integrate f along the circle's rim and apply a domain-correction
+    #   factor for [-1,1] ↦ [0, circumference]
+    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+end
+
+function lineintegral(
+    f::F,
+    circle::Meshes.Sphere{2,T},
+    settings::GaussLegendre
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Sphere{2,T} is simply a circle in 2D-space
+    _validate_integrand(f,2,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = gausslegendre(settings.n)
@@ -177,11 +200,26 @@ end
 
 function lineintegral(
     f::F,
-    circle::C,
+    circle::Meshes.Circle{T},
     settings::GaussKronrod
-) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}}}
+) where {F<:Function, T}
     # Validate the provided integrand function
+    # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
+
+    len = length(circle)
+    point(t) = circle(t)
+    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    circle::Meshes.Sphere{2,T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Sphere{2,T} is simply a circle in 2D-space
+    _validate_integrand(f,2,T)
 
     len = length(circle)
     point(t) = circle(t)

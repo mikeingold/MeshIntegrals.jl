@@ -4,11 +4,12 @@
 
 function surfaceintegral(
     f::F,
-    circle::C,
+    circle::Meshes.Circle,
     settings::I
-) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}} , I<:IntegrationAlgorithm}
-    # Circle is parametrically 1-dimensional
-    # Convert to a Disk, integrate that
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Circle is parametrically 1D, whereas Disk is parametrically 2D
+    # Circle and Disk are both definitionally embedded in 3D-space
+    # Convert to a Disk, integrate its surface
     return surfaceintegral(f, Disk(circle.plane, circle.radius), settings)
 end
 
@@ -44,10 +45,38 @@ end
 
 function surfaceintegral(
     f,
-    disk::D,
+    disk::Meshes.Disk{T},
     settings::GaussLegendre
-) where {T, D<:Union{Meshes.Disk{T}, Meshes.Sphere{2,T}}}
+) where {T}
     # Validate the provided integrand function
+    # A Disk is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
+    s(u) = 0.5u + 0.5
+    t(v) = 0.5v + 0.5
+    point(xi,xj) = disk(s(xi), t(xj))
+
+    # Calculate weight-node product with curvilinear correction
+    g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
+
+    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
+    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
+    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
+end
+
+function surfaceintegral(
+    f,
+    disk::Meshes.Sphere{2,T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
@@ -135,10 +164,28 @@ end
 
 function surfaceintegral(
     f,
-    disk::D,
+    disk::Meshes.Disk{T},
     settings::GaussKronrod
-) where {T, D<:Union{Meshes.Disk{T}, Meshes.Sphere{2,T}}}
+) where {T}
     # Validate the provided integrand function
+    # A Disk is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Integrate the box in parametric (ρ,ϕ)-space
+    innerintegral(ϕ) = QuadGK.quadgk(ρ -> f(disk(ρ,ϕ)) * disk.radius * ρ, 0, 1; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
+
+    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
+    return (2π * disk.radius) .* outerintegral
+end
+
+function surfaceintegral(
+    f,
+    disk::Meshes.Sphere{2,T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
     # Integrate the box in parametric (ρ,ϕ)-space
