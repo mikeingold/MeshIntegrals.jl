@@ -77,33 +77,33 @@ using Test
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
                 # Line Integrals
-                @test lineintegral(f, seg_ne, rule) ≈ sqrt(2)                         # Meshes.Segment
-                @test lineintegral(f, ring_rect, rule) ≈ 4sqrt(2)                # Meshes.Ring
-                @test lineintegral(f, rope_rect, rule) ≈ 4sqrt(2)                # Meshes.Rope
-                @test lineintegral(f, bezier, rule) ≈ length(bezier)        # Meshes.BezierCurve
-                @test lineintegral(f, circle, rule) ≈ length(circle)                  # Meshes.Circle
-                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d)              # Meshes.Sphere{2,T}
+                @test lineintegral(f, bezier, rule) ≈ length(bezier)        # BezierCurve
+                @test lineintegral(f, circle, rule) ≈ length(circle)        # Circle
+                @test lineintegral(f, ring_rect, rule) ≈ length(ring_rect)  # Ring
+                @test lineintegral(f, rope_rect, rule) ≈ length(rope_rect)  # Rope
+                @test lineintegral(f, seg_ne, rule) ≈ length(seg_ne)        # Segment
+                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d)    # Sphere{2,T}
 
                 # Surface Integrals
-                @test isapprox(surfaceintegral(f, triangle, rule), 1.0; rtol=1e-3)      # Meshes.Triangle
-                @test isapprox(surfaceintegral(f, box2d, rule), 4.0; rtol=1e-3)         # Meshes.Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-3)   # Meshes.Disk
+                @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-3)         # Box{2,T}
+                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-3)           # Disk
+                @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-3)   # Triangle
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
 
                 # Line Integrals
-                @test lineintegral(f, seg_ne, rule) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
-                @test lineintegral(f, ring_rect, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
-                @test lineintegral(f, rope_rect, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
-                @test lineintegral(f, bezier, rule) ≈ length(bezier) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
-                @test lineintegral(f, circle, rule) ≈ length(circle) .* [1.0, 1.0, 1.0]        # Meshes.Circle
-                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d) .* [1.0, 1.0, 1.0]    # Meshes.Sphere{2,T}
+                @test lineintegral(f, bezier, rule) ≈ fill(length(bezier),3)         # BezierCurve
+                @test lineintegral(f, circle, rule) ≈ fill(length(circle),3)         # Circle
+                @test lineintegral(f, ring_rect, rule) ≈ fill(length(ring_rect),3)   # Ring
+                @test lineintegral(f, rope_rect, rule) ≈ fill(length(rope_rect),3)   # Rope
+                @test lineintegral(f, seg_ne, rule) ≈ fill(length(seg_ne),3)         # Segment
+                @test lineintegral(f, sphere2d, rule) ≈ fill(length(sphere2d),3)     # Sphere{2,T}
 
                 # Surface Integrals
-                @test isapprox(surfaceintegral(f, triangle, rule), [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Triangle
-                @test isapprox(surfaceintegral(f, box2d, rule), [4.0, 4.0, 4.0]; rtol=1e-3)      # Meshes.Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3)     # Meshes.Disk
+                @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-3)        # Box{2,T}
+                @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-3)          # Disk
+                @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-3)  # Triangle
             end
         end
     end
@@ -113,9 +113,7 @@ using Test
         fc(p::Point{1,ComplexF64}) = fc(p.coords[1])
 
         # Construct a unit circle on the complex domain
-        unit_circle_complex = Meshes.BezierCurve(
-            [Point{1,ComplexF64}(cos(t) + sin(t)*im) for t in range(0,2pi,length=361)]
-        )
+        unit_circle_complex = Meshes.BezierCurve([Point{1,ComplexF64}(cos(t) + sin(t)*im) for t in range(0,2pi,length=361)])
 
         # 2πi Res_{z=0}(1/z) = \int_C (1/z) dz
         # Res_{z=0}(1/z) = 1
