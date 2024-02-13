@@ -106,6 +106,16 @@ end
 ################################################################################
 
 function surfaceintegral(
+    f::F,
+    circle::Meshes.Circle,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Circle is parametrically 1-dimensional
+    # Convert to a Disk, integrate that
+    return surfaceintegral(f, Disk(circle.plane, circle.radius), settings)
+end
+
+function surfaceintegral(
     f,
     box::Meshes.Box{2,T},
     settings::GaussLegendre
