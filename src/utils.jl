@@ -46,6 +46,7 @@ function unitdirection(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     return u    # ::Vec{Dim,T}
 end
 
+#=
 """
     area(triangle::Meshes.Triangle)
 
@@ -60,3 +61,4 @@ function area(triangle::Meshes.Ngon{3,Dim,T}) where {Dim, T}
     s = (a + b + c) / 2
     return sqrt( s * (s-a) * (s-b) * (s-c) )
 end
+=#
