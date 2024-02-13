@@ -20,6 +20,7 @@ Methods are tested to ensure compatibility with
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
+| :green_circle: | Implemented (implicit conversion), passes tests |
 | :yellow_square: | Implemented, untested |
 | :x: | Not yet implemented |
 
@@ -29,6 +30,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :x: | :x: |
 | `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Disk` | :yellow_square: | :yellow_square: |
 | `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Point...` | :x: | :x: |
 | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
@@ -41,7 +43,8 @@ Methods are tested to ensure compatibility with
 | `Meshes.Ball` | :x: | :x: | :x: |
 | `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :x: |
 | `Meshes.Box{>2,T}` | :x: | :x: | :x: |
-| `Meshes.Circle` | :x: | :x: | :x: |
+| `Meshes.Circle` | :yellow_square: | :yellow_square: | :x: |
+| `Meshes.Disk` | :yellow_square: | :yellow_square: | :x: |
 | `Meshes.Sphere` | :x: | :x: | :x: |
 | `Meshes.Ngon` | :x: | :x: | :x: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :x: |
