@@ -28,7 +28,7 @@ Methods are tested to ensure compatibility with
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{2,T}` | :x: | :x: |
+| `Meshes.Box{2,T}` | :green_circle: | :green_circle: |
 | `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Disk` | :green_circle: | :green_circle: |
 | `Meshes.Ngon` | :white_check_mark: | :white_check_mark: |
