@@ -36,6 +36,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Sphere{2,T}` | :x: | :x: |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
@@ -45,7 +46,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.Box{>2,T}` | :x: | :x: | :x: |
 | `Meshes.Circle` | :green_circle: | :green_circle: | :x: |
 | `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :x: |
-| `Meshes.Sphere` | :x: | :x: | :x: |
+| `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
 | `Meshes.Ngon` | :x: | :x: | :x: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :x: |
 
@@ -54,7 +55,7 @@ Methods are tested to ensure compatibility with
 |----------|----------------|---------------|
 | `Meshes.Ball` | :x: | :x: |
 | `Meshes.Box{Dim,T}` | :x: | :x: |
-| `Meshes.Sphere` | :x: | :x: |
+| `Meshes.Sphere{3,T}` | :x: | :x: |
 
 # Example Usage
 
@@ -88,10 +89,13 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
+- Updates included in v0.8.3:
+    - Implement `lineintegral` on `Box{2,T}`
+    - Fixed incorrect domain correction factors in `surfaceintegral` on `Circle` and `Disk`
+        - Added tests to ensure accuracy for `Circle` and `Disk` and with non-unit-radii
+
 - Short term:
-    - Implement `surfaceintegral(f, ::Triangle, ::HAdaptiveCubature)`
-    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::GaussLegendre)`
-    - Implement `volumeintegral(f, ::Meshes.Box{Dim,T}, ::HAdaptiveCubature)`
+    - Implement all methods in the support matrix above
     - Update Example Usage and benchmarks
     - Re-implement all tests for Unitful compatibility
 
