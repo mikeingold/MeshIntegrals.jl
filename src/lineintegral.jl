@@ -104,9 +104,9 @@ end
 
 function lineintegral(
     f::F,
-    circle::Meshes.Circle{T},
+    circle::C,
     settings::GaussLegendre
-) where {F<:Function, T}
+) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}}}
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
@@ -177,9 +177,9 @@ end
 
 function lineintegral(
     f::F,
-    circle::Meshes.Circle{T},
+    circle::C,
     settings::GaussKronrod
-) where {F<:Function, T}
+) where {F<:Function, T, C<:Union{Meshes.Circle{T}, Meshes.Sphere{2,T}}}
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
