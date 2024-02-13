@@ -179,8 +179,8 @@ function surfaceintegral(
     g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
 
     # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    # Apply curvilinear domain-correction factor [-1,1]² ↦ area(disk)
-    return 0.5 * area(disk) .* sum(g, zip(wws,xxs))
+    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
+    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
 end
 
 function surfaceintegral(
@@ -195,8 +195,8 @@ function surfaceintegral(
     innerintegral(ϕ) = QuadGK.quadgk(ρ -> f(disk(ρ,ϕ)) * disk.radius * ρ, 0, 1; settings.kwargs...)[1]
     outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
 
-    # Apply a linear domain-correction factor π ↦ area(disk)
-    return 2π .* outerintegral
+    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
+    return (2π * disk.radius) .* outerintegral
 end
 
 """
