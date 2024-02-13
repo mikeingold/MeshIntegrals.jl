@@ -36,8 +36,9 @@ using Test
     triangle = Ngon(pt_e, pt_n, pt_w)
 
     # Unit circle/disk
-    unit_circle = Circle(Plane(origin,ẑ), 1.0)
-    unit_disk = Disk(Plane(origin,ẑ), 1.0)
+    circle = Circle(Plane(origin,ẑ), 2.0)
+    disk = Disk(Plane(origin,ẑ), 2.0)
+    sphere2d = Sphere(Point(0.0,0.0), 2.0)
 
     # 2D Box on [-1,1]^2
     box2d = Box(Point(-1.0,-1.0), Point(1.0,1.0))
@@ -51,15 +52,18 @@ using Test
                 @test lineintegral(f, rect_traj_ring, rule) ≈ 4sqrt(2)                # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ 4sqrt(2)                # Meshes.Rope
                 @test lineintegral(f, unit_bezier, rule) ≈ length(unit_bezier)        # Meshes.BezierCurve
-                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle)        # Meshes.Circle
-                @test lineintegral(f, unit_disk, rule) ≈ length(unit_circle)          # Meshes.Disk
+                @test lineintegral(f, circle, rule) ≈ length(circle)                  # Meshes.Circle
+                @test lineintegral(f, disk, rule) ≈ length(circle)                    # Meshes.Disk
+                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d)              # Meshes.Sphere{2,T}
                 @test lineintegral(f, triangle, rule) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
+                @test lineintegral(f, box2d, rule) ≈ 8.0                              # Meshes.Box{2,T}
 
                 # Surface Integrals
                 @test isapprox(surfaceintegral(f, triangle, rule), 1.0; rtol=1e-3)    # Meshes.Triangle
                 @test isapprox(surfaceintegral(f, box2d, rule), 4.0; rtol=1e-3)       # Meshes.Box{2,T}
-                @test isapprox(surfaceintegral(f, unit_circle, rule), area(unit_disk); rtol=1e-3)   # Meshes.Circle
-                @test isapprox(surfaceintegral(f, unit_disk, rule), area(unit_disk); rtol=1e-3)     # Meshes.Disk
+                @test isapprox(surfaceintegral(f, circle, rule), area(disk); rtol=1e-3)     # Meshes.Circle
+                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-3)       # Meshes.Disk
+                #@test isapprox(surfaceintegral(f, sphere2d, rule), area(disk); rtol=1e-3)   # Meshes.Sphere{2,T}
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -69,12 +73,18 @@ using Test
                 @test lineintegral(f, rect_traj_ring, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
                 @test lineintegral(f, unit_bezier, rule) ≈ length(unit_bezier) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
-                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.Circle
+                @test lineintegral(f, circle, rule) ≈ length(circle) .* [1.0, 1.0, 1.0]        # Meshes.Circle
+                @test lineintegral(f, disk, rule) ≈ length(circle) .* [1.0, 1.0, 1.0]          # Meshes.Disk
+                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d) .* [1.0, 1.0, 1.0]    # Meshes.Sphere{2,T}
                 @test lineintegral(f, triangle, rule) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
+                @test lineintegral(f, box2d, rule) ≈ [8.0, 8.0, 8.0]                           # Meshes.Box{2,T}
 
                 # Surface Integrals
                 @test isapprox(surfaceintegral(f, triangle, rule), [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Triangle
                 @test isapprox(surfaceintegral(f, box2d, rule), [4.0, 4.0, 4.0]; rtol=1e-3)      # Meshes.Box{2,T}
+                @test isapprox(surfaceintegral(f, circle, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Circle
+                @test isapprox(surfaceintegral(f, disk, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3)     # Meshes.Disk
+                #@test isapprox(surfaceintegral(f, sphere2d, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3) # Meshes.Sphere{2,T}
             end
         end
     end
