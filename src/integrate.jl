@@ -179,8 +179,8 @@ function surfaceintegral(
     g(((wi,wj), (xρ,xϕ))) = wi * wj * s(xρ) * f(point(xρ,xϕ))
 
     # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    # Apply a linear domain-correction factor [-1,1]² ↦ area(disk)
-    return 0.25 * area(disk) .* sum(g, zip(wws,xxs))
+    # Apply curvilinear domain-correction factor [-1,1]² ↦ area(disk)
+    return 0.5 * area(disk) .* sum(g, zip(wws,xxs))
 end
 
 function surfaceintegral(
