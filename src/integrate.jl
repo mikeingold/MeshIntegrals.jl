@@ -176,7 +176,7 @@ function surfaceintegral(
     point(xi,xj) = disk(s(xi), t(xj))
 
     # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (xρ,xϕ))) = wi * wj * xρ * f(point(xρ,xϕ))
+    g(((wi,wj), (xρ,xϕ))) = wi * wj * s(xρ) * f(point(xρ,xϕ))
 
     # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
     # Apply a linear domain-correction factor [-1,1]² ↦ area(disk)
@@ -196,7 +196,7 @@ function surfaceintegral(
     outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor π ↦ area(disk)
-    return (area(disk) / π) .* outerintegral
+    return 2π .* outerintegral
 end
 
 """
