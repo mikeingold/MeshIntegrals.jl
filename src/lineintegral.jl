@@ -97,7 +97,9 @@ function lineintegral(
     t(x) = 0.5x + 0.5
     point(x) = circle(t(x))
 
-    return length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    # Integrate f along the circle's rim and apply a domain-correction
+    #   factor for [-1,1] ↦ [0, circumference]
+    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
 #=
