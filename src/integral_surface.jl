@@ -70,6 +70,7 @@ function surfaceintegral(
     return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
 end
 
+#=
 function surfaceintegral(
     f,
     disk::Meshes.Sphere{2,T},
@@ -96,6 +97,7 @@ function surfaceintegral(
     # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
     return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
 end
+=#
 
 """
     surfaceintegral(f, triangle::Meshes.Triangle, ::GaussLegendre)
@@ -179,6 +181,7 @@ function surfaceintegral(
     return (2π * disk.radius) .* outerintegral
 end
 
+#=
 function surfaceintegral(
     f,
     disk::Meshes.Sphere{2,T},
@@ -195,6 +198,7 @@ function surfaceintegral(
     # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
     return (2π * disk.radius) .* outerintegral
 end
+=#
 
 """
     surfaceintegral(f, triangle::Meshes.Triangle, ::GaussKronrod)

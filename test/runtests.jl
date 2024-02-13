@@ -63,7 +63,7 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), 4.0; rtol=1e-3)       # Meshes.Box{2,T}
                 @test isapprox(surfaceintegral(f, circle, rule), area(disk); rtol=1e-3)     # Meshes.Circle
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-3)       # Meshes.Disk
-                @test isapprox(surfaceintegral(f, sphere2d, rule), area(disk); rtol=1e-3)   # Meshes.Sphere{2,T}
+                #@test isapprox(surfaceintegral(f, sphere2d, rule), area(disk); rtol=1e-3)   # Meshes.Sphere{2,T}
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -84,7 +84,7 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), [4.0, 4.0, 4.0]; rtol=1e-3)      # Meshes.Box{2,T}
                 @test isapprox(surfaceintegral(f, circle, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Circle
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3)     # Meshes.Disk
-                @test isapprox(surfaceintegral(f, sphere2d, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3) # Meshes.Sphere{2,T}
+                #@test isapprox(surfaceintegral(f, sphere2d, rule), area(disk) .* [1.0, 1.0, 1.0]; rtol=1e-3) # Meshes.Sphere{2,T}
             end
         end
     end
