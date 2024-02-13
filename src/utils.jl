@@ -45,3 +45,6 @@ function unitdirection(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     LinearAlgebra.normalize!(u)
     return u    # ::Vec{Dim,T}
 end
+
+# Get the corners of a 2D Box
+_corners(box::Meshes.Box{2,T}) = [box(0,0), box(1,0), box(1,1), box(0,1)]

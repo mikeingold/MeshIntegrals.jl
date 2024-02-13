@@ -39,6 +39,16 @@ function lineintegral(
     return lineintegral(f, Circle(disk.plane, disk.radius), settings)
 end
 
+function lineintegral(
+    f::F,
+    box::Meshes.Box,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Disk is parametrically 2-dimensional
+    # Convert to a Circle, integrate that
+    return lineintegral(f, Ring(_corners(box)), settings)
+end
+
 ################################################################################
 #                            Gauss-Legendre
 ################################################################################
