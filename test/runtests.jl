@@ -36,7 +36,7 @@ using Test
     triangle = Ngon(pt_e, pt_n, pt_w)
 
     # Unit circle/disk
-    circle = Circle(Plane(origin,ẑ), 1.0)
+    circle = Circle(Plane(origin,ẑ), 2.0)
     disk = Disk(Plane(origin,ẑ), 2.0)
 
     # 2D Box on [-1,1]^2
