@@ -4,11 +4,11 @@
 
 function lineintegral(
     f::F,
-    polygon::Meshes.Ngon,
+    ring::Meshes.Ring,
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
-    # Convert polygon to a Ring, integrate that
-    return lineintegral(f, Ring(pointify(polygon)), settings)
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
 function lineintegral(
@@ -20,58 +20,10 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(rope))
 end
 
-function lineintegral(
-    f::F,
-    ring::Meshes.Ring,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
-    # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
-end
-
-function lineintegral(
-    f::F,
-    disk::Meshes.Disk,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
-    # Circle is parametrically 1D, whereas Disk is parametrically 2D
-    # Circle and Disk are both definitionally embedded in 3D-space
-    # Convert to a Circle, integrate its circumference
-    return lineintegral(f, Circle(disk.plane, disk.radius), settings)
-end
-
-function lineintegral(
-    f::F,
-    box::Meshes.Box,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
-    # Disk is parametrically 2-dimensional
-    # Convert to a Circle, integrate that
-    return lineintegral(f, Ring(_corners(box)), settings)
-end
 
 ################################################################################
 #                            Gauss-Legendre
 ################################################################################
-
-function lineintegral(
-    f::F,
-    segment::Meshes.Segment{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = segment(t(x))
-
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
-end
 
 """
     lineintegral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
@@ -126,6 +78,25 @@ end
 
 function lineintegral(
     f::F,
+    segment::Meshes.Segment{Dim,T},
+    settings::GaussLegendre
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = gausslegendre(settings.n)
+
+    # Change of variables: x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+    point(x) = segment(t(x))
+
+    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
+    return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+end
+
+function lineintegral(
+    f::F,
     circle::Meshes.Sphere{2,T},
     settings::GaussLegendre
 ) where {F<:Function, T}
@@ -145,34 +116,10 @@ function lineintegral(
     return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
-#=
-function lineintegral(
-    f,
-    pts::Meshes.Point{Dim,T}...,
-    settings::GaussLegendre
-) where {Dim, T}
-    # Collect Points into a Rope, integrate that
-    rope = Meshes.Rope(pts...)
-    return lineintegral(f, rope, settings)
-end
-=#
 
 ################################################################################
 #                                Gauss-Kronrod
 ################################################################################
-
-function lineintegral(
-    f::F,
-    segment::Meshes.Segment{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    len = length(segment)
-    point(t) = segment(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
-end
 
 """
     lineintegral(f, curve::BezierCurve, ::GaussKronrod; alg=Horner(), kws...)
@@ -214,6 +161,19 @@ end
 
 function lineintegral(
     f::F,
+    segment::Meshes.Segment{Dim,T},
+    settings::GaussKronrod
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    len = length(segment)
+    point(t) = segment(t)
+    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
     circle::Meshes.Sphere{2,T},
     settings::GaussKronrod
 ) where {F<:Function, T}
@@ -225,15 +185,3 @@ function lineintegral(
     point(t) = circle(t)
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
-
-#=
-function lineintegral(
-    f,
-    pts::Meshes.Point{Dim,T}...,
-    settings::GaussKronrod
-) where {Dim, T}
-    # Collect Points into a Rope, integrate that
-    rope = Meshes.Rope(pts...)
-    return lineintegral(f, rope, settings)
-end
-=#
