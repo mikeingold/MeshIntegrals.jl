@@ -29,6 +29,16 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
+function lineintegral(
+    f::F,
+    disk::Meshes.Disk,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Disk is parametrically 2-dimensional
+    # Convert to a Circle, integrate that
+    return lineintegral(f, Circle(disk.plane, disk.radius), settings)
+end
+
 ################################################################################
 #                            Gauss-Legendre
 ################################################################################
