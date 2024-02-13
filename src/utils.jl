@@ -45,18 +45,3 @@ function unitdirection(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     LinearAlgebra.normalize!(u)
     return u    # ::Vec{Dim,T}
 end
-
-"""
-    area(triangle::Meshes.Triangle)
-
-Calculate the un-signed area of a `triangle`.
-"""
-function area(triangle::Meshes.Ngon{3,Dim,T}) where {Dim, T}
-    # Use Heron's formula
-    A, B, C = triangle.vertices
-    a = norm(B-A)
-    b = norm(C-B)
-    c = norm(A-C)
-    s = (a + b + c) / 2
-    return sqrt( s * (s-a) * (s-b) * (s-c) )
-end

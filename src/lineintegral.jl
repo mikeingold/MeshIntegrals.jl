@@ -82,6 +82,26 @@ function lineintegral(
     return 0.5 * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
+function lineintegral(
+    f::F,
+    circle::Meshes.Circle{T},
+    settings::GaussLegendre
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = gausslegendre(settings.n)
+
+    # Change of variables: x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+    point(x) = circle(t(x))
+
+    # Integrate f along the circle's rim and apply a domain-correction
+    #   factor for [-1,1] ↦ [0, circumference]
+    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+end
+
 #=
 function lineintegral(
     f,
@@ -132,6 +152,19 @@ function lineintegral(
 
     len = length(curve)
     point(t) = curve(t, alg)
+    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    circle::Meshes.Circle{T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    len = length(circle)
+    point(t) = circle(t)
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 

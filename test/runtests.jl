@@ -14,6 +14,8 @@ using Test
     pt_n = Point( 0.0,  1.0, 0.0)
     pt_w = Point(-1.0,  0.0, 0.0)
     pt_s = Point( 0.0, -1.0, 0.0)
+    origin = Point(0.0, 0.0, 0.0)
+    ẑ = Vec(0.0, 0.0, 1.0)
 
     # Line segments oriented CCW between points
     seg_ne = Segment(pt_e, pt_n)
@@ -26,31 +28,49 @@ using Test
     rect_traj_rope = Rope(pt_e, pt_n, pt_w, pt_s, pt_e)
 
     # Approximately circular trajectory CCW around the unit circle
-    unit_circle = BezierCurve(
+    unit_bezier = BezierCurve(
         [Point(cos(t), sin(t), 0.0) for t in range(0, 2pi, length=361)]
     )
 
     # Triangle on upper-half-plane
     triangle = Ngon(pt_e, pt_n, pt_w)
 
-    for (name,rule) in [("Gauss-Legendre",GaussLegendre(100)), ("Gauss-Kronrod",GaussKronrod())]
+    # Unit circle
+    unit_circle = Circle(Plane(origin,ẑ), 1.0)
+
+    # 2D Box on [-1,1]^2
+    box2d = Box(Point(-1.0,-1.0), Point(1.0,1.0))
+
+    for (name,rule) in [("Gauss-Legendre",GaussLegendre(10_000)), ("Gauss-Kronrod",GaussKronrod())]
         @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
+                # Line Integrals
                 @test lineintegral(f, seg_ne, rule) ≈ sqrt(2)                         # Meshes.Segment
                 @test lineintegral(f, rect_traj_ring, rule) ≈ 4sqrt(2)                # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ 4sqrt(2)                # Meshes.Rope
-                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle)        # Meshes.BezierCurve
-                #@test lineintegral(f, pt_e, pt_n, pt_w, pt_s, pt_e, rule) ≈ 4sqrt(2)  # Varargs of Meshes.Point
+                @test lineintegral(f, unit_bezier, rule) ≈ length(unit_bezier)        # Meshes.BezierCurve
+                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle)        # Meshes.Circle
                 @test lineintegral(f, triangle, rule) ≈ 2 + 2sqrt(2)                  # Meshes.Triangle
+
+                # Surface Integrals
+                @test isapprox(surfaceintegral(f, triangle, rule), 1.0; rtol=1e-3)    # Meshes.Triangle
+                @test isapprox(surfaceintegral(f, box2d, rule), 4.0; rtol=1e-3)       # Meshes.Box{2,T}
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
+
+                # Line Integrals
                 @test lineintegral(f, seg_ne, rule) ≈ [sqrt(2), sqrt(2), sqrt(2)]              # Meshes.Segment
                 @test lineintegral(f, rect_traj_ring, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Ring
                 @test lineintegral(f, rect_traj_rope, rule) ≈ [4sqrt(2), 4sqrt(2), 4sqrt(2)]   # Meshes.Rope
-                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
+                @test lineintegral(f, unit_bezier, rule) ≈ length(unit_bezier) .* [1.0, 1.0, 1.0]    # Meshes.BezierCurve
+                @test lineintegral(f, unit_circle, rule) ≈ length(unit_circle) .* [1.0, 1.0, 1.0]    # Meshes.Circle
                 @test lineintegral(f, triangle, rule) ≈ (2 + 2sqrt(2)) .* [1.0, 1.0, 1.0]      # Meshes.Triangle
+
+                # Surface Integrals
+                @test isapprox(surfaceintegral(f, triangle, rule), [1.0, 1.0, 1.0]; rtol=1e-3)   # Meshes.Triangle
+                @test isapprox(surfaceintegral(f, box2d, rule), [4.0, 4.0, 4.0]; rtol=1e-3)      # Meshes.Box{2,T}
             end
         end
     end
