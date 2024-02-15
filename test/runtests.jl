@@ -77,11 +77,14 @@ using Test
         @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
+                fLine(p::Point) = exp(-(p.coords[1])^2)
+                fLineVal = sqrt(pi) * sqrt(2)
+
                 # Line Integrals
                 @test lineintegral(f, bezier, rule) ≈ length(bezier)        # BezierCurve
                 @test lineintegral(f, box1d, rule) ≈ length(box1d)          # Box{1,T}
                 @test lineintegral(f, circle, rule) ≈ length(circle)        # Circle
-                @test lineintegral(f, line_ne, rule) ≈ length(line_ne)      # Line
+                @test lineintegral(fLine, line_ne, rule) ≈ fLineVal         # Line
                 @test lineintegral(f, ring_rect, rule) ≈ length(ring_rect)  # Ring
                 @test lineintegral(f, rope_rect, rule) ≈ length(rope_rect)  # Rope
                 @test lineintegral(f, seg_ne, rule) ≈ length(seg_ne)        # Segment
@@ -94,12 +97,14 @@ using Test
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
+                fLine(p::Point) = fill(exp(-(p.coords[1])^2), 3)
+                fLineVal = sqrt(pi) * sqrt(2)
 
                 # Line Integrals
                 @test lineintegral(f, bezier, rule) ≈ fill(length(bezier),3)         # BezierCurve
                 @test lineintegral(f, box1d, rule) ≈ fill(length(box1d),3)           # Box{1,T}
                 @test lineintegral(f, circle, rule) ≈ fill(length(circle),3)         # Circle
-                @test lineintegral(f, line_ne, rule) ≈ fill(length(line_ne),3)       # Line
+                @test lineintegral(fLine, line_ne, rule) ≈ fill(fLineVal,3)          # Line
                 @test lineintegral(f, ring_rect, rule) ≈ fill(length(ring_rect),3)   # Ring
                 @test lineintegral(f, rope_rect, rule) ≈ fill(length(rope_rect),3)   # Rope
                 @test lineintegral(f, seg_ne, rule) ≈ fill(length(seg_ne),3)         # Segment
