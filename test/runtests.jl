@@ -78,7 +78,7 @@ using Test
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0
                 fLine(p::Point) = exp(-(p.coords[1])^2)
-                fLineVal = sqrt(pi) * sqrt(2)
+                fLineVal = sqrt(pi)
 
                 # Line Integrals
                 @test lineintegral(f, bezier, rule) ≈ length(bezier)        # BezierCurve
@@ -98,7 +98,7 @@ using Test
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
                 fLine(p::Point) = fill(exp(-(p.coords[1])^2), 3)
-                fLineVal = sqrt(pi) * sqrt(2)
+                fLineVal = sqrt(pi)
 
                 # Line Integrals
                 @test lineintegral(f, bezier, rule) ≈ fill(length(bezier),3)         # BezierCurve
