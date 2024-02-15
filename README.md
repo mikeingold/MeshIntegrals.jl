@@ -27,9 +27,9 @@ Methods are tested to ensure compatibility with
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{1,T}` | :x: | :x: |
+| `Meshes.Box{1,T}` | :yellow_square: | :yellow_square: |
 | `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Line` | :x: | :x: |
+| `Meshes.Line` | :yellow_square: | :yellow_square: |
 | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
@@ -91,6 +91,7 @@ fr(p) = fr(p.coords...)
     - Re-implement all tests for Unitful compatibility
 
 - Longer term:
+    - Once all methods are implemented, determine which can be consolidated with a more abstract/unioned case
     - Implement Aqua.jl tests
     - Implement Documenter docs
     - Implement Monte Carlo integration methods
