@@ -107,12 +107,11 @@ function lineintegral(
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = gausslegendre(settings.n)
 
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = line(t(x))
+    # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
+    integrand(x) = f(line((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
 
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(line) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    # Integrate f along the line
+    return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
 function lineintegral(
@@ -220,9 +219,8 @@ function lineintegral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    len = length(line)
-    point(t) = line(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    # Lines are infinite-length passing through defined points a and b
+    return QuadGK.quadgk(t -> f(line(t)), -Inf, Inf; settings.kwargs...)[1]
 end
 
 function lineintegral(
