@@ -27,9 +27,9 @@ Methods are tested to ensure compatibility with
 | Geometry | Gauss-Legendre | Gauss-Kronrod |
 |----------|----------------|---------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{1,T}` | :yellow_square: | :yellow_square: |
+| `Meshes.Box{1,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Line` | :yellow_square: | :yellow_square: |
+| `Meshes.Line` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
@@ -70,7 +70,7 @@ unit_circle = BezierCurve(
 fr(x,y,z) = abs(x + y)
 fr(p) = fr(p.coords...)
 
-@btime lineintegral(fr, unit_circle, GaussLegendre(100))
+@btime lineintegral(fr, unit_circle)
     # 9.970 ms (18831 allocations: 78.40 MiB)
     # 5.55240987912083
 
