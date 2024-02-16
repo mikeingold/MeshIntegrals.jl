@@ -4,6 +4,32 @@
 
 function surfaceintegral(
     f,
+    disk::Meshes.Ball{2,T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,2,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
+    s(u) = 0.5u + 0.5
+    t(v) = 0.5v + 0.5
+    point(xi,xj) = disk(s(xi), t(xj))
+
+    # Calculate weight-node product with curvilinear correction
+    g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
+
+    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
+    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
+    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
+end
+
+function surfaceintegral(
+    f,
     box::Meshes.Box{2,T},
     settings::GaussLegendre
 ) where {T}
@@ -106,6 +132,26 @@ end
 
 function surfaceintegral(
     f,
+    disk::Meshes.Ball{2,T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,2,T)
+
+    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
+    ρ(ρ₀) = disk.radius * ρ₀
+
+    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
+    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
+    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
+
+    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
+    return (2π * disk.radius) .* outerintegral
+end
+
+function surfaceintegral(
+    f,
     box::Meshes.Box{2,T},
     settings::GaussKronrod
 ) where {T}
@@ -129,9 +175,13 @@ function surfaceintegral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Integrate the box in parametric (ρ,ϕ)-space
-    innerintegral(ϕ) = QuadGK.quadgk(ρ -> f(disk(ρ,ϕ)) * disk.radius * ρ, 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
+    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
+    ρ(ρ₀) = disk.radius * ρ₀
+
+    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
+    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
+    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
+    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
     return (2π * disk.radius) .* outerintegral
