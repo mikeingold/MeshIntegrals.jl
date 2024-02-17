@@ -329,6 +329,7 @@ function lineintegral(
     
     # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
     integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
+    integrand(x::AbstractVector) = integrand(x[1])
 
     # Lines are infinite-length passing through defined points a and b
     return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
