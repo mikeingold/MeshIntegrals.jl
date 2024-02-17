@@ -326,9 +326,12 @@ function lineintegral(
     # Get domain-corrected parametric locator
     len = length(Segment(line.a,line.b))
     point(t) = line(t/len)
+    
+    # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
+    integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
 
     # Lines are infinite-length passing through defined points a and b
-    return hcubature(t -> f(point(t[1])), [-Inf], [Inf]; settings.kwargs...)[1]
+    return hcubature(t -> f(point(t[1])), [-1], [1]; settings.kwargs...)[1]
 end
 
 function lineintegral(
