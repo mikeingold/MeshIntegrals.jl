@@ -295,7 +295,7 @@ function surfaceintegral(
         a,b = sincos(φ)
         u = R * (1 - a/(a+b))
         v = R * (1 - b/(a+b))
-        return f(triangle(u,v)) * R / (2*a*b)
+        return f(triangle(u,v)) * R / (a+b)^2
     end
 
     return hcubature(integrand, [0,0], [1,π/2], settings.kwargs...)[1]
