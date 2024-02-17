@@ -331,7 +331,7 @@ function lineintegral(
     integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
 
     # Lines are infinite-length passing through defined points a and b
-    return hcubature(t -> f(point(t[1])), [-1], [1]; settings.kwargs...)[1]
+    return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
 end
 
 function lineintegral(
