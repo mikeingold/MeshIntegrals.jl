@@ -289,7 +289,11 @@ function surfaceintegral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Integrate in Barycentric-polar-space with transformed R
+    # Integrate the Barycentric triangle by transforming it into polar coordinates
+    #   with a modified radius
+    #     R = r ( sinφ + cosφ )
+    #   s.t. integration bounds become rectangular
+    #     R ∈ [0, 1] and φ ∈ [0, π/2]
     function integrand(Rφ)
         R,φ = Rφ
         a,b = sincos(φ)
@@ -297,6 +301,8 @@ function surfaceintegral(
         v = R * (1 - b/(a+b))
         return f(triangle(u,v)) * R / (a+b)^2
     end
+    intval = hcubature(integrand, [0,0], [1,π/2], settings.kwargs...)[1]
 
-    return hcubature(integrand, [0,0], [1,π/2], settings.kwargs...)[1]
+    # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
+    return 2.0 * area(triangle) .* intval
 end
