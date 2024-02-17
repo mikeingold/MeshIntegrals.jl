@@ -257,3 +257,107 @@ function lineintegral(
     point(t) = circle(t)
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
+
+
+################################################################################
+#                                HCubature
+################################################################################
+
+"""
+    lineintegral(f, curve::BezierCurve, ::HAdaptiveCubature; alg=Horner(), kws...)
+
+Like [`lineintegral`](@ref) but integrates along the domain defined a `curve`.
+By default this uses Horner's method to improve performance when parameterizing
+the `curve` at the expense of a small loss of precision. Additional accuracy
+can be obtained by specifying the use of DeCasteljau's algorithm instead with
+`alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
+especially for curves with a large number of control points.
+"""
+function lineintegral(
+    f::F,
+    curve::Meshes.BezierCurve{Dim,T,V},
+    settings::HAdaptiveCubature;
+    alg::Meshes.BezierEvalMethod=Meshes.Horner()
+) where {F<:Function,Dim, T, V}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    len = length(curve)
+    point(t) = curve(t, alg)
+    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    line::Meshes.Box{1,T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Box is definitionally embedded in 1D-space
+    _validate_integrand(f,1,T)
+
+    len = length(line)
+    point(t) = line(t)
+    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    circle::Meshes.Circle{T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Circle is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    len = length(circle)
+    point(t) = circle(t)
+    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    line::Meshes.Line{Dim,T},
+    settings::HAdaptiveCubature
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Get domain-corrected parametric locator
+    len = length(Segment(line.a,line.b))
+    point(t) = line(t/len)
+    
+    # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
+    integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
+    integrand(x::AbstractVector) = integrand(x[1])
+
+    # Lines are infinite-length passing through defined points a and b
+    return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    segment::Meshes.Segment{Dim,T},
+    settings::HAdaptiveCubature
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    len = length(segment)
+    point(t) = segment(t)
+    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+end
+
+function lineintegral(
+    f::F,
+    circle::Meshes.Sphere{2,T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Sphere{2,T} is simply a circle in 2D-space
+    _validate_integrand(f,2,T)
+
+    len = length(circle)
+    point(t) = circle(t)
+    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+end

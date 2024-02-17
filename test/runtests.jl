@@ -73,7 +73,13 @@ using Test
         @test_throws MethodError surfaceintegral(f, sphere2d)     # Sphere{2,T}
     end
 
-    for (name,rule) in [("Gauss-Legendre",GaussLegendre(10_000)), ("Gauss-Kronrod",GaussKronrod())]
+    test_solvers = [
+        ("Gauss-Legendre", GaussLegendre(10_000)),
+        ("Gauss-Kronrod", GaussKronrod()),
+        ("H-Adaptive Cubature", HAdaptiveCubature())
+    ]
+
+    for (name,rule) in test_solvers
         @testset "$name" begin
             @testset "Scalar-Valued Functions" begin
                 f(::Point) = 1.0

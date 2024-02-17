@@ -24,27 +24,27 @@ Methods are tested to ensure compatibility with
 | :x: | Not yet implemented |
 
 ### Line Integrals
-| Geometry | Gauss-Legendre | Gauss-Kronrod |
-|----------|----------------|---------------|
-| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{1,T}` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Circle` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Line` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Ring` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Rope` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Segment` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Sphere{2,T}` | :white_check_mark: | :white_check_mark: |
+| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
+|----------|----------------|---------------|---------------------|
+| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Box{1,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Ring` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Rope` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 ### Surface Integrals
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
-| `Meshes.Ball{2,T}` | :yellow_square: | :yellow_square: | :x: |
-| `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.CylinderSurface` | :x: | :x: | :x: |
-| `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
 | `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
-| `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :x: |
+| `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Torus` | :x: | :x: | :x: |
 
 ### Volume Integrals
