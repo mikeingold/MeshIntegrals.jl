@@ -74,7 +74,7 @@ using Test
     end
 
     test_solvers = [
-        ("Gauss-Legendre", GaussLegendre(10_000)),
+        ("Gauss-Legendre", GaussLegendre(100)),
         ("Gauss-Kronrod", GaussKronrod()),
         ("H-Adaptive Cubature", HAdaptiveCubature())
     ]
