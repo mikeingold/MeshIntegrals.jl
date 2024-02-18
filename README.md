@@ -46,6 +46,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Torus` | :x: | :x: | :x: |
+| `Meshes.SimpleMesh` | :x: | :x: | :x: |
 
 ### Volume Integrals
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
