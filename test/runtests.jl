@@ -97,10 +97,10 @@ using Test
                 @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d)    # Sphere{2,T}
 
                 # Surface Integrals
-                @test isapprox(surfaceintegral(f, ball2d, rule), area(ball2d); rtol=1e-3)       # Ball{2,T}
-                @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-3)         # Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-3)           # Disk
-                @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-3)   # Triangle
+                @test isapprox(surfaceintegral(f, ball2d, rule), area(ball2d); rtol=1e-6)       # Ball{2,T}
+                @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-6)         # Box{2,T}
+                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
+                @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -118,10 +118,10 @@ using Test
                 @test lineintegral(f, sphere2d, rule) ≈ fill(length(sphere2d),3)     # Sphere{2,T}
 
                 # Surface Integrals
-                @test isapprox(surfaceintegral(f, ball2d, rule), fill(area(ball2d),3); rtol=1e-3)      # Ball{2,T}
-                @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-3)        # Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-3)          # Disk
-                @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-3)  # Triangle
+                @test isapprox(surfaceintegral(f, ball2d, rule), fill(area(ball2d),3); rtol=1e-6)      # Ball{2,T}
+                @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-6)        # Box{2,T}
+                @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-6)          # Disk
+                @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-6)  # Triangle
             end
         end
     end
