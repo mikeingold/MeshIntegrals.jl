@@ -85,6 +85,7 @@ end
     surfaceintegral(f, triangle::Meshes.Triangle, ::GaussLegendre)
 
 Like [`surfaceintegral`](@ref) but integrates over the surface of a `triangle`
+by transforming the triangle into a polar-barycentric coordinate system and
 using a Gauss-Legendre quadrature rule along each barycentric dimension of the
 triangle.
 """
