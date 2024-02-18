@@ -13,7 +13,7 @@ function volumeintegral(
     # Get Gauss-Legendre nodes and weights for a 3D region [-1,1]³
     xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws, ws)
-    xxs = Iterators.product(xs, xs, vs)
+    xxs = Iterators.product(xs, xs, xs)
 
     # Domain transformation: xi,xj,xk [-1,1] ↦ s,t,u [0,1]
     s(xi) = 0.5xi + 0.5
