@@ -122,8 +122,8 @@ function surfaceintegral(
     end
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
-    # Apply a linear domain-correction factor: area 2 ↦ area(triangle)
-    return 0.5 * area(triangle) .* sum(integrand, zip(wws,xxs))
+    # Apply a linear domain-correction factor: area π/2 ↦ area 2 ↦ area(triangle)
+    return π * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
 ################################################################################
