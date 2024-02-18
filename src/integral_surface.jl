@@ -121,7 +121,10 @@ function surfaceintegral(
     end
 
     # Calculate weight-node product
-    g(((wᵢ,wⱼ), (xᵢ,xⱼ))) = wᵢ * wⱼ * integrand([R(xᵢ),φ(xⱼ)])
+    function g(((wᵢ,wⱼ), (xᵢ,xⱼ)))
+        Rφ = [R(xᵢ), φ(xⱼ)]
+        return wᵢ * wⱼ * integrand(Rφ)
+    end
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
     # Apply a linear domain-correction factor: area 2 ↦ area(triangle)
