@@ -22,9 +22,9 @@ function volumeintegral(
     point(xi,xj,xk) = box(s(xi), t(xj), u(xk))
 
     # Calculate weight-node product
-    g(((wi,wj,wk), (xi,xj,xk))) = wi * wj * f(point(xi,xj,xk))
+    g(((wi,wj,wk), (xi,xj,xk))) = wi * wj * wk * f(point(xi,xj,xk))
 
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]³
+    # Calculate 3D Gauss-Legendre integral of f over parametric coordinates [-1,1]³
     # Apply a linear domain-correction factor [-1,1]³ ↦ volume(box)
     return (1/8) * volume(box) .* sum(g, zip(wws,xxs))
 end

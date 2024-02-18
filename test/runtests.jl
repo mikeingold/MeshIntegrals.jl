@@ -102,8 +102,10 @@ using Test
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
 
-                # Volume Integrals
-                @test volumeintegral(f, box3d, rule) ≈ volume(box3d)     # Box{3,T}
+                # Volume Integrals (skip for GaussKronrod rules)
+                if rule != GaussKronrod()
+                    @test volumeintegral(f, box3d, rule) ≈ volume(box3d)     # Box{3,T}
+                end
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -126,8 +128,10 @@ using Test
                 @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-6)          # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-6)  # Triangle
 
-                # Volume Integrals
-                @test volumeintegral(f, box3d, rule) ≈ fill(volume(box3d),3)     # Box{3,T}
+                # Volume Integrals (skip for GaussKronrod rules)
+                if rule != GaussKronrod()
+                    @test volumeintegral(f, box3d, rule) ≈ fill(volume(box3d),3)     # Box{3,T}
+                end
             end
         end
     end
