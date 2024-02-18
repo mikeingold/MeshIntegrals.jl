@@ -74,7 +74,7 @@ using Test
     end
 
     test_solvers = [
-        ("Gauss-Legendre", GaussLegendre(10_000)),
+        ("Gauss-Legendre", GaussLegendre(100)),
         ("Gauss-Kronrod", GaussKronrod()),
         ("H-Adaptive Cubature", HAdaptiveCubature())
     ]
@@ -101,6 +101,11 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-6)         # Box{2,T}
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
+
+                # Volume Integrals (skip for GaussKronrod rules)
+                if rule != GaussKronrod()
+                    @test volumeintegral(f, box3d, rule) ≈ volume(box3d)     # Box{3,T}
+                end
             end
             @testset "Vector-Valued Functions" begin
                 f(::Point) = [1.0, 1.0, 1.0]
@@ -122,6 +127,11 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-6)        # Box{2,T}
                 @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-6)          # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-6)  # Triangle
+
+                # Volume Integrals (skip for GaussKronrod rules)
+                if rule != GaussKronrod()
+                    @test volumeintegral(f, box3d, rule) ≈ fill(volume(box3d),3)     # Box{3,T}
+                end
             end
         end
     end

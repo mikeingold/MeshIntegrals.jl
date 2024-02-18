@@ -52,6 +52,7 @@ Methods are tested to ensure compatibility with
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
 | `Meshes.Ball{3,T}` | :x: | :x: |
+| `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{Dim,T}` | :x: | :x: |
 
 # Example Usage
