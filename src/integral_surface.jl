@@ -101,28 +101,30 @@ function surfaceintegral(
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = triangle(s(xi), t(xj))
+    # Domain transformations:
+    #   xᵢ [-1,1] ↦ R [0,1]
+    #   xⱼ [-1,1] ↦ φ [0,π/2]
+    R(xᵢ) = 0.5 * (xᵢ + 1)
+    φ(xⱼ) = (π/4) * (xⱼ + 1)
 
-    # Determine output type of f at a Point inside the triangle
-    # Define an applicable zero value
-    fzero = zero(f(point(-0.5,-0.5)))
-
-    # Calculate weight-node product
-    function g(((wi,wj), (xi,xj)))
-        if 0 < (s(xi) + t(xj)) < 1
-            # Valid coordinate (inside triangle)
-            return wi * wj * f(point(xi,xj))
-        else
-            # Invalid coordinate (outside triangle)
-            return fzero
-        end
+    # Integrate the Barycentric triangle by transforming it into polar coordinates
+    #   with a modified radius
+    #     R = r ( sinφ + cosφ )
+    #   s.t. integration bounds become rectangular
+    #     R ∈ [0, 1] and φ ∈ [0, π/2]
+    function integrand(Rφ)
+        R,φ = Rφ
+        a,b = sincos(φ)
+        u = R * (1 - a/(a+b))
+        v = R * (1 - b/(a+b))
+        return f(triangle(u,v)) * R / (a+b)^2
     end
 
-    # Calculate 2D Gauss-Legendre integral of f over Barycentric coordinates [-1,1]^2
-    # Apply a linear domain-correction factor [-1,1]^2 ↦ area(triangle)
+    # Calculate weight-node product
+    g(((wᵢ,wⱼ), (xᵢ,xⱼ))) = wᵢ * wⱼ * integrand([R(xᵢ),φ(xⱼ)])
+
+    # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
+    # Apply a linear domain-correction factor: area 2 ↦ area(triangle)
     return 0.5 * area(triangle) .* sum(g, zip(wws,xxs))
 end
 
