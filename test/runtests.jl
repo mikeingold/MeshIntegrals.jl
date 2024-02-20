@@ -23,9 +23,6 @@ using Test
 
     # Line segments/paths oriented CCW between points
     seg_ne = Segment(pt_e, pt_n)
-    #seg_nw = Segment(pt_n, pt_w)
-    #seg_sw = Segment(pt_w, pt_s)
-    #seg_se = Segment(pt_s, pt_e)
     line_ne = Line(pt_e, pt_n)
     ring_rect = Ring(pt_e, pt_n, pt_w, pt_s)
     rope_rect = Rope(pt_e, pt_n, pt_w, pt_s, pt_e)
@@ -44,6 +41,7 @@ using Test
     sphere2d = Sphere(origin2d, 2.0)
     sphere3d = Sphere(origin3d, 2.0)
     triangle = Ngon(pt_e, pt_n, pt_w)
+    cylsurf = CylinderSurface(pt_e, pt_w, 2.0)
 
     @testset "Errors Expected on Invalid Methods" begin
         f(::Point) = 1.0
@@ -53,7 +51,7 @@ using Test
         @test_throws MethodError lineintegral(f, ball3d)      # Ball{3,T}
         @test_throws MethodError lineintegral(f, box2d)       # Box{2,T}
         @test_throws MethodError lineintegral(f, box3d)       # Box{3,T}
-        # CylinderSurface
+        @test_throws MethodError lineintegral(f, cylsurf)     # CylinderSurface
         @test_throws MethodError lineintegral(f, disk)        # Disk
         @test_throws MethodError lineintegral(f, triangle)    # Ngon{3,Dim,T}
         # ParaboloidSurface
@@ -101,6 +99,8 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-6)         # Box{2,T}
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
+                @test isapprox(surfaceintegral(f, cylsurf, rule), area(cylsurf); rtol=1e-6)     # CylinderSurface
+                    # TODO add test for a non-right-cylinder surface when measure(c) is fixed in Meshes
 
                 # Volume Integrals (skip for GaussKronrod rules)
                 if rule != GaussKronrod()
@@ -127,6 +127,7 @@ using Test
                 @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-6)        # Box{2,T}
                 @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-6)          # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-6)  # Triangle
+                @test isapprox(surfaceintegral(f, cylsurf, rule), fill(area(cylsurf),3); rtol=1e-6)    # CylinderSurface
 
                 # Volume Integrals (skip for GaussKronrod rules)
                 if rule != GaussKronrod()
