@@ -169,6 +169,41 @@ end
 
 function surfaceintegral(
     f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    # A CylinderSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Integrate the rounded sides of the cylinder's surface
+    # \int ( \int f(r̄) dz ) dφ
+    function sides_innerintegral(φ)
+        sidelength = norm(cyl(φ,1) - cyl(φ,0))
+        return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
+    end
+    sides = (2π * cyl.radius) .* quadgk(sides_innerintegral, 0, 1; settings.kwargs...)[1]
+
+    # Integrate the top and bottom disks
+    # \int ( \int r f(r̄) dr ) dφ
+    function disk_innerintegral(φ,plane,z)
+        # Parameterize the top surface of the cylinder
+        rimedge = cyl(φ,z)
+        centerpoint = plane.p
+        r̄ = rimedge - centerpoint
+        radius = norm(r̄)
+        point(r) = centerpoint + (r / radius) * r̄
+
+        return radius * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
+    end
+    top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
+    bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
+
+    return sides + top + bottom
+end
+
+function surfaceintegral(
+    f,
     disk::Meshes.Disk{T},
     settings::GaussKronrod
 ) where {T}
