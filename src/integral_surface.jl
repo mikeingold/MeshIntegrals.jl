@@ -182,7 +182,7 @@ function surfaceintegral(
         sidelength = norm(cyl(φ,1) - cyl(φ,0))
         return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
     end
-    sides = (2π * cyl.radius) .* quadgk(sides_innerintegral, 0, 1; settings.kwargs...)[1]
+    sides = (2π * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), 0, 1; settings.kwargs...)[1]
 
     # Integrate the top and bottom disks
     # \int ( \int r f(r̄) dr ) dφ
@@ -199,6 +199,7 @@ function surfaceintegral(
     top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
     bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
 
+    @info sides, top, bottom
     return sides + top + bottom
 end
 
