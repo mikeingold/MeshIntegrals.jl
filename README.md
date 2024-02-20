@@ -20,10 +20,15 @@ Methods are tested to ensure compatibility with
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :yellow_square: | Implemented, untested |
+| :yellow_square: | Implemented, not yet validated |
 | :x: | Not yet implemented |
 
-### Line Integrals
+### Integral
+| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
+|----------|----------------|---------------|---------------------|
+| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+
+### Line Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
@@ -35,12 +40,12 @@ Methods are tested to ensure compatibility with
 | `Meshes.Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
-### Surface Integrals
+### Surface Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
 | `Meshes.Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.CylinderSurface` | :x: | :x: | :x: |
+| `Meshes.CylinderSurface` | :yellow_square: | :yellow_square: | :yellow_square: |
 | `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
 | `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
@@ -48,12 +53,11 @@ Methods are tested to ensure compatibility with
 | `Meshes.Torus` | :x: | :x: | :x: |
 | `Meshes.SimpleMesh` | :x: | :x: | :x: |
 
-### Volume Integrals
+### Volume Integral
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
 | `Meshes.Ball{3,T}` | :x: | :x: |
 | `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{Dim,T}` | :x: | :x: |
 
 # Example Usage
 
@@ -86,6 +90,11 @@ fr(p) = fr(p.coords...)
 ```
 
 # Plans and Work in Progress
+
+- Branch `sphere` plans:
+    - [ ] Implement `surfaceintegral` on `Sphere{3,T}`
+    - [ ] Implement `volumeintegral` on `Ball{3,T}`
+    - [ ] Implement `surfaceintegral` on `CylinderSurface`
 
 - Short term:
     - Implement all methods in the support matrix above
