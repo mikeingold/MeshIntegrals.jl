@@ -127,6 +127,30 @@ function surfaceintegral(
     return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: xi,xj [-1,1] ↦ s,t [0,1]
+    t(xi) = 0.5xi + 0.5
+    u(xj) = 0.5xj + 0.5
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]²
+    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
+    R = sphere.radius
+    return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
+end
+
 ################################################################################
 #                               Gauss-Kronrod
 ################################################################################
@@ -341,4 +365,37 @@ function surfaceintegral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* intval
+end
+
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]^2
+    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(1,t,u)), 0, 1)[1]
+    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
+
+    R = sphere.radius
+    return 2π^2 * R^2 .* intval
+end
+
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]^2
+    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    integrand(tu) = integrand(tu[1],tu[2])
+    intval = hcubature(tu -> integrand(tu), [0,0], [1,1], settings.kwargs...)[1]
+
+    R = sphere.radius
+    return 2π^2 * R^2 .* intval
 end
