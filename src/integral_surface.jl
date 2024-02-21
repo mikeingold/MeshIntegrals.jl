@@ -194,12 +194,12 @@ function surfaceintegral(
         radius = norm(r̄)
         point(r) = centerpoint + (r / radius) * r̄
 
-        return radius * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
+        return radius^2 * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
     end
     top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
     bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
 
-    @info sides, top, bottom
+    @info top, bottom
     return sides + top + bottom
 end
 
