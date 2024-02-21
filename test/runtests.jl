@@ -41,7 +41,8 @@ using Test
     sphere2d = Sphere(origin2d, 2.0)
     sphere3d = Sphere(origin3d, 2.0)
     triangle = Ngon(pt_e, pt_n, pt_w)
-    cylsurf = CylinderSurface(pt_e, pt_w, 2.0)
+    cylsurf = CylinderSurface(pt_e, pt_w, 2.5)
+    # TODO add test for a non-right-cylinder surface when measure(c) is fixed in Meshes
 
     @testset "Errors Expected on Invalid Methods" begin
         f(::Point) = 1.0
@@ -100,7 +101,6 @@ using Test
                 @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
                 @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
                 @test isapprox(surfaceintegral(f, cylsurf, rule), area(cylsurf); rtol=1e-6)     # CylinderSurface
-                    # TODO add test for a non-right-cylinder surface when measure(c) is fixed in Meshes
 
                 # Volume Integrals (skip for GaussKronrod rules)
                 if rule != GaussKronrod()
