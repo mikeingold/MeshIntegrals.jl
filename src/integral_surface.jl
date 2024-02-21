@@ -127,6 +127,30 @@ function surfaceintegral(
     return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: xi,xj [-1,1] ↦ s,t [0,1]
+    t(xi) = 0.5xi + 0.5
+    u(xj) = 0.5xj + 0.5
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]²
+    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
+    R = sphere.radius
+    return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
+end
+
 ################################################################################
 #                               Gauss-Kronrod
 ################################################################################
@@ -165,6 +189,41 @@ function surfaceintegral(
 
     # Apply a linear domain-correction factor 1 ↦ area(box)
     return area(box) .* outerintegral
+end
+
+function surfaceintegral(
+    f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    # A CylinderSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Integrate the rounded sides of the cylinder's surface
+    # \int ( \int f(r̄) dz ) dφ
+    function sides_innerintegral(φ)
+        sidelength = norm(cyl(φ,1) - cyl(φ,0))
+        return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
+    end
+    sides = (2π * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), 0, 1; settings.kwargs...)[1]
+
+    # Integrate the top and bottom disks
+    # \int ( \int r f(r̄) dr ) dφ
+    function disk_innerintegral(φ,plane,z)
+        # Parameterize the top surface of the cylinder
+        rimedge = cyl(φ,z)
+        centerpoint = plane.p
+        r̄ = rimedge - centerpoint
+        radius = norm(r̄)
+        point(r) = centerpoint + (r / radius) * r̄
+
+        return radius^2 * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
+    end
+    top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
+    bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
+
+    return sides + top + bottom
 end
 
 function surfaceintegral(
@@ -210,6 +269,22 @@ function surfaceintegral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* outerintegral
+end
+
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]^2
+    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(1,t,u)), 0, 1)[1]
+    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
+
+    R = sphere.radius
+    return 2π^2 * R^2 .* intval
 end
 
 
@@ -306,4 +381,21 @@ function surfaceintegral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* intval
+end
+
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]^2
+    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    integrand(tu) = integrand(tu[1],tu[2])
+    intval = hcubature(tu -> integrand(tu), [0,0], [1,1], settings.kwargs...)[1]
+
+    R = sphere.radius
+    return 2π^2 * R^2 .* intval
 end

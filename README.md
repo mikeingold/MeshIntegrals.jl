@@ -20,10 +20,15 @@ Methods are tested to ensure compatibility with
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :yellow_square: | Implemented, untested |
+| :yellow_square: | Implemented, not yet validated |
 | :x: | Not yet implemented |
 
-### Line Integrals
+### Integral
+| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
+|----------|----------------|---------------|---------------------|
+| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+
+### Line Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
 | `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
@@ -35,25 +40,24 @@ Methods are tested to ensure compatibility with
 | `Meshes.Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
-### Surface Integrals
+### Surface Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|-------------------|
 | `Meshes.Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.CylinderSurface` | :x: | :x: | :x: |
+| `Meshes.CylinderSurface` | :x: | :white_check_mark: | :x: |
 | `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
-| `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
+| `Meshes.Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Torus` | :x: | :x: | :x: |
 | `Meshes.SimpleMesh` | :x: | :x: | :x: |
 
-### Volume Integrals
+### Volume Integral
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
-| `Meshes.Ball{3,T}` | :x: | :x: |
+| `Meshes.Ball{3,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{Dim,T}` | :x: | :x: |
 
 # Example Usage
 
