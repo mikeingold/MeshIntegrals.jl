@@ -104,6 +104,7 @@ using Test
 
                 # Volume Integrals (skip for GaussKronrod rules)
                 if rule != GaussKronrod()
+                    @test volumeintegral(f, ball3d, rule) ≈ volume(ball3d)   # Ball{3,T}
                     @test volumeintegral(f, box3d, rule) ≈ volume(box3d)     # Box{3,T}
                 end
             end
@@ -131,6 +132,7 @@ using Test
 
                 # Volume Integrals (skip for GaussKronrod rules)
                 if rule != GaussKronrod()
+                    @test volumeintegral(f, ball3d, rule) ≈ fill(volume(ball3d),3)   # Ball{3,T}
                     @test volumeintegral(f, box3d, rule) ≈ fill(volume(box3d),3)     # Box{3,T}
                 end
             end

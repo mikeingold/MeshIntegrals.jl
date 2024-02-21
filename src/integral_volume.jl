@@ -36,6 +36,23 @@ end
 
 function volumeintegral(
     f,
+    ball::Meshes.Ball{3,T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the ball in parametric (s,t,u)-space [0,1]³
+    integrand(s,t,u) = s^2 * sinpi(t) * f(ball(s,t,u))
+    integrand(stu) = integrand(stu[1],stu[2],stu[3])
+    intval = hcubature(stu -> integrand(stu), [0,0,0], [1,1,1], settings.kwargs...)[1]
+
+    R = ball.radius
+    return 2π^2 * R^3 .* intval
+end
+
+function volumeintegral(
+    f,
     box::Meshes.Box{3,T},
     settings::HAdaptiveCubature
 ) where {T}
