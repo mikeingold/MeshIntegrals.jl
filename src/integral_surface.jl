@@ -271,6 +271,22 @@ function surfaceintegral(
     return 2.0 * area(triangle) .* outerintegral
 end
 
+function surfaceintegral(
+    f,
+    sphere::Meshes.Sphere{3,T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    # Integrate the sphere in parametric (t,u)-space [0,1]^2
+    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(1,t,u)), 0, 1)[1]
+    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
+
+    R = sphere.radius
+    return 2π^2 * R^2 .* intval
+end
+
 
 ################################################################################
 #                               HCubature
@@ -365,22 +381,6 @@ function surfaceintegral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* intval
-end
-
-function surfaceintegral(
-    f,
-    sphere::Meshes.Sphere{3,T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(1,t,u)), 0, 1)[1]
-    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
-
-    R = sphere.radius
-    return 2π^2 * R^2 .* intval
 end
 
 function surfaceintegral(
