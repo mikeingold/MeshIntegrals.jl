@@ -139,6 +139,7 @@ using Test
         end
     end
 
+    #= Disabled: As of Feb 2024 Meshes seems to now disallow Point{1,Complex}
     @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
         fc(z::Complex) = 1/z
         fc(p::Point{1,ComplexF64}) = fc(p.coords[1])
@@ -151,4 +152,5 @@ using Test
         # ∴ \int_C (1/z) dz = 2πi
         @test lineintegral(fc, unit_circle_complex, GaussKronrod()) ≈ 2π*im
     end
+    =#
 end
