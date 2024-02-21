@@ -199,7 +199,6 @@ function surfaceintegral(
     top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
     bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
 
-    @info top, bottom
     return sides + top + bottom
 end
 
