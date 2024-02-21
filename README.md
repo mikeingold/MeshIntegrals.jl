@@ -48,7 +48,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.CylinderSurface` | :x: | :white_check_mark: | :x: |
 | `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
-| `Meshes.Sphere{3,T}` | :x: | :x: | :x: |
+| `Meshes.Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Torus` | :x: | :x: | :x: |
 | `Meshes.SimpleMesh` | :x: | :x: | :x: |
@@ -56,7 +56,7 @@ Methods are tested to ensure compatibility with
 ### Volume Integral
 | Geometry | Gauss-Legendre | H-Adaptive Cubature |
 |----------|----------------|---------------|
-| `Meshes.Ball{3,T}` | :x: | :white_check_mark: |
+| `Meshes.Ball{3,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
 
 # Example Usage

@@ -1,7 +1,7 @@
 name = "MeshIntegrals"
 uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.9.4"
+version = "0.9.5"
 
 [deps]
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
