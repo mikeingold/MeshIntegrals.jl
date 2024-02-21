@@ -24,7 +24,7 @@ function volumeintegral(
     integrand(s,t,u) = s^2 * sinpi(t) * f(ball(s,t,u))
     g(((wi,wj,wk), (xi,xj,xk))) = wi * wj * wk * integrand(s(xi),t(xj),u(xk))
     R = ball.radius
-    return 2π^2 * R^3 .* sum(g, zip(wws,xxs))
+    return (1/8) * 2π^2 * R^3 .* sum(g, zip(wws,xxs))
 end
 
 function volumeintegral(
