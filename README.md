@@ -91,11 +91,6 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
-- Branch `sphere` plans:
-    - [ ] Implement `surfaceintegral` on `Sphere{3,T}`
-    - [ ] Implement `volumeintegral` on `Ball{3,T}`
-    - [ ] Implement `surfaceintegral` on `CylinderSurface`
-
 - Short term:
     - Implement all methods in the support matrix above
     - Update Example Usage and benchmarks
