@@ -72,6 +72,9 @@ using Test
         @test_throws MethodError surfaceintegral(f, sphere2d)     # Sphere{2,T}
     end
 
+    include("runtests_new.jl")
+    
+    #= Disabled for testing new version
     test_solvers = [
         ("Gauss-Legendre", GaussLegendre(100)),
         ("Gauss-Kronrod", GaussKronrod()),
@@ -138,6 +141,7 @@ using Test
             end
         end
     end
+    =#
 
     #= Disabled: As of Feb 2024 Meshes seems to now disallow Point{1,Complex}
     @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
