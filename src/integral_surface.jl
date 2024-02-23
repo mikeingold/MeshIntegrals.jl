@@ -71,8 +71,8 @@ function surfaceintegral(
     # Domain transformations:
     #   s [-1,1] ↦ r [0,1]
     #   t [-1,1] ↦ φ [0,1]
-    r(s) = 0.5u + 0.5
-    φ(t) = 0.5v + 0.5
+    r(s) = 0.5s + 0.5
+    φ(t) = 0.5t + 0.5
     point(s,t) = disk(r(s), φ(t))
 
     # Calculate weight-node product with curvilinear correction
