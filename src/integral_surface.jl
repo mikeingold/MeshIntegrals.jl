@@ -145,7 +145,7 @@ function surfaceintegral(
     u(xj) = 0.5xj + 0.5
 
     # Integrate the sphere in parametric (t,u)-space [0,1]²
-    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    integrand(t,u) = sinpi(t) * f(sphere(t,u))
     g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
     R = sphere.radius
     return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
@@ -280,7 +280,7 @@ function surfaceintegral(
     _validate_integrand(f,3,T)
 
     # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(1,t,u)), 0, 1)[1]
+    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(t,u)), 0, 1)[1]
     intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
 
     R = sphere.radius
