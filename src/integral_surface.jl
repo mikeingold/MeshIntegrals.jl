@@ -392,7 +392,7 @@ function surfaceintegral(
     _validate_integrand(f,3,T)
 
     # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    integrand(t,u) = sinpi(t) * f(sphere(1,t,u))
+    integrand(t,u) = sinpi(t) * f(sphere(t,u))
     integrand(tu) = integrand(tu[1],tu[2])
     intval = hcubature(tu -> integrand(tu), [0,0], [1,1], settings.kwargs...)[1]
 
