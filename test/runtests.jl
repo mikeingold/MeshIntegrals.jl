@@ -97,27 +97,27 @@ using Test
     end
 
     SUPPORT_MATRIX = [
-        SupportItem(bezier, lineintegral, true, true, true),       # BezierCurve
-        SupportItem(box1d, lineintegral, true, true, true),        # Box{1,T}
-        SupportItem(circle, lineintegral, true, true, true),       # Circle
+        SupportItem(bezier,    false, true, false, false,   true, true, true),    # BezierCurve
+        SupportItem(box1d,     false, true, false, false,   true, true, true),    # Box{1,T}
+        SupportItem(circle,    false, true, false, false,   true, true, true),    # Circle
         # Line -- custom test
-        SupportItem(ring_rect, lineintegral, true, true, true),    # Ring
-        SupportItem(rope_rect, lineintegral, true, true, true),    # Rope
-        SupportItem(seg_ne, lineintegral, true, true, true),       # Segment
-        SupportItem(sphere2d, lineintegral, true, true, true),     # Sphere{2,T}
+        SupportItem(ring_rect, false, true, false, false,   true, true, true),    # Ring
+        SupportItem(rope_rect, false, true, false, false,   true, true, true),    # Rope
+        SupportItem(seg_ne,    false, true, false, false,   true, true, true),    # Segment
+        SupportItem(sphere2d,  false, true, false, false,   true, true, true),    # Sphere{2,T}
 
-        SupportItem(ball2d, surfaceintegral, true, true, true),       # Ball{2,T}
-        SupportItem(box2d, surfaceintegral, true, true, true),        # Box{2,T}
-        SupportItem(cylsurf, surfaceintegral, false, true, false),    # CylinderSurface
-        SupportItem(disk, surfaceintegral, true, true, true),         # Disk
+        SupportItem(ball2d,    false, false, true, false,   true, true, true),    # Ball{2,T}
+        SupportItem(box2d,     false, false, true, false,   true, true, true),    # Box{2,T}
+        SupportItem(cylsurf,   false, false, true, false,   false, true, false),  # CylinderSurface
+        SupportItem(disk,      false, false, true, false,   true, true, true),    # Disk
         # ParaboloidSurface -- not yet supported
-        SupportItem(sphere3d, surfaceintegral, true, true, true),    # Sphere{3,T}
-        SupportItem(triangle, surfaceintegral, true, true, true),    # Triangle
+        SupportItem(sphere3d,  false, false, true, false,   true, true, true),    # Sphere{3,T}
+        SupportItem(triangle,  false, false, true, false,   true, true, true),    # Triangle
         # Torus -- not yet supported
         # SimpleMesh -- not yet supported
         
-        SupportItem(ball3d, volumeintegral, false, true, true),    # Ball{3,T}
-        SupportItem(box3d, volumeintegral, false, true, true)      # Box{3,T}
+        SupportItem(ball3d,    false, false, false, true,   false, true, true),    # Ball{3,T}
+        SupportItem(box3d,     false, false, false, true,   false, true, true)     # Box{3,T}
     ]
 
     map(autotest, SUPPORT_MATRIX)
