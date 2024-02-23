@@ -117,8 +117,8 @@ using Test
         # Torus -- not yet supported
         # SimpleMesh -- not yet supported
         
-        SupportItem("Ball{3,T}", ball3d,         0, 0, 0, 1,   0, 1, 1),
-        SupportItem("Box{3,T}", box3d,           0, 0, 0, 1,   0, 1, 1)
+        SupportItem("Ball{3,T}", ball3d,         0, 0, 0, 1,   1, 0, 1),
+        SupportItem("Box{3,T}", box3d,           0, 0, 0, 1,   1, 0, 1)
     ]
 
     map(autotest, SUPPORT_MATRIX)
