@@ -44,117 +44,81 @@ using Test
     cylsurf = CylinderSurface(pt_e, pt_w, 2.5)
     # TODO add test for a non-right-cylinder surface when measure(c) is fixed in Meshes
 
-    @testset "Errors Expected on Invalid Methods" begin
-        f(::Point) = 1.0
+    # TODO Custom tests: Line, Plane, CylinderSurface (non-right)?
 
-        # lineintegrals should fail on these geometries with paramdims ≠ 1
-        @test_throws MethodError lineintegral(f, ball2d)      # Ball{2,T}
-        @test_throws MethodError lineintegral(f, ball3d)      # Ball{3,T}
-        @test_throws MethodError lineintegral(f, box2d)       # Box{2,T}
-        @test_throws MethodError lineintegral(f, box3d)       # Box{3,T}
-        @test_throws MethodError lineintegral(f, cylsurf)     # CylinderSurface
-        @test_throws MethodError lineintegral(f, disk)        # Disk
-        @test_throws MethodError lineintegral(f, triangle)    # Ngon{3,Dim,T}
-        # ParaboloidSurface
-        @test_throws MethodError lineintegral(f, sphere3d)    # Sphere{3,T}
-        # Torus
-
-        # surfaceintegrals should fail on these geometries with paramdims ≠ 1
-        @test_throws MethodError surfaceintegral(f, bezier)       # BezierCurve
-        @test_throws MethodError surfaceintegral(f, ball3d)       # Ball{3,T}
-        @test_throws MethodError surfaceintegral(f, box1d)        # Box{1,T}
-        @test_throws MethodError surfaceintegral(f, box3d)        # Box{3,T}
-        @test_throws MethodError surfaceintegral(f, circle)       # Circle
-        @test_throws MethodError surfaceintegral(f, line_ne)      # Line
-        @test_throws MethodError surfaceintegral(f, ring_rect)    # Ring
-        @test_throws MethodError surfaceintegral(f, rope_rect)    # Rope
-        @test_throws MethodError surfaceintegral(f, seg_ne)       # Segment
-        @test_throws MethodError surfaceintegral(f, sphere2d)     # Sphere{2,T}
+    struct SupportItem
+        geometry
+        integral::Bool
+        lineintegral::Bool
+        surfaceintegral::Bool
+        volumeintegral::Bool
+        gausslegendre::Bool
+        gausskronrod::Bool
+        hadaptivecubature::Bool
     end
 
-    include("runtests_new.jl")
-    
-    #= Disabled for testing new version
-    test_solvers = [
-        ("Gauss-Legendre", GaussLegendre(100)),
-        ("Gauss-Kronrod", GaussKronrod()),
-        ("H-Adaptive Cubature", HAdaptiveCubature())
-    ]
+    # If method is supported, test it on scalar- and vector-valued functions.
+    # Otherwise, test that its use throws a MethodError
+    function integraltest(intf, geometry, rule, supported)
+        f(::Point) = 1.0
+        fv(::Point) = fill(1.0,3)
 
-    for (name,rule) in test_solvers
-        @testset "$name" begin
-            @testset "Scalar-Valued Functions" begin
-                f(::Point) = 1.0
-                fLine(p::Point) = exp(-(p.coords[1])^2)
-                fLineVal = sqrt(2pi)
+        if supported
+            @test intf(f, geometry, rule) ≈ measure(geometry)
+            @test intf(fv, geometry, rule) ≈ fill(measure(geometry),3)
+        else
+            @test_throws MethodError intf(f, geometry, rule)
+        end
+    end
 
-                # Line Integrals
-                @test lineintegral(f, bezier, rule) ≈ length(bezier)        # BezierCurve
-                @test lineintegral(f, box1d, rule) ≈ length(box1d)          # Box{1,T}
-                @test lineintegral(f, circle, rule) ≈ length(circle)        # Circle
-                @test lineintegral(fLine, line_ne, rule) ≈ fLineVal         # Line
-                @test lineintegral(f, ring_rect, rule) ≈ length(ring_rect)  # Ring
-                @test lineintegral(f, rope_rect, rule) ≈ length(rope_rect)  # Rope
-                @test lineintegral(f, seg_ne, rule) ≈ length(seg_ne)        # Segment
-                @test lineintegral(f, sphere2d, rule) ≈ length(sphere2d)    # Sphere{2,T}
+    # Generate a @testset for item
+    function autotest(item::SupportItem)
+        algorithm_set = [
+            (GaussLegendre(100),  item.gausslegendre),
+            (GaussKronrod(),      item.gausskronrod),
+            (HAdaptiveCubature(), item.hadaptivecubature)
+        ]
 
-                # Surface Integrals
-                @test isapprox(surfaceintegral(f, ball2d, rule), area(ball2d); rtol=1e-6)       # Ball{2,T}
-                @test isapprox(surfaceintegral(f, box2d, rule), area(box2d); rtol=1e-6)         # Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), area(disk); rtol=1e-6)           # Disk
-                @test isapprox(surfaceintegral(f, triangle, rule), area(triangle); rtol=1e-6)   # Triangle
-                @test isapprox(surfaceintegral(f, cylsurf, rule), area(cylsurf); rtol=1e-6)     # CylinderSurface
+        method_set = [
+            (integral, item.integral),
+            (lineintegral, item.lineintegral),
+            (surfaceintegral, item.surfaceintegral),
+            (volumeintegral, item.volumeintegral)
+        ]
 
-                # Volume Integrals (skip for GaussKronrod rules)
-                if rule != GaussKronrod()
-                    @test volumeintegral(f, ball3d, rule) ≈ volume(ball3d)   # Ball{3,T}
-                    @test volumeintegral(f, box3d, rule) ≈ volume(box3d)     # Box{3,T}
-                end
-            end
-            @testset "Vector-Valued Functions" begin
-                f(::Point) = [1.0, 1.0, 1.0]
-                fLine(p::Point) = fill(exp(-(p.coords[1])^2), 3)
-                fLineVal = sqrt(2pi)
+        itemsupport = Iterators.product(method_set,algorithm_set)
 
-                # Line Integrals
-                @test lineintegral(f, bezier, rule) ≈ fill(length(bezier),3)         # BezierCurve
-                @test lineintegral(f, box1d, rule) ≈ fill(length(box1d),3)           # Box{1,T}
-                @test lineintegral(f, circle, rule) ≈ fill(length(circle),3)         # Circle
-                @test lineintegral(fLine, line_ne, rule) ≈ fill(fLineVal,3)          # Line
-                @test lineintegral(f, ring_rect, rule) ≈ fill(length(ring_rect),3)   # Ring
-                @test lineintegral(f, rope_rect, rule) ≈ fill(length(rope_rect),3)   # Rope
-                @test lineintegral(f, seg_ne, rule) ≈ fill(length(seg_ne),3)         # Segment
-                @test lineintegral(f, sphere2d, rule) ≈ fill(length(sphere2d),3)     # Sphere{2,T}
-
-                # Surface Integrals
-                @test isapprox(surfaceintegral(f, ball2d, rule), fill(area(ball2d),3); rtol=1e-6)      # Ball{2,T}
-                @test isapprox(surfaceintegral(f, box2d, rule), fill(area(box2d),3); rtol=1e-6)        # Box{2,T}
-                @test isapprox(surfaceintegral(f, disk, rule), fill(area(disk),3); rtol=1e-6)          # Disk
-                @test isapprox(surfaceintegral(f, triangle, rule), fill(area(triangle),3); rtol=1e-6)  # Triangle
-                @test isapprox(surfaceintegral(f, cylsurf, rule), fill(area(cylsurf),3); rtol=1e-6)    # CylinderSurface
-
-                # Volume Integrals (skip for GaussKronrod rules)
-                if rule != GaussKronrod()
-                    @test volumeintegral(f, ball3d, rule) ≈ fill(volume(ball3d),3)   # Ball{3,T}
-                    @test volumeintegral(f, box3d, rule) ≈ fill(volume(box3d),3)     # Box{3,T}
-                end
+        # For each enabled solver type, run the test suite
+        @testset "$typeof(geometry)" begin
+            for ((method,methodsupport), (alg,algsupport)) in itemsupport
+                integraltest(method, item.geometry, alg, methodsupport && algsupport)
             end
         end
     end
-    =#
 
-    #= Disabled: As of Feb 2024 Meshes seems to now disallow Point{1,Complex}
-    @testset "Contour Integrals on a Point{1,Complex}-Domain" begin
-        fc(z::Complex) = 1/z
-        fc(p::Point{1,ComplexF64}) = fc(p.coords[1])
+    SUPPORT_MATRIX = [
+        SupportItem(bezier, lineintegral, true, true, true),       # BezierCurve
+        SupportItem(box1d, lineintegral, true, true, true),        # Box{1,T}
+        SupportItem(circle, lineintegral, true, true, true),       # Circle
+        # Line -- custom test
+        SupportItem(ring_rect, lineintegral, true, true, true),    # Ring
+        SupportItem(rope_rect, lineintegral, true, true, true),    # Rope
+        SupportItem(seg_ne, lineintegral, true, true, true),       # Segment
+        SupportItem(sphere2d, lineintegral, true, true, true),     # Sphere{2,T}
 
-        # Construct a unit circle on the complex domain
-        unit_circle_complex = Meshes.BezierCurve([Point{1,ComplexF64}(cos(t) + sin(t)*im) for t in range(0,2pi,length=361)])
+        SupportItem(ball2d, surfaceintegral, true, true, true),       # Ball{2,T}
+        SupportItem(box2d, surfaceintegral, true, true, true),        # Box{2,T}
+        SupportItem(cylsurf, surfaceintegral, false, true, false),    # CylinderSurface
+        SupportItem(disk, surfaceintegral, true, true, true),         # Disk
+        # ParaboloidSurface -- not yet supported
+        SupportItem(sphere3d, surfaceintegral, true, true, true),    # Sphere{3,T}
+        SupportItem(triangle, surfaceintegral, true, true, true),    # Triangle
+        # Torus -- not yet supported
+        # SimpleMesh -- not yet supported
+        
+        SupportItem(ball3d, volumeintegral, false, true, true),    # Ball{3,T}
+        SupportItem(box3d, volumeintegral, false, true, true)      # Box{3,T}
+    ]
 
-        # 2πi Res_{z=0}(1/z) = \int_C (1/z) dz
-        # Res_{z=0}(1/z) = 1
-        # ∴ \int_C (1/z) dz = 2πi
-        @test lineintegral(fc, unit_circle_complex, GaussKronrod()) ≈ 2π*im
-    end
-    =#
+    map(autotest, SUPPORT_MATRIX)
 end
