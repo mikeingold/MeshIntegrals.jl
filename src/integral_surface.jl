@@ -68,17 +68,19 @@ function surfaceintegral(
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = disk(s(xi), t(xj))
+    # Domain transformations:
+    #   s [-1,1] ↦ r [0,1]
+    #   t [-1,1] ↦ φ [0,1]
+    r(s) = 0.5u + 0.5
+    φ(t) = 0.5v + 0.5
+    point(s,t) = disk(r(s), φ(t))
 
     # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
+    g(((wi,wj), (s,t))) = wi * wj * f(point(s,t)) * (s + 1.0)
 
     # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
-    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
+    R = disk.radius
+    return (π*R^2/4) .* sum(g, zip(wws,xxs))
 end
 
 """
