@@ -56,6 +56,8 @@ end
 #                        Integral Function API
 ################################################################################
 
+function integral end
+
 """
     lineintegral(f, geometry, algorithm::IntegrationAlgorithm=GaussKronrod)
 
