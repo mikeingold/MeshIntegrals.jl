@@ -78,8 +78,8 @@ Algorithm types available:
 function lineintegral(
     f::F,
     geometry::G,
-    settings::IntegrationAlgorithm=GaussKronrod()
-) where {F<:Function, G<:Meshes.Geometry}
+    settings::I=GaussKronrod()
+) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 1
         return integral(f, geometry, settings)
@@ -97,8 +97,8 @@ using a particular `integration algorithm`.
 function surfaceintegral(
     f::F,
     geometry::G,
-    settings::IntegrationAlgorithm=HAdaptiveCubature()
-) where {F<:Function, G<:Meshes.Geometry}
+    settings::I=HAdaptiveCubature()
+) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 2
         return integral(f, geometry, settings)
@@ -117,8 +117,8 @@ Numerically integrate a given function `f(::Point)` throughout a volumetric
 function volumeintegral(
     f::F,
     geometry::G,
-    settings::IntegrationAlgorithm=HAdaptiveCubature()
-) where {F<:Function, G<:Meshes.Geometry}
+    settings::I=HAdaptiveCubature()
+) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 3
         return integral(f, geometry, settings)
