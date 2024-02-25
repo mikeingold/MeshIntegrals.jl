@@ -1,11 +1,3 @@
-function lineintegral(f, geometry, settings)
-    dim = paramdim(geometry)
-    if  == 1
-        return integral(f, geometry, settings)
-    else
-        error("Unable to perform line integral on a geometry with $dim parametric dimensions.")
-end
-
 ################################################################################
 #                               Gauss-Legendre
 ################################################################################

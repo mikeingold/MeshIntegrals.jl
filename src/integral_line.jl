@@ -2,7 +2,7 @@
 #                            Common Methods
 ################################################################################
 
-function lineintegral(
+function integral(
     f::F,
     ring::Meshes.Ring,
     settings::I
@@ -11,7 +11,7 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(ring))
 end
 
-function lineintegral(
+function integral(
     f::F,
     rope::Meshes.Rope,
     settings::I
@@ -20,22 +20,31 @@ function lineintegral(
     return sum(segment -> lineintegral(f, segment, settings), segments(rope))
 end
 
+function lineintegral(
+    f::F,
+    curve::Meshes.BezierCurve{Dim,T,V},
+    settings::I;
+    alg::Meshes.BezierEvalMethod=Meshes.Horner()
+) where {F<:Function, Dim, T, V, I<:IntegrationAlgorithm}
+    return integral(f, curve, settings; alg=alg)
+end
+
 
 ################################################################################
 #                            Gauss-Legendre
 ################################################################################
 
 """
-    lineintegral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
+    integral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
 
-Like [`lineintegral`](@ref) but integrates along the domain defined a `curve`.
-By default this uses Horner's method to improve performance when parameterizing
+Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
+default this uses Horner's method to improve performance when parameterizing
 the `curve` at the expense of a small loss of precision. Additional accuracy
 can be obtained by specifying the use of DeCasteljau's algorithm instead with
 `alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
 especially for curves with a large number of control points.
 """
-function lineintegral(
+function integral(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V},
     settings::GaussLegendre;
@@ -55,7 +64,7 @@ function lineintegral(
     return 0.5 * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Box{1,T},
     settings::GaussLegendre
@@ -75,7 +84,7 @@ function lineintegral(
     return 0.5 * length(line) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Circle{T},
     settings::GaussLegendre
@@ -96,7 +105,7 @@ function lineintegral(
     return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Line{Dim,T},
     settings::GaussLegendre
@@ -118,7 +127,7 @@ function lineintegral(
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
-function lineintegral(
+function integral(
     f::F,
     segment::Meshes.Segment{Dim,T},
     settings::GaussLegendre
@@ -137,7 +146,7 @@ function lineintegral(
     return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Sphere{2,T},
     settings::GaussLegendre
@@ -164,16 +173,16 @@ end
 ################################################################################
 
 """
-    lineintegral(f, curve::BezierCurve, ::GaussKronrod; alg=Horner(), kws...)
+    integral(f, curve::BezierCurve, ::GaussKronrod; alg=Horner(), kws...)
 
-Like [`lineintegral`](@ref) but integrates along the domain defined a `curve`.
-By default this uses Horner's method to improve performance when parameterizing
+Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
+default this uses Horner's method to improve performance when parameterizing
 the `curve` at the expense of a small loss of precision. Additional accuracy
 can be obtained by specifying the use of DeCasteljau's algorithm instead with
 `alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
 especially for curves with a large number of control points.
 """
-function lineintegral(
+function integral(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V},
     settings::GaussKronrod;
@@ -187,7 +196,7 @@ function lineintegral(
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Box{1,T},
     settings::GaussKronrod
@@ -201,7 +210,7 @@ function lineintegral(
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Circle{T},
     settings::GaussKronrod
@@ -215,7 +224,7 @@ function lineintegral(
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Line{Dim,T},
     settings::GaussKronrod
@@ -231,7 +240,7 @@ function lineintegral(
     return QuadGK.quadgk(t -> f(point(t)), -Inf, Inf; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     segment::Meshes.Segment{Dim,T},
     settings::GaussKronrod
@@ -244,7 +253,7 @@ function lineintegral(
     return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Sphere{2,T},
     settings::GaussKronrod
@@ -264,16 +273,16 @@ end
 ################################################################################
 
 """
-    lineintegral(f, curve::BezierCurve, ::HAdaptiveCubature; alg=Horner(), kws...)
+    integral(f, curve::BezierCurve, ::HAdaptiveCubature; alg=Horner(), kws...)
 
-Like [`lineintegral`](@ref) but integrates along the domain defined a `curve`.
-By default this uses Horner's method to improve performance when parameterizing
+Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
+default this uses Horner's method to improve performance when parameterizing
 the `curve` at the expense of a small loss of precision. Additional accuracy
 can be obtained by specifying the use of DeCasteljau's algorithm instead with
 `alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
 especially for curves with a large number of control points.
 """
-function lineintegral(
+function integral(
     f::F,
     curve::Meshes.BezierCurve{Dim,T,V},
     settings::HAdaptiveCubature;
@@ -287,7 +296,7 @@ function lineintegral(
     return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Box{1,T},
     settings::HAdaptiveCubature
@@ -301,7 +310,7 @@ function lineintegral(
     return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Circle{T},
     settings::HAdaptiveCubature
@@ -315,7 +324,7 @@ function lineintegral(
     return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     line::Meshes.Line{Dim,T},
     settings::HAdaptiveCubature
@@ -335,7 +344,7 @@ function lineintegral(
     return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     segment::Meshes.Segment{Dim,T},
     settings::HAdaptiveCubature
@@ -348,7 +357,7 @@ function lineintegral(
     return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
 end
 
-function lineintegral(
+function integral(
     f::F,
     circle::Meshes.Sphere{2,T},
     settings::HAdaptiveCubature
