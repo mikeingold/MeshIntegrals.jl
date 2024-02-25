@@ -56,6 +56,12 @@ end
 #                        Integral Function API
 ################################################################################
 
+"""
+    integral(f, geometry, algorithm::IntegrationAlgorithm)
+
+Numerically integrate a given function `f(::Point)` over the domain defined by
+a `geometry` using a particular `integration algorithm`.
+"""
 function integral end
 
 """
@@ -67,12 +73,19 @@ using a particular `integration algorithm`.
 Algorithm types available:
 - GaussKronrod
 - GaussLegendre
+- HAdaptiveCubature
 """
 function lineintegral(
     f::F,
-    geometry::G
+    geometry::G,
+    settings::IntegrationAlgorithm=GaussKronrod()
 ) where {F<:Function, G<:Meshes.Geometry}
-    return lineintegral(f, geometry, GaussKronrod())
+    dim = paramdim(geometry)
+    if dim == 1
+        return integral(f, geometry, settings)
+    else
+        error("Unable to perform line integral on a geometry with $dim parametric dimensions.")
+    end
 end
 
 """
@@ -83,9 +96,15 @@ using a particular `integration algorithm`.
 """
 function surfaceintegral(
     f::F,
-    geometry::G
+    geometry::G,
+    settings::IntegrationAlgorithm=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry}
-    return surfaceintegral(f, geometry, HAdaptiveCubature())
+    dim = paramdim(geometry)
+    if dim == 2
+        return integral(f, geometry, settings)
+    else
+        error("Unable to perform surface integral on a geometry with $dim parametric dimensions.")
+    end
 end
 
 """
@@ -97,7 +116,13 @@ Numerically integrate a given function `f(::Point)` throughout a volumetric
 """
 function volumeintegral(
     f::F,
-    geometry::G
+    geometry::G,
+    settings::IntegrationAlgorithm=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry}
-    return volumeintegral(f, geometry, HAdaptiveCubature())
+    dim = paramdim(geometry)
+    if dim == 3
+        return integral(f, geometry, settings)
+    else
+        error("Unable to perform surface integral on a geometry with $dim parametric dimensions.")
+    end
 end
