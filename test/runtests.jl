@@ -31,7 +31,7 @@ function integraltest(intf, geometry, rule, supported)
         @test intf(f, geometry, rule) ≈ measure(geometry)
         @test intf(fv, geometry, rule) ≈ fill(measure(geometry),3)
     else
-        @test_throws MethodError intf(f, geometry, rule)
+        @test_throws "Unable to perform" intf(f, geometry, rule)
     end
 end
 
