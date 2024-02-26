@@ -2,7 +2,7 @@
 #                               Gauss-Legendre
 ################################################################################
 
-function volumeintegral(
+function integral(
     f,
     ball::Meshes.Ball{3,T},
     settings::GaussLegendre
@@ -27,7 +27,7 @@ function volumeintegral(
     return (1/8) * 2π^2 * R^3 .* sum(g, zip(wws,xxs))
 end
 
-function volumeintegral(
+function integral(
     f,
     box::Meshes.Box{3,T},
     settings::GaussLegendre
@@ -59,7 +59,7 @@ end
 #                               HCubature
 ################################################################################
 
-function volumeintegral(
+function integral(
     f,
     ball::Meshes.Ball{3,T},
     settings::HAdaptiveCubature
@@ -76,7 +76,7 @@ function volumeintegral(
     return 2π^2 * R^3 .* intval
 end
 
-function volumeintegral(
+function integral(
     f,
     box::Meshes.Box{3,T},
     settings::HAdaptiveCubature
