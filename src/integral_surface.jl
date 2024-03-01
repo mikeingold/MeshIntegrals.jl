@@ -162,6 +162,15 @@ function integral(
     return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
 end
 
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::GaussLegendre
+) where {T}
+    error("Integrating a Torus with GaussLegendre not supported.")
+end
+
+
 ################################################################################
 #                               Gauss-Kronrod
 ################################################################################
@@ -295,6 +304,14 @@ function integral(
 
     R = sphere.radius
     return 2π^2 * R^2 .* intval
+end
+
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::GaussKronrod
+) where {T}
+    error("Integrating a Torus with GaussKronrod not supported.")
 end
 
 
