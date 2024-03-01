@@ -2,6 +2,29 @@
 #                               Gauss-Legendre
 ################################################################################
 
+# Generalized method
+function _integral_2d(f, geometry2d, settings::GaussLegendre)
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: x [-1,1] ↦ u,v [0,1]
+    u(x) = 0.5x + 0.5
+    v(x) = 0.5x + 0.5
+    point(xi,xj) = geometry2d(u(xi), v(xj))
+
+    function paramfactor(xi, xj)
+        uv = [u(xi), v(xj)]
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
+
+    return sum(integrand, zip(wws,xxs))
+end
+
 function integral(
     f,
     disk::Meshes.Ball{2,T},
@@ -146,6 +169,9 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
+    return _integral_2d(f, sphere, settings)
+
+    #=
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws)
@@ -160,6 +186,7 @@ function integral(
     g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
     R = sphere.radius
     return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
+    =#
 end
 
 function integral(
@@ -167,7 +194,10 @@ function integral(
     torus::Meshes.Torus{T},
     settings::GaussLegendre
 ) where {T}
-    error("Integrating a Torus with GaussLegendre not supported.")
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, sphere, settings)
 end
 
 

@@ -115,7 +115,7 @@ end
         # ParaboloidSurface -- not yet supported
         SupportItem("Sphere{3,T}", sphere3d,     1, 0, 1, 0,   1, 1, 1),
         SupportItem("Triangle", triangle,        1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Torus{T}", torus,           1, 0, 1, 0,   0, 0, 1),
+        SupportItem("Torus{T}", torus,           1, 0, 1, 0,   1, 0, 1),
         # SimpleMesh -- not yet supported
 
         SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
