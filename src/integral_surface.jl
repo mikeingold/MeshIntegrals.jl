@@ -176,16 +176,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* outerintegral
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -196,12 +187,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Integrate the box in parametric (u,v)-space
-    innerintegral(u) = QuadGK.quadgk(v -> f(box(u,v)), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor 1 ↦ area(box)
-    return area(box) .* outerintegral
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -248,16 +234,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* outerintegral
+    return _integral_2d(f, disk, settings)
 end
 
 """
