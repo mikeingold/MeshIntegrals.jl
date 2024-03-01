@@ -55,7 +55,7 @@ end
 
 # Calculate the Jacobian of a geometry at some parametric point using a simple
 #   central-finite-difference approximation
-function jacobian(geometry, ts::Vector{T}; ε=1e-6) where {T<:AbstractFloat}
+function jacobian(geometry, ts::AbstractVector{T}; ε=1e-6) where {T<:AbstractFloat}
 
     function ∂r_∂tn!(εv,n)
         # Construct a zero vector with ε in the n'th element 
