@@ -418,3 +418,20 @@ function integral(
     R = sphere.radius
     return 2π^2 * R^2 .* intval
 end
+
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    function paramfactor(uv)
+        J = jacobian(torus, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(uv) = paramfactor(uv) * f(torus(uv...))
+    return hcubature(integrand, [0,0], [1,1])[1]
+end
