@@ -93,7 +93,7 @@ end
     sphere3d = Sphere(origin3d, 2.5)
     triangle = Ngon(pt_e, pt_n, pt_w)
     cylsurf = CylinderSurface(pt_e, pt_w, 2.5)   # TODO modify to a non-right-CylinderSurface when measure(c) supported in Meshes
-    torus = Torus(origin, ẑ, 3.5, 1.25)
+    torus = Torus(origin3d, ẑ, 3.5, 1.25)
 
     # TODO Custom tests: Line, Plane
 
