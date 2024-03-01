@@ -31,7 +31,7 @@ function integraltest(intf, geometry, rule, supported)
         @test intf(f, geometry, rule) ≈ measure(geometry)
         @test intf(fv, geometry, rule) ≈ fill(measure(geometry),3)
     else
-        @test_throws "Unable to perform" intf(f, geometry, rule)
+        @test_throws "not supported" intf(f, geometry, rule)
     end
 end
 
@@ -55,9 +55,7 @@ function autotest(item::SupportItem)
     # For each enabled solver type, run the test suite
     @testset "$(item.name)" begin
         for ((method,methodsupport), (alg,algsupport)) in itemsupport
-            support = methodsupport && algsupport
-            @info item.name, method, methodsupport, alg, algsupport, support
-            integraltest(method, item.geometry, alg, support)
+            integraltest(method, item.geometry, alg, methodsupport && algsupport)
         end
     end
 end

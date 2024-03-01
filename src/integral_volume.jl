@@ -56,6 +56,27 @@ end
 
 
 ################################################################################
+#                             GaussKronrod
+################################################################################
+
+function integral(
+    f,
+    ball::Meshes.Ball{3,T},
+    settings::GaussKronrod
+) where {T}
+    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
+end
+
+function integral(
+    f,
+    box::Meshes.Box{3,T},
+    settings::GaussKronrod
+) where {T}
+    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
+end
+
+
+################################################################################
 #                               HCubature
 ################################################################################
 

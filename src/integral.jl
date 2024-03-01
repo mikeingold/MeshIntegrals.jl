@@ -84,7 +84,7 @@ function lineintegral(
     if dim == 1
         return integral(f, geometry, settings)
     else
-        error("Unable to perform line integral on a geometry with $dim parametric dimensions.")
+        error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
     end
 end
 
@@ -103,7 +103,7 @@ function surfaceintegral(
     if dim == 2
         return integral(f, geometry, settings)
     else
-        error("Unable to perform surface integral on a geometry with $dim parametric dimensions.")
+        error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
     end
 end
 
@@ -123,6 +123,6 @@ function volumeintegral(
     if dim == 3
         return integral(f, geometry, settings)
     else
-        error("Unable to perform surface integral on a geometry with $dim parametric dimensions.")
+        error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
     end
 end

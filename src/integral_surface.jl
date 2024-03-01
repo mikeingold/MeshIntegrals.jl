@@ -56,6 +56,15 @@ end
 
 function integral(
     f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::GaussLegendre
+) where {T}
+    error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
+    # Planned to support in the future
+end
+
+function integral(
+    f,
     disk::Meshes.Disk{T},
     settings::GaussLegendre
 ) where {T}
@@ -328,6 +337,15 @@ function integral(
 
     # Apply a linear domain-correction factor 1 ↦ area(box)
     return area(box) .* intval
+end
+
+function integral(
+    f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::HAdaptiveCubature
+) where {T}
+    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
+    # Planned to support in the future
 end
 
 function integral(
