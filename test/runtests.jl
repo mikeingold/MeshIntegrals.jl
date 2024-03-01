@@ -110,7 +110,7 @@ end
 
         SupportItem("Ball{2,T}", ball2d,         1, 0, 1, 0,   1, 1, 1),
         SupportItem("Box{2,T}", box2d,           1, 0, 1, 0,   1, 1, 1),
-        SupportItem("CylinderSurface", cylsurf,  1, 0, 1, 0,   0, 1, 1),
+        SupportItem("CylinderSurface", cylsurf,  1, 0, 1, 0,   0, 1, 0),
         SupportItem("Disk", disk,                1, 0, 1, 0,   1, 1, 1),
         # ParaboloidSurface -- not yet supported
         SupportItem("Sphere{3,T}", sphere3d,     1, 0, 1, 0,   1, 1, 1),
