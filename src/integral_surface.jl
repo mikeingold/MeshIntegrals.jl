@@ -2,7 +2,7 @@
 #                               Gauss-Legendre
 ################################################################################
 
-function surfaceintegral(
+function integral(
     f,
     disk::Meshes.Ball{2,T},
     settings::GaussLegendre
@@ -28,7 +28,7 @@ function surfaceintegral(
     return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
 end
 
-function surfaceintegral(
+function integral(
     f,
     box::Meshes.Box{2,T},
     settings::GaussLegendre
@@ -54,7 +54,16 @@ function surfaceintegral(
     return 0.25 * area(box) .* sum(g, zip(wws,xxs))
 end
 
-function surfaceintegral(
+function integral(
+    f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::GaussLegendre
+) where {T}
+    error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
+    # Planned to support in the future
+end
+
+function integral(
     f,
     disk::Meshes.Disk{T},
     settings::GaussLegendre
@@ -84,14 +93,14 @@ function surfaceintegral(
 end
 
 """
-    surfaceintegral(f, triangle::Meshes.Triangle, ::GaussLegendre)
+    integral(f, triangle::Meshes.Triangle, ::GaussLegendre)
 
-Like [`surfaceintegral`](@ref) but integrates over the surface of a `triangle`
+Like [`integral`](@ref) but integrates over the surface of a `triangle`
 by transforming the triangle into a polar-barycentric coordinate system and
 using a Gauss-Legendre quadrature rule along each barycentric dimension of the
 triangle.
 """
-function surfaceintegral(
+function integral(
     f,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussLegendre
@@ -129,7 +138,7 @@ function surfaceintegral(
     return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
-function surfaceintegral(
+function integral(
     f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussLegendre
@@ -157,7 +166,7 @@ end
 #                               Gauss-Kronrod
 ################################################################################
 
-function surfaceintegral(
+function integral(
     f,
     disk::Meshes.Ball{2,T},
     settings::GaussKronrod
@@ -177,7 +186,7 @@ function surfaceintegral(
     return (2π * disk.radius) .* outerintegral
 end
 
-function surfaceintegral(
+function integral(
     f,
     box::Meshes.Box{2,T},
     settings::GaussKronrod
@@ -193,7 +202,7 @@ function surfaceintegral(
     return area(box) .* outerintegral
 end
 
-function surfaceintegral(
+function integral(
     f,
     cyl::Meshes.CylinderSurface{T},
     settings::GaussKronrod
@@ -228,7 +237,7 @@ function surfaceintegral(
     return sides + top + bottom
 end
 
-function surfaceintegral(
+function integral(
     f,
     disk::Meshes.Disk{T},
     settings::GaussKronrod
@@ -250,13 +259,12 @@ function surfaceintegral(
 end
 
 """
-    surfaceintegral(f, triangle::Meshes.Triangle, ::GaussKronrod)
+    integral(f, triangle::Meshes.Triangle, ::GaussKronrod)
 
-Like [`surfaceintegral`](@ref) but integrates over the surface of a `triangle`
-using a Gauss-Kronrod quadrature rule along each barycentric dimension of the
-triangle.
+Like [`integral`](@ref) but integrates over the surface of a `triangle` using nested
+Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 """
-function surfaceintegral(
+function integral(
     f,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussKronrod
@@ -273,7 +281,7 @@ function surfaceintegral(
     return 2.0 * area(triangle) .* outerintegral
 end
 
-function surfaceintegral(
+function integral(
     f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussKronrod
@@ -294,7 +302,7 @@ end
 #                               HCubature
 ################################################################################
 
-function surfaceintegral(
+function integral(
     f,
     disk::Meshes.Ball{2,T},
     settings::HAdaptiveCubature
@@ -314,7 +322,7 @@ function surfaceintegral(
     return (2π * disk.radius) .* intval
 end
 
-function surfaceintegral(
+function integral(
     f,
     box::Meshes.Box{2,T},
     settings::HAdaptiveCubature
@@ -331,7 +339,16 @@ function surfaceintegral(
     return area(box) .* intval
 end
 
-function surfaceintegral(
+function integral(
+    f,
+    cyl::Meshes.CylinderSurface{T},
+    settings::HAdaptiveCubature
+) where {T}
+    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
+    # Planned to support in the future
+end
+
+function integral(
     f,
     disk::Meshes.Disk{T},
     settings::HAdaptiveCubature
@@ -353,13 +370,13 @@ function surfaceintegral(
 end
 
 """
-    surfaceintegral(f, triangle::Meshes.Triangle, ::GaussKronrod)
+    integral(f, triangle::Meshes.Triangle, ::GaussKronrod)
 
-Like [`surfaceintegral`](@ref) but integrates over the surface of a `triangle`
-by transforming the triangle into a polar-barycentric coordinate system and
-using an h-adaptive cubature rule.
+Like [`integral`](@ref) but integrates over the surface of a `triangle` by
+transforming the triangle into a polar-barycentric coordinate system and using
+an h-adaptive cubature rule.
 """
-function surfaceintegral(
+function integral(
     f,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::HAdaptiveCubature
@@ -385,7 +402,7 @@ function surfaceintegral(
     return 2.0 * area(triangle) .* intval
 end
 
-function surfaceintegral(
+function integral(
     f,
     sphere::Meshes.Sphere{3,T},
     settings::HAdaptiveCubature

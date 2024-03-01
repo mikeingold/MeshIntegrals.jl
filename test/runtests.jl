@@ -31,7 +31,7 @@ function integraltest(intf, geometry, rule, supported)
         @test intf(f, geometry, rule) ≈ measure(geometry)
         @test intf(fv, geometry, rule) ≈ fill(measure(geometry),3)
     else
-        @test_throws MethodError intf(f, geometry, rule)
+        @test_throws "not supported" intf(f, geometry, rule)
     end
 end
 
@@ -98,27 +98,27 @@ end
 
     SUPPORT_MATRIX = [
     # Name, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("BezierCurve", bezier,       0, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{1,T}", box1d,           0, 1, 0, 0,   1, 1, 1),
-        SupportItem("Circle", circle,            0, 1, 0, 0,   1, 1, 1),
+        SupportItem("BezierCurve", bezier,       1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{1,T}", box1d,           1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Circle", circle,            1, 1, 0, 0,   1, 1, 1),
         # Line -- custom test
-        SupportItem("Ring", ring_rect,           0, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope", rope_rect,           0, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment", seg_ne,           0, 1, 0, 0,   1, 1, 1),
-        SupportItem("Sphere{2,T}", sphere2d,     0, 1, 0, 0,   1, 1, 1),
+        SupportItem("Ring", ring_rect,           1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Rope", rope_rect,           1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Segment", seg_ne,           1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Sphere{2,T}", sphere2d,     1, 1, 0, 0,   1, 1, 1),
 
-        SupportItem("Ball{2,T}", ball2d,         0, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{2,T}", box2d,           0, 0, 1, 0,   1, 1, 1),
-        SupportItem("CylinderSurface", cylsurf,  0, 0, 1, 0,   0, 1, 0),
-        SupportItem("Disk", disk,                0, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ball{2,T}", ball2d,         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{2,T}", box2d,           1, 0, 1, 0,   1, 1, 1),
+        SupportItem("CylinderSurface", cylsurf,  1, 0, 1, 0,   0, 1, 0),
+        SupportItem("Disk", disk,                1, 0, 1, 0,   1, 1, 1),
         # ParaboloidSurface -- not yet supported
-        SupportItem("Sphere{3,T}", sphere3d,     0, 0, 1, 0,   1, 1, 1),
-        SupportItem("Triangle", triangle,        0, 0, 1, 0,   1, 1, 1),
+        SupportItem("Sphere{3,T}", sphere3d,     1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Triangle", triangle,        1, 0, 1, 0,   1, 1, 1),
         # Torus -- not yet supported
         # SimpleMesh -- not yet supported
 
-        SupportItem("Ball{3,T}", ball3d,         0, 0, 0, 1,   1, 0, 1),
-        SupportItem("Box{3,T}", box3d,           0, 0, 0, 1,   1, 0, 1)
+        SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Box{3,T}", box3d,           1, 0, 0, 1,   1, 0, 1)
     ]
 
     # Run all integral tests
