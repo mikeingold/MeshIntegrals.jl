@@ -54,7 +54,7 @@ Methods are tested to ensure compatibility with
 | `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
 | `Meshes.Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Torus` | :x: | :x: | :x: |
+| `Meshes.Torus` | :x: | :x: | :white_check_mark: |
 | `Meshes.SimpleMesh` | :x: | :x: | :x: |
 
 ### Volume Integral
