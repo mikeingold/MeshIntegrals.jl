@@ -260,6 +260,17 @@ end
 #                                HCubature
 ################################################################################
 
+# Generalized method
+function _integral_1d(f, geometry, settings::HAdaptiveCubature)
+    function paramfactor(t)
+        J = jacobian(geometry,t)
+        return norm(J[1])
+    end
+
+    integrand(t) = f(geometry(t[1])) * paramfactor(t)
+    return HCubature.hcubature(integrand, [0], [1]; settings.kwargs...)[1]
+end
+
 """
     integral(f, curve::BezierCurve, ::HAdaptiveCubature; alg=Horner(), kws...)
 
@@ -293,9 +304,7 @@ function integral(
     # A Box is definitionally embedded in 1D-space
     _validate_integrand(f,1,T)
 
-    len = length(line)
-    point(t) = line(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, line, settings)
 end
 
 function integral(
@@ -307,9 +316,7 @@ function integral(
     # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
 
 function integral(
@@ -340,9 +347,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    len = length(segment)
-    point(t) = segment(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, segment, settings)
 end
 
 function integral(
@@ -354,7 +359,5 @@ function integral(
     # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
