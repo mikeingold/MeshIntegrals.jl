@@ -34,6 +34,24 @@ end
 #                            Gauss-Legendre
 ################################################################################
 
+function _integral_1d(f, geometry, settings::GaussLegendre)
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = gausslegendre(settings.n)
+
+    # Change of variables: x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+    point(x) = geometry(t(x))
+
+    function paramfactor(x)
+        J = jacobian(geometry,[t(x)])
+        return norm(J[1])
+    end
+
+    # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
+    integrand(w,x) = w * f(point(x)) * paramfactor(x)
+    return 0.5 * sum(integrand, zip(ws, xs))
+end
+
 """
     integral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
 
@@ -73,15 +91,7 @@ function integral(
     # A Box{1,T} is definitionally embedded in 1D-space
     _validate_integrand(f,1,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = line(t(x))
-
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(line) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, line, settings)
 end
 
 function integral(
