@@ -48,7 +48,7 @@ function _integral_1d(f, geometry, settings::GaussLegendre)
     end
 
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
-    integrand(w,x) = w * f(point(x)) * paramfactor(x)
+    integrand((w,x)) = w * f(point(x)) * paramfactor(x)
     return 0.5 * sum(integrand, zip(ws, xs))
 end
 
