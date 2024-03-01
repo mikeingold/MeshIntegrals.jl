@@ -357,8 +357,11 @@ function integral(
     cyl::Meshes.CylinderSurface{T},
     settings::HAdaptiveCubature
 ) where {T}
-    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
-    # Planned to support in the future
+    # Validate the provided integrand function
+    # A CylinderSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d_hcubature(f, cyl, settings)
 end
 
 function integral(
