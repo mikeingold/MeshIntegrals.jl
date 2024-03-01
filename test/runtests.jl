@@ -113,7 +113,7 @@ end
         SupportItem("Box{2,T}", box2d,               1, 0, 1, 0,   1, 1, 1),
         SupportItem("CylinderSurface", cylsurf,      1, 0, 1, 0,   0, 1, 0),
         SupportItem("Disk", disk,                    1, 0, 1, 0,   1, 1, 1),
-        SupportItem("ParaboloidSurface{T}", parab,   1, 0, 1, 0,   1, 0, 1),
+        SupportItem("ParaboloidSurface{T}", parab,   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Sphere{3,T}", sphere3d,         1, 0, 1, 0,   1, 1, 1),
         SupportItem("Triangle", triangle,            1, 0, 1, 0,   1, 1, 1),
         SupportItem("Torus{T}", torus,               1, 0, 1, 0,   1, 1, 1),

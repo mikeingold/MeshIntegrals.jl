@@ -288,7 +288,11 @@ function integral(
     paraboloid::Meshes.ParaboloidSurface{T},
     settings::GaussKronrod
 ) where {T}
-    error("Integrating a ParaboloidSurface with GaussKronrod not supported.")
+    # Validate the provided integrand function
+    # A Torus is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
 end
 
 function integral(
@@ -299,12 +303,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(t,u)), 0, 1)[1]
-    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
-
-    R = sphere.radius
-    return 2π^2 * R^2 .* intval
+    return _integral_2d(f, sphere, settings)
 end
 
 function integral(
@@ -317,7 +316,6 @@ function integral(
     _validate_integrand(f,3,T)
 
     return _integral_2d(f, torus, settings)
-    #error("Integrating a Torus with GaussKronrod not supported.")
 end
 
 
