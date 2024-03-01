@@ -34,6 +34,7 @@ end
 #                            Gauss-Legendre
 ################################################################################
 
+# Generalized method
 function _integral_1d(f, geometry, settings::GaussLegendre)
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = gausslegendre(settings.n)
@@ -103,16 +104,7 @@ function integral(
     # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = circle(t(x))
-
-    # Integrate f along the circle's rim and apply a domain-correction
-    #   factor for [-1,1] ↦ [0, circumference]
-    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, circle, settings)
 end
 
 function integral(
@@ -145,15 +137,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = segment(t(x))
-
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, segment, settings)
 end
 
 function integral(
@@ -165,16 +149,7 @@ function integral(
     # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = circle(t(x))
-
-    # Integrate f along the circle's rim and apply a domain-correction
-    #   factor for [-1,1] ↦ [0, circumference]
-    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, circle, settings)
 end
 
 
