@@ -33,22 +33,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = disk(s(xi), t(xj))
-
-    # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
-    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -59,22 +44,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = box(s(xi), t(xj))
-
-    # Calculate weight-node product
-    g(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj))
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]^2
-    # Apply a linear domain-correction factor [-1,1]^2 ↦ area(box)
-    return 0.25 * area(box) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -83,7 +53,10 @@ function integral(
     settings::GaussLegendre
 ) where {T}
     error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
-    # Planned to support in the future
+    # TODO Planned to support in the future
+    # Waiting for resolution on whether CylinderSurface includes the terminating disks
+    # on its surface by definition, and whether there will be parametric function to
+    # generate those.
 end
 
 function integral(
@@ -95,24 +68,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformations:
-    #   s [-1,1] ↦ r [0,1]
-    #   t [-1,1] ↦ φ [0,1]
-    r(s) = 0.5s + 0.5
-    φ(t) = 0.5t + 0.5
-    point(s,t) = disk(r(s), φ(t))
-
-    # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (s,t))) = wi * wj * f(point(s,t)) * (s + 1.0)
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    R = disk.radius
-    return (π*R^2/4) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -170,23 +126,6 @@ function integral(
     _validate_integrand(f,3,T)
 
     return _integral_2d(f, sphere, settings)
-
-    #=
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: xi,xj [-1,1] ↦ s,t [0,1]
-    t(xi) = 0.5xi + 0.5
-    u(xj) = 0.5xj + 0.5
-
-    # Integrate the sphere in parametric (t,u)-space [0,1]²
-    integrand(t,u) = sinpi(t) * f(sphere(t,u))
-    g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
-    R = sphere.radius
-    return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
-    =#
 end
 
 function integral(
