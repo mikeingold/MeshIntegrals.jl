@@ -273,6 +273,14 @@ end
 
 function integral(
     f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::GaussKronrod
+) where {T}
+    error("Integrating a ParaboloidSurface with GaussKronrod not supported.")
+end
+
+function integral(
+    f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussKronrod
 ) where {T}
