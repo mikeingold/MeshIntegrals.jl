@@ -119,6 +119,18 @@ end
 
 function integral(
     f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    # A ParaboloidSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
+end
+
+function integral(
+    f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussLegendre
 ) where {T}
@@ -373,6 +385,18 @@ function integral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* intval
+end
+
+function integral(
+    f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    # A ParaboloidSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
 end
 
 function integral(
