@@ -22,7 +22,7 @@ function _integral_2d(f, geometry2d, settings::GaussLegendre)
 
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
 
-    return sum(integrand, zip(wws,xxs))
+    return 0.25 .* sum(integrand, zip(wws,xxs))
 end
 
 function integral(
@@ -197,7 +197,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    return _integral_2d(f, sphere, settings)
+    return _integral_2d(f, torus, settings)
 end
 
 
