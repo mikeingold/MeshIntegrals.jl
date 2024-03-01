@@ -338,18 +338,6 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    #=
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    integrand(ρφ) = integrand(ρφ[1], ρφ[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* intval
-    =#
     return _integral_2d_hcubature(f, disk, settings)
 end
 
@@ -361,15 +349,6 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    #=
-    # Integrate the box in parametric (u,v)-space
-    integrand(u,v) = f(box(u,v))
-    integrand(uv) = integrand(uv[1], uv[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor 1 ↦ area(box)
-    return area(box) .* intval
-    =#
     return _integral_2d_hcubature(f, box, settings)
 end
 
@@ -391,16 +370,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    integrand(ρφ) = integrand(ρφ[1], ρφ[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* intval
+    return _integral_2d_hcubature(f, disk, settings)
 end
 
 """
@@ -444,13 +414,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    integrand(t,u) = sinpi(t) * f(sphere(t,u))
-    integrand(tu) = integrand(tu[1],tu[2])
-    intval = hcubature(tu -> integrand(tu), [0,0], [1,1], settings.kwargs...)[1]
-
-    R = sphere.radius
-    return 2π^2 * R^2 .* intval
+    return _integral_2d_hcubature(f, sphere, settings)
 end
 
 function integral(
