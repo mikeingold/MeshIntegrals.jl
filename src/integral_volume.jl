@@ -80,6 +80,17 @@ end
 #                               HCubature
 ################################################################################
 
+# Generalized method
+function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
+    function paramfactor(ts)
+        J = jacobian(geometry3d, ts)
+        return norm(J[1] × J[2] × J[3])
+    end
+
+    integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
+    return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
+end
+
 function integral(
     f,
     ball::Meshes.Ball{3,T},
@@ -88,6 +99,8 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
+    return _integral_3d(f, ball, settings)
+    #=
     # Integrate the ball in parametric (s,t,u)-space [0,1]³
     integrand(s,t,u) = s^2 * sinpi(t) * f(ball(s,t,u))
     integrand(stu) = integrand(stu[1],stu[2],stu[3])
@@ -95,6 +108,7 @@ function integral(
 
     R = ball.radius
     return 2π^2 * R^3 .* intval
+    =#
 end
 
 function integral(
@@ -105,10 +119,14 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
+    return _integral_3d(f, box, settings)
+
+    #=
     # Integrate the box in parametric (s,t,u)-space
     integrand(stu) = f(box(stu[1],stu[2],stu[3]))
     intval = hcubature(integrand, [0,0,0], [1,1,1], settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor [0,1]³ ↦ volume(box)
     return volume(box) .* intval
+    =#
 end
