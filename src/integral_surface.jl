@@ -320,11 +320,7 @@ end
 ################################################################################
 
 # Generalized method
-function _integral_2d_hcubature(
-    f,
-    geometry2d,
-    settings::HAdaptiveCubature
-) where {T}
+function _integral_2d_hcubature(f, geometry2d, settings::HAdaptiveCubature)
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
@@ -342,6 +338,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
+    #=
     # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
     ρ(ρ₀) = disk.radius * ρ₀
 
@@ -352,6 +349,8 @@ function integral(
 
     # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
     return (2π * disk.radius) .* intval
+    =#
+    return _integral_2d_hcubature(f, disk, settings)
 end
 
 function integral(
@@ -362,6 +361,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
+    #=
     # Integrate the box in parametric (u,v)-space
     integrand(u,v) = f(box(u,v))
     integrand(uv) = integrand(uv[1], uv[2])
@@ -369,6 +369,8 @@ function integral(
 
     # Apply a linear domain-correction factor 1 ↦ area(box)
     return area(box) .* intval
+    =#
+    return _integral_2d_hcubature(f, box, settings)
 end
 
 function integral(
