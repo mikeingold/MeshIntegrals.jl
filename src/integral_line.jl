@@ -160,7 +160,7 @@ end
 # Generalized method
 function _integral_1d(f, geometry, settings::GaussKronrod)
     function paramfactor(t)
-        J = jacobian(geometry,[t(x)])
+        J = jacobian(geometry,[t])
         return norm(J[1])
     end
 
