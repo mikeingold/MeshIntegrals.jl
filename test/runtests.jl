@@ -93,6 +93,7 @@ end
     sphere3d = Sphere(origin3d, 2.5)
     triangle = Ngon(pt_e, pt_n, pt_w)
     cylsurf = CylinderSurface(pt_e, pt_w, 2.5)   # TODO modify to a non-right-CylinderSurface when measure(c) supported in Meshes
+    torus = Torus(origin, ẑ, 3.5, 1.25)
 
     # TODO Custom tests: Line, Plane
 
@@ -114,7 +115,7 @@ end
         # ParaboloidSurface -- not yet supported
         SupportItem("Sphere{3,T}", sphere3d,     1, 0, 1, 0,   1, 1, 1),
         SupportItem("Triangle", triangle,        1, 0, 1, 0,   1, 1, 1),
-        # Torus -- not yet supported
+        SupportItem("Torus{T}", torus,           1, 0, 1, 0,   0, 0, 1),
         # SimpleMesh -- not yet supported
 
         SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
