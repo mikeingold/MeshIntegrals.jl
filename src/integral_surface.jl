@@ -320,7 +320,7 @@ end
 ################################################################################
 
 # Generalized method
-function _integral_2d_hcubature(f, geometry2d, settings::HAdaptiveCubature)
+function _integral_2d(f, geometry2d, settings::HAdaptiveCubature)
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
@@ -338,7 +338,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    return _integral_2d_hcubature(f, disk, settings)
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -349,7 +349,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    return _integral_2d_hcubature(f, box, settings)
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -357,11 +357,8 @@ function integral(
     cyl::Meshes.CylinderSurface{T},
     settings::HAdaptiveCubature
 ) where {T}
-    # Validate the provided integrand function
-    # A CylinderSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d_hcubature(f, cyl, settings)
+    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
+    # TODO Planned to support in the future
 end
 
 function integral(
@@ -373,7 +370,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    return _integral_2d_hcubature(f, disk, settings)
+    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -417,7 +414,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    return _integral_2d_hcubature(f, sphere, settings)
+    return _integral_2d(f, sphere, settings)
 end
 
 function integral(
@@ -428,5 +425,5 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    return _integral_2d_hcubature(f, torus, settings)
+    return _integral_2d(f, torus, settings)
 end
