@@ -156,6 +156,18 @@ end
 #                               Gauss-Kronrod
 ################################################################################
 
+# Generalized method
+function _integral_2d(f, geometry2d, settings::GaussKronrod)
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
+end
+
 function integral(
     f,
     disk::Meshes.Ball{2,T},
@@ -300,7 +312,12 @@ function integral(
     torus::Meshes.Torus{T},
     settings::GaussKronrod
 ) where {T}
-    error("Integrating a Torus with GaussKronrod not supported.")
+    # Validate the provided integrand function
+    # A Torus is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, torus, settings)
+    #error("Integrating a Torus with GaussKronrod not supported.")
 end
 
 
