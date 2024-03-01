@@ -319,6 +319,21 @@ end
 #                               HCubature
 ################################################################################
 
+# Generalized method
+function _integral_2d_hcubature(
+    f,
+    geometry2d,
+    settings::HAdaptiveCubature
+) where {T}
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
+    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
+end
+
 function integral(
     f,
     disk::Meshes.Ball{2,T},
@@ -444,11 +459,5 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    function paramfactor(uv)
-        J = jacobian(torus, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(uv) = paramfactor(uv) * f(torus(uv...))
-    return hcubature(integrand, [0,0], [1,1])[1]
+    return _integral_2d_hcubature(f, torus, settings)
 end
