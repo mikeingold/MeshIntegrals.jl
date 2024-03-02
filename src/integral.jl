@@ -53,7 +53,7 @@ struct HAdaptiveCubature <: IntegrationAlgorithm
 end
 
 ################################################################################
-#                        Integral Function API
+#                         Master Integral Function
 ################################################################################
 
 """
@@ -81,6 +81,10 @@ function integral(
     end
 end
 
+################################################################################
+#                    Line, Surface, and Volume Aliases
+################################################################################
+
 """
     lineintegral(f, geometry, algorithm::IntegrationAlgorithm=GaussKronrod)
 
@@ -97,8 +101,7 @@ function lineintegral(
     geometry::G,
     settings::I=GaussKronrod()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    dim = paramdim(geometry)
-    if dim == 1
+    if paramdim(geometry) == 1
         return integral(f, geometry, settings)
     else
         error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
@@ -116,8 +119,7 @@ function surfaceintegral(
     geometry::G,
     settings::I=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    dim = paramdim(geometry)
-    if dim == 2
+    if paramdim(geometry) == 2
         return integral(f, geometry, settings)
     else
         error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
@@ -136,8 +138,7 @@ function volumeintegral(
     geometry::G,
     settings::I=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    dim = paramdim(geometry)
-    if dim == 3
+    if paramdim(geometry) == 3
         return integral(f, geometry, settings)
     else
         error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
