@@ -26,10 +26,10 @@ function _integral_2d(f, geometry2d, settings::GaussLegendre)
 end
 
 function integral(
-    f,
+    f::F,
     cyl::Meshes.CylinderSurface{T},
     settings::GaussLegendre
-) where {T}
+) where {F<:Function, T}
     error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
     # TODO Planned to support in the future
     # Waiting for resolution on whether CylinderSurface includes the terminating disks
@@ -46,10 +46,10 @@ using a Gauss-Legendre quadrature rule along each barycentric dimension of the
 triangle.
 """
 function integral(
-    f,
+    f::F,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussLegendre
-) where {Dim, T}
+) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
@@ -101,10 +101,10 @@ function _integral_2d(f, geometry2d, settings::GaussKronrod)
 end
 
 function integral(
-    f,
+    f::F,
     cyl::Meshes.CylinderSurface{T},
     settings::GaussKronrod
-) where {T}
+) where {F<:Function, T}
     # Validate the provided integrand function
     # A CylinderSurface is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
@@ -142,10 +142,10 @@ Like [`integral`](@ref) but integrates over the surface of a `triangle` using ne
 Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 """
 function integral(
-    f,
+    f::F,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussKronrod
-) where {Dim, T}
+) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
@@ -175,10 +175,10 @@ function _integral_2d(f, geometry2d, settings::HAdaptiveCubature)
 end
 
 function integral(
-    f,
+    f::F,
     cyl::Meshes.CylinderSurface{T},
     settings::HAdaptiveCubature
-) where {T}
+) where {F<:Function, T}
     error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
     # TODO Planned to support in the future
 end
@@ -191,10 +191,10 @@ transforming the triangle into a polar-barycentric coordinate system and using
 an h-adaptive cubature rule.
 """
 function integral(
-    f,
+    f::F,
     triangle::Meshes.Ngon{3,Dim,T},
     settings::HAdaptiveCubature
-) where {Dim, T}
+) where {F<:Function, Dim, T}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 

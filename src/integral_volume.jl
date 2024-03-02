@@ -34,18 +34,18 @@ end
 ################################################################################
 
 function integral(
-    f,
+    f::F,
     ball::Meshes.Ball{3,T},
     settings::GaussKronrod
-) where {T}
+) where {F<:Function, T}
     error("Integrating a Ball{3,T} with GaussKronrod not supported.")
 end
 
 function integral(
-    f,
+    f::F,
     box::Meshes.Box{3,T},
     settings::GaussKronrod
-) where {T}
+) where {F<:Function, T}
     error("Integrating a Ball{3,T} with GaussKronrod not supported.")
 end
 
