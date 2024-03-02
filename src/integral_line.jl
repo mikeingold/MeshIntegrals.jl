@@ -85,30 +85,6 @@ end
 
 function integral(
     f::F,
-    line::Meshes.Box{1,T},
-    settings::GaussLegendre
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Box{1,T} is definitionally embedded in 1D-space
-    _validate_integrand(f,1,T)
-
-    return _integral_1d(f, line, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Circle{T},
-    settings::GaussLegendre
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Circle is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_1d(f, circle, settings)
-end
-
-function integral(
-    f::F,
     line::Meshes.Line{Dim,T},
     settings::GaussLegendre
 ) where {F<:Function, Dim, T}
@@ -127,29 +103,6 @@ function integral(
 
     # Integrate f along the line
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
-end
-
-function integral(
-    f::F,
-    segment::Meshes.Segment{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return _integral_1d(f, segment, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Sphere{2,T},
-    settings::GaussLegendre
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Sphere{2,T} is simply a circle in 2D-space
-    _validate_integrand(f,2,T)
-
-    return _integral_1d(f, circle, settings)
 end
 
 
@@ -194,30 +147,6 @@ end
 
 function integral(
     f::F,
-    line::Meshes.Box{1,T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Box is definitionally embedded in 1D-space
-    _validate_integrand(f,1,T)
-
-    return _integral_1d(f, line, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Circle{T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Circle is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_1d(f, circle, settings)
-end
-
-function integral(
-    f::F,
     line::Meshes.Line{Dim,T},
     settings::GaussKronrod
 ) where {F<:Function, Dim, T}
@@ -230,29 +159,6 @@ function integral(
 
     # Lines are infinite-length passing through defined points a and b
     return QuadGK.quadgk(t -> f(point(t)), -Inf, Inf; settings.kwargs...)[1]
-end
-
-function integral(
-    f::F,
-    segment::Meshes.Segment{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return _integral_1d(f, segment, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Sphere{2,T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Sphere{2,T} is simply a circle in 2D-space
-    _validate_integrand(f,2,T)
-
-    return _integral_1d(f, circle, settings)
 end
 
 
@@ -297,30 +203,6 @@ end
 
 function integral(
     f::F,
-    line::Meshes.Box{1,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Box is definitionally embedded in 1D-space
-    _validate_integrand(f,1,T)
-
-    return _integral_1d(f, line, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Circle{T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Circle is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_1d(f, circle, settings)
-end
-
-function integral(
-    f::F,
     line::Meshes.Line{Dim,T},
     settings::HAdaptiveCubature
 ) where {F<:Function, Dim, T}
@@ -337,27 +219,4 @@ function integral(
 
     # Lines are infinite-length passing through defined points a and b
     return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
-end
-
-function integral(
-    f::F,
-    segment::Meshes.Segment{Dim,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
-    return _integral_1d(f, segment, settings)
-end
-
-function integral(
-    f::F,
-    circle::Meshes.Sphere{2,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Sphere{2,T} is simply a circle in 2D-space
-    _validate_integrand(f,2,T)
-
-    return _integral_1d(f, circle, settings)
 end

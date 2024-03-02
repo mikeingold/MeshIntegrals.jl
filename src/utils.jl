@@ -28,31 +28,6 @@ function derivative(bz::Meshes.BezierCurve{Dim,T,V}, t) where {Dim,T,V}
     return N .* sum(sigma, 0:N-1)    # ::Vec{Dim,T}
 end
 
-#=
-# Calculate the derivative of a `geometry` with 1 parametric dimension at `t`
-function derivative(geometry, t)
-    ε = 1e-6
-    return (geometry(t+ε) - geometry(t-ε)) / 2ε
-end
-
-# Calculate the Jacobian of a `geometry` with 2 parametric dimensions at `(u,v)`
-function jacobian2d(geometry, u, v)
-    ε = 1e-6
-    ∂r_∂u = (geometry(u+ε,v) - geometry(u-ε,v)) / 2ε
-    ∂r_∂v = (geometry(u,v+ε) - geometry(u,v-ε)) / 2ε
-    return [∂r_∂u, ∂r_∂v]
-end
-
-# Calculate the Jacobian of a `geometry` with 2 parametric dimensions at `(s,t,u)`
-function jacobian2d(geometry, s, t, u)
-    ε = 1e-6
-    ∂r_∂s = (geometry(s+ε,t,u) - geometry(s-ε,t,u)) / 2ε
-    ∂r_∂t = (geometry(s,t+ε,u) - geometry(s,t-ε,u)) / 2ε
-    ∂r_∂u = (geometry(s,t,u+ε) - geometry(s,t,u-ε)) / 2ε
-    return [∂r_∂s, ∂r_∂t, ∂r_∂u]
-end
-=#
-
 # Calculate the Jacobian of a geometry at some parametric point using a simple
 #   central-finite-difference approximation
 function jacobian(geometry, ts::AbstractVector{T}; ε=1e-6) where {T<:AbstractFloat}

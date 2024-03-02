@@ -27,28 +27,6 @@ end
 
 function integral(
     f,
-    disk::Meshes.Ball{2,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, disk, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{2,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, box, settings)
-end
-
-function integral(
-    f,
     cyl::Meshes.CylinderSurface{T},
     settings::GaussLegendre
 ) where {T}
@@ -57,18 +35,6 @@ function integral(
     # Waiting for resolution on whether CylinderSurface includes the terminating disks
     # on its surface by definition, and whether there will be parametric function to
     # generate those.
-end
-
-function integral(
-    f,
-    disk::Meshes.Disk{T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    # A Disk is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -117,40 +83,6 @@ function integral(
     return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
-function integral(
-    f,
-    paraboloid::Meshes.ParaboloidSurface{T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    # A ParaboloidSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, paraboloid, settings)
-end
-
-function integral(
-    f,
-    sphere::Meshes.Sphere{3,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, sphere, settings)
-end
-
-function integral(
-    f,
-    torus::Meshes.Torus{T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, torus, settings)
-end
-
 
 ################################################################################
 #                               Gauss-Kronrod
@@ -166,28 +98,6 @@ function _integral_2d(f, geometry2d, settings::GaussKronrod)
     integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
     innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
     return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
-end
-
-function integral(
-    f,
-    disk::Meshes.Ball{2,T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, disk, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{2,T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -225,18 +135,6 @@ function integral(
     return sides + top + bottom
 end
 
-function integral(
-    f,
-    disk::Meshes.Disk{T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    # A Disk is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, disk, settings)
-end
-
 """
     integral(f, triangle::Meshes.Triangle, ::GaussKronrod)
 
@@ -260,41 +158,6 @@ function integral(
     return 2.0 * area(triangle) .* outerintegral
 end
 
-function integral(
-    f,
-    paraboloid::Meshes.ParaboloidSurface{T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    # A Torus is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, paraboloid, settings)
-end
-
-function integral(
-    f,
-    sphere::Meshes.Sphere{3,T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, sphere, settings)
-end
-
-function integral(
-    f,
-    torus::Meshes.Torus{T},
-    settings::GaussKronrod
-) where {T}
-    # Validate the provided integrand function
-    # A Torus is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, torus, settings)
-end
-
 
 ################################################################################
 #                               HCubature
@@ -313,45 +176,11 @@ end
 
 function integral(
     f,
-    disk::Meshes.Ball{2,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, disk, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{2,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,2,T)
-
-    return _integral_2d(f, box, settings)
-end
-
-function integral(
-    f,
     cyl::Meshes.CylinderSurface{T},
     settings::HAdaptiveCubature
 ) where {T}
     error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
     # TODO Planned to support in the future
-end
-
-function integral(
-    f,
-    disk::Meshes.Disk{T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    # A Disk is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -385,38 +214,4 @@ function integral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* intval
-end
-
-function integral(
-    f,
-    paraboloid::Meshes.ParaboloidSurface{T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    # A ParaboloidSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, paraboloid, settings)
-end
-
-function integral(
-    f,
-    sphere::Meshes.Sphere{3,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, sphere, settings)
-end
-
-function integral(
-    f,
-    torus::Meshes.Torus{T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_2d(f, torus, settings)
 end

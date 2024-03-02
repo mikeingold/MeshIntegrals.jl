@@ -28,28 +28,6 @@ function _integral_3d(f, geometry3d, settings::GaussLegendre)
     return (1/8) .* sum(integrand, zip(wws,xxs))
 end
 
-function integral(
-    f,
-    ball::Meshes.Ball{3,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, ball, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{3,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, box, settings)
-end
-
 
 ################################################################################
 #                             GaussKronrod
@@ -85,26 +63,4 @@ function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
 
     integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
     return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
-end
-
-function integral(
-    f,
-    ball::Meshes.Ball{3,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, ball, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{3,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, box, settings)
 end

@@ -62,7 +62,24 @@ end
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular `integration algorithm`.
 """
-function integral end
+function integral(
+    f::F,
+    geometry::Meshes.Geometry{Dim,T},
+    settings::I=HAdaptiveCubature()
+) where {F<:Function, Dim, T, I<:IntegrationAlgorithm}
+    # Validate that the provided function has an appropriate f(::Point{Dim,T}) method
+    _validate_integrand(f, Dim, T)
+
+    # Run the appropriate integral type
+    dim_param = paramdim(geometry)
+    if dim_param == 1
+        return _integral_1d(f, geometry, settings)
+    elseif dim_param == 2
+        return _integral_2d(f, geometry, settings)
+    elseif dim_param == 3
+        return _integral_3d(f, geometry, settings)
+    end
+end
 
 """
     lineintegral(f, geometry, algorithm::IntegrationAlgorithm=GaussKronrod)
@@ -82,7 +99,7 @@ function lineintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 1
-        return integral(f, geometry, settings)
+        return _integral_1d(f, geometry, settings)
     else
         error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
     end
@@ -101,7 +118,7 @@ function surfaceintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 2
-        return integral(f, geometry, settings)
+        return _integral_2d(f, geometry, settings)
     else
         error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
     end
@@ -121,7 +138,7 @@ function volumeintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 3
-        return integral(f, geometry, settings)
+        return _integral_3d(f, geometry, settings)
     else
         error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
     end
