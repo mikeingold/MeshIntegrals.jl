@@ -1,5 +1,5 @@
 ################################################################################
-#                               Gauss-Legendre
+#                       Generalized 3D Methods
 ################################################################################
 
 function _integral_3d(f, geometry3d, settings::GaussLegendre)
@@ -28,9 +28,19 @@ function _integral_3d(f, geometry3d, settings::GaussLegendre)
     return (1/8) .* sum(integrand, zip(wws,xxs))
 end
 
+function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
+    function paramfactor(ts)
+        J = jacobian(geometry3d, ts)
+        return abs((J[1] × J[2]) ⋅ J[3])
+    end
+
+    integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
+    return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
+end
+
 
 ################################################################################
-#                             GaussKronrod
+#                         Unsupported Placeholders
 ################################################################################
 
 function integral(
@@ -47,20 +57,4 @@ function integral(
     settings::GaussKronrod
 ) where {F<:Function, T}
     error("Integrating a Ball{3,T} with GaussKronrod not supported.")
-end
-
-
-################################################################################
-#                               HCubature
-################################################################################
-
-# Generalized method
-function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
-    function paramfactor(ts)
-        J = jacobian(geometry3d, ts)
-        return abs((J[1] × J[2]) ⋅ J[3])
-    end
-
-    integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
-    return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
 end
