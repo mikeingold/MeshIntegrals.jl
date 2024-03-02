@@ -99,7 +99,7 @@ function lineintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 1
-        return _integral_1d(f, geometry, settings)
+        return integral(f, geometry, settings)
     else
         error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
     end
@@ -118,7 +118,7 @@ function surfaceintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 2
-        return _integral_2d(f, geometry, settings)
+        return integral(f, geometry, settings)
     else
         error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
     end
@@ -138,7 +138,7 @@ function volumeintegral(
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     dim = paramdim(geometry)
     if dim == 3
-        return _integral_3d(f, geometry, settings)
+        return integral(f, geometry, settings)
     else
         error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
     end
