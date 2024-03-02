@@ -93,6 +93,8 @@ end
     sphere3d = Sphere(origin3d, 2.5)
     triangle = Ngon(pt_e, pt_n, pt_w)
     cylsurf = CylinderSurface(pt_e, pt_w, 2.5)   # TODO modify to a non-right-CylinderSurface when measure(c) supported in Meshes
+    torus = Torus(origin3d, ẑ, 3.5, 1.25)
+    parab = ParaboloidSurface(origin3d, 2.5, 4.15)
 
     # TODO Custom tests: Line, Plane
 
@@ -107,14 +109,14 @@ end
         SupportItem("Segment", seg_ne,           1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{2,T}", sphere2d,     1, 1, 0, 0,   1, 1, 1),
 
-        SupportItem("Ball{2,T}", ball2d,         1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{2,T}", box2d,           1, 0, 1, 0,   1, 1, 1),
-        SupportItem("CylinderSurface", cylsurf,  1, 0, 1, 0,   0, 1, 0),
-        SupportItem("Disk", disk,                1, 0, 1, 0,   1, 1, 1),
-        # ParaboloidSurface -- not yet supported
-        SupportItem("Sphere{3,T}", sphere3d,     1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Triangle", triangle,        1, 0, 1, 0,   1, 1, 1),
-        # Torus -- not yet supported
+        SupportItem("Ball{2,T}", ball2d,             1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{2,T}", box2d,               1, 0, 1, 0,   1, 1, 1),
+        SupportItem("CylinderSurface", cylsurf,      1, 0, 1, 0,   0, 1, 0),
+        SupportItem("Disk", disk,                    1, 0, 1, 0,   1, 1, 1),
+        SupportItem("ParaboloidSurface{T}", parab,   1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Sphere{3,T}", sphere3d,         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Triangle", triangle,            1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Torus{T}", torus,               1, 0, 1, 0,   1, 1, 1),
         # SimpleMesh -- not yet supported
 
         SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),

@@ -30,7 +30,7 @@ Methods are tested to ensure compatibility with
 ### Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
-| `Meshes.Box{Dim,T}` | :x: | :x: | :x: |
+| `Meshes.Box{Dim>3,T}` | :x: | :x: | :x: |
 
 ### Line Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
@@ -51,10 +51,10 @@ Methods are tested to ensure compatibility with
 | `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.CylinderSurface` | :x: | :white_check_mark: | :x: |
 | `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.ParaboloidSurface` | :x: | :x: | :x: |
+| `Meshes.ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Torus` | :x: | :x: | :x: |
+| `Meshes.Torus` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Meshes.SimpleMesh` | :x: | :x: | :x: |
 
 ### Volume Integral
@@ -95,13 +95,15 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
-- Short term:
-    - Implement all methods in the support matrix above
+- TODO
     - Update Example Usage and benchmarks
     - Re-implement all tests for Unitful compatibility
-
-- Longer term:
-    - Once all methods are implemented, determine which can be consolidated with a more abstract/unioned case
     - Implement Aqua.jl tests
-    - Implement Documenter docs
+    - Improve README documentation in lieu of Documenter
     - Implement Monte Carlo integration methods
+    - Implement BenchmarkTools test suite to quantify performance
+    - Continue working to generalize and consolidate methods
+
+- Longer term plans
+    - Assess impact of upcoming Meshes.jl CRS refactor
+    - Once functionality is established and stable, evaluate transition to JuliaGeometry organization or direct absorption into Meshes.jl

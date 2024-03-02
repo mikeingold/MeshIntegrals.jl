@@ -2,6 +2,29 @@
 #                               Gauss-Legendre
 ################################################################################
 
+# Generalized method
+function _integral_2d(f, geometry2d, settings::GaussLegendre)
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Domain transformation: x [-1,1] ↦ u,v [0,1]
+    u(x) = 0.5x + 0.5
+    v(x) = 0.5x + 0.5
+    point(xi,xj) = geometry2d(u(xi), v(xj))
+
+    function paramfactor(xi, xj)
+        uv = [u(xi), v(xj)]
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
+
+    return 0.25 .* sum(integrand, zip(wws,xxs))
+end
+
 function integral(
     f,
     disk::Meshes.Ball{2,T},
@@ -10,22 +33,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = disk(s(xi), t(xj))
-
-    # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (xρ,xϕ))) = wi * wj * f(point(xρ,xϕ)) * disk.radius * s(xρ)
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    # Apply curvilinear domain-correction factor [-1,1]² ↦ [0,1]² ↦ [0,ρ]x[0,2π]
-    return (0.25 * area(disk)) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -36,22 +44,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: u,v [-1,1] ↦ s,t [0,1]
-    s(u) = 0.5u + 0.5
-    t(v) = 0.5v + 0.5
-    point(xi,xj) = box(s(xi), t(xj))
-
-    # Calculate weight-node product
-    g(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj))
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]^2
-    # Apply a linear domain-correction factor [-1,1]^2 ↦ area(box)
-    return 0.25 * area(box) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -60,7 +53,10 @@ function integral(
     settings::GaussLegendre
 ) where {T}
     error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
-    # Planned to support in the future
+    # TODO Planned to support in the future
+    # Waiting for resolution on whether CylinderSurface includes the terminating disks
+    # on its surface by definition, and whether there will be parametric function to
+    # generate those.
 end
 
 function integral(
@@ -72,24 +68,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformations:
-    #   s [-1,1] ↦ r [0,1]
-    #   t [-1,1] ↦ φ [0,1]
-    r(s) = 0.5s + 0.5
-    φ(t) = 0.5t + 0.5
-    point(s,t) = disk(r(s), φ(t))
-
-    # Calculate weight-node product with curvilinear correction
-    g(((wi,wj), (s,t))) = wi * wj * f(point(s,t)) * (s + 1.0)
-
-    # Calculate 2D Gauss-Legendre integral of f over parametric coordinates [-1,1]²
-    R = disk.radius
-    return (π*R^2/4) .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -140,31 +119,54 @@ end
 
 function integral(
     f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    # A ParaboloidSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
+end
+
+function integral(
+    f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussLegendre
 ) where {T}
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: xi,xj [-1,1] ↦ s,t [0,1]
-    t(xi) = 0.5xi + 0.5
-    u(xj) = 0.5xj + 0.5
-
-    # Integrate the sphere in parametric (t,u)-space [0,1]²
-    integrand(t,u) = sinpi(t) * f(sphere(t,u))
-    g(((wi,wj), (xi,xj))) = wi * wj * integrand(t(xi),u(xj))
-    R = sphere.radius
-    return 0.25 * 2π^2 * R^2 .* sum(g, zip(wws,xxs))
+    return _integral_2d(f, sphere, settings)
 end
+
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::GaussLegendre
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, torus, settings)
+end
+
 
 ################################################################################
 #                               Gauss-Kronrod
 ################################################################################
+
+# Generalized method
+function _integral_2d(f, geometry2d, settings::GaussKronrod)
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
+end
 
 function integral(
     f,
@@ -174,16 +176,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* outerintegral
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -194,12 +187,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Integrate the box in parametric (u,v)-space
-    innerintegral(u) = QuadGK.quadgk(v -> f(box(u,v)), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor 1 ↦ area(box)
-    return area(box) .* outerintegral
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -246,16 +234,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    innerintegral(φ₀) = QuadGK.quadgk(ρ₀ -> integrand(ρ₀,φ₀), 0, 1; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(φ₀ -> innerintegral(φ₀), 0, 1; settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* outerintegral
+    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -283,24 +262,54 @@ end
 
 function integral(
     f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    # A Torus is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
+end
+
+function integral(
+    f,
     sphere::Meshes.Sphere{3,T},
     settings::GaussKronrod
 ) where {T}
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    innerintegrand(u) = quadgk(t -> sinpi(t) * f(sphere(t,u)), 0, 1)[1]
-    intval = quadgk(u -> innerintegrand(u), 0, 1, settings.kwargs...)[1]
+    return _integral_2d(f, sphere, settings)
+end
 
-    R = sphere.radius
-    return 2π^2 * R^2 .* intval
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::GaussKronrod
+) where {T}
+    # Validate the provided integrand function
+    # A Torus is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, torus, settings)
 end
 
 
 ################################################################################
 #                               HCubature
 ################################################################################
+
+# Generalized method
+function _integral_2d(f, geometry2d, settings::HAdaptiveCubature)
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
+    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
+end
 
 function integral(
     f,
@@ -310,16 +319,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    integrand(ρφ) = integrand(ρφ[1], ρφ[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* intval
+    return _integral_2d(f, disk, settings)
 end
 
 function integral(
@@ -330,13 +330,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,2,T)
 
-    # Integrate the box in parametric (u,v)-space
-    integrand(u,v) = f(box(u,v))
-    integrand(uv) = integrand(uv[1], uv[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor 1 ↦ area(box)
-    return area(box) .* intval
+    return _integral_2d(f, box, settings)
 end
 
 function integral(
@@ -345,7 +339,7 @@ function integral(
     settings::HAdaptiveCubature
 ) where {T}
     error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
-    # Planned to support in the future
+    # TODO Planned to support in the future
 end
 
 function integral(
@@ -357,16 +351,7 @@ function integral(
     # A Disk is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Map parametric ρ₀ [0,1] ↦ ρ [0, disk.radius]
-    ρ(ρ₀) = disk.radius * ρ₀
-
-    # Integrate the box in parametric (ρ₀,φ₀)-space [0,1]
-    integrand(ρ₀,φ₀) = f(disk(ρ₀,φ₀)) * ρ(ρ₀)
-    integrand(ρφ) = integrand(ρφ[1], ρφ[2])
-    intval = hcubature(integrand, [0,0], [1,1], settings.kwargs...)[1]
-
-    # Apply a linear domain-correction factor [0,1]² ↦ [0,ρ]x[0,2π]
-    return (2π * disk.radius) .* intval
+    return _integral_2d(f, disk, settings)
 end
 
 """
@@ -404,17 +389,34 @@ end
 
 function integral(
     f,
+    paraboloid::Meshes.ParaboloidSurface{T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    # A ParaboloidSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, paraboloid, settings)
+end
+
+function integral(
+    f,
     sphere::Meshes.Sphere{3,T},
     settings::HAdaptiveCubature
 ) where {T}
     # Validate the provided integrand function
     _validate_integrand(f,3,T)
 
-    # Integrate the sphere in parametric (t,u)-space [0,1]^2
-    integrand(t,u) = sinpi(t) * f(sphere(t,u))
-    integrand(tu) = integrand(tu[1],tu[2])
-    intval = hcubature(tu -> integrand(tu), [0,0], [1,1], settings.kwargs...)[1]
+    return _integral_2d(f, sphere, settings)
+end
 
-    R = sphere.radius
-    return 2π^2 * R^2 .* intval
+function integral(
+    f,
+    torus::Meshes.Torus{T},
+    settings::HAdaptiveCubature
+) where {T}
+    # Validate the provided integrand function
+    _validate_integrand(f,3,T)
+
+    return _integral_2d(f, torus, settings)
 end

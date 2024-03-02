@@ -34,6 +34,25 @@ end
 #                            Gauss-Legendre
 ################################################################################
 
+# Generalized method
+function _integral_1d(f, geometry, settings::GaussLegendre)
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = gausslegendre(settings.n)
+
+    # Change of variables: x [-1,1] ↦ t [0,1]
+    t(x) = 0.5x + 0.5
+    point(x) = geometry(t(x))
+
+    function paramfactor(x)
+        J = jacobian(geometry,[t(x)])
+        return norm(J[1])
+    end
+
+    # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
+    integrand((w,x)) = w * f(point(x)) * paramfactor(x)
+    return 0.5 * sum(integrand, zip(ws, xs))
+end
+
 """
     integral(f, curve::Meshes.BezierCurve, ::GaussLegendre; alg=Meshes.Horner())
 
@@ -73,15 +92,7 @@ function integral(
     # A Box{1,T} is definitionally embedded in 1D-space
     _validate_integrand(f,1,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = line(t(x))
-
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(line) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, line, settings)
 end
 
 function integral(
@@ -93,16 +104,7 @@ function integral(
     # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = circle(t(x))
-
-    # Integrate f along the circle's rim and apply a domain-correction
-    #   factor for [-1,1] ↦ [0, circumference]
-    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, circle, settings)
 end
 
 function integral(
@@ -135,15 +137,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = segment(t(x))
-
-    # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(segment) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, segment, settings)
 end
 
 function integral(
@@ -155,22 +149,24 @@ function integral(
     # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
-    point(x) = circle(t(x))
-
-    # Integrate f along the circle's rim and apply a domain-correction
-    #   factor for [-1,1] ↦ [0, circumference]
-    return 0.5 * length(circle) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return _integral_1d(f, circle, settings)
 end
 
 
 ################################################################################
 #                                Gauss-Kronrod
 ################################################################################
+
+# Generalized method
+function _integral_1d(f, geometry, settings::GaussKronrod)
+    function paramfactor(t)
+        J = jacobian(geometry,[t])
+        return norm(J[1])
+    end
+
+    integrand(t) = f(geometry(t)) * paramfactor(t)
+    return QuadGK.quadgk(integrand, 0, 1; settings.kwargs...)[1]
+end
 
 """
     integral(f, curve::BezierCurve, ::GaussKronrod; alg=Horner(), kws...)
@@ -205,9 +201,7 @@ function integral(
     # A Box is definitionally embedded in 1D-space
     _validate_integrand(f,1,T)
 
-    len = length(line)
-    point(t) = line(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    return _integral_1d(f, line, settings)
 end
 
 function integral(
@@ -219,9 +213,7 @@ function integral(
     # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
 
 function integral(
@@ -248,9 +240,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    len = length(segment)
-    point(t) = segment(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    return _integral_1d(f, segment, settings)
 end
 
 function integral(
@@ -262,15 +252,24 @@ function integral(
     # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
 
 
 ################################################################################
 #                                HCubature
 ################################################################################
+
+# Generalized method
+function _integral_1d(f, geometry, settings::HAdaptiveCubature)
+    function paramfactor(t)
+        J = jacobian(geometry,t)
+        return norm(J[1])
+    end
+
+    integrand(t) = f(geometry(t[1])) * paramfactor(t)
+    return HCubature.hcubature(integrand, [0], [1]; settings.kwargs...)[1]
+end
 
 """
     integral(f, curve::BezierCurve, ::HAdaptiveCubature; alg=Horner(), kws...)
@@ -305,9 +304,7 @@ function integral(
     # A Box is definitionally embedded in 1D-space
     _validate_integrand(f,1,T)
 
-    len = length(line)
-    point(t) = line(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, line, settings)
 end
 
 function integral(
@@ -319,9 +316,7 @@ function integral(
     # A Circle is definitionally embedded in 3D-space
     _validate_integrand(f,3,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
 
 function integral(
@@ -352,9 +347,7 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    len = length(segment)
-    point(t) = segment(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, segment, settings)
 end
 
 function integral(
@@ -366,7 +359,5 @@ function integral(
     # A Sphere{2,T} is simply a circle in 2D-space
     _validate_integrand(f,2,T)
 
-    len = length(circle)
-    point(t) = circle(t)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return _integral_1d(f, circle, settings)
 end
