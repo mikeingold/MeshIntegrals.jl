@@ -25,7 +25,7 @@ function _integral_3d(f, geometry3d, settings::GaussLegendre)
         wi * wj * wk * f(point(stu)) * paramfactor(stu)
     end
 
-    return (1/8) .* sum(g, zip(wws,xxs))
+    return (1/8) .* sum(integrand, zip(wws,xxs))
 end
 
 function integral(
