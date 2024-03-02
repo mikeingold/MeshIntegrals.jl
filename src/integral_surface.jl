@@ -1,9 +1,12 @@
 ################################################################################
-#                               Gauss-Legendre
+#                          Generalized 2D Methods
 ################################################################################
 
-# Generalized method
-function _integral_2d(f, geometry2d, settings::GaussLegendre)
+function _integral_2d(
+    f,
+    geometry2d,
+    settings::GaussLegendre
+)
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws)
@@ -25,6 +28,40 @@ function _integral_2d(f, geometry2d, settings::GaussLegendre)
     return 0.25 .* sum(integrand, zip(wws,xxs))
 end
 
+function _integral_2d(
+    f,
+    geometry2d,
+    settings::GaussKronrod
+)
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
+end
+
+function _integral_2d(
+    f,
+    geometry2d,
+    settings::HAdaptiveCubature
+)
+    function paramfactor(uv)
+        J = jacobian(geometry2d, uv)
+        return norm(J[1] × J[2])
+    end
+
+    integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
+    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
+end
+
+
+################################################################################
+#                  Specialized Methods for CylinderSurface
+################################################################################
+
 function integral(
     f::F,
     cyl::Meshes.CylinderSurface{T},
@@ -36,6 +73,55 @@ function integral(
     # on its surface by definition, and whether there will be parametric function to
     # generate those.
 end
+
+function integral(
+    f::F,
+    cyl::Meshes.CylinderSurface{T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A CylinderSurface is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Integrate the rounded sides of the cylinder's surface
+    # \int ( \int f(r̄) dz ) dφ
+    function sides_innerintegral(φ)
+        sidelength = norm(cyl(φ,1) - cyl(φ,0))
+        return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
+    end
+    sides = (2π * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), 0, 1; settings.kwargs...)[1]
+
+    # Integrate the top and bottom disks
+    # \int ( \int r f(r̄) dr ) dφ
+    function disk_innerintegral(φ,plane,z)
+        # Parameterize the top surface of the cylinder
+        rimedge = cyl(φ,z)
+        centerpoint = plane.p
+        r̄ = rimedge - centerpoint
+        radius = norm(r̄)
+        point(r) = centerpoint + (r / radius) * r̄
+
+        return radius^2 * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
+    end
+    top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
+    bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
+
+    return sides + top + bottom
+end
+
+function integral(
+    f::F,
+    cyl::Meshes.CylinderSurface{T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
+    # TODO Planned to support in the future
+end
+
+
+################################################################################
+#                    Specialized Methods for Triangle
+################################################################################
 
 """
     integral(f, triangle::Meshes.Triangle, ::GaussLegendre)
@@ -83,58 +169,6 @@ function integral(
     return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
-
-################################################################################
-#                               Gauss-Kronrod
-################################################################################
-
-# Generalized method
-function _integral_2d(f, geometry2d, settings::GaussKronrod)
-    function paramfactor(uv)
-        J = jacobian(geometry2d, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
-end
-
-function integral(
-    f::F,
-    cyl::Meshes.CylinderSurface{T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A CylinderSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    # Integrate the rounded sides of the cylinder's surface
-    # \int ( \int f(r̄) dz ) dφ
-    function sides_innerintegral(φ)
-        sidelength = norm(cyl(φ,1) - cyl(φ,0))
-        return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
-    end
-    sides = (2π * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), 0, 1; settings.kwargs...)[1]
-
-    # Integrate the top and bottom disks
-    # \int ( \int r f(r̄) dr ) dφ
-    function disk_innerintegral(φ,plane,z)
-        # Parameterize the top surface of the cylinder
-        rimedge = cyl(φ,z)
-        centerpoint = plane.p
-        r̄ = rimedge - centerpoint
-        radius = norm(r̄)
-        point(r) = centerpoint + (r / radius) * r̄
-
-        return radius^2 * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
-    end
-    top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
-    bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
-
-    return sides + top + bottom
-end
-
 """
     integral(f, triangle::Meshes.Triangle, ::GaussKronrod)
 
@@ -156,31 +190,6 @@ function integral(
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2.0 * area(triangle) .* outerintegral
-end
-
-
-################################################################################
-#                               HCubature
-################################################################################
-
-# Generalized method
-function _integral_2d(f, geometry2d, settings::HAdaptiveCubature)
-    function paramfactor(uv)
-        J = jacobian(geometry2d, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
-    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
-end
-
-function integral(
-    f::F,
-    cyl::Meshes.CylinderSurface{T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
-    # TODO Planned to support in the future
 end
 
 """

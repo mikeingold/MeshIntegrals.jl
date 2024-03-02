@@ -2,7 +2,11 @@
 #                          Generalized 1D Methods
 ################################################################################
 
-function _integral_1d(f, geometry, settings::GaussLegendre)
+function _integral_1d(
+    f,
+    geometry,
+    settings::GaussLegendre
+)
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = gausslegendre(settings.n)
 
@@ -20,7 +24,11 @@ function _integral_1d(f, geometry, settings::GaussLegendre)
     return 0.5 * sum(integrand, zip(ws, xs))
 end
 
-function _integral_1d(f, geometry, settings::GaussKronrod)
+function _integral_1d(
+    f,
+    geometry,
+    settings::GaussKronrod
+)
     function paramfactor(t)
         J = jacobian(geometry,[t])
         return norm(J[1])
@@ -30,7 +38,11 @@ function _integral_1d(f, geometry, settings::GaussKronrod)
     return QuadGK.quadgk(integrand, 0, 1; settings.kwargs...)[1]
 end
 
-function _integral_1d(f, geometry, settings::HAdaptiveCubature)
+function _integral_1d(
+    f,
+    geometry,
+    settings::HAdaptiveCubature
+)
     function paramfactor(t)
         J = jacobian(geometry,t)
         return norm(J[1])
