@@ -64,9 +64,9 @@ a `geometry` using a particular `integration algorithm`.
 """
 function integral(
     f::F,
-    geometry::Meshes.Geometry{Dim,T},
+    geometry::G,
     settings::I=HAdaptiveCubature()
-) where {F<:Function, Dim, T, I<:IntegrationAlgorithm}
+) where {F<:Function, Dim, T, G<:Meshes.Geometry{Dim,T}, I<:IntegrationAlgorithm}
     # Validate that the provided function has an appropriate f(::Point{Dim,T}) method
     _validate_integrand(f, Dim, T)
 
