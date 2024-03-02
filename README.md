@@ -101,6 +101,7 @@ fr(p) = fr(p.coords...)
     - Implement Aqua.jl tests
     - Improve README documentation in lieu of Documenter
     - Implement Monte Carlo integration methods
+    - Implement BenchmarkTools test suite to quantify performance
     - Continue working to generalize and consolidate methods
 
 - Longer term plans
