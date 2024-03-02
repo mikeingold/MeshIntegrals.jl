@@ -1,12 +1,3 @@
-# Validate that f has a method defined for f(::Point{Dim,T})
-@inline function _validate_integrand(f,Dim,T)
-    if hasmethod(f, (Point{Dim,T},))
-        return nothing
-    else
-        error("The provided Function f must have a method f(::Meshes.Point{$Dim,$T})")
-    end
-end
-
 ################################################################################
 #                         Integration Algorithms
 ################################################################################
