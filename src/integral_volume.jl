@@ -1,8 +1,12 @@
 ################################################################################
-#                               Gauss-Legendre
+#                       Generalized 3D Methods
 ################################################################################
 
-function _integral_3d(f, geometry3d, settings::GaussLegendre)
+function _integral_3d(
+    f,
+    geometry3d,
+    settings::GaussLegendre
+)
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws, ws)
@@ -28,56 +32,11 @@ function _integral_3d(f, geometry3d, settings::GaussLegendre)
     return (1/8) .* sum(integrand, zip(wws,xxs))
 end
 
-function integral(
+function _integral_3d(
     f,
-    ball::Meshes.Ball{3,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, ball, settings)
-end
-
-function integral(
-    f,
-    box::Meshes.Box{3,T},
-    settings::GaussLegendre
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, box, settings)
-end
-
-
-################################################################################
-#                             GaussKronrod
-################################################################################
-
-function integral(
-    f,
-    ball::Meshes.Ball{3,T},
-    settings::GaussKronrod
-) where {T}
-    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
-end
-
-function integral(
-    f,
-    box::Meshes.Box{3,T},
-    settings::GaussKronrod
-) where {T}
-    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
-end
-
-
-################################################################################
-#                               HCubature
-################################################################################
-
-# Generalized method
-function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
+    geometry3d,
+    settings::HAdaptiveCubature
+)
     function paramfactor(ts)
         J = jacobian(geometry3d, ts)
         return abs((J[1] × J[2]) ⋅ J[3])
@@ -87,24 +46,23 @@ function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
     return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
 end
 
-function integral(
-    f,
-    ball::Meshes.Ball{3,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
 
-    return _integral_3d(f, ball, settings)
+################################################################################
+#                         Unsupported Placeholders
+################################################################################
+
+function integral(
+    f::F,
+    ball::Meshes.Ball{3,T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
 end
 
 function integral(
-    f,
+    f::F,
     box::Meshes.Box{3,T},
-    settings::HAdaptiveCubature
-) where {T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
-    return _integral_3d(f, box, settings)
+    settings::GaussKronrod
+) where {F<:Function, T}
+    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
 end
