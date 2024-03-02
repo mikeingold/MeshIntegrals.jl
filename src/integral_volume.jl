@@ -84,7 +84,7 @@ end
 function _integral_3d(f, geometry3d, settings::HAdaptiveCubature)
     function paramfactor(ts)
         J = jacobian(geometry3d, ts)
-        return norm(J[1] × J[2] × J[3])
+        return abs((J[1] × J[2]) ⋅ J[3])
     end
 
     integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
