@@ -101,7 +101,7 @@ function lineintegral(
     geometry::G,
     settings::I=GaussKronrod()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if paramdim(geometry) == 1
+    if (dim = paramdim(geometry)) == 1
         return integral(f, geometry, settings)
     else
         error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
@@ -119,7 +119,7 @@ function surfaceintegral(
     geometry::G,
     settings::I=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if paramdim(geometry) == 2
+    if (dim = paramdim(geometry)) == 2
         return integral(f, geometry, settings)
     else
         error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
@@ -138,7 +138,7 @@ function volumeintegral(
     geometry::G,
     settings::I=HAdaptiveCubature()
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if paramdim(geometry) == 3
+    if (dim = paramdim(geometry)) == 3
         return integral(f, geometry, settings)
     else
         error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
