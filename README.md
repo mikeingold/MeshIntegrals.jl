@@ -92,13 +92,3 @@ fr(p) = fr(p.coords...)
     # 9.871 ms (18829 allocations: 78.40 MiB)
     # (5.551055333711397, 1.609823385706477e-15)
 ```
-
-# Plans and Work in Progress
-
-- TODO (See GitHub Issues)
-    - Improve README documentation (in lieu of Documenter)
-    - Implement Monte Carlo integration methods
-
-- Longer term plans
-    - Assess impact of upcoming Meshes.jl CRS refactor
-    - Once functionality is established and stable, evaluate transition to JuliaGeometry organization or direct absorption into Meshes.jl
