@@ -95,14 +95,9 @@ fr(p) = fr(p.coords...)
 
 # Plans and Work in Progress
 
-- TODO
-    - Update Example Usage and benchmarks
-    - Re-implement all tests for Unitful compatibility
-    - Implement Aqua.jl tests
-    - Improve README documentation in lieu of Documenter
+- TODO (See GitHub Issues)
+    - Improve README documentation (in lieu of Documenter)
     - Implement Monte Carlo integration methods
-    - Implement BenchmarkTools test suite to quantify performance
-    - Continue working to generalize and consolidate methods
 
 - Longer term plans
     - Assess impact of upcoming Meshes.jl CRS refactor
