@@ -19,6 +19,36 @@ Methods are tested to ensure compatibility with
     - Dimensionful scalars or vectors from Unitful.jl
     - Dimensionful scalars or vectors from DynamicQuantities.jl
 
+# Example Usage
+
+```julia
+using Meshes
+using MeshIntegrals
+
+# Define a unit circle on the xy-plane
+origin = Point(0,0,0)
+ẑ = Vec(0,0,1)
+xy_plane = Plane(origin,ẑ)
+unit_circle_xy = Circle(xy_plane, 1.0)
+
+# Approximate unit_circle_xy with a high-order Bezier curve
+unit_circle_bz = BezierCurve(
+    [Point(cos(t), sin(t), 0.0) for t in range(0,2pi,length=361)]
+)
+
+# A Real-valued function
+f(x,y,z) = abs(x + y)
+f(p) = f(p.coords...)
+
+integral(f, unit_circle_xy, GaussKronrod())
+    # 56.500 μs (1819 allocations: 100.95 KiB)
+    # ans == 5.656854249502878
+
+integral(f, unit_circle_bz, GaussKronrod())
+    # 9.638 ms (18830 allocations: 78.40 MiB)
+    # ans = 5.551055333711397
+```
+
 # Support Matrix
 
 | Symbol | Meaning |
@@ -62,33 +92,3 @@ Methods are tested to ensure compatibility with
 |----------|----------------|---------------|
 | `Meshes.Ball{3,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
-
-# Example Usage
-
-```julia
-using BenchmarkTools
-using Meshes
-using MeshIntegrals
-
-# Construct a path that approximates a unit circle on the xy-plane
-#   embedded in 3D space using a Bezier curve
-unit_circle = BezierCurve(
-    [Point(cos(t), sin(t), 0.0) for t in range(0,2pi,length=361)]
-)
-
-# Real function
-fr(x,y,z) = abs(x + y)
-fr(p) = fr(p.coords...)
-
-@btime lineintegral(fr, unit_circle)
-    # 9.970 ms (18831 allocations: 78.40 MiB)
-    # 5.55240987912083
-
-@btime lineintegral(fr, unit_circle, GaussLegendre(10_000))
-    # 16.932 ms (18835 allocations: 78.69 MiB)
-    # 5.551055240210768
-
-@btime lineintegral(fr, unit_circle, GaussKronrod())
-    # 9.871 ms (18829 allocations: 78.40 MiB)
-    # (5.551055333711397, 1.609823385706477e-15)
-```
