@@ -1,5 +1,8 @@
 # Surface Integral Over a Triangle
 
+**Note: This explanation reflects my original method but is no longer valid.
+An updated derivation is planned. **
+
 A linear transformation can be applied that maps any triangle onto a Barycentric
 coordinate system. A linear correction factor is then applied to correct for the
 domain transformation, where the area of the original triangle is $A$ and the area
