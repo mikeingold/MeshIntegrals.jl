@@ -142,7 +142,7 @@ function integral(
     Δ(u) = (1 + u^2) / (1 - u^2)^2
 
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(xi) * Δ(xj)
-    return T(1/4) .* sum(integrand, zip(wws,xxs))
+    return sum(integrand, zip(wws,xxs))
 end
 
 function integral(
