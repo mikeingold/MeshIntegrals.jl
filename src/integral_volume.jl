@@ -64,5 +64,13 @@ function integral(
     box::Meshes.Box{3,T},
     settings::GaussKronrod
 ) where {F<:Function, T}
-    error("Integrating a Ball{3,T} with GaussKronrod not supported.")
+    error("Integrating a Box{3,T} with GaussKronrod not supported.")
+end
+
+function integral(
+    f::F,
+    box::Meshes.Cylinder{3,T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    error("Integrating a Cylinder{T} with GaussKronrod not supported.")
 end
