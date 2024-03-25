@@ -165,15 +165,8 @@ function integral(
     t(y) = y / (1 - y^2)
     Δ(u) = (1 + u^2) / (1 - u^2)^2
 
-    #integrand(uv) = f(plane(uv[1], uv[2])) * Δ(uv[1]) * Δ(uv[2])
-    function integrand(uv)
-        result = f(plane(uv[1], uv[2])) * Δ(uv[1]) * Δ(uv[2])
-        if result == Inf
-            @info "Detected (Integrand == Inf) at uv = $uv"
-        end
-        return result
-    end
-
+    integrand(x, y) = f(plane(s(x), t(y))) * Δ(x) * Δ(y)
+    integrand(xy) = integrand(xy[1], xy[2])
     return HCubature.hcubature(integrand, [-1, -1], [1, 1]; settings.kwargs...)[1]
 end
 
