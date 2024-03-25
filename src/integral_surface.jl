@@ -141,7 +141,7 @@ function integral(
     t(y) = y / (1 - y^2)
     Δ(u) = (1 + u^2) / (1 - u^2)^2
 
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(x) * Δ(y)
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(xi) * Δ(xj)
     return T(1/4) .* sum(integrand, zip(wws,xxs))
 end
 
