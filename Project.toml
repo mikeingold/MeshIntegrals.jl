@@ -1,7 +1,7 @@
 name = "MeshIntegrals"
 uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.11.1"
+version = "0.11.2"
 
 [deps]
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
@@ -11,7 +11,7 @@ Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 
 [compat]
-DynamicQuantities = "0.11.3"
+DynamicQuantities = "0.11.3 - 0.13"
 FastGaussQuadrature = "1"
 HCubature = "1.5"
 julia = "1.6"
