@@ -134,10 +134,15 @@ end
             x, y, z = p.coords
             exp(-x^2)
         end
+        fv(p) = fill(f(p),3)
 
         @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)
         @test integral(f, line, GaussKronrod()) ≈ sqrt(π)
         @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)
+
+        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
     end
 
     # Custom tests for Plane (no measure available for reference)
@@ -148,9 +153,14 @@ end
             x, y, z = p.coords
             exp(-x^2 - y^2)
         end
+        fv(p) = fill(f(p),3)
 
         @test integral(f, plane, GaussLegendre(100)) ≈ π
         @test integral(f, plane, GaussKronrod()) ≈ π
         @test integral(f, plane, HAdaptiveCubature()) ≈ π
+
+        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π,3)
+        @test integral(fv, plane, GaussKronrod()) ≈ fill(π,3)
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π,3)
     end
 end
