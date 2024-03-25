@@ -118,6 +118,48 @@ function integral(
     # TODO Planned to support in the future
 end
 
+################################################################################
+#                      Specialized Methods for Plane
+################################################################################
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::GaussLegendre
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Plane is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
+    s(x) = x / (1 - x^2)
+    t(y) = y / (1 - y^2)
+    Δ(u) = (1 + u^2) / (1 - u^2)^2
+
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(x) * Δ(y)
+    return T(1/4) .* sum(integrand, zip(wws,xxs))
+end
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    error("Not yet implemented.")  # TODO
+end
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    error("Not yet implemented.")  # TODO
+end
 
 ################################################################################
 #                    Specialized Methods for Triangle
