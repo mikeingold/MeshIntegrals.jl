@@ -120,7 +120,7 @@ end
 
         SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
         SupportItem("Box{3,T}", box3d,           1, 0, 0, 1,   1, 0, 1),
-        SupportItem("Cylinder{T}", cyl,          1, 0, 0, 1,   1, 1, 1)
+        SupportItem("Cylinder{T}", cyl,          1, 0, 0, 1,   1, 0, 1)
     ]
 
     # Run all integral tests
