@@ -152,7 +152,7 @@ function integral(
 ) where {F<:Function, T}
     integrand(u,v) = f(plane(u, v))
     innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), -Inf, Inf; settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), Inf, Inf; settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), -Inf, Inf; settings.kwargs...)[1]
 end
 
 function integral(
