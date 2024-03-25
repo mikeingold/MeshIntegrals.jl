@@ -69,7 +69,7 @@ end
 
 function integral(
     f::F,
-    box::Meshes.Cylinder{3,T},
+    box::Meshes.Cylinder{T},
     settings::GaussKronrod
 ) where {F<:Function, T}
     error("Integrating a Cylinder{T} with GaussKronrod not supported.")
