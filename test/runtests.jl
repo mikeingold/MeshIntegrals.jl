@@ -151,6 +151,6 @@ end
 
         @test integral(f, plane, GaussLegendre(100)) ≈ π
         @test integral(f, plane, GaussKronrod()) ≈ π
-        #@test integral(f, plane, HAdaptiveCubature()) ≈ π
+        @test integral(f, plane, HAdaptiveCubature()) ≈ π
     end
 end

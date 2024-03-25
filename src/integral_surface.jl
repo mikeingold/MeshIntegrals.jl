@@ -160,7 +160,13 @@ function integral(
     plane::Meshes.Plane{T},
     settings::HAdaptiveCubature
 ) where {F<:Function, T}
-    error("Not yet implemented.")  # TODO
+    # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
+    s(x) = x / (1 - x^2)
+    t(y) = y / (1 - y^2)
+    Δ(u) = (1 + u^2) / (1 - u^2)^2
+
+    integrand(uv) = plane(uv[1], uv[2]) * Δ(uv[1]) * Δ(uv[2])
+    HCubature.hcubature(integrand, [-1, -1], [1, 1], settings.kwargs...)[1]
 end
 
 ################################################################################
