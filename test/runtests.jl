@@ -84,19 +84,17 @@ end
     box2d = Box(Point(-1.0,-1.0), Point(1.0,1.0))
     box3d = Box(Point(-1.0,-1.0,-1.0), Point(1.0,1.0,1.0))
     circle = Circle(plane_xy, 2.5)
+    cyl = Cylinder(pt_e, pt_w, 2.5)
+    cylsurf = CylinderSurface(pt_e, pt_w, 2.5)
     disk = Disk(plane_xy, 2.5)
-    line_ne = Line(pt_e, pt_n)
+    parab = ParaboloidSurface(origin3d, 2.5, 4.15)
     ring_rect = Ring(pt_e, pt_n, pt_w, pt_s)
     rope_rect = Rope(pt_e, pt_n, pt_w, pt_s, pt_e)
     seg_ne = Segment(pt_e, pt_n)
     sphere2d = Sphere(origin2d, 2.5)
     sphere3d = Sphere(origin3d, 2.5)
     triangle = Ngon(pt_e, pt_n, pt_w)
-    cylsurf = CylinderSurface(pt_e, pt_w, 2.5)   # TODO modify to a non-right-CylinderSurface when measure(c) supported in Meshes
     torus = Torus(origin3d, ẑ, 3.5, 1.25)
-    parab = ParaboloidSurface(origin3d, 2.5, 4.15)
-
-    # TODO Custom tests: Line, Plane
 
     SUPPORT_MATRIX = [
     # Name, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
@@ -114,15 +112,55 @@ end
         SupportItem("CylinderSurface", cylsurf,      1, 0, 1, 0,   0, 1, 0),
         SupportItem("Disk", disk,                    1, 0, 1, 0,   1, 1, 1),
         SupportItem("ParaboloidSurface{T}", parab,   1, 0, 1, 0,   1, 1, 1),
+        # Plane -- custom test
         SupportItem("Sphere{3,T}", sphere3d,         1, 0, 1, 0,   1, 1, 1),
         SupportItem("Triangle", triangle,            1, 0, 1, 0,   1, 1, 1),
         SupportItem("Torus{T}", torus,               1, 0, 1, 0,   1, 1, 1),
         # SimpleMesh -- not yet supported
 
         SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
-        SupportItem("Box{3,T}", box3d,           1, 0, 0, 1,   1, 0, 1)
+        SupportItem("Box{3,T}", box3d,           1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Cylinder{T}", cyl,          1, 0, 0, 1,   1, 0, 1)
     ]
 
     # Run all integral tests
     map(autotest, SUPPORT_MATRIX)
+
+    # Custom tests for Line (no measure available for reference)
+    @testset "Meshes.Line" begin
+        line = Line(pt_e, pt_w)
+
+        function f(p::Point{3,T}) where {T}
+            x, y, z = p.coords
+            exp(-x^2)
+        end
+        fv(p) = fill(f(p),3)
+
+        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)
+        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)
+        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)
+
+        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+    end
+
+    # Custom tests for Plane (no measure available for reference)
+    @testset "Meshes.Plane" begin
+        plane = Plane(origin3d, ẑ)
+
+        function f(p::Point{3,T}) where {T}
+            x, y, z = p.coords
+            exp(-x^2 - y^2)
+        end
+        fv(p) = fill(f(p),3)
+
+        @test integral(f, plane, GaussLegendre(100)) ≈ π
+        @test integral(f, plane, GaussKronrod()) ≈ π
+        @test integral(f, plane, HAdaptiveCubature()) ≈ π
+
+        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π,3)
+        @test integral(fv, plane, GaussKronrod()) ≈ fill(π,3)
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π,3)
+    end
 end

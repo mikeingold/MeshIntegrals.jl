@@ -118,6 +118,57 @@ function integral(
     # TODO Planned to support in the future
 end
 
+################################################################################
+#                      Specialized Methods for Plane
+################################################################################
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::GaussLegendre
+) where {F<:Function, T}
+    # Validate the provided integrand function
+    # A Plane is definitionally embedded in 3D-space
+    _validate_integrand(f,3,T)
+
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
+    xs, ws = gausslegendre(settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
+
+    # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
+    s(x) = x / (1 - x^2)
+    t(y) = y / (1 - y^2)
+    Δ(u) = (1 + u^2) / (1 - u^2)^2
+
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(xi) * Δ(xj)
+    return sum(integrand, zip(wws,xxs))
+end
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::GaussKronrod
+) where {F<:Function, T}
+    integrand(u,v) = f(plane(u, v))
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), -Inf, Inf; settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), -Inf, Inf; settings.kwargs...)[1]
+end
+
+function integral(
+    f::F,
+    plane::Meshes.Plane{T},
+    settings::HAdaptiveCubature
+) where {F<:Function, T}
+    # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
+    s(x) = x / (1 - x^2)
+    t(y) = y / (1 - y^2)
+    Δ(u) = (1 + u^2) / (1 - u^2)^2
+
+    integrand(x, y) = f(plane(s(x), t(y))) * Δ(x) * Δ(y)
+    integrand(xy) = integrand(xy[1], xy[2])
+    return HCubature.hcubature(integrand, [-1, -1], [1, 1]; settings.kwargs...)[1]
+end
 
 ################################################################################
 #                    Specialized Methods for Triangle

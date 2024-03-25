@@ -92,3 +92,4 @@ integral(f, unit_circle_bz, GaussKronrod())
 |----------|----------------|---------------|
 | `Meshes.Ball{3,T}` | :white_check_mark: | :white_check_mark: |
 | `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
+| `Meshes.Cylinder{T}` | :white_check_mark: | :white_check_mark: |
