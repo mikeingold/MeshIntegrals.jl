@@ -98,29 +98,24 @@ end
 
     SUPPORT_MATRIX = [
     # Name, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("BezierCurve", bezier,       1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{1,T}", box1d,           1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Circle", circle,            1, 1, 0, 0,   1, 1, 1),
-        # Line -- custom test
-        SupportItem("Ring", ring_rect,           1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope", rope_rect,           1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment", seg_ne,           1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Sphere{2,T}", sphere2d,     1, 1, 0, 0,   1, 1, 1),
-
-        SupportItem("Ball{2,T}", ball2d,             1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{2,T}", box2d,               1, 0, 1, 0,   1, 1, 1),
-        SupportItem("CylinderSurface", cylsurf,      1, 0, 1, 0,   0, 1, 0),
-        SupportItem("Disk", disk,                    1, 0, 1, 0,   1, 1, 1),
-        SupportItem("ParaboloidSurface{T}", parab,   1, 0, 1, 0,   1, 1, 1),
-        # Plane -- custom test
-        SupportItem("Sphere{3,T}", sphere3d,         1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Triangle", triangle,            1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Torus{T}", torus,               1, 0, 1, 0,   1, 1, 1),
-        # SimpleMesh -- not yet supported
-
-        SupportItem("Ball{3,T}", ball3d,         1, 0, 0, 1,   1, 0, 1),
-        SupportItem("Box{3,T}", box3d,           1, 0, 0, 1,   1, 0, 1),
-        SupportItem("Cylinder{T}", cyl,          1, 0, 0, 1,   1, 0, 1)
+        SupportItem("Ball{2,T}", ball2d,          1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ball{3,T}", ball3d,          1, 0, 0, 1,   1, 0, 1),
+        SupportItem("BezierCurve", bezier,        1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{1,T}", box1d,            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{2,T}", box2d,            1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{3,T}", box3d,            1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Circle", circle,             1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Cylinder", cyl,              1, 0, 0, 1,   1, 0, 1),
+        SupportItem("CylinderSurface", cylsurf,   1, 0, 1, 0,   0, 1, 0),
+        SupportItem("Disk", disk,                 1, 0, 1, 0,   1, 1, 1),
+        SupportItem("ParaboloidSurface", parab,   1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ring", ring_rect,            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Rope", rope_rect,            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Segment", seg_ne,            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Sphere{2,T}", sphere2d,      1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Sphere{3,T}", sphere3d,      1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Triangle", triangle,         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Torus", torus,               1, 0, 1, 0,   1, 1, 1),
     ]
 
     # Run all integral tests
