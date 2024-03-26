@@ -104,34 +104,34 @@ end
 
     SUPPORT_MATRIX(T) = [
     # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("Ball{2,T}", T, ball2d(T),          1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Ball{3,T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Ball{2,$T}", T, ball2d(T),          1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ball{3,$T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
         # Ball{Dim,T}
-        SupportItem("BezierCurve", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{1,T}", T, box1d(T),            1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{2,T}", T, box2d(T),            1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{3,T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
+        SupportItem("BezierCurve{$T}", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{1,$T}", T, box1d(T),            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{2,$T}", T, box2d(T),            1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{3,$T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
-        SupportItem("Circle", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone
         # ConeSurface
-        SupportItem("Cylinder", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
-        SupportItem("CylinderSurface", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 0),
-        SupportItem("Disk", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
+        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 0),
+        SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum
         # FrustumSurface
         # Line -- custom tests below
-        SupportItem("ParaboloidSurface", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
+        SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         # Plane -- custom tests below
         # Ray
-        SupportItem("Ring", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
-        SupportItem("Sphere{2,T}", T, sphere2d(T),      1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Sphere{3,T}", T, sphere3d(T),      1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Triangle", T, triangle(T),         1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Torus", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Triangle{$T}", T, triangle(T),         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Torus{$T}", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
     ]
 
     # Run all integral tests
