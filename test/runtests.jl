@@ -23,9 +23,9 @@ SupportItem(name, type, geometry, checkboxes::Vararg{I,7}) where {I<:Integer} = 
 
 # If method is supported, test it on scalar- and vector-valued functions.
 # Otherwise, test that its use throws a MethodError
-function integraltest(intf, geometry, rule, supported)
-    f(::Point) = 1.0
-    fv(::Point) = fill(1.0,3)
+function integraltest(intf, geometry, rule, supported, T)
+    f(::Point) = T(1)
+    fv(::Point) = fill(T(1),3)
 
     if supported
         @test intf(f, geometry, rule) ≈ measure(geometry)
@@ -57,7 +57,7 @@ function autotest(item::SupportItem)
     # For each enabled solver type, run the test suite
     @testset "$(item.name)" begin
         for ((method,methodsupport), (alg,algsupport)) in itemsupport
-            integraltest(method, item.geometry, alg, methodsupport && algsupport)
+            integraltest(method, item.geometry, alg, methodsupport && algsupport, item.type)
         end
     end
 end
