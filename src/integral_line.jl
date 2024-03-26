@@ -47,6 +47,8 @@ function _integral_1d(
     geometry,
     settings::HAdaptiveCubature
 )
+    T = coordtype(geometry)
+
     function paramfactor(t)
         J = jacobian(geometry,t)
         return norm(J[1])
