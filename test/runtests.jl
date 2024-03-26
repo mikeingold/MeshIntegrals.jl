@@ -28,7 +28,9 @@ function integraltest(intf, geometry, rule, supported, T)
     fv(::Point) = fill(T(1),3)
 
     if supported
-        @test (a1 = intf(f, geometry, rule)) ≈ (b1 = measure(geometry))
+        a1 = intf(f, geometry, rule)
+        b1 = measure(geometry)
+        @test a1 ≈ b1
         @test typeof(a1) == typeof(b1)
         @test intf(fv, geometry, rule) ≈ fill(b1,3)
     else
