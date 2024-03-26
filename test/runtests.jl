@@ -6,9 +6,9 @@ using Test
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem{G<:Meshes.Geometry}
+struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
     name::String
-    T::Type
+    type::Type{T}
     geometry::G
     integral::Bool
     lineintegral::Bool
@@ -35,7 +35,7 @@ end
 
 # Generate a @testset for item
 function autotest(item::SupportItem)
-    @assert item.T == coordtype(item.geometry) "Item type mismatch"
+    @assert item.type == coordtype(item.geometry) "Item type mismatch"
 
     algorithm_set = [
         (GaussLegendre(100),  item.gausslegendre),
