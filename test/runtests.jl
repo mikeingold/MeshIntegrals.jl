@@ -97,7 +97,7 @@ end
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
     rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
-    segment(T)   = Segment(pt_e(T), pt_n(T))
+    segment(T)  = Segment(pt_e(T), pt_n(T))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
     triangle(T) = Ngon(pt_e(T), pt_n(T), pt_w(T))
@@ -135,9 +135,14 @@ end
         SupportItem("Torus{$T}", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
     ]
 
-    # Run all integral tests
-    #map(autotest, SUPPORT_MATRIX(Float32))    # TODO temp disable, see Issue
-    map(autotest, SUPPORT_MATRIX(Float64))
+    @testset "Float64 Geometries" begin
+        map(autotest, SUPPORT_MATRIX(Float64))
+    end
+
+    @testset "Float32 Geometries" begin
+        # TODO temp disabled, see Issue #33
+        #map(autotest, SUPPORT_MATRIX(Float64))
+    end
 
     # Custom tests for Line (no measure available for reference)
     @testset "Meshes.Line" begin
