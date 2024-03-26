@@ -42,8 +42,9 @@ end
 function autotest(item::SupportItem)
     @assert item.type == coordtype(item.geometry) "Item type mismatch"
 
+    N = (item.type == Float32) ? 1000 : 100
     algorithm_set = [
-        (GaussLegendre(100),  item.gausslegendre),
+        (GaussLegendre(N),  item.gausslegendre),
         (GaussKronrod(),      item.gausskronrod),
         (HAdaptiveCubature(), item.hadaptivecubature)
     ]
