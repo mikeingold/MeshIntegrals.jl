@@ -135,7 +135,7 @@ end
     ]
 
     # Run all integral tests
-    #map(autotest, SUPPORT_MATRIX(Float32))  TODO re-enable
+    map(autotest, SUPPORT_MATRIX(Float32))
     map(autotest, SUPPORT_MATRIX(Float64))
 
     # Custom tests for Line (no measure available for reference)
