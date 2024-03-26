@@ -8,7 +8,7 @@ function _integral_3d(
     settings::GaussLegendre
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = T.(gausslegendre(settings.n))
     wws = Iterators.product(ws, ws, ws)
     xxs = Iterators.product(xs, xs, xs)
 
