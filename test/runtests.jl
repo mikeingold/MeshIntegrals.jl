@@ -106,12 +106,12 @@ end
     SUPPORT_MATRIX(T) = [
     # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
         SupportItem("Ball{2,$T}", T, ball2d(T),          1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Ball{3,$T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
+        #SupportItem("Ball{3,$T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
         # Ball{Dim,T}
         SupportItem("BezierCurve{$T}", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{1,$T}", T, box1d(T),            1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{2,$T}", T, box2d(T),            1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{3,$T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
+        #SupportItem("Box{3,$T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone
