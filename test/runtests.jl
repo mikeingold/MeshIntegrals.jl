@@ -6,7 +6,7 @@ using Test
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem{G} where {G<:Meshes.Geometry}
+struct SupportItem{G<:Meshes.Geometry}
     name::String
     T::Type
     geometry::G
