@@ -54,7 +54,6 @@ integral(f, unit_circle_bz, GaussKronrod())
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :yellow_square: | Implemented, not yet validated |
 | :x: | Planned but not yet implemented |
 | :warning: | Unable to implement until parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
 
