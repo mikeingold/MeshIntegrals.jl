@@ -4,17 +4,17 @@
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::GaussLegendre
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = gausslegendre(settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Domain transformation: x [-1,1] ↦ u,v [0,1]
-    u(x) = 0.5x + 0.5
-    v(x) = 0.5x + 0.5
+    u(x) = T(1/2)*x + T(1/2)
+    v(x) = T(1/2)*x + T(1/2)
     point(xi,xj) = geometry2d(u(xi), v(xj))
 
     function paramfactor(xi, xj)
@@ -25,36 +25,36 @@ function _integral_2d(
 
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
 
-    return 0.25 .* sum(integrand, zip(wws,xxs))
+    return T(1/4) .* sum(integrand, zip(wws,xxs))
 end
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::GaussKronrod
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
     end
 
     integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), T(0), T(1); settings.kwargs...)[1]
 end
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::HAdaptiveCubature
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
     end
 
     integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
-    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
+    return hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
 end
 
 
