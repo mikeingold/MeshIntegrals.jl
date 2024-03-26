@@ -56,27 +56,27 @@ integral(f, unit_circle_bz, GaussKronrod())
 | :white_check_mark: | Implemented, passes tests |
 | :yellow_square: | Implemented, not yet validated |
 | :x: | Planned but not yet implemented |
-| :o: | Unable to implement until parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
+| :warning: | Unable to implement until parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
 
 ### Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
 | `Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Ball{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
-| `Ball{Dim,T}` | :o: | :o: | :o: |
+| `Ball{Dim,T}` | :warning: | :warning: | :warning: |
 | `BezierCurve{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box{1,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
 | `Box{Dim,T}` | :x: | :x: | :x: |
 | `Circle{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Cone{T}` | :o: | :o: | :o: |
+| `Cone{T}` | :warning: | :warning: | :warning: |
 | `ConeSurface{T}` | :x: | :x: | :x: |
 | `Cylinder{T}` | :white_check_mark: | :x: | :white_check_mark: |
 | `CylinderSurface{T}` | :x: | :white_check_mark: | :x: |
 | `Disk{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Frustum{T}` | :o: | :o: | :o: |
-| `FrustumSurface{T}` | :o: | :o: | :o: |
+| `Frustum{T}` | :warning: | :warning: | :warning: |
+| `FrustumSurface{T}` | :warning: | :warning: | :warning: |
 | `Line{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ParaboloidSurface{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Plane{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
