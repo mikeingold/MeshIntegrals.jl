@@ -19,6 +19,8 @@ struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
     hadaptivecubature::Bool
 end
 
+SupportItem(name, type, geometry, checkboxes::VarArg{I,7}) where {I<:Integer} = SupportItem(name, type, geometry, Bool.(checkboxes)...)
+
 # If method is supported, test it on scalar- and vector-valued functions.
 # Otherwise, test that its use throws a MethodError
 function integraltest(intf, geometry, rule, supported)
