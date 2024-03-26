@@ -8,7 +8,7 @@ function _integral_2d(
     settings::GaussLegendre
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
@@ -132,7 +132,7 @@ function integral(
     _validate_integrand(f,3,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
@@ -191,7 +191,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 

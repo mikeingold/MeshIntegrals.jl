@@ -10,7 +10,7 @@ function _integral_1d(
     T = coordtype(geometry)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = T(1/2) * x + T(1/2)
@@ -88,7 +88,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = T(1/2) * x + T(1/2)
@@ -159,7 +159,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = T.(gausslegendre(settings.n))
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Get domain-corrected parametric locator
     len = length(Segment(line.a,line.b))

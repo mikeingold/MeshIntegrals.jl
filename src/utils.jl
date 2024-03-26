@@ -99,3 +99,9 @@ end
         error("The provided Function f must have a method f(::Meshes.Point{$Dim,$T})")
     end
 end
+
+# Calculate Gauss-Legendre nodes/weights and convert to type T
+function _gausslegendre(T, n)
+    xs, ws = FastGaussQuadrature.gausslegendre(n)
+    return T.(xs), T.(ws)
+end
