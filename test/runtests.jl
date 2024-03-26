@@ -140,7 +140,7 @@ end
 
     # Custom tests for Line (no measure available for reference)
     @testset "Meshes.Line" begin
-        line = Line(pt_e, pt_w)
+        line = Line(pt_e(Float64), pt_w(Float64))
 
         function f(p::Point{3,T}) where {T}
             x, y, z = p.coords
@@ -159,7 +159,7 @@ end
 
     # Custom tests for Plane (no measure available for reference)
     @testset "Meshes.Plane" begin
-        plane = Plane(origin3d, ẑ)
+        plane = Plane(origin3d(Float64), ẑ(Float64))
 
         function f(p::Point{3,T}) where {T}
             x, y, z = p.coords
