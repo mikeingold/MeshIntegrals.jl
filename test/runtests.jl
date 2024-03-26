@@ -6,9 +6,10 @@ using Test
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem
+struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
     name::String
-    geometry
+    type::Type{T}
+    geometry::G
     integral::Bool
     lineintegral::Bool
     surfaceintegral::Bool
@@ -18,15 +19,20 @@ struct SupportItem
     hadaptivecubature::Bool
 end
 
+SupportItem(name, type, geometry, checkboxes::Vararg{I,7}) where {I<:Integer} = SupportItem(name, type, geometry, Bool.(checkboxes)...)
+
 # If method is supported, test it on scalar- and vector-valued functions.
 # Otherwise, test that its use throws a MethodError
-function integraltest(intf, geometry, rule, supported)
-    f(::Point) = 1.0
-    fv(::Point) = fill(1.0,3)
+function integraltest(intf, geometry, rule, supported, T)
+    f(::Point) = T(1)
+    fv(::Point) = fill(T(1),2)
 
     if supported
-        @test intf(f, geometry, rule) ≈ measure(geometry)
-        @test intf(fv, geometry, rule) ≈ fill(measure(geometry),3)
+        a1 = intf(f, geometry, rule)
+        b1 = measure(geometry)
+        @test a1 ≈ b1
+        @test typeof(a1) == typeof(b1)
+        @test intf(fv, geometry, rule) ≈ fill(b1,2)
     else
         @test_throws "not supported" intf(f, geometry, rule)
     end
@@ -34,8 +40,11 @@ end
 
 # Generate a @testset for item
 function autotest(item::SupportItem)
+    @assert item.type == coordtype(item.geometry) "Item type mismatch"
+
+    N = (item.type == Float32) ? 1000 : 100
     algorithm_set = [
-        (GaussLegendre(100),  item.gausslegendre),
+        (GaussLegendre(N),  item.gausslegendre),
         (GaussKronrod(),      item.gausskronrod),
         (HAdaptiveCubature(), item.hadaptivecubature)
     ]
@@ -52,7 +61,7 @@ function autotest(item::SupportItem)
     # For each enabled solver type, run the test suite
     @testset "$(item.name)" begin
         for ((method,methodsupport), (alg,algsupport)) in itemsupport
-            integraltest(method, item.geometry, alg, methodsupport && algsupport)
+            integraltest(method, item.geometry, alg, methodsupport && algsupport, item.type)
         end
     end
 end
@@ -63,74 +72,81 @@ end
 
 @testset "Integrals" begin
     # Spatial descriptors
-    origin3d = Point(0.0, 0.0, 0.0)
-    origin2d = Point(0.0, 0.0)
-    ẑ = Vec(0.0, 0.0, 1.0)
-    plane_xy = Plane(origin3d,ẑ)
+    origin3d(T) = Point(T(0), T(0), T(0))
+    origin2d(T) = Point(T(0), T(0))
+    ẑ(T) = Vec(T(0), T(0), T(1))
+    plane_xy(T) = Plane(origin3d(T), ẑ(T))
 
-    # Points on unit circle at axes
-                   pt_n = Point( 0.0,  1.0, 0.0)
-    pt_w = Point(-1.0,  0.0, 0.0);    pt_e = Point( 1.0,  0.0, 0.0)
-                   pt_s = Point( 0.0, -1.0, 0.0)  
+    # Points on xy-plane at unit distance on axes
+    pt_n(T) = Point(T( 0), T( 1), T(0))
+    pt_w(T) = Point(T(-1), T( 0), T(0))
+    pt_e(T) = Point(T( 1), T( 0), T(0))
+    pt_s(T) = Point(T( 0), T(-1), T(0))
     
     # Test Geometries
-    ball2d = Ball(origin2d, 2.0)
-    ball3d = Ball(origin3d, 2.0)
-    bezier = BezierCurve([Point(cos(t), sin(t), 0.0) for t in range(0, 2pi, length=361)])
-    box1d = Box(Point(-1.0), Point(1.0))
-    box2d = Box(Point(-1.0,-1.0), Point(1.0,1.0))
-    box3d = Box(Point(-1.0,-1.0,-1.0), Point(1.0,1.0,1.0))
-    circle = Circle(plane_xy, 2.5)
-    cyl = Cylinder(pt_e, pt_w, 2.5)
-    cylsurf = CylinderSurface(pt_e, pt_w, 2.5)
-    disk = Disk(plane_xy, 2.5)
-    parab = ParaboloidSurface(origin3d, 2.5, 4.15)
-    ring_rect = Ring(pt_e, pt_n, pt_w, pt_s)
-    rope_rect = Rope(pt_e, pt_n, pt_w, pt_s, pt_e)
-    seg_ne = Segment(pt_e, pt_n)
-    sphere2d = Sphere(origin2d, 2.5)
-    sphere3d = Sphere(origin3d, 2.5)
-    triangle = Ngon(pt_e, pt_n, pt_w)
-    torus = Torus(origin3d, ẑ, 3.5, 1.25)
+    ball2d(T)   = Ball{2,T}(origin2d(T), T(2.0))
+    ball3d(T)   = Ball{3,T}(origin3d(T), T(2.0))
+    bezier(T)   = BezierCurve([Point(cos(t), sin(t), 0) for t in range(T(0), T(2π), length=361)])
+    box1d(T)    = Box{1,T}(Point(T(-1)), Point(T(1)))
+    box2d(T)    = Box{2,T}(Point(T(-1), T(-1)), Point(T(1), T(1)))
+    box3d(T)    = Box{3,T}(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
+    circle(T)   = Circle(plane_xy(T), T(2.5))
+    cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
+    cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
+    disk(T)     = Disk(plane_xy(T), T(2.5))
+    parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
+    ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
+    rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
+    segment(T)  = Segment(pt_e(T), pt_n(T))
+    sphere2d(T) = Sphere(origin2d(T), T(2.5))
+    sphere3d(T) = Sphere(origin3d(T), T(2.5))
+    triangle(T) = Ngon(pt_e(T), pt_n(T), pt_w(T))
+    torus(T)    = Torus(origin3d(T), ẑ(T), T(3.5), T(1.25))
 
-    SUPPORT_MATRIX = [
-    # Name, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("Ball{2,T}", ball2d,          1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Ball{3,T}", ball3d,          1, 0, 0, 1,   1, 0, 1),
+    SUPPORT_MATRIX(T) = [
+    # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
+        SupportItem("Ball{2,$T}", T, ball2d(T),          1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ball{3,$T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
         # Ball{Dim,T}
-        SupportItem("BezierCurve", bezier,        1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{1,T}", box1d,            1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{2,T}", box2d,            1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{3,T}", box3d,            1, 0, 0, 1,   1, 0, 1),
+        SupportItem("BezierCurve{$T}", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{1,$T}", T, box1d(T),            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{2,$T}", T, box2d(T),            1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{3,$T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
-        SupportItem("Circle", circle,             1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone
         # ConeSurface
-        SupportItem("Cylinder", cyl,              1, 0, 0, 1,   1, 0, 1),
-        SupportItem("CylinderSurface", cylsurf,   1, 0, 1, 0,   0, 1, 0),
-        SupportItem("Disk", disk,                 1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
+        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 0),
+        SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum
         # FrustumSurface
         # Line -- custom tests below
-        SupportItem("ParaboloidSurface", parab,   1, 0, 1, 0,   1, 1, 1),
+        SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         # Plane -- custom tests below
         # Ray
-        SupportItem("Ring", ring_rect,            1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope", rope_rect,            1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment", seg_ne,            1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
-        SupportItem("Sphere{2,T}", sphere2d,      1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Sphere{3,T}", sphere3d,      1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Triangle", triangle,         1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Torus", torus,               1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Triangle{$T}", T, triangle(T),         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Torus{$T}", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
     ]
 
-    # Run all integral tests
-    map(autotest, SUPPORT_MATRIX)
+    @testset "Float64 Geometries" begin
+        map(autotest, SUPPORT_MATRIX(Float64))
+    end
+
+    @testset "Float32 Geometries" begin
+        # TODO temp disabled, see Issue #33
+        #map(autotest, SUPPORT_MATRIX(Float64))
+    end
 
     # Custom tests for Line (no measure available for reference)
     @testset "Meshes.Line" begin
-        line = Line(pt_e, pt_w)
+        line = Line(pt_e(Float64), pt_w(Float64))
 
         function f(p::Point{3,T}) where {T}
             x, y, z = p.coords
@@ -149,7 +165,7 @@ end
 
     # Custom tests for Plane (no measure available for reference)
     @testset "Meshes.Plane" begin
-        plane = Plane(origin3d, ẑ)
+        plane = Plane(origin3d(Float64), ẑ(Float64))
 
         function f(p::Point{3,T}) where {T}
             x, y, z = p.coords

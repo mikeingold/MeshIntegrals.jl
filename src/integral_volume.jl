@@ -4,18 +4,18 @@
 
 function _integral_3d(
     f,
-    geometry3d,
+    geometry3d::G,
     settings::GaussLegendre
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws, ws)
     xxs = Iterators.product(xs, xs, xs)
 
     # Domain transformation: x [-1,1] ↦ s,t,u [0,1]
-    s(x) = 0.5x + 0.5
-    t(x) = 0.5x + 0.5
-    u(x) = 0.5x + 0.5
+    s(x) = T(1/2) * x + T(1/2)
+    t(x) = T(1/2) * x + T(1/2)
+    u(x) = T(1/2) * x + T(1/2)
 
     point(stu) = geometry3d(stu[1], stu[2], stu[3])
 
@@ -29,21 +29,21 @@ function _integral_3d(
         wi * wj * wk * f(point(stu)) * paramfactor(stu)
     end
 
-    return (1/8) .* sum(integrand, zip(wws,xxs))
+    return T(1/8) .* sum(integrand, zip(wws,xxs))
 end
 
 function _integral_3d(
     f,
-    geometry3d,
+    geometry3d::G,
     settings::HAdaptiveCubature
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     function paramfactor(ts)
         J = jacobian(geometry3d, ts)
         return abs((J[1] × J[2]) ⋅ J[3])
     end
 
     integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
-    return hcubature(integrand, zeros(3), ones(3); settings.kwargs...)[1]
+    return hcubature(integrand, zeros(T,3), ones(T,3); settings.kwargs...)[1]
 end
 
 

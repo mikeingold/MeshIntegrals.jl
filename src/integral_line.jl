@@ -7,21 +7,23 @@ function _integral_1d(
     geometry,
     settings::GaussLegendre
 )
+    T = coordtype(geometry)
+
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
+    t(x) = T(1/2) * x + T(1/2)
     point(x) = geometry(t(x))
 
     function paramfactor(x)
-        J = jacobian(geometry,[t(x)])
+        J = jacobian(geometry, T[t(x)])
         return norm(J[1])
     end
 
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
     integrand((w,x)) = w * f(point(x)) * paramfactor(x)
-    return 0.5 * sum(integrand, zip(ws, xs))
+    return T(1/2) * sum(integrand, zip(ws, xs))
 end
 
 function _integral_1d(
@@ -29,13 +31,15 @@ function _integral_1d(
     geometry,
     settings::GaussKronrod
 )
+    T = coordtype(geometry)
+    
     function paramfactor(t)
-        J = jacobian(geometry,[t])
+        J = jacobian(geometry, T[t])
         return norm(J[1])
     end
 
     integrand(t) = f(geometry(t)) * paramfactor(t)
-    return QuadGK.quadgk(integrand, 0, 1; settings.kwargs...)[1]
+    return QuadGK.quadgk(integrand, T(0), T(1); settings.kwargs...)[1]
 end
 
 function _integral_1d(
@@ -43,13 +47,15 @@ function _integral_1d(
     geometry,
     settings::HAdaptiveCubature
 )
+    T = coordtype(geometry)
+
     function paramfactor(t)
-        J = jacobian(geometry,t)
+        J = jacobian(geometry, t)
         return norm(J[1])
     end
 
     integrand(t) = f(geometry(t[1])) * paramfactor(t)
-    return HCubature.hcubature(integrand, [0], [1]; settings.kwargs...)[1]
+    return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
 end
 
 
@@ -86,14 +92,14 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = 0.5x + 0.5
+    t(x) = T(1/2) * x + T(1/2)
     point(x) = curve(t(x), alg)
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return 0.5 * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return T(1/2) * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
 """
@@ -117,7 +123,7 @@ function integral(
 
     len = length(curve)
     point(t) = curve(t, alg)
-    return QuadGK.quadgk(t -> len * f(point(t)), 0, 1; settings.kwargs...)[1]
+    return QuadGK.quadgk(t -> len * f(point(t)), T(0), T(1); settings.kwargs...)[1]
 end
 
 """
@@ -141,7 +147,7 @@ function integral(
 
     len = length(curve)
     point(t) = curve(t, alg)
-    return hcubature(t -> len * f(point(t[1])), [0], [1]; settings.kwargs...)[1]
+    return hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
@@ -157,7 +163,7 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
 
     # Get domain-corrected parametric locator
     len = length(Segment(line.a,line.b))
@@ -183,7 +189,7 @@ function integral(
     point(t) = line(t/len)
 
     # Lines are infinite-length passing through defined points a and b
-    return QuadGK.quadgk(t -> f(point(t)), -Inf, Inf; settings.kwargs...)[1]
+    return QuadGK.quadgk(t -> f(point(t)), T(-Inf), T(Inf); settings.kwargs...)[1]
 end
 
 function integral(
@@ -203,7 +209,7 @@ function integral(
     integrand(x::AbstractVector) = integrand(x[1])
 
     # Lines are infinite-length passing through defined points a and b
-    return hcubature(integrand, [-1], [1]; settings.kwargs...)[1]
+    return hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################

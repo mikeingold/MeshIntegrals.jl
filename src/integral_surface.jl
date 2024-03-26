@@ -4,17 +4,17 @@
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::GaussLegendre
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Domain transformation: x [-1,1] ↦ u,v [0,1]
-    u(x) = 0.5x + 0.5
-    v(x) = 0.5x + 0.5
+    u(x) = T(1/2)*x + T(1/2)
+    v(x) = T(1/2)*x + T(1/2)
     point(xi,xj) = geometry2d(u(xi), v(xj))
 
     function paramfactor(xi, xj)
@@ -25,36 +25,36 @@ function _integral_2d(
 
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
 
-    return 0.25 .* sum(integrand, zip(wws,xxs))
+    return T(1/4) .* sum(integrand, zip(wws,xxs))
 end
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::GaussKronrod
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
     end
 
     integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), 0, 1; settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), 0, 1; settings.kwargs...)[1]
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), T(0), T(1); settings.kwargs...)[1]
 end
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry2d::G,
     settings::HAdaptiveCubature
-)
+) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     function paramfactor(uv)
         J = jacobian(geometry2d, uv)
         return norm(J[1] × J[2])
     end
 
     integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
-    return hcubature(integrand, [0,0], [1,1]; settings.kwargs...)[1]
+    return hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
 end
 
 
@@ -86,25 +86,25 @@ function integral(
     # Integrate the rounded sides of the cylinder's surface
     # \int ( \int f(r̄) dz ) dφ
     function sides_innerintegral(φ)
-        sidelength = norm(cyl(φ,1) - cyl(φ,0))
-        return sidelength * quadgk(z -> f(cyl(φ,z)), 0, 1; settings.kwargs...)[1]
+        sidelength = norm(cyl(φ,T(1)) - cyl(φ,T(0)))
+        return sidelength * quadgk(z -> f(cyl(φ,z)), T(0), T(1); settings.kwargs...)[1]
     end
-    sides = (2π * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), 0, 1; settings.kwargs...)[1]
+    sides = (T(2π) * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), T(0), T(1); settings.kwargs...)[1]
 
     # Integrate the top and bottom disks
     # \int ( \int r f(r̄) dr ) dφ
     function disk_innerintegral(φ,plane,z)
         # Parameterize the top surface of the cylinder
-        rimedge = cyl(φ,z)
+        rimedge = cyl(φ,T(z))
         centerpoint = plane.p
         r̄ = rimedge - centerpoint
         radius = norm(r̄)
         point(r) = centerpoint + (r / radius) * r̄
 
-        return radius^2 * quadgk(r -> r * f(point(r)), 0, 1; settings.kwargs...)[1]
+        return radius^2 * quadgk(r -> r * f(point(r)), T(0), T(1); settings.kwargs...)[1]
     end
-    top    = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), 0, 1; settings.kwargs...)[1]
-    bottom = 2π .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), 0, 1; settings.kwargs...)[1]
+    top    = T(2π) .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), T(0), T(1); settings.kwargs...)[1]
+    bottom = T(2π) .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), T(0), T(1); settings.kwargs...)[1]
 
     return sides + top + bottom
 end
@@ -132,14 +132,14 @@ function integral(
     _validate_integrand(f,3,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
-    s(x) = x / (1 - x^2)
-    t(y) = y / (1 - y^2)
-    Δ(u) = (1 + u^2) / (1 - u^2)^2
+    s(x) = x / (T(1) - x^2)
+    t(y) = y / (T(1) - y^2)
+    Δ(u) = (T(1) + u^2) / (T(1) - u^2)^2
 
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(s(xi), t(xj))) * Δ(xi) * Δ(xj)
     return sum(integrand, zip(wws,xxs))
@@ -151,8 +151,8 @@ function integral(
     settings::GaussKronrod
 ) where {F<:Function, T}
     integrand(u,v) = f(plane(u, v))
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), -Inf, Inf; settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), -Inf, Inf; settings.kwargs...)[1]
+    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(-Inf), T(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> innerintegral(v), T(-Inf), T(Inf); settings.kwargs...)[1]
 end
 
 function integral(
@@ -161,13 +161,13 @@ function integral(
     settings::HAdaptiveCubature
 ) where {F<:Function, T}
     # Change of variables: s,t [-Inf,Inf] ↦ x,y [-1,1]
-    s(x) = x / (1 - x^2)
-    t(y) = y / (1 - y^2)
-    Δ(u) = (1 + u^2) / (1 - u^2)^2
+    s(x) = x / (T(1) - x^2)
+    t(y) = y / (T(1) - y^2)
+    Δ(u) = (T(1) + u^2) / (T(1) - u^2)^2
 
     integrand(x, y) = f(plane(s(x), t(y))) * Δ(x) * Δ(y)
     integrand(xy) = integrand(xy[1], xy[2])
-    return HCubature.hcubature(integrand, [-1, -1], [1, 1]; settings.kwargs...)[1]
+    return HCubature.hcubature(integrand, T[-1, -1], T[1, 1]; settings.kwargs...)[1]
 end
 
 ################################################################################
@@ -191,15 +191,15 @@ function integral(
     _validate_integrand(f,Dim,T)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = gausslegendre(settings.n)
+    xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Domain transformations:
     #   xᵢ [-1,1] ↦ R [0,1]
     #   xⱼ [-1,1] ↦ φ [0,π/2]
-    uR(xᵢ) = 0.5 * (xᵢ + 1)
-    uφ(xⱼ) = (π/4) * (xⱼ + 1)
+    uR(xᵢ) = T(1/2) * (xᵢ + T(1))
+    uφ(xⱼ) = T(π/4) * (xⱼ + T(1))
 
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
@@ -210,14 +210,14 @@ function integral(
         R = uR(xᵢ)
         φ = uφ(xⱼ)
         a,b = sincos(φ)
-        u = R * (1 - a/(a+b))
-        v = R * (1 - b/(a+b))
+        u = R * (T(1) - a/(a+b))
+        v = R * (T(1) - b/(a+b))
         return wᵢ * wⱼ * f(triangle(u,v)) * R / (a+b)^2
     end
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
     # Apply a linear domain-correction factor
-    return (π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
+    return T(π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
 """
@@ -240,7 +240,7 @@ function integral(
     outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2.0 * area(triangle) .* outerintegral
+    return T(2) * area(triangle) .* outerintegral
 end
 
 """
@@ -266,12 +266,12 @@ function integral(
     function integrand(Rφ)
         R,φ = Rφ
         a,b = sincos(φ)
-        u = R * (1 - a/(a+b))
-        v = R * (1 - b/(a+b))
+        u = R * (T(1) - a/(a+b))
+        v = R * (T(1) - b/(a+b))
         return f(triangle(u,v)) * R / (a+b)^2
     end
-    intval = hcubature(integrand, [0,0], [1,π/2], settings.kwargs...)[1]
+    intval = hcubature(integrand, T[0,0], T[1,π/2], settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2.0 * area(triangle) .* intval
+    return T(2) * area(triangle) .* intval
 end

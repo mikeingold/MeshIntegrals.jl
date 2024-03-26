@@ -13,23 +13,49 @@ function jacobian(
     ts::AbstractVector{T};
     ε=1e-6
 ) where {T<:AbstractFloat}
+    # Get the partial derivative along the n'th axis via finite difference approximation
+    #   where ts is the current parametric position (εv is a reusable buffer)
+    function ∂r_∂tn!(εv, ts, n)
+        if ts[n] < T(0.01)
+            return ∂r_∂tn_right!(εv, ts, n)
+        elseif T(0.99) < ts[n]
+            return ∂r_∂tn_left!(εv, ts, n)
+        else
+            return ∂r_∂tn_central!(εv, ts, n)
+        end
+    end
 
-    function ∂r_∂tn!(εv,n)
-        # Construct a zero vector with ε in the n'th element 
-        εv .= 0.0
+    # Central finite difference
+    function ∂r_∂tn_central!(εv, ts, n)
+        εv .= T(0)
         εv[n] = ε
-
-        # Parametric points over which to perform finite difference approximation
         a = ts - εv
         b = ts + εv
-
         return (geometry(b...) - geometry(a...)) / 2ε
+    end
+
+    # Left finite difference
+    function ∂r_∂tn_left!(εv, ts, n)
+        εv .= T(0)
+        εv[n] = ε
+        a = ts - εv
+        b = ts
+        return (geometry(b...) - geometry(a...)) / ε
+    end
+
+    # Right finite difference
+    function ∂r_∂tn_right!(εv, ts, n)
+        εv .= T(0)
+        εv[n] = ε
+        a = ts
+        b = ts + εv
+        return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Allocate a re-usable ε vector
     εv = similar(ts)
-    ∂r_∂tn(n) = ∂r_∂tn!(εv,n)
 
+    ∂r_∂tn(n) = ∂r_∂tn!(εv,ts,n)
     return map(∂r_∂tn, 1:length(ts))
 end
 
@@ -98,4 +124,10 @@ end
     else
         error("The provided Function f must have a method f(::Meshes.Point{$Dim,$T})")
     end
+end
+
+# Calculate Gauss-Legendre nodes/weights and convert to type T
+function _gausslegendre(T, n)
+    xs, ws = FastGaussQuadrature.gausslegendre(n)
+    return T.(xs), T.(ws)
 end
