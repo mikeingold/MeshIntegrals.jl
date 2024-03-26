@@ -25,14 +25,14 @@ SupportItem(name, type, geometry, checkboxes::Vararg{I,7}) where {I<:Integer} = 
 # Otherwise, test that its use throws a MethodError
 function integraltest(intf, geometry, rule, supported, T)
     f(::Point) = T(1)
-    fv(::Point) = fill(T(1),3)
+    fv(::Point) = fill(T(1),2)
 
     if supported
         a1 = intf(f, geometry, rule)
         b1 = measure(geometry)
         @test a1 ≈ b1
         @test typeof(a1) == typeof(b1)
-        @test intf(fv, geometry, rule) ≈ fill(b1,3)
+        @test intf(fv, geometry, rule) ≈ fill(b1,2)
     else
         @test_throws "not supported" intf(f, geometry, rule)
     end
