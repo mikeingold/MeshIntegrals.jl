@@ -37,7 +37,7 @@ unit_circle_bz = BezierCurve(
 )
 
 # A Real-valued function
-f(x,y,z) = abs(x + y)
+f(x, y, z) = abs(x + y)
 f(p) = f(p.coords...)
 
 integral(f, unit_circle_xy, GaussKronrod())
@@ -60,36 +60,24 @@ integral(f, unit_circle_bz, GaussKronrod())
 ### Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
-| `Meshes.Box{Dim>3,T}` | :x: | :x: | :x: |
-
-### Line Integral
-| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
-|----------|----------------|---------------|---------------------|
-| `Meshes.BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{1,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Ring` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Rope` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-
-### Surface Integral
-| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
-|----------|----------------|---------------|-------------------|
-| `Meshes.Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.CylinderSurface` | :x: | :white_check_mark: | :x: |
-| `Meshes.Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.Torus` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Meshes.SimpleMesh` | :x: | :x: | :x: |
-
-### Volume Integral
-| Geometry | Gauss-Legendre | H-Adaptive Cubature |
-|----------|----------------|---------------|
-| `Meshes.Ball{3,T}` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Box{3,T}` | :white_check_mark: | :white_check_mark: |
-| `Meshes.Cylinder{T}` | :white_check_mark: | :white_check_mark: |
+| `Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ball{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
+| `BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box{1,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
+| `Box{Dim>3,T}` | :x: | :x: | :x: |
+| `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Cylinder{T}` | :white_check_mark: | :x: | :white_check_mark: |
+| `CylinderSurface` | :x: | :white_check_mark: | :x: |
+| `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ring` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Rope` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `SimpleMesh` | :x: | :x: | :x: |
+| `Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Torus` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
