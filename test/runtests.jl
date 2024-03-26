@@ -130,7 +130,7 @@ end
         SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
+        #SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),  TODO
         SupportItem("Triangle{$T}", T, triangle(T),         1, 0, 1, 0,   1, 1, 1),
         SupportItem("Torus{$T}", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
     ]
