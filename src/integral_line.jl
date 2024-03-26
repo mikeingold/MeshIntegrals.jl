@@ -17,7 +17,7 @@ function _integral_1d(
     point(x) = geometry(t(x))
 
     function paramfactor(x)
-        J = jacobian(geometry,[t(x)])
+        J = jacobian(geometry, T[t(x)])
         return norm(J[1])
     end
 
@@ -34,7 +34,7 @@ function _integral_1d(
     T = coordtype(geometry)
     
     function paramfactor(t)
-        J = jacobian(geometry,[t])
+        J = jacobian(geometry, T[t])
         return norm(J[1])
     end
 
@@ -50,7 +50,7 @@ function _integral_1d(
     T = coordtype(geometry)
 
     function paramfactor(t)
-        J = jacobian(geometry,t)
+        J = jacobian(geometry, T(t))
         return norm(J[1])
     end
 
