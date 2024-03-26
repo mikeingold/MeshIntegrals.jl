@@ -16,7 +16,7 @@ function jacobian(
 
     function ∂r_∂tn!(εv,n)
         # Construct a zero vector with ε in the n'th element 
-        εv .= 0.0
+        εv .= T(0)
         εv[n] = ε
 
         # Parametric points over which to perform finite difference approximation
