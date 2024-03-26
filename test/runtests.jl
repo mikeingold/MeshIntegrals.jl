@@ -2,9 +2,6 @@ using MeshIntegrals
 using Meshes
 using Test
 
-#using DynamicQuantities
-#using Unitful
-
 ################################################################################
 #                                Infrastructure
 ################################################################################
@@ -100,18 +97,28 @@ end
     # Name, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
         SupportItem("Ball{2,T}", ball2d,          1, 0, 1, 0,   1, 1, 1),
         SupportItem("Ball{3,T}", ball3d,          1, 0, 0, 1,   1, 0, 1),
+        # Ball{Dim,T}
         SupportItem("BezierCurve", bezier,        1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{1,T}", box1d,            1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{2,T}", box2d,            1, 0, 1, 0,   1, 1, 1),
         SupportItem("Box{3,T}", box3d,            1, 0, 0, 1,   1, 0, 1),
+        # Box{Dim,T}
         SupportItem("Circle", circle,             1, 1, 0, 0,   1, 1, 1),
+        # Cone
+        # ConeSurface
         SupportItem("Cylinder", cyl,              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface", cylsurf,   1, 0, 1, 0,   0, 1, 0),
         SupportItem("Disk", disk,                 1, 0, 1, 0,   1, 1, 1),
+        # Frustum
+        # FrustumSurface
+        # Line -- custom tests below
         SupportItem("ParaboloidSurface", parab,   1, 0, 1, 0,   1, 1, 1),
+        # Plane -- custom tests below
+        # Ray
         SupportItem("Ring", ring_rect,            1, 1, 0, 0,   1, 1, 1),
         SupportItem("Rope", rope_rect,            1, 1, 0, 0,   1, 1, 1),
         SupportItem("Segment", seg_ne,            1, 1, 0, 0,   1, 1, 1),
+        # SimpleMesh
         SupportItem("Sphere{2,T}", sphere2d,      1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{3,T}", sphere3d,      1, 0, 1, 0,   1, 1, 1),
         SupportItem("Triangle", triangle,         1, 0, 1, 0,   1, 1, 1),
