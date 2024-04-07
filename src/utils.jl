@@ -15,18 +15,18 @@ function jacobian(
 ) where {T<:AbstractFloat}
     # Get the partial derivative along the n'th axis via finite difference approximation
     #   where ts is the current parametric position (εv is a reusable buffer)
-    function ∂r_∂tn!(εv, ts, n)
+    function ∂ₙr!(εv, ts, n)
         if ts[n] < T(0.01)
-            return ∂r_∂tn_right!(εv, ts, n)
+            return ∂ₙr_right!(εv, ts, n)
         elseif T(0.99) < ts[n]
-            return ∂r_∂tn_left!(εv, ts, n)
+            return ∂ₙr_left!(εv, ts, n)
         else
-            return ∂r_∂tn_central!(εv, ts, n)
+            return ∂ₙr_central!(εv, ts, n)
         end
     end
 
     # Central finite difference
-    function ∂r_∂tn_central!(εv, ts, n)
+    function ∂ₙr_central!(εv, ts, n)
         εv .= T(0)
         εv[n] = ε
         a = ts - εv
@@ -35,7 +35,7 @@ function jacobian(
     end
 
     # Left finite difference
-    function ∂r_∂tn_left!(εv, ts, n)
+    function ∂ₙr_left!(εv, ts, n)
         εv .= T(0)
         εv[n] = ε
         a = ts - εv
@@ -44,7 +44,7 @@ function jacobian(
     end
 
     # Right finite difference
-    function ∂r_∂tn_right!(εv, ts, n)
+    function ∂ₙr_right!(εv, ts, n)
         εv .= T(0)
         εv[n] = ε
         a = ts
@@ -55,8 +55,29 @@ function jacobian(
     # Allocate a re-usable ε vector
     εv = similar(ts)
 
-    ∂r_∂tn(n) = ∂r_∂tn!(εv,ts,n)
-    return map(∂r_∂tn, 1:length(ts))
+    ∂ₙr(n) = ∂ₙr!(εv,ts,n)
+    return map(∂ₙr, 1:length(ts))
+end
+
+"""
+    differential(geometry, ts)
+
+Calculate the differential element (length, area, volume, etc) of the parametric
+function for `geometry` at arguments `ts`.
+"""
+function differential(geometry, ts::AbstractVector)
+    J = jacobian(geometry, ts)
+
+    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
+    if length(J) == 1
+        return norm(J[1])
+    elseif length(J) == 2
+        return norm(J[1] × J[2])
+    elseif length(J) == 3
+        return abs((J[1] × J[2]) ⋅ J[3])
+    else
+        error("Not implemented yet. Please report this as an Issue on GitHub.")
+    end
 end
 
 """
