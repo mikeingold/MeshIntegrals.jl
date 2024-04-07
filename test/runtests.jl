@@ -188,6 +188,4 @@ end
 #                                Aqua.jl Tests
 ################################################################################
 
-@testset "Aqua.jl" begin
-    Aqua.test_all(MeshIntegrals)
-end
+Aqua.test_all(MeshIntegrals)
