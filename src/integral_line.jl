@@ -16,13 +16,8 @@ function _integral_1d(
     t(x) = T(1/2) * x + T(1/2)
     point(x) = geometry(t(x))
 
-    function paramfactor(x)
-        J = jacobian(geometry, T[t(x)])
-        return norm(J[1])
-    end
-
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
-    integrand((w,x)) = w * f(point(x)) * paramfactor(x)
+    integrand((w,x)) = w * f(point(x)) * differential(geometry, [t(x)])
     return T(1/2) * sum(integrand, zip(ws, xs))
 end
 
@@ -32,13 +27,9 @@ function _integral_1d(
     settings::GaussKronrod
 )
     T = coordtype(geometry)
-    
-    function paramfactor(t)
-        J = jacobian(geometry, T[t])
-        return norm(J[1])
-    end
 
-    integrand(t) = f(geometry(t)) * paramfactor(t)
+
+    integrand(t) = f(geometry(t)) * differential(geometry, t)
     return QuadGK.quadgk(integrand, T(0), T(1); settings.kwargs...)[1]
 end
 
@@ -49,12 +40,7 @@ function _integral_1d(
 )
     T = coordtype(geometry)
 
-    function paramfactor(t)
-        J = jacobian(geometry, t)
-        return norm(J[1])
-    end
-
-    integrand(t) = f(geometry(t[1])) * paramfactor(t)
+    integrand(t) = f(geometry(t[1])) * differential(geometry, t)
     return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
 end
 

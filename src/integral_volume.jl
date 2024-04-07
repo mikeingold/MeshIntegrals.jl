@@ -19,14 +19,9 @@ function _integral_3d(
 
     point(stu) = geometry3d(stu[1], stu[2], stu[3])
 
-    function paramfactor(stu)
-        J = jacobian(geometry3d, stu)
-        return abs((J[1] × J[2]) ⋅ J[3])
-    end
-
     function integrand(((wi,wj,wk), (xi,xj,xk)))
         stu = [s(xi),t(xj),u(xk)]
-        wi * wj * wk * f(point(stu)) * paramfactor(stu)
+        wi * wj * wk * f(point(stu)) * differential(geometry3d, stu)
     end
 
     return T(1/8) .* sum(integrand, zip(wws,xxs))
@@ -37,12 +32,7 @@ function _integral_3d(
     geometry3d::G,
     settings::HAdaptiveCubature
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    function paramfactor(ts)
-        J = jacobian(geometry3d, ts)
-        return abs((J[1] × J[2]) ⋅ J[3])
-    end
-
-    integrand(ts) = paramfactor(ts) * f(geometry3d(ts...))
+    integrand(ts) = differential(geometry3d, ts) * f(geometry3d(ts...))
     return hcubature(integrand, zeros(T,3), ones(T,3); settings.kwargs...)[1]
 end
 

@@ -17,13 +17,7 @@ function _integral_2d(
     v(x) = T(1/2)*x + T(1/2)
     point(xi,xj) = geometry2d(u(xi), v(xj))
 
-    function paramfactor(xi, xj)
-        uv = [u(xi), v(xj)]
-        J = jacobian(geometry2d, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * paramfactor(xi,xj)
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, [u(xi), v(xj)])
 
     return T(1/4) .* sum(integrand, zip(wws,xxs))
 end
@@ -33,12 +27,7 @@ function _integral_2d(
     geometry2d::G,
     settings::GaussKronrod
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    function paramfactor(uv)
-        J = jacobian(geometry2d, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(u,v) = f(geometry2d(u,v)) * paramfactor([u,v])
+    integrand(u,v) = f(geometry2d(u,v)) * differentialf(geometry2d, [u,v])
     innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
     return QuadGK.quadgk(v -> innerintegral(v), T(0), T(1); settings.kwargs...)[1]
 end
@@ -48,12 +37,7 @@ function _integral_2d(
     geometry2d::G,
     settings::HAdaptiveCubature
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    function paramfactor(uv)
-        J = jacobian(geometry2d, uv)
-        return norm(J[1] × J[2])
-    end
-
-    integrand(uv) = paramfactor(uv) * f(geometry2d(uv...))
+    integrand(uv) = differential(geometry2d, uv) * f(geometry2d(uv...))
     return hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
 end
 
