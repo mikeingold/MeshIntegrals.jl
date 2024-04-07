@@ -59,16 +59,21 @@ function jacobian(
     return map(∂ₙr, 1:length(ts))
 end
 
-function differential(geometry, t)
-    J = jacobian(geometry, t)
+"""
+    differential(geometry, ts)
 
-    # TODO generalize this into something like
-    #   norm(foldl(∧, J))
-    if length(t) == 1
+Calculate the differential element (length, area, volume, etc) of the parametric
+function for `geometry` at arguments `ts`.
+"""
+function differential(geometry, ts::AbstractVector)
+    J = jacobian(geometry, ts)
+
+    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
+    if length(J) == 1
         return norm(J[1])
-    elseif length(t) == 2
+    elseif length(J) == 2
         return norm(J[1] × J[2])
-    elseif length(t) == 3
+    elseif length(J) == 3
         return abs((J[1] × J[2]) ⋅ J[3])
     else
         error("Not implemented yet. Please report this as an Issue on GitHub.")
