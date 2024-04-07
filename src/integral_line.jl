@@ -27,9 +27,7 @@ function _integral_1d(
     settings::GaussKronrod
 )
     T = coordtype(geometry)
-
-
-    integrand(t) = f(geometry(t)) * differential(geometry, t)
+    integrand(t) = f(geometry(t)) * differential(geometry, [t])
     return QuadGK.quadgk(integrand, T(0), T(1); settings.kwargs...)[1]
 end
 
@@ -39,7 +37,6 @@ function _integral_1d(
     settings::HAdaptiveCubature
 )
     T = coordtype(geometry)
-
     integrand(t) = f(geometry(t[1])) * differential(geometry, t)
     return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
 end
