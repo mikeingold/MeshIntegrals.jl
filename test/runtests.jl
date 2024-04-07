@@ -1,3 +1,4 @@
+using Aqua
 using MeshIntegrals
 using Meshes
 using Test
@@ -181,4 +182,14 @@ end
         @test integral(fv, plane, GaussKronrod()) ≈ fill(π,3)
         @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π,3)
     end
+end
+
+################################################################################
+#                                Aqua.jl Tests
+################################################################################
+
+@testset "Aqua.jl" begin
+    # As of v0.11.4 -- Ambiguities check disabled since it fails due to upstream findings
+    #   Verified that no ambiguities exist within MeshIntegrals.jl
+    Aqua.test_all(MeshIntegrals; ambiguities=false)
 end
