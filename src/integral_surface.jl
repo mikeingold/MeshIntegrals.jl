@@ -27,7 +27,7 @@ function _integral_2d(
     geometry2d::G,
     settings::GaussKronrod
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    integrand(u,v) = f(geometry2d(u,v)) * differentialf(geometry2d, [u,v])
+    integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
     innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
     return QuadGK.quadgk(v -> innerintegral(v), T(0), T(1); settings.kwargs...)[1]
 end
