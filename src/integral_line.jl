@@ -196,6 +196,68 @@ function integral(
 end
 
 ################################################################################
+#                   Specialized Methods for Ray
+################################################################################
+
+function integral(
+    f::F,
+    ray::Meshes.Ray{Dim,T},
+    settings::GaussLegendre
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
+    xs, ws = _gausslegendre(T, settings.n)
+
+    # Normalize the Ray s.t. ray(t) is distance t from origin point
+    ray = Ray(ray.p, normalize(ray.v))
+
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
+
+    # Integrate f along the Ray
+    integrand(x) = f(ray(t(x))) * t′(x)
+    return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
+end
+
+function integral(
+    f::F,
+    ray::Meshes.Ray{Dim,T},
+    settings::GaussKronrod
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Normalize the Ray s.t. ray(t) is distance t from origin point
+    ray = Ray(ray.p, normalize(ray.v))
+
+    # Integrate f along the Ray
+    return QuadGK.quadgk(t -> f(ray(t)), T(0), T(Inf); settings.kwargs...)[1]
+end
+
+function integral(
+    f::F,
+    ray::Meshes.Ray{Dim,T},
+    settings::HAdaptiveCubature
+) where {F<:Function, Dim, T}
+    # Validate the provided integrand function
+    _validate_integrand(f,Dim,T)
+
+    # Normalize the Ray s.t. ray(t) is distance t from origin point
+    ray = Ray(ray.p, normalize(ray.v))
+
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
+    
+    # Integrate f along the Ray
+    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1])
+    return hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
+end
+
+################################################################################
 #                    Specialized Methods for Ring, Rope
 ################################################################################
 
