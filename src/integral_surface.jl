@@ -209,9 +209,9 @@ function integral(
         R = uR(xᵢ)
         φ = uφ(xⱼ)
         a,b = sincos(φ)
-        u = R * (T(1) - a/(a+b))
-        v = R * (T(1) - b/(a+b))
-        return wᵢ * wⱼ * f(triangle(u,v)) * R / (a+b)^2
+        u = R * (1 - a / (a + b))
+        v = R * (1 - b / (a + b))
+        return wᵢ * wⱼ * f(triangle(u, v)) * R / (a + b)^2
     end
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
@@ -235,11 +235,11 @@ function integral(
 
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    innerintegral(u) = QuadGK.quadgk(v -> f(triangle(u,v)), 0, 1-u; settings.kwargs...)[1]
-    outerintegral = QuadGK.quadgk(innerintegral, 0, 1; settings.kwargs...)[1]
+    inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), T(0), T(1-u); settings.kwargs...)[1]
+    outer∫ = QuadGK.quadgk(inner∫, T(0), T(1); settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return T(2) * area(triangle) .* outerintegral
+    return 2 * area(triangle) .* outer∫
 end
 
 """
@@ -265,12 +265,12 @@ function integral(
     function integrand(Rφ)
         R,φ = Rφ
         a,b = sincos(φ)
-        u = R * (T(1) - a/(a+b))
-        v = R * (T(1) - b/(a+b))
+        u = R * (1 - a/(a+b))
+        v = R * (1 - b/(a+b))
         return f(triangle(u,v)) * R / (a+b)^2
     end
     intval = hcubature(integrand, T[0,0], T[1,π/2], settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return T(2) * area(triangle) .* intval
+    return 2 * area(triangle) .* intval
 end
