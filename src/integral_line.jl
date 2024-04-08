@@ -148,14 +148,15 @@ function integral(
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(T, settings.n)
 
-    # Get domain-corrected parametric locator
-    len = length(Segment(line.a,line.b))
-    point(t) = line(t/len)
+    # Normalize the Line s.t. line(t) is distance t from origin point
+    line = Line(line.a, line.a + normalize(line.b - line.a))
 
-    # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
-    integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
 
-    # Integrate f along the line
+    # Integrate f along the Line
+    integrand(x) = f(line(t(x))) * t′(x)
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
@@ -167,12 +168,11 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Get domain-corrected parametric locator
-    len = length(Segment(line.a,line.b))
-    point(t) = line(t/len)
+    # Normalize the Line s.t. line(t) is distance t from origin point
+    line = Line(line.a, line.a + normalize(line.b - line.a))
 
-    # Lines are infinite-length passing through defined points a and b
-    return QuadGK.quadgk(t -> f(point(t)), T(-Inf), T(Inf); settings.kwargs...)[1]
+    # Integrate f along the Line
+    return QuadGK.quadgk(t -> f(line(t)), T(-Inf), T(Inf); settings.kwargs...)[1]
 end
 
 function integral(
@@ -183,16 +183,16 @@ function integral(
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
-    # Get domain-corrected parametric locator
-    len = length(Segment(line.a,line.b))
-    point(t) = line(t/len)
-    
-    # Change of variables: t [-Inf,Inf] ↦ x [-1,1]
-    integrand(x) = f(point((x/(1-x^2)))) * (1+x^2)/((1-x^2)^2)
-    integrand(x::AbstractVector) = integrand(x[1])
+    # Normalize the Line s.t. line(t) is distance t from origin point
+    line = Line(line.a, line.a + normalize(line.b - line.a))
 
-    # Lines are infinite-length passing through defined points a and b
-    return hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
+
+    # Integrate f along the Line
+    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1])
+    return HCubature.hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
@@ -254,7 +254,7 @@ function integral(
     
     # Integrate f along the Ray
     integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1])
-    return hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
+    return HCubature.hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
