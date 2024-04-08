@@ -13,15 +13,13 @@ function _integral_3d(
     xxs = Iterators.product(xs, xs, xs)
 
     # Domain transformation: x [-1,1] ↦ s,t,u [0,1]
-    s(x) = T(1/2) * x + T(1/2)
     t(x) = T(1/2) * x + T(1/2)
-    u(x) = T(1/2) * x + T(1/2)
 
-    point(stu) = geometry3d(stu[1], stu[2], stu[3])
+    point(t) = 
 
     function integrand(((wi,wj,wk), (xi,xj,xk)))
-        stu = [s(xi),t(xj),u(xk)]
-        wi * wj * wk * f(point(stu)) * differential(geometry3d, stu)
+        ts = t.([xi, xj, xk])
+        wi * wj * wk * f(geometry3d(ts...)) * differential(geometry3d, ts)
     end
 
     return T(1/8) .* sum(integrand, zip(wws,xxs))
@@ -32,8 +30,8 @@ function _integral_3d(
     geometry3d::G,
     settings::HAdaptiveCubature
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    integrand(ts) = differential(geometry3d, ts) * f(geometry3d(ts...))
-    return hcubature(integrand, zeros(T,3), ones(T,3); settings.kwargs...)[1]
+    integrand(ts) = f(geometry3d(ts...)) * differential(geometry3d, ts)
+    return HCubature.hcubature(integrand, zeros(T,3), ones(T,3); settings.kwargs...)[1]
 end
 
 
