@@ -216,9 +216,8 @@ function integral(
     t₁(x) = T(1/2) * x + T(1/2)
     t₂(x) = x / (1 - x^2)
     t = t₁ ∘ t₂
-    t₁′(x) = T(1/2)
     t₂′(x) = (1 + x^2) / (1 - x^2)^2
-    t′(x) = t₁′(t₂(x)) * t₂′(x)
+    t′(x) = T(1/2) * t₂′(x)
 
     # Integrate f along the Ray
     integrand(x) = f(ray(t(x))) * t′(x)
