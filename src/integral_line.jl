@@ -214,8 +214,12 @@ function integral(
     ray = Ray(ray.p, normalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
-    t(x) = x / (1 - x^2)
-    t′(x) = (1 + x^2) / (1 - x^2)^2
+    t₁(x) = T(1/2) * x + T(1/2)
+    t₂(x) = x / (1 - x^2)
+    t = t₁ ∘ t₂
+    t₁′(x) = T(1/2)
+    t₂′(x) = (1 + x^2) / (1 - x^2)^2
+    t′(x) = t₁′(t₂(x)) * t₂′(x)
 
     # Integrate f along the Ray
     integrand(x) = f(ray(t(x))) * t′(x)
@@ -248,13 +252,13 @@ function integral(
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, normalize(ray.v))
 
-    # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
+    # Domain transformation: x ∈ [0,1] ↦ t ∈ [0,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
     
     # Integrate f along the Ray
     integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1])
-    return HCubature.hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
+    return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
