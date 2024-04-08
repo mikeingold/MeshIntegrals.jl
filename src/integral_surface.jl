@@ -68,15 +68,15 @@ function integral(
 
     # Integrate the rounded sides of the cylinder's surface
     # \int ( \int f(r̄) dz ) dφ
-    function sides_innerintegral(φ)
+    function sides_inner∫(φ)
         sidelength = norm(cyl(φ,T(1)) - cyl(φ,T(0)))
-        return sidelength * quadgk(z -> f(cyl(φ,z)), T(0), T(1); settings.kwargs...)[1]
+        return sidelength * QuadGK.quadgk(z -> f(cyl(φ,z)), T(0), T(1); settings.kwargs...)[1]
     end
-    sides = (T(2π) * cyl.radius) .* quadgk(φ -> sides_innerintegral(φ), T(0), T(1); settings.kwargs...)[1]
+    sides = (T(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), T(0), T(1); settings.kwargs...)[1]
 
     # Integrate the top and bottom disks
     # \int ( \int r f(r̄) dr ) dφ
-    function disk_innerintegral(φ,plane,z)
+    function disk_inner∫(φ,plane,z)
         # Parameterize the top surface of the cylinder
         rimedge = cyl(φ,T(z))
         centerpoint = plane.p
@@ -84,10 +84,10 @@ function integral(
         radius = norm(r̄)
         point(r) = centerpoint + (r / radius) * r̄
 
-        return radius^2 * quadgk(r -> r * f(point(r)), T(0), T(1); settings.kwargs...)[1]
+        return radius^2 * QuadGK.quadgk(r -> r * f(point(r)), T(0), T(1); settings.kwargs...)[1]
     end
-    top    = T(2π) .* quadgk(φ -> disk_innerintegral(φ,cyl.top,1), T(0), T(1); settings.kwargs...)[1]
-    bottom = T(2π) .* quadgk(φ -> disk_innerintegral(φ,cyl.bot,0), T(0), T(1); settings.kwargs...)[1]
+    top    = T(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.top,1), T(0), T(1); settings.kwargs...)[1]
+    bottom = T(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.bot,0), T(0), T(1); settings.kwargs...)[1]
 
     return sides + top + bottom
 end
@@ -144,8 +144,8 @@ function integral(
     plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
 
     # Integrate f over the Plane
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(-Inf), T(Inf); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), T(-Inf), T(Inf); settings.kwargs...)[1]
+    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)), T(-Inf), T(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> inner∫(v), T(-Inf), T(Inf); settings.kwargs...)[1]
 end
 
 function integral(
@@ -197,8 +197,8 @@ function integral(
     # Domain transformations:
     #   xᵢ [-1,1] ↦ R [0,1]
     #   xⱼ [-1,1] ↦ φ [0,π/2]
-    uR(xᵢ) = T(1/2) * (xᵢ + T(1))
-    uφ(xⱼ) = T(π/4) * (xⱼ + T(1))
+    uR(xᵢ) = T(1/2) * (xᵢ + 1)
+    uφ(xⱼ) = T(π/4) * (xⱼ + 1)
 
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
@@ -265,11 +265,11 @@ function integral(
     function integrand(Rφ)
         R,φ = Rφ
         a,b = sincos(φ)
-        u = R * (1 - a/(a+b))
-        v = R * (1 - b/(a+b))
-        return f(triangle(u,v)) * R / (a+b)^2
+        u = R * (1 - a / (a + b))
+        v = R * (1 - b / (a + b))
+        return f(triangle(u, v)) * R / (a + b)^2
     end
-    intval = hcubature(integrand, T[0,0], T[1,π/2], settings.kwargs...)[1]
+    intval = HCubature.hcubature(integrand, T[0, 0], T[1, π/2], settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * area(triangle) .* intval
