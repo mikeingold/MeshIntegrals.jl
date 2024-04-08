@@ -12,11 +12,11 @@ function _integral_2d(
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
-    # Domain transformation: x [-1,1] ↦ u,v [0,1]
-    u(x) = T(1/2)*x + T(1/2)
-    v(x) = T(1/2)*x + T(1/2)
-    point(xi,xj) = geometry2d(u(xi), v(xj))
+    # Domain transformation: x [-1,1] ↦ t [0,1]
+    t(x) = T(1/2) * x + T(1/2)
+    point(xi, xj) = geometry2d(t(xi), t(xj))
 
+    # Integrate f over the geometry
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, [u(xi), v(xj)])
 
     return T(1/4) .* sum(integrand, zip(wws,xxs))
@@ -28,8 +28,8 @@ function _integral_2d(
     settings::GaussKronrod
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
     integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
-    innerintegral(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> innerintegral(v), T(0), T(1); settings.kwargs...)[1]
+    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> ∫₁(v), T(0), T(1); settings.kwargs...)[1]
 end
 
 function _integral_2d(
@@ -37,8 +37,8 @@ function _integral_2d(
     geometry2d::G,
     settings::HAdaptiveCubature
 ) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    integrand(uv) = differential(geometry2d, uv) * f(geometry2d(uv...))
-    return hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
+    integrand(uv) = f(geometry2d(uv...)) * differential(geometry2d, uv)
+    return HCubature.hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
 end
 
 

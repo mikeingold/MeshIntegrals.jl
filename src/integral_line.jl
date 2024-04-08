@@ -14,10 +14,9 @@ function _integral_1d(
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = T(1/2) * x + T(1/2)
-    point(x) = geometry(t(x))
 
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
-    integrand((w,x)) = w * f(point(x)) * differential(geometry, [t(x)])
+    integrand((w,x)) = w * f(geometry(t(x))) * differential(geometry, [t(x)])
     return T(1/2) * sum(integrand, zip(ws, xs))
 end
 
