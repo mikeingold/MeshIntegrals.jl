@@ -215,8 +215,8 @@ function integral(
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
     t₁(x) = T(1/2) * x + T(1/2)
     t₂(x) = x / (1 - x^2)
-    t = t₁ ∘ t₂
     t₂′(x) = (1 + x^2) / (1 - x^2)^2
+    t = t₂ ∘ t₁
     t′(x) = T(1/2) * t₂′(x)
 
     # Integrate f along the Ray
