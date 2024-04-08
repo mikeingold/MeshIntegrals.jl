@@ -167,7 +167,7 @@ end
 
     # Custom tests for Ray (no measure available for reference)
     @testset "Meshes.Ray" begin
-        ray = Line(origin3d(Float64), ẑ)
+        ray = Ray(origin3d(Float64), ẑ)
 
         function f(p::Point{3,T}) where {T}
             x, y, z = p.coords

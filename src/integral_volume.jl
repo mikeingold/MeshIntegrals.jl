@@ -15,8 +15,6 @@ function _integral_3d(
     # Domain transformation: x [-1,1] ↦ s,t,u [0,1]
     t(x) = T(1/2) * x + T(1/2)
 
-    point(t) = 
-
     function integrand(((wi,wj,wk), (xi,xj,xk)))
         ts = t.([xi, xj, xk])
         wi * wj * wk * f(geometry3d(ts...)) * differential(geometry3d, ts)

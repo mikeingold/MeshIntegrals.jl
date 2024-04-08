@@ -17,7 +17,7 @@ function _integral_2d(
     point(xi, xj) = geometry2d(t(xi), t(xj))
 
     # Integrate f over the geometry
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, [u(xi), v(xj)])
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, t.([xi, xj]))
     return T(1/4) .* sum(integrand, zip(wws,xxs))
 end
 
