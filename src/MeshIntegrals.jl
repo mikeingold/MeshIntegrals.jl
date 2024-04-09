@@ -1,9 +1,10 @@
 module MeshIntegrals
-    using FastGaussQuadrature
-    using HCubature
     using LinearAlgebra
     using Meshes
-    using QuadGK
+
+    import FastGaussQuadrature
+    import HCubature
+    import QuadGK
 
     include("utils.jl")
     export jacobian, derivative, unitdirection
