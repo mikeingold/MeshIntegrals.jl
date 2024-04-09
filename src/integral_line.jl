@@ -129,7 +129,7 @@ function integral(
 
     len = length(curve)
     point(t) = curve(t, alg)
-    return hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
+    return HCubature.hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
