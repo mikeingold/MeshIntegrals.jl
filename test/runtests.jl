@@ -20,6 +20,7 @@ struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
     hadaptivecubature::Bool
 end
 
+# Constructor to explicitly convert Ints (0,1) to Bool values
 SupportItem(name, type, geometry, checkboxes::Vararg{I,7}) where {I<:Integer} = SupportItem(name, type, geometry, Bool.(checkboxes)...)
 
 # If method is supported, test it on scalar- and vector-valued functions.
@@ -125,7 +126,7 @@ end
         # Line -- custom tests below
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         # Plane -- custom tests below
-        # Ray
+        # Ray -- custom tests below
         SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
@@ -162,6 +163,25 @@ end
         @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π),3)
         @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π),3)
         @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+    end
+
+    # Custom tests for Ray (no measure available for reference)
+    @testset "Meshes.Ray" begin
+        ray = Ray(origin3d(Float64), ẑ(Float64))
+
+        function f(p::Point{3,T}) where {T}
+            x, y, z = p.coords
+            2 * exp(-z^2)
+        end
+        fv(p) = fill(f(p),3)
+
+        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)
+        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)
+        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)
+
+        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π),3)
+        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π),3)
+        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
     end
 
     # Custom tests for Plane (no measure available for reference)
