@@ -10,9 +10,8 @@ Functions available:
 - `integral(f, geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular
 - `lineintegral`, `surfaceintegral`, and `volumeintegral` are available as aliases for `integral` that first verify that `geometry` has the appropriate number of parametric dimensions
 
-Methods are tested to ensure compatibility with
+Integration methods are also compatible with:
 - Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
-- Meshes.jl geometries with **DynamicQuantities.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
 - Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that **QuadGK.jl** can integrate, including:
     - Real or complex-valued scalars
     - Real or complex-valued vectors
@@ -79,7 +78,7 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `Line{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ParaboloidSurface{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Plane{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ray{Dim,T}` | :x: | :x: | :x: |
+| `Ray{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Ring{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Rope{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Segment{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
