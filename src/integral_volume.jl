@@ -57,8 +57,8 @@ function integral(
     inner∫₁(w) = QuadGK.quadgk(v -> inner∫₂(v,w), T(0), T(1-w); settings.kwargs...)[1]
     outer∫ = QuadGK.quadgk(w -> inner∫₁(w), T(0), T(1); settings.kwargs...)[1]
 
-    # Apply barycentric domain correction
-    return 2 * volume(tetrahedron) * outer∫
+    # Apply barycentric domain correction (volume: 1/6 → actual)
+    return 6 * volume(tetrahedron) * outer∫
 end
 
 function integral(
