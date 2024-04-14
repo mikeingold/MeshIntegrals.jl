@@ -60,7 +60,7 @@ end
 
 function integral(
     f::F,
-    cyl::Meshes.CylinderSurface{T},
+    tetrahedron::Meshes.Tetrahedron{3,T},
     settings::HAdaptiveCubature
 ) where {F<:Function, T}
     error("Integrating a Tetrahedron{3,T} with HAdaptiveCubature not supported.")
