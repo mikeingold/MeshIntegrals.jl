@@ -102,18 +102,19 @@ end
     segment(T)  = Segment(pt_e(T), pt_n(T))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
+    tetra(T)    = Tetrahedron(pt_n(T), pt_w(T), pt_e(T), pt_n(T)+ẑ(T))
     triangle(T) = Ngon(pt_e(T), pt_n(T), pt_w(T))
     torus(T)    = Torus(origin3d(T), ẑ(T), T(3.5), T(1.25))
 
     SUPPORT_MATRIX(T) = [
     # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("Ball{2,$T}", T, ball2d(T),          1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Ball{3,$T}", T, ball3d(T),          1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Ball{2,$T}", T, ball2d(T),             1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Ball{3,$T}", T, ball3d(T),             1, 0, 0, 1,   1, 0, 1),
         # Ball{Dim,T}
         SupportItem("BezierCurve{$T}", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{1,$T}", T, box1d(T),            1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Box{2,$T}", T, box2d(T),            1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Box{3,$T}", T, box3d(T),            1, 0, 0, 1,   1, 0, 1),
+        SupportItem("Box{1,$T}", T, box1d(T),               1, 1, 0, 0,   1, 1, 1),
+        SupportItem("Box{2,$T}", T, box2d(T),               1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone
@@ -133,6 +134,7 @@ end
         # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
+        SupportItem("Tetrahedron", T, tetra(T),             1, 0, 0, 1,   0, 1, 0),
         SupportItem("Triangle{$T}", T, triangle(T),         1, 0, 1, 0,   1, 1, 1),
         SupportItem("Torus{$T}", T, torus(T),               1, 0, 1, 0,   1, 1, 1),
     ]
