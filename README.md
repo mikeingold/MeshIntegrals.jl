@@ -54,7 +54,7 @@ integral(f, unit_circle_bz, GaussKronrod())
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
 | :x: | Planned but not yet implemented |
-| :warning: | Unable to implement until parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
+| :warning: | Unable to implement: parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
 
 ### Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
@@ -85,5 +85,6 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `SimpleMesh{Dim,T,V}` | :x: | :x: | :x: |
 | `Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Tetrahedron{3,T}` | :x: | :white_check_mark: | :x: |
 | `Triangle{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Torus{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
