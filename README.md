@@ -1,3 +1,10 @@
+# Branch: CRS
+
+TODO
+- [x] Change `Project.toml` upper bound to current version of Meshes.jl
+- [ ] Run test suite and evaluate results
+- [ ] Make updates as required to pass all tests
+
 # MeshIntegrals.jl
 
 This package implements methods for numerically-computing integrals over geometric polytopes
