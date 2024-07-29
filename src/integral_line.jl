@@ -47,10 +47,10 @@ end
 
 function lineintegral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
+    curve::Meshes.BezierCurve,
     settings::I;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, Dim, T, V, I<:IntegrationAlgorithm}
+) where {F<:Function, I<:IntegrationAlgorithm}
     return integral(f, curve, settings; alg=alg)
 end
 
