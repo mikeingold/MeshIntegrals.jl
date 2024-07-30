@@ -3,39 +3,38 @@
 ################################################################################
 
 function _integral_1d(
+    T::DataType = Float64,
     f,
     geometry,
     settings::GaussLegendre
 )
-    T = coordtype(geometry)
-
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = T(1/2) * x + T(1/2)
+    t(x) = (1/2)*x + (1/2)
 
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
     integrand((w,x)) = w * f(geometry(t(x))) * differential(geometry, [t(x)])
-    return T(1/2) * sum(integrand, zip(ws, xs))
+    return (1/2) * sum(integrand, zip(ws, xs))
 end
 
 function _integral_1d(
+    T::DataType = Float64,
     f,
     geometry,
     settings::GaussKronrod
 )
-    T = coordtype(geometry)
     integrand(t) = f(geometry(t)) * differential(geometry, [t])
     return QuadGK.quadgk(integrand, T(0), T(1); settings.kwargs...)[1]
 end
 
 function _integral_1d(
+    T::DataType = Float64,
     f,
     geometry,
     settings::HAdaptiveCubature
 )
-    T = coordtype(geometry)
     integrand(t) = f(geometry(t[1])) * differential(geometry, t)
     return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
 end
@@ -44,6 +43,16 @@ end
 ################################################################################
 #                   Specialized Methods for BezierCurve
 ################################################################################
+
+function lineintegral(
+    T::DataType,
+    f::F,
+    curve::Meshes.BezierCurve,
+    settings::I;
+    alg::Meshes.BezierEvalMethod=Meshes.Horner()
+) where {F<:Function, I<:IntegrationAlgorithm}
+    return integral(T, f, curve, settings; alg=alg)
+end
 
 function lineintegral(
     f::F,
@@ -65,11 +74,12 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
+    T::DataType = Float64,
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
+    curve::Meshes.BezierCurve,
     settings::GaussLegendre;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, Dim, T, V}
+) where {F<:Function}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
@@ -77,11 +87,11 @@ function integral(
     xs, ws = _gausslegendre(T, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = T(1/2) * x + T(1/2)
+    t(x) = (1/2)*x + (1/2)
     point(x) = curve(t(x), alg)
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return T(1/2) * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return (1/2) * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
 """
@@ -95,11 +105,12 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
+    T::DataType = Float64,
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
+    curve::Meshes.BezierCurve,
     settings::GaussKronrod;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function,Dim, T, V}
+) where {F<:Function}
     # Validate the provided integrand function
     _validate_integrand(f,Dim,T)
 
@@ -119,12 +130,14 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
+    T::DataType = Float64,
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
+    curve::Meshes.BezierCurve,
     settings::HAdaptiveCubature;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function,Dim, T, V}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(curve)
     _validate_integrand(f,Dim,T)
 
     len = length(curve)
@@ -137,11 +150,13 @@ end
 ################################################################################
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    line::Meshes.Line{Dim,T},
+    line::Meshes.Line,
     settings::GaussLegendre
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
@@ -160,11 +175,13 @@ function integral(
 end
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    line::Meshes.Line{Dim,T},
+    line::Meshes.Line,
     settings::GaussKronrod
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
@@ -175,11 +192,13 @@ function integral(
 end
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    line::Meshes.Line{Dim,T},
+    line::Meshes.Line,
     settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
@@ -199,11 +218,13 @@ end
 ################################################################################
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    ray::Meshes.Ray{Dim,T},
+    ray::Meshes.Ray,
     settings::GaussLegendre
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
@@ -213,8 +234,8 @@ function integral(
     ray = Ray(ray.p, normalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
-    t₁(x) = T(1/2) * x + T(1/2)
-    t₁′(x) = T(1/2)
+    t₁(x) = (1/2)*x + (1/2)
+    t₁′(x) = (1/2)
     t₂(x) = x / (1 - x^2)
     t₂′(x) = (1 + x^2) / (1 - x^2)^2
     t = t₂ ∘ t₁
@@ -226,11 +247,13 @@ function integral(
 end
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    ray::Meshes.Ray{Dim,T},
+    ray::Meshes.Ray,
     settings::GaussKronrod
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -241,11 +264,13 @@ function integral(
 end
 
 function integral(
+    T::DataType = Float64,
     f::F,
-    ray::Meshes.Ray{Dim,T},
+    ray::Meshes.Ray,
     settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
+) where {F<:Function}
     # Validate the provided integrand function
+    Dim = embeddim(line)
     _validate_integrand(f,Dim,T)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -265,12 +290,32 @@ end
 ################################################################################
 
 function integral(
+    T::DataType,
+    f::F,
+    ring::Meshes.Ring,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> lineintegral(T, f, segment, settings), segments(ring))
+end
+
+function integral(
     f::F,
     ring::Meshes.Ring,
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> lineintegral(f, segment, settings), segments(ring))
+end
+
+function integral(
+    T::DataType,
+    f::F,
+    rope::Meshes.Rope,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> lineintegral(T, f, segment, settings), segments(rope))
 end
 
 function integral(
