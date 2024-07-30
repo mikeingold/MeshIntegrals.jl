@@ -1,9 +1,19 @@
 # Branch: CRS
 
+Breaking Change:
+- Currently testing a conversion of function signature to `integral(T=Float64, f, geometry, settings)`
+
 TODO
 - [x] Change `Project.toml` upper bound to current version of Meshes.jl
-- [ ] Run test suite and evaluate results
+- [x] Run test suite and evaluate results
 - [ ] Make updates as required to pass all tests
+  - [ ] Remove all obsolete `{Dim,T}` parameterizations
+  - [ ] Convert to new signature in `integrals_surface.jl`
+  - [ ] Convert to new signature in `integrals_volume.jl`
+  - [ ] Re-run tests and see what happens
+
+Longer term?
+- [ ] Evaluate Zygote for AD Jacobians
 
 # MeshIntegrals.jl
 
