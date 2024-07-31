@@ -80,9 +80,6 @@ function integral(
     settings::GaussLegendre;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,FP)
-
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -111,9 +108,6 @@ function integral(
     settings::GaussKronrod;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,FP)
-
     len = length(curve)
     point(t) = curve(t, alg)
     return QuadGK.quadgk(t -> len * f(point(t)), FP(0), FP(1); settings.kwargs...)[1]
@@ -136,10 +130,6 @@ function integral(
     settings::HAdaptiveCubature;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(curve)
-    _validate_integrand(f,Dim,FP)
-
     len = length(curve)
     point(t) = curve(t, alg)
     return HCubature.hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
@@ -155,10 +145,6 @@ function integral(
     line::Meshes.Line,
     settings::GaussLegendre
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -180,10 +166,6 @@ function integral(
     line::Meshes.Line,
     settings::GaussKronrod
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + normalize(line.b - line.a))
 
@@ -197,10 +179,6 @@ function integral(
     line::Meshes.Line,
     settings::HAdaptiveCubature
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + normalize(line.b - line.a))
 
@@ -223,10 +201,6 @@ function integral(
     ray::Meshes.Ray,
     settings::GaussLegendre
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -252,10 +226,6 @@ function integral(
     ray::Meshes.Ray,
     settings::GaussKronrod
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, normalize(ray.v))
 
@@ -269,10 +239,6 @@ function integral(
     ray::Meshes.Ray,
     settings::HAdaptiveCubature
 ) where {F<:Function}
-    # Validate the provided integrand function
-    Dim = embeddim(line)
-    _validate_integrand(f,Dim,FP)
-
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, normalize(ray.v))
 
