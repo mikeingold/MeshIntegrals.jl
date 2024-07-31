@@ -62,10 +62,6 @@ function integral(
     cyl::Meshes.CylinderSurface{T},
     settings::GaussKronrod
 ) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A CylinderSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
     # Integrate the rounded sides of the cylinder's surface
     # \int ( \int f(r̄) dz ) dφ
     function sides_inner∫(φ)
@@ -110,10 +106,6 @@ function integral(
     plane::Meshes.Plane{T},
     settings::GaussLegendre
 ) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
@@ -136,10 +128,6 @@ function integral(
     plane::Meshes.Plane{T},
     settings::GaussKronrod
 ) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
     # Normalize the Plane's orthogonal vectors
     plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
 
@@ -153,10 +141,6 @@ function integral(
     plane::Meshes.Plane{T},
     settings::HAdaptiveCubature
 ) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
     # Normalize the Plane's orthogonal vectors
     plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
 
@@ -186,9 +170,6 @@ function integral(
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussLegendre
 ) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(T, settings.n)
     wws = Iterators.product(ws, ws)
@@ -230,9 +211,6 @@ function integral(
     triangle::Meshes.Ngon{3,Dim,T},
     settings::GaussKronrod
 ) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
     inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), T(0), T(1-u); settings.kwargs...)[1]
@@ -254,9 +232,6 @@ function integral(
     triangle::Meshes.Ngon{3,Dim,T},
     settings::HAdaptiveCubature
 ) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )

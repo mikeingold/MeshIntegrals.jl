@@ -50,9 +50,6 @@ function integral(
     tetrahedron::Meshes.Tetrahedron{3,T},
     settings::GaussKronrod
 ) where {F<:Function, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,3,T)
-
     inner∫₂(v,w) = QuadGK.quadgk(u -> f(tetrahedron(u,v,w)), T(0), T(1-v-w); settings.kwargs...)[1]
     inner∫₁(w) = QuadGK.quadgk(v -> inner∫₂(v,w), T(0), T(1-w); settings.kwargs...)[1]
     outer∫ = QuadGK.quadgk(w -> inner∫₁(w), T(0), T(1); settings.kwargs...)[1]
