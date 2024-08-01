@@ -7,7 +7,7 @@ using Test
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
+struct SupportItem{T, Dim, CRS, ℒ, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS.ℒ}}
     name::String
     type::Type{T}
     geometry::G
@@ -86,12 +86,12 @@ end
     pt_s(T) = Point(T( 0), T(-1), T(0))
     
     # Test Geometries
-    ball2d(T)   = Ball{2,T}(origin2d(T), T(2.0))
-    ball3d(T)   = Ball{3,T}(origin3d(T), T(2.0))
+    ball2d(T)   = Ball(origin2d(T), T(2.0))
+    ball3d(T)   = Ball(origin3d(T), T(2.0))
     bezier(T)   = BezierCurve([Point(cos(t), sin(t), 0) for t in range(T(0), T(2π), length=361)])
-    box1d(T)    = Box{1,T}(Point(T(-1)), Point(T(1)))
-    box2d(T)    = Box{2,T}(Point(T(-1), T(-1)), Point(T(1), T(1)))
-    box3d(T)    = Box{3,T}(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
+    box1d(T)    = Box(Point(T(-1)), Point(T(1)))
+    box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
+    box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
@@ -152,7 +152,7 @@ end
     @testset "Meshes.Line" begin
         line = Line(pt_e(Float64), pt_w(Float64))
 
-        function f(p::Point{3,T}) where {T}
+        function f(p::P) where {P<:Meshes.Point}
             x, y, z = p.coords
             exp(-x^2)
         end
@@ -171,7 +171,7 @@ end
     @testset "Meshes.Ray" begin
         ray = Ray(origin3d(Float64), ẑ(Float64))
 
-        function f(p::Point{3,T}) where {T}
+        function f(p::P) where {P<:Meshes.Point}
             x, y, z = p.coords
             2 * exp(-z^2)
         end
@@ -190,7 +190,7 @@ end
     @testset "Meshes.Plane" begin
         plane = Plane(origin3d(Float64), ẑ(Float64))
 
-        function f(p::Point{3,T}) where {T}
+        function f(p::P) where {P<:Meshes.Point}
             x, y, z = p.coords
             exp(-x^2 - y^2)
         end
