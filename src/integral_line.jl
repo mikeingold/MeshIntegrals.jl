@@ -3,10 +3,10 @@
 ################################################################################
 
 function _integral_1d(
-    FP::Type{T} = Float64,
     f,
     geometry,
-    settings::GaussLegendre
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
@@ -20,21 +20,21 @@ function _integral_1d(
 end
 
 function _integral_1d(
-    FP::Type{T} = Float64,
     f,
     geometry,
-    settings::GaussKronrod
-)
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, [t])
     return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
 end
 
 function _integral_1d(
-    FP::Type{T} = Float64,
     f,
     geometry,
-    settings::HAdaptiveCubature
-)
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(t) = f(geometry(t[1])) * differential(geometry, t)
     return HCubature.hcubature(integrand, FP[0], FP[1]; settings.kwargs...)[1]
 end
@@ -45,13 +45,13 @@ end
 ################################################################################
 
 function lineintegral(
-    FP::Type{T} = Float64,
     f::F,
     curve::Meshes.BezierCurve,
-    settings::I;
+    settings::I,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {T<:AbstractFloat, F<:Function, I<:IntegrationAlgorithm}
-    return integral(FP, f, curve, settings; alg=alg)
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    return integral(f, curve, settings, FP; alg=alg)
 end
 
 function lineintegral(
@@ -74,12 +74,12 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     curve::Meshes.BezierCurve,
-    settings::GaussLegendre;
+    settings::GaussLegendre,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function}
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -102,12 +102,12 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     curve::Meshes.BezierCurve,
-    settings::GaussKronrod;
+    settings::GaussKronrod,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function}
+) where {F<:Function, T<:AbstractFloat}
     len = length(curve)
     point(t) = curve(t, alg)
     return QuadGK.quadgk(t -> len * f(point(t)), FP(0), FP(1); settings.kwargs...)[1]
@@ -124,15 +124,15 @@ can be obtained by specifying the use of DeCasteljau's algorithm instead with
 especially for curves with a large number of control points.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     curve::Meshes.BezierCurve,
-    settings::HAdaptiveCubature;
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function}
+) where {F<:Function, T<:AbstractFloat}
     len = length(curve)
     point(t) = curve(t, alg)
-    return HCubature.hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
+    return HCubature.hcubature(t -> len * f(point(t[1])), FP[0], FP[1]; settings.kwargs...)[1]
 end
 
 ################################################################################
@@ -140,11 +140,11 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     line::Meshes.Line,
-    settings::GaussLegendre
-) where {F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -161,11 +161,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     line::Meshes.Line,
-    settings::GaussKronrod
-) where {F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + normalize(line.b - line.a))
 
@@ -174,11 +174,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     line::Meshes.Line,
-    settings::HAdaptiveCubature
-) where {F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + normalize(line.b - line.a))
 
@@ -196,11 +196,11 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     ray::Meshes.Ray,
-    settings::GaussLegendre
-) where {F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, settings.n)
 
@@ -221,11 +221,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     ray::Meshes.Ray,
-    settings::GaussKronrod
-) where {F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, normalize(ray.v))
 
@@ -234,11 +234,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     ray::Meshes.Ray,
-    settings::HAdaptiveCubature
-) where {F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, normalize(ray.v))
 
@@ -256,13 +256,13 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     ring::Meshes.Ring,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
+    settings::I,
+    FP::Type{T} = Float64
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(FP, f, segment, settings), segments(ring))
+    return sum(segment -> lineintegral(f, segment, settings, FP), segments(ring))
 end
 
 function integral(
@@ -275,13 +275,13 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     rope::Meshes.Rope,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
+    settings::I,
+    FP::Type{T} = Float64,
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Rope into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(FP, f, segment, settings), segments(rope))
+    return sum(segment -> lineintegral(f, segment, settings, FP), segments(rope))
 end
 
 function integral(

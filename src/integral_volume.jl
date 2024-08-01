@@ -3,11 +3,11 @@
 ################################################################################
 
 function _integral_3d(
-    FP::Type{T} = Float64,
     f,
-    geometry3d::G,
-    settings::GaussLegendre
-) where {T<:AbstractFloat, G<:Meshes.Geometry}
+    geometry3d,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws, ws)
@@ -25,11 +25,11 @@ function _integral_3d(
 end
 
 function _integral_3d(
-    FP::Type{T} = Float64,
     f,
-    geometry3d::G,
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, G<:Meshes.Geometry}
+    geometry3d,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64,
+) where {T<:AbstractFloat}
     integrand(ts) = f(geometry3d(ts...)) * differential(geometry3d, ts)
     return HCubature.hcubature(integrand, zeros(FP,3), ones(FP,3); settings.kwargs...)[1]
 end
@@ -40,20 +40,20 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     tetrahedron::Meshes.Tetrahedron,
-    settings::GaussLegendre
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     error("Integrating a Tetrahedron with GaussLegendre not supported.")
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     tetrahedron::Meshes.Tetrahedron,
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     inner∫₂(v,w) = QuadGK.quadgk(u -> f(tetrahedron(u,v,w)), FP(0), FP(1-v-w); settings.kwargs...)[1]
     inner∫₁(w) = QuadGK.quadgk(v -> inner∫₂(v,w), FP(0), FP(1-w); settings.kwargs...)[1]
     outer∫ = QuadGK.quadgk(w -> inner∫₁(w), FP(0), FP(1); settings.kwargs...)[1]
@@ -63,11 +63,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     tetrahedron::Meshes.Tetrahedron,
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64,
+) where {F<:Function, T<:AbstractFloat}
     error("Integrating a Tetrahedron with HAdaptiveCubature not supported.")
 end
 
@@ -77,28 +77,28 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     ball::Meshes.Ball{Meshes.𝔼{3},CRS,ℒ},
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function, CRS, ℒ}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, CRS, ℒ, T<:AbstractFloat}
     error("Integrating a Ball in 𝔼{3} with GaussKronrod not supported.")
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     box::Meshes.Box{Meshes.𝔼{3},CRS,ℒ},
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function, CRS, ℒ}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64,
+) where {F<:Function, CRS, ℒ, T<:AbstractFloat}
     error("Integrating a Box in 𝔼{3} with GaussKronrod not supported.")
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     box::Meshes.Cylinder,
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     error("Integrating a Cylinder with GaussKronrod not supported.")
 end

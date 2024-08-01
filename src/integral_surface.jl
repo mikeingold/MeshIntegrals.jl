@@ -3,11 +3,11 @@
 ################################################################################
 
 function _integral_2d(
-    FP::Type{T} = Float64,
     f,
-    geometry2d::G,
-    settings::GaussLegendre
-) where {T<:AbstractFloat, G<:Meshes.Geometry}
+    geometry2d,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
@@ -23,22 +23,22 @@ function _integral_2d(
 end
 
 function _integral_2d(
-    FP::Type{T} = Float64,
     f,
-    geometry2d::G,
-    settings::GaussKronrod
-) where {T<:AbstractFloat, G<:Meshes.Geometry}
+    geometry2d,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), FP(0), FP(1); settings.kwargs...)[1]
     return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
 end
 
 function _integral_2d(
-    FP::Type{T} = Float64,
     f,
-    geometry2d::G,
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, G<:Meshes.Geometry}
+    geometry2d,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(uv) = f(geometry2d(uv...)) * differential(geometry2d, uv)
     return HCubature.hcubature(integrand, FP[0,0], FP[1,1]; settings.kwargs...)[1]
 end
@@ -49,11 +49,11 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     cyl::Meshes.CylinderSurface,
-    settings::GaussLegendre
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     error("Integrating a CylinderSurface with GaussLegendre not supported.")
     # TODO Planned to support in the future
     # Waiting for resolution on whether CylinderSurface includes the terminating disks
@@ -62,11 +62,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     cyl::Meshes.CylinderSurface,
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Integrate the rounded sides of the cylinder's surface
     # \int ( \int f(r̄) dz ) dφ
     function sides_inner∫(φ)
@@ -94,11 +94,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     cyl::Meshes.CylinderSurface,
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     error("Integrating a CylinderSurface with HAdaptiveCubature not supported.")
     # TODO Planned to support in the future
 end
@@ -108,11 +108,11 @@ end
 ################################################################################
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     plane::Meshes.Plane,
-    settings::GaussLegendre
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
@@ -131,11 +131,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     plane::Meshes.Plane,
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
     plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
 
@@ -145,11 +145,11 @@ function integral(
 end
 
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     plane::Meshes.Plane,
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
     plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
 
@@ -175,11 +175,11 @@ using a Gauss-Legendre quadrature rule along each barycentric dimension of the
 triangle.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::GaussLegendre
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
@@ -217,11 +217,11 @@ Like [`integral`](@ref) but integrates over the surface of a `triangle` using ne
 Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::GaussKronrod
-) where {T<:AbstractFloat, F<:Function}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
     inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), FP(0), FP(1-u); settings.kwargs...)[1]
@@ -239,11 +239,11 @@ transforming the triangle into a polar-barycentric coordinate system and using
 an h-adaptive cubature rule.
 """
 function integral(
-    FP::Type{T} = Float64,
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::HAdaptiveCubature
-) where {T<:AbstractFloat, F<:Function}
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )
