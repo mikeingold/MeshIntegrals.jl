@@ -7,7 +7,7 @@ using Test
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem{T, Dim, CRS, ℒ, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS.ℒ}}
+struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
     name::String
     type::Type{T}
     geometry::G
