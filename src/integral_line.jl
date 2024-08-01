@@ -48,7 +48,7 @@ function lineintegral(
     f::F,
     curve::Meshes.BezierCurve,
     settings::I,
-    FP::Type{T} = Float64;
+    FP::Type{T};
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     return integral(f, curve, settings, FP; alg=alg)
@@ -259,7 +259,7 @@ function integral(
     f::F,
     ring::Meshes.Ring,
     settings::I,
-    FP::Type{T} = Float64
+    FP::Type{T}
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> lineintegral(f, segment, settings, FP), segments(ring))
@@ -278,7 +278,7 @@ function integral(
     f::F,
     rope::Meshes.Rope,
     settings::I,
-    FP::Type{T} = Float64,
+    FP::Type{T}
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Rope into Segments, sum the integrals of those 
     return sum(segment -> lineintegral(f, segment, settings, FP), segments(rope))
