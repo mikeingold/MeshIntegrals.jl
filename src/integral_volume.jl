@@ -87,10 +87,10 @@ end
 
 function integral(
     f::F,
-    box::Meshes.Box{Meshes.𝔼{3},CRS,ℒ},
+    box::Meshes.Box{Meshes.𝔼{3},CRS},
     settings::GaussKronrod,
     FP::Type{T} = Float64,
-) where {F<:Function, CRS, ℒ, T<:AbstractFloat}
+) where {F<:Function, CRS, T<:AbstractFloat}
     error("Integrating a Box in 𝔼{3} with GaussKronrod not supported.")
 end
 
