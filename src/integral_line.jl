@@ -149,7 +149,7 @@ function integral(
     xs, ws = _gausslegendre(FP, settings.n)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
@@ -167,7 +167,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Integrate f along the Line
     return QuadGK.quadgk(t -> f(line(t)), FP(-Inf), FP(Inf); settings.kwargs...)[1]
@@ -180,7 +180,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
@@ -205,7 +205,7 @@ function integral(
     xs, ws = _gausslegendre(FP, settings.n)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
     t₁(x) = FP(1/2) * x + FP(1/2)
@@ -227,7 +227,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Integrate f along the Ray
     return QuadGK.quadgk(t -> f(ray(t)), FP(0), FP(Inf); settings.kwargs...)[1]
@@ -240,7 +240,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [0,1] ↦ t ∈ [0,∞)
     t(x) = x / (1 - x^2)
