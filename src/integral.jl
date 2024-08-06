@@ -58,9 +58,6 @@ function integral(
     geometry::G,
     settings::I=HAdaptiveCubature()
 ) where {F<:Function, Dim, T, G<:Meshes.Geometry{Dim,T}, I<:IntegrationAlgorithm}
-    # Validate that the provided function has an appropriate f(::Point{Dim,T}) method
-    _validate_integrand(f, Dim, T)
-
     # Run the appropriate integral type
     dim_param = paramdim(geometry)
     if dim_param == 1

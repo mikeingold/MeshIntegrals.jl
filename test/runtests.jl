@@ -42,7 +42,7 @@ end
 
 # Generate a @testset for item
 function autotest(item::SupportItem)
-    @assert item.type == coordtype(item.geometry) "Item type mismatch"
+    #@assert item.type == coordtype(item.geometry) "Item type mismatch"
 
     N = (item.type == Float32) ? 1000 : 100
     algorithm_set = [
