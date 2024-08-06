@@ -119,7 +119,7 @@ function integral(
     xxs = Iterators.product(xs, xs)
 
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
@@ -137,7 +137,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Integrate f over the Plane
     inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)), FP(-Inf), FP(Inf); settings.kwargs...)[1]
@@ -151,7 +151,7 @@ function integral(
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
