@@ -1,6 +1,7 @@
 module MeshIntegrals
     using LinearAlgebra
     using Meshes
+    using Unitful
 
     import FastGaussQuadrature
     import HCubature
