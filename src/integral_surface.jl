@@ -50,7 +50,7 @@ function _integral_2d(
     value = HCubature.hcubature(uintegrand, FP[0,0], FP[1,1]; settings.kwargs...)[1]
 
     # Reapply units
-    return value * integrandunits
+    return value .* integrandunits
 end
 
 
