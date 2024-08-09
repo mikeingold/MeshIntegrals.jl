@@ -31,7 +31,17 @@ function _integral_3d(
     FP::Type{T} = Float64,
 ) where {T<:AbstractFloat}
     integrand(ts) = f(geometry3d(ts...)) * differential(geometry3d, ts)
-    return HCubature.hcubature(integrand, zeros(FP,3), ones(FP,3); settings.kwargs...)[1]
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    integrandunits = Unitful.unit.(integrand(fill(0.5,3)))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, zeros(FP,3), ones(FP,3); settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 
