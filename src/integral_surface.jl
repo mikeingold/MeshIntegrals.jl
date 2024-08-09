@@ -43,9 +43,9 @@ function _integral_2d(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    integrandunits = Unitful.unit(integrand(FP[0.5,0.5]))
+    integrandunits = Unitful.unit.(integrand(FP[0.5,0.5]))
     # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip(integrandunits, integrand(uv))
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
     value = HCubature.hcubature(uintegrand, FP[0,0], FP[1,1]; settings.kwargs...)[1]
 
