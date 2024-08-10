@@ -1,16 +1,3 @@
-# Branch: CRS
-
-Changes:
-- Established compatibility with recent Meshes.jl versions (0.43+) that implemented CRS changes
-- Adds a direct dependency on Unitful for manipulating Meshes.jl now-inherently-Unitful types
-- Added an optional floating-point precision type argument, e.g. `integral(f, geometry, settings, T)`
-- Lots of internal restructuring
-- Add support for integration of `CylinderSurface`s with `HAdaptiveCubature` algorithm (PENDING)
-
-Longer term outlook (document as TODO actions in GitHub Issues?)
-- Evaluate Zygote for AD Jacobians
-- Implement generalized GaussLegendre method
-
 # MeshIntegrals.jl
 
 This package implements methods for numerically-computing integrals over geometric polytopes
