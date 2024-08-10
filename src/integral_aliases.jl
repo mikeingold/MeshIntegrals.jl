@@ -25,7 +25,7 @@ function lineintegral(
     if Dim == 1
         return integral(f, geometry, GaussKronrod())
     else
-        error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -39,7 +39,7 @@ function lineintegral(
     if Dim == 1
         return integral(f, geometry, settings)
     else
-        error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -54,7 +54,7 @@ function lineintegral(
     if Dim == 1
         return integral(f, geometry, settings, FP)
     else
-        error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -86,7 +86,7 @@ function surfaceintegral(
     if Dim == 2
         return integral(f, geometry, GaussKronrod())
     else
-        error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -100,7 +100,7 @@ function surfaceintegral(
     if Dim == 2
         return integral(f, geometry, settings)
     else
-        error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -115,7 +115,7 @@ function surfaceintegral(
     if Dim == 2
         return integral(f, geometry, settings, FP)
     else
-        error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -147,7 +147,7 @@ function volumeintegral(
     if Dim == 3
         return integral(f, geometry, GaussKronrod())
     else
-        error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -161,7 +161,7 @@ function volumeintegral(
     if Dim == 3
         return integral(f, geometry, settings)
     else
-        error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
 
@@ -176,6 +176,6 @@ function volumeintegral(
     if Dim == 3
         return integral(f, geometry, settings, FP)
     else
-        error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
 end
