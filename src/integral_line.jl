@@ -288,11 +288,20 @@ end
 function integral(
     f::F,
     ring::Meshes.Ring,
-    settings::I,
-    FP::Type{T}
-) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    settings::HAdaptiveCubature
+) where {F<:Function}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings, FP), segments(ring))
+    return sum(segment -> _integral(f, segment, settings), segments(ring))
+end
+
+function integral(
+    f::F,
+    ring::Meshes.Ring,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {F<:Function, T<:AbstractFloat}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings, FP), segments(ring))
 end
 
 function integral(
@@ -301,7 +310,46 @@ function integral(
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
+    return sum(segment -> integral(f, segment, settings), segments(ring))
+end
+
+function integral(
+    f::F,
+    ring::Meshes.Ring,
+    settings::I,
+    FP::Type{T}
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> integral(f, segment, settings, FP), segments(ring))
+end
+
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::HAdaptiveCubature
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings), segments(rope))
+end
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings, FP), segments(rope))
+end
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::I
+) where {F<:Function, I<:IntegrationAlgorithm}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> integral(f, segment, settings), segments(rope))
 end
 
 function integral(
@@ -311,14 +359,5 @@ function integral(
     FP::Type{T}
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Rope into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings, FP), segments(rope))
-end
-
-function integral(
-    f::F,
-    rope::Meshes.Rope,
-    settings::I
-) where {F<:Function, I<:IntegrationAlgorithm}
-    # Convert the Rope into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings), segments(rope))
+    return sum(segment -> integral(f, segment, settings, FP), segments(rope))
 end
