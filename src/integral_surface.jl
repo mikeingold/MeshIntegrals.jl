@@ -98,7 +98,7 @@ function integral(
 ) where {F<:Function, T<:AbstractFloat}
     Dim = Meshes.paramdim(cyl)
 
-    integrand(t) = f(cyl(t...)) * differential(geometry, t)
+    integrand(t) = f(cyl(t...)) * differential(cyl, t)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
