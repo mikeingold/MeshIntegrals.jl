@@ -78,7 +78,7 @@ function integral(
     settings::GaussKronrod,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
-    # Integrate the rounded sides of the cylinder's surface
+    # Integrate the curved sides of the CylinderSurface
     # \int ( \int f(r̄) dz ) dφ
     function sides_inner∫(φ)
         sidelength = norm(cyl(φ,FP(1)) - cyl(φ,FP(0)))
@@ -86,27 +86,12 @@ function integral(
     end
     sides = (FP(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), FP(0), FP(1); settings.kwargs...)[1]
 
-    #=
-    # Integrate the top and bottom disks
-    # \int ( \int r f(r̄) dr ) dφ
-    function disk_inner∫(φ,plane,z)
-        # Parameterize the top surface of the cylinder
-        rimedge = cyl(φ,FP(z))
-        centerpoint = plane.p
-        r̄ = rimedge - centerpoint
-        radius = norm(r̄)
-        point(r) = centerpoint + (r / radius) * r̄
-
-        return radius^2 * QuadGK.quadgk(r -> r * f(point(r)), FP(0), FP(1); settings.kwargs...)[1]
-    end
-    top    = FP(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.top,1), FP(0), FP(1); settings.kwargs...)[1]
-    bottom = FP(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.bot,0), FP(0), FP(1); settings.kwargs...)[1]
-    =#
-
+    # Integrate the Disk at the top of the CylinderSurface
     disk_top = Meshes.Disk(cyl.top, cyl.radius)
-    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
-
     top = _integral_2d(f, disk_top, settings, FP)
+
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
     bottom = _integral_2d(f, disk_bottom, settings, FP)
 
     return sides + top + bottom
