@@ -2,6 +2,7 @@ using Aqua
 using MeshIntegrals
 using Meshes
 using Test
+using Unitful
 
 ################################################################################
 #                                Infrastructure
