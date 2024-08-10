@@ -26,23 +26,19 @@ end
 
 function _integral_3d(
     f,
-    geometry3d,
+    geometry,
     settings::HAdaptiveCubature,
-    FP::Type{T} = Float64,
+)
+    return _integral(f, geometry, settings)
+end
+
+function _integral_3d(
+    f,
+    geometry,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    integrand(ts) = f(geometry3d(ts...)) * differential(geometry3d, ts)
-
-    # HCubature doesn't support functions that output Unitful Quantity types
-    # Establish the units that are output by f
-    testpoint_parametriccoord = fill(FP(0.5),3)
-    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
-    # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
-    # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zeros(FP,3), ones(FP,3); settings.kwargs...)[1]
-
-    # Reapply units
-    return value .* integrandunits
+    return _integral(f, geometry, settings, FP)
 end
 
 

@@ -35,23 +35,19 @@ end
 
 function _integral_2d(
     f,
-    geometry2d,
+    geometry,
+    settings::HAdaptiveCubature,
+)
+    return _integral(f, geometry, settings)
+end
+
+function _integral_2d(
+    f,
+    geometry,
     settings::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    integrand(uv) = f(geometry2d(uv...)) * differential(geometry2d, uv)
-
-    # HCubature doesn't support functions that output Unitful Quantity types
-    # Establish the units that are output by f
-    testpoint_parametriccoord = fill(FP(0.5),3)
-    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
-    # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
-    # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zeros(FP,2), ones(FP,2); settings.kwargs...)[1]
-
-    # Reapply units
-    return value .* integrandunits
+    return _integral(f, geometry, settings, FP)
 end
 
 
