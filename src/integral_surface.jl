@@ -85,6 +85,7 @@ function integral(
     end
     sides = (FP(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), FP(0), FP(1); settings.kwargs...)[1]
 
+    #=
     # Integrate the top and bottom disks
     # \int ( \int r f(r̄) dr ) dφ
     function disk_inner∫(φ,plane,z)
@@ -99,6 +100,13 @@ function integral(
     end
     top    = FP(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.top,1), FP(0), FP(1); settings.kwargs...)[1]
     bottom = FP(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.bot,0), FP(0), FP(1); settings.kwargs...)[1]
+    =#
+
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+
+    top = _integral_2d(f, disk_top, settings, FP)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
 
     return sides + top + bottom
 end
