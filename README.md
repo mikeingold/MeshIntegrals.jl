@@ -1,39 +1,27 @@
 # Branch: CRS
 
-Breaking Change:
-- Currently testing a conversion of function signature to `integral(T=Float64, f, geometry, settings)`
+Changes:
+- Established compatibility with recent Meshes.jl versions (0.43+) that implemented CRS changes
+- Adds a direct dependency on Unitful for manipulating Meshes.jl now-inherently-Unitful types
+- Added an optional floating-point precision type argument, e.g. `integral(f, geometry, settings, T)`
+- Lots of internal restructuring
+- Add support for integration of `CylinderSurface`s with `HAdaptiveCubature` algorithm (PENDING)
 
-TODO
-- [x] Change `Project.toml` upper bound to current version of Meshes.jl
-- [x] Run test suite and evaluate results
-- [ ] Make updates as required to pass all tests
-  - [ ] Remove all obsolete `{Dim,T}` parameterizations
-  - [ ] Convert to new signature in `integrals_surface.jl`
-  - [ ] Convert to new signature in `integrals_volume.jl`
-  - [ ] Re-run tests and see what happens
-
-Longer term?
-- [ ] Evaluate Zygote for AD Jacobians
+Longer term outlook (document as TODO actions in GitHub Issues?)
+- Evaluate Zygote for AD Jacobians
+- Implement generalized GaussLegendre method
 
 # MeshIntegrals.jl
 
 This package implements methods for numerically-computing integrals over geometric polytopes
-from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using:
+from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using the following `::IntegrationAlgorithms`:
 - Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl): `GaussLegendre(n)`
 - H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl): `GaussKronrod(kwargs...)`
 - H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl): `HAdaptiveCubature(kwargs...)`
 
 Functions available:
-- `integral(f, geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular
+- `integral(f, ::Geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular `::IntegrationAlgorithm`
 - `lineintegral`, `surfaceintegral`, and `volumeintegral` are available as aliases for `integral` that first verify that `geometry` has the appropriate number of parametric dimensions
-
-Integration methods are also compatible with:
-- Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
-- Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that **QuadGK.jl** can integrate, including:
-    - Real or complex-valued scalars
-    - Real or complex-valued vectors
-    - Dimensionful scalars or vectors from Unitful.jl
-    - Dimensionful scalars or vectors from DynamicQuantities.jl
 
 # Example Usage
 
