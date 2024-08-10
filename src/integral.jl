@@ -48,26 +48,82 @@ end
 ################################################################################
 
 """
-    integral(f, geometry, algorithm::IntegrationAlgorithm)
+    integral(f, geometry)
+    integral(f, geometry, algorithm)
+    integral(f, geometry, algorithm, FP)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
-a `geometry` using a particular `integration algorithm`.
+a `geometry` using a particular `integration algorithm` with floating point
+precision of type `FP`.
 """
+function integral end
+
+# If only f and geometry are specified, default to HAdaptiveCubature
+function integral(
+    f::F,
+    geometry::G
+) where {F<:Function, G<:Meshes.Geometry}
+    _integral(f, geometry, HAdaptiveCubature())
+end
+
+# If algorithm is HAdaptiveCubature, use the generalized n-dim solution
 function integral(
     f::F,
     geometry::G,
-    settings::I=HAdaptiveCubature()
-) where {F<:Function, Dim, T, G<:Meshes.Geometry{Dim,T}, I<:IntegrationAlgorithm}
+    settings::HAdaptiveCubature
+) where {F<:Function, G<:Meshes.Geometry}
+    _integral(f, geometry, settings)
+end
+
+# If algorithm is HAdaptiveCubature, and FP specified, use the generalized n-dim solution
+function integral(
+    f::F,
+    geometry::G,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {F<:Function, G<:Meshes.Geometry, T<:AbstractFloat}
+    _integral(f, geometry, settings, FP)
+end
+
+# If algorithm is not HAdaptiveCubature, specialize on number of dimensions
+function integral(
+    f::F,
+    geometry::G,
+    settings::I
+) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
     # Run the appropriate integral type
-    dim_param = paramdim(geometry)
-    if dim_param == 1
+    Dim = Meshes.paramdim(geometry)
+    if Dim == 1
         return _integral_1d(f, geometry, settings)
-    elseif dim_param == 2
+    elseif Dim == 2
         return _integral_2d(f, geometry, settings)
-    elseif dim_param == 3
+    elseif Dim == 3
         return _integral_3d(f, geometry, settings)
     end
 end
+
+# If algorithm is not HAdaptiveCubature, and FP specified, specialize on number of dimensions
+function integral(
+    f::F,
+    geometry::G,
+    settings::I,
+    FP::Type{T}
+) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # Run the appropriate integral type
+    Dim = Meshes.paramdim(geometry)
+    if Dim == 1
+        return _integral_1d(f, geometry, settings, FP)
+    elseif Dim == 2
+        return _integral_2d(f, geometry, settings, FP)
+    elseif Dim == 3
+        return _integral_3d(f, geometry, settings, FP)
+    end
+end
+
+
+################################################################################
+#                    Generalized (n-Dimensional) Worker Methods
+################################################################################
 
 # General solution for HAdaptiveCubature methods
 function _integral(
@@ -91,68 +147,4 @@ function _integral(
 
     # Reapply units
     return value .* integrandunits
-end
-
-################################################################################
-#                    Line, Surface, and Volume Aliases
-################################################################################
-
-"""
-    lineintegral(f, geometry, algorithm::IntegrationAlgorithm=GaussKronrod)
-
-Numerically integrate a given function `f(::Point)` along a line-like `geometry`
-using a particular `integration algorithm`.
-
-Algorithm types available:
-- GaussKronrod
-- GaussLegendre
-- HAdaptiveCubature
-"""
-function lineintegral(
-    f::F,
-    geometry::G,
-    settings::I=GaussKronrod()
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if (dim = paramdim(geometry)) == 1
-        return integral(f, geometry, settings)
-    else
-        error("Performing a line integral on a geometry with $dim parametric dimensions not supported.")
-    end
-end
-
-"""
-    surfaceintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
-
-Numerically integrate a given function `f(::Point)` over a surface `geometry`
-using a particular `integration algorithm`.
-"""
-function surfaceintegral(
-    f::F,
-    geometry::G,
-    settings::I=HAdaptiveCubature()
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if (dim = paramdim(geometry)) == 2
-        return integral(f, geometry, settings)
-    else
-        error("Performing a surface integral on a geometry with $dim parametric dimensions not supported.")
-    end
-end
-
-"""
-    volumeintegral(f, geometry, algorithm::IntegrationAlgorithm=HAdaptiveCubature)
-
-Numerically integrate a given function `f(::Point)` throughout a volumetric
-`geometry` using a particular `integration algorithm`.
-
-"""
-function volumeintegral(
-    f::F,
-    geometry::G,
-    settings::I=HAdaptiveCubature()
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    if (dim = paramdim(geometry)) == 3
-        return integral(f, geometry, settings)
-    else
-        error("Performing a volume integral on a geometry with $dim parametric dimensions not supported.")
-    end
 end
