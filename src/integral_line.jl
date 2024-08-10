@@ -41,7 +41,7 @@ function _integral_1d(
     f,
     geometry,
     settings::HAdaptiveCubature,
-    FP::Type{T} = Float64
+    FP::Type{T}
 ) where {T<:AbstractFloat}
     return _integral(f, geometry, settings, FP)
 end
