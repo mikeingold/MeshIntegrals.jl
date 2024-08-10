@@ -63,9 +63,6 @@ function integral(
 ) where {F<:Function, T<:AbstractFloat}
     error("Integrating a CylinderSurface with GaussLegendre not supported.")
     # TODO Planned to support in the future
-    # Waiting for resolution on whether CylinderSurface includes the terminating disks
-    # on its surface by definition, and whether there will be parametric function to
-    # generate those.
 end
 
 function integral(
@@ -99,8 +96,30 @@ function integral(
     settings::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
-    error("Integrating a CylinderSurface with HAdaptiveCubature not supported.")
-    # TODO Planned to support in the future
+    Dim = Meshes.paramdim(cyl)
+
+    integrand(t) = f(cyl(t...)) * differential(geometry, t)
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = fill(FP(0.5),Dim)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); settings.kwargs...)[1]
+    # Reapply units
+    sides = value .* integrandunits
+
+    # Integrate the Disk at the top of the CylinderSurface
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral_2d(f, disk_top, settings, FP)
+
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
+
+    return sides + top + bottom
 end
 
 ################################################################################
