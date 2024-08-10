@@ -11,6 +11,7 @@ module MeshIntegrals
     export jacobian, derivative, unitdirection
 
     include("integral.jl")
+    include("integral_aliases.jl")
     include("integral_line.jl")
     include("integral_surface.jl")
     include("integral_volume.jl")
