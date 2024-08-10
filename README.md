@@ -1,22 +1,14 @@
 # MeshIntegrals.jl
 
 This package implements methods for numerically-computing integrals over geometric polytopes
-from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using:
+from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using the following `::IntegrationAlgorithms`:
 - Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl): `GaussLegendre(n)`
 - H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl): `GaussKronrod(kwargs...)`
 - H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl): `HAdaptiveCubature(kwargs...)`
 
 Functions available:
-- `integral(f, geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular
+- `integral(f, ::Geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular `::IntegrationAlgorithm`
 - `lineintegral`, `surfaceintegral`, and `volumeintegral` are available as aliases for `integral` that first verify that `geometry` has the appropriate number of parametric dimensions
-
-Integration methods are also compatible with:
-- Meshes.jl geometries with **Unitful.jl** coordinate types, e.g. `Point(1.0u"m", 2.0u"m")`
-- Any `f(::Meshes.Point{Dim,<:Real})` that maps to a value type that **QuadGK.jl** can integrate, including:
-    - Real or complex-valued scalars
-    - Real or complex-valued vectors
-    - Dimensionful scalars or vectors from Unitful.jl
-    - Dimensionful scalars or vectors from DynamicQuantities.jl
 
 # Example Usage
 

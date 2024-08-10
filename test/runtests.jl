@@ -2,12 +2,13 @@ using Aqua
 using MeshIntegrals
 using Meshes
 using Test
+using Unitful
 
 ################################################################################
 #                                Infrastructure
 ################################################################################
 
-struct SupportItem{Dim, T, G<:Meshes.Geometry{Dim,T}}
+struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
     name::String
     type::Type{T}
     geometry::G
@@ -42,7 +43,7 @@ end
 
 # Generate a @testset for item
 function autotest(item::SupportItem)
-    @assert item.type == coordtype(item.geometry) "Item type mismatch"
+    #@assert item.type == coordtype(item.geometry) "Item type mismatch"
 
     N = (item.type == Float32) ? 1000 : 100
     algorithm_set = [
@@ -86,12 +87,12 @@ end
     pt_s(T) = Point(T( 0), T(-1), T(0))
     
     # Test Geometries
-    ball2d(T)   = Ball{2,T}(origin2d(T), T(2.0))
-    ball3d(T)   = Ball{3,T}(origin3d(T), T(2.0))
+    ball2d(T)   = Ball(origin2d(T), T(2.0))
+    ball3d(T)   = Ball(origin3d(T), T(2.0))
     bezier(T)   = BezierCurve([Point(cos(t), sin(t), 0) for t in range(T(0), T(2π), length=361)])
-    box1d(T)    = Box{1,T}(Point(T(-1)), Point(T(1)))
-    box2d(T)    = Box{2,T}(Point(T(-1), T(-1)), Point(T(1), T(1)))
-    box3d(T)    = Box{3,T}(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
+    box1d(T)    = Box(Point(T(-1)), Point(T(1)))
+    box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
+    box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
@@ -120,7 +121,7 @@ end
         # Cone
         # ConeSurface
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
-        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 0),
+        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum
         # FrustumSurface
@@ -152,57 +153,63 @@ end
     @testset "Meshes.Line" begin
         line = Line(pt_e(Float64), pt_w(Float64))
 
-        function f(p::Point{3,T}) where {T}
-            x, y, z = p.coords
+        function f(p::P) where {P<:Meshes.Point}
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             exp(-x^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)
-        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)
-        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)
+        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)*u"m"
+        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)*u"m"
+        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
 
-        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π),3)
-        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π),3)
-        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
     end
 
     # Custom tests for Ray (no measure available for reference)
     @testset "Meshes.Ray" begin
         ray = Ray(origin3d(Float64), ẑ(Float64))
 
-        function f(p::Point{3,T}) where {T}
-            x, y, z = p.coords
+        function f(p::P) where {P<:Meshes.Point}
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             2 * exp(-z^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)
-        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)
-        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)
+        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)*u"m"
+        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)*u"m"
+        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
 
-        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π),3)
-        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π),3)
-        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
     end
 
     # Custom tests for Plane (no measure available for reference)
     @testset "Meshes.Plane" begin
         plane = Plane(origin3d(Float64), ẑ(Float64))
 
-        function f(p::Point{3,T}) where {T}
-            x, y, z = p.coords
+        function f(p::P) where {P<:Meshes.Point}
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             exp(-x^2 - y^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, plane, GaussLegendre(100)) ≈ π
-        @test integral(f, plane, GaussKronrod()) ≈ π
-        @test integral(f, plane, HAdaptiveCubature()) ≈ π
+        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m^2"
+        @test integral(f, plane, GaussKronrod()) ≈ π*u"m^2"
+        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m^2"
 
-        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π,3)
-        @test integral(fv, plane, GaussKronrod()) ≈ fill(π,3)
-        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π,3)
+        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m^2",3)
+        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m^2",3)
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m^2",3)
     end
 end
 

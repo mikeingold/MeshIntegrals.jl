@@ -5,39 +5,45 @@
 function _integral_1d(
     f,
     geometry,
-    settings::GaussLegendre
-)
-    T = coordtype(geometry)
-
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = T(1/2) * x + T(1/2)
+    t(x) = FP(1/2) * x + FP(1/2)
 
     # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
     integrand((w,x)) = w * f(geometry(t(x))) * differential(geometry, [t(x)])
-    return T(1/2) * sum(integrand, zip(ws, xs))
+    return FP(1/2) * sum(integrand, zip(ws, xs))
 end
 
 function _integral_1d(
     f,
     geometry,
-    settings::GaussKronrod
-)
-    T = coordtype(geometry)
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, [t])
-    return QuadGK.quadgk(integrand, T(0), T(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
 end
 
 function _integral_1d(
     f,
     geometry,
-    settings::HAdaptiveCubature
+    settings::HAdaptiveCubature,
 )
-    T = coordtype(geometry)
-    integrand(t) = f(geometry(t[1])) * differential(geometry, t)
-    return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
+    return _integral(f, geometry, settings)
+end
+
+function _integral_1d(
+    f,
+    geometry,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {T<:AbstractFloat}
+    return _integral(f, geometry, settings, FP)
 end
 
 
@@ -47,10 +53,20 @@ end
 
 function lineintegral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
+    curve::Meshes.BezierCurve,
+    settings::I,
+    FP::Type{T};
+    alg::Meshes.BezierEvalMethod=Meshes.Horner()
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    return integral(f, curve, settings, FP; alg=alg)
+end
+
+function lineintegral(
+    f::F,
+    curve::Meshes.BezierCurve,
     settings::I;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, Dim, T, V, I<:IntegrationAlgorithm}
+) where {F<:Function, I<:IntegrationAlgorithm}
     return integral(f, curve, settings; alg=alg)
 end
 
@@ -66,22 +82,20 @@ especially for curves with a large number of control points.
 """
 function integral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
-    settings::GaussLegendre;
+    curve::Meshes.BezierCurve,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, Dim, T, V}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = T(1/2) * x + T(1/2)
+    t(x) = FP(1/2) * x + FP(1/2)
     point(x) = curve(t(x), alg)
 
     # Integrate f along the line and apply a domain-correction factor for [-1,1] ↦ [0, length]
-    return T(1/2) * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
+    return FP(1/2) * length(curve) * sum(w .* f(point(x)) for (w,x) in zip(ws, xs))
 end
 
 """
@@ -96,16 +110,14 @@ especially for curves with a large number of control points.
 """
 function integral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
-    settings::GaussKronrod;
+    curve::Meshes.BezierCurve,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function,Dim, T, V}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+) where {F<:Function, T<:AbstractFloat}
     len = length(curve)
     point(t) = curve(t, alg)
-    return QuadGK.quadgk(t -> len * f(point(t)), T(0), T(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(t -> len * f(point(t)), FP(0), FP(1); settings.kwargs...)[1]
 end
 
 """
@@ -120,16 +132,26 @@ especially for curves with a large number of control points.
 """
 function integral(
     f::F,
-    curve::Meshes.BezierCurve{Dim,T,V},
-    settings::HAdaptiveCubature;
+    curve::Meshes.BezierCurve,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function,Dim, T, V}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+) where {F<:Function, T<:AbstractFloat}
     len = length(curve)
     point(t) = curve(t, alg)
-    return HCubature.hcubature(t -> len * f(point(t[1])), T[0], T[1]; settings.kwargs...)[1]
+    integrand(t) = len * f(point(t[1]))
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = fill(FP(0.5),3)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 ################################################################################
@@ -138,60 +160,69 @@ end
 
 function integral(
     f::F,
-    line::Meshes.Line{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    line::Meshes.Line,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    integrand(x) = f(line(t(x))) * t′(x)
+    domainunits = _units(line(0))
+    integrand(x) = f(line(t(x))) * t′(x) * domainunits
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
 function integral(
     f::F,
-    line::Meshes.Line{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    line::Meshes.Line,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Integrate f along the Line
-    return QuadGK.quadgk(t -> f(line(t)), T(-Inf), T(Inf); settings.kwargs...)[1]
+    domainunits = _units(line(0))
+    integrand(t) = f(line(t)) * domainunits
+    return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
     f::F,
-    line::Meshes.Line{Dim,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    line::Meshes.Line,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + normalize(line.b - line.a))
+    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1])
-    return HCubature.hcubature(integrand, T[-1], T[1]; settings.kwargs...)[1]
+    domainunits = _units(line(0))
+    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1]) * domainunits
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = FP[0.5]
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[-1], FP[1]; settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 ################################################################################
@@ -200,64 +231,72 @@ end
 
 function integral(
     f::F,
-    ray::Meshes.Ray{Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    ray::Meshes.Ray,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
-    t₁(x) = T(1/2) * x + T(1/2)
-    t₁′(x) = T(1/2)
+    t₁(x) = FP(1/2) * x + FP(1/2)
+    t₁′(x) = FP(1/2)
     t₂(x) = x / (1 - x^2)
     t₂′(x) = (1 + x^2) / (1 - x^2)^2
     t = t₂ ∘ t₁
     t′(x) = t₂′(t₁(x)) * t₁′(x)
 
     # Integrate f along the Ray
-    integrand(x) = f(ray(t(x))) * t′(x)
+    domainunits = _units(ray(0))
+    integrand(x) = f(ray(t(x))) * t′(x) * domainunits
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
 function integral(
     f::F,
-    ray::Meshes.Ray{Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    ray::Meshes.Ray,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Integrate f along the Ray
-    return QuadGK.quadgk(t -> f(ray(t)), T(0), T(Inf); settings.kwargs...)[1]
+    domainunits = _units(ray(0))
+    return QuadGK.quadgk(t -> f(ray(t)) * domainunits, FP(0), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
     f::F,
-    ray::Meshes.Ray{Dim,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    ray::Meshes.Ray,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, normalize(ray.v))
+    ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [0,1] ↦ t ∈ [0,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
     
     # Integrate f along the Ray
-    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1])
-    return HCubature.hcubature(integrand, T[0], T[1]; settings.kwargs...)[1]
+    domainunits = _units(ray(0))
+    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1]) * domainunits
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = FP[0.5]
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 ################################################################################
@@ -267,10 +306,59 @@ end
 function integral(
     f::F,
     ring::Meshes.Ring,
+    settings::HAdaptiveCubature
+) where {F<:Function}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings), segments(ring))
+end
+
+function integral(
+    f::F,
+    ring::Meshes.Ring,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {F<:Function, T<:AbstractFloat}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings, FP), segments(ring))
+end
+
+function integral(
+    f::F,
+    ring::Meshes.Ring,
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings), segments(ring))
+    return sum(segment -> integral(f, segment, settings), segments(ring))
+end
+
+function integral(
+    f::F,
+    ring::Meshes.Ring,
+    settings::I,
+    FP::Type{T}
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # Convert the Ring into Segments, sum the integrals of those 
+    return sum(segment -> integral(f, segment, settings, FP), segments(ring))
+end
+
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::HAdaptiveCubature
+) where {F<:Function}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings), segments(rope))
+end
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {F<:Function, T<:AbstractFloat}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> _integral(f, segment, settings, FP), segments(rope))
 end
 
 function integral(
@@ -279,5 +367,15 @@ function integral(
     settings::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Rope into Segments, sum the integrals of those 
-    return sum(segment -> lineintegral(f, segment, settings), segments(rope))
+    return sum(segment -> integral(f, segment, settings), segments(rope))
+end
+
+function integral(
+    f::F,
+    rope::Meshes.Rope,
+    settings::I,
+    FP::Type{T}
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # Convert the Rope into Segments, sum the integrals of those 
+    return sum(segment -> integral(f, segment, settings, FP), segments(rope))
 end

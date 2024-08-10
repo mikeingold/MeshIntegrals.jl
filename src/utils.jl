@@ -87,9 +87,9 @@ Determine the vector derivative of a Bezier curve `b` for the point on the
 curve parameterized by value `t`.
 """
 function derivative(
-    bz::Meshes.BezierCurve{Dim,T,V},
+    bz::Meshes.BezierCurve,
     t
-) where {Dim,T,V}
+)
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
         throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
@@ -110,7 +110,7 @@ function derivative(
     # Derivative = N Σ_{i=0}^{N-1} sigma(i)
     #   P indices adjusted for Julia 1-based array indexing
     sigma(i) = B(i,N-1)(t) .* (P[(i+1)+1] - P[(i)+1])
-    return N .* sum(sigma, 0:N-1)    # ::Vec{Dim,T}
+    return N .* sum(sigma, 0:N-1)
 end
 
 """
@@ -120,9 +120,9 @@ Determine a unit vector pointing in the forward (t+) direction of a Bezier
 curve `b` for a point on the curve parameterized by value `t`.
 """
 function unitdirection(
-    bz::Meshes.BezierCurve{Dim,T,V}, 
+    bz::Meshes.BezierCurve, 
     t
-) where {Dim,T,V}
+)
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
         throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
@@ -131,24 +131,18 @@ function unitdirection(
     # Normalize the derivative of the curve
     u = derivative(bz,t)
     LinearAlgebra.normalize!(u)
-    return u    # ::Vec{Dim,T}
+    return u
 end
 
 ################################################################################
 #                               Internal Tools
 ################################################################################
 
-# Validate that f has a method defined for f(::Point{Dim,T})
-@inline function _validate_integrand(f,Dim,T)
-    if hasmethod(f, (Point{Dim,T},))
-        return nothing
-    else
-        error("The provided Function f must have a method f(::Meshes.Point{$Dim,$T})")
-    end
-end
-
 # Calculate Gauss-Legendre nodes/weights and convert to type T
 function _gausslegendre(T, n)
     xs, ws = FastGaussQuadrature.gausslegendre(n)
     return T.(xs), T.(ws)
 end
+
+# Extract the length units used by the CRS of a Point
+_units(pt::Meshes.Point{M,CRS}) where {M,CRS} = first(CoordRefSystems.units(CRS))

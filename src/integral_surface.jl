@@ -4,40 +4,50 @@
 
 function _integral_2d(
     f,
-    geometry2d::G,
-    settings::GaussLegendre
-) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
+    geometry2d,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Domain transformation: x [-1,1] ↦ t [0,1]
-    t(x) = T(1/2) * x + T(1/2)
+    t(x) = FP(1/2) * x + FP(1/2)
     point(xi, xj) = geometry2d(t(xi), t(xj))
 
     # Integrate f over the geometry
     integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, t.([xi, xj]))
-    return T(1/4) .* sum(integrand, zip(wws,xxs))
+    return FP(1/4) .* sum(integrand, zip(wws,xxs))
 end
 
 function _integral_2d(
     f,
-    geometry2d::G,
-    settings::GaussKronrod
-) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
+    geometry2d,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
-    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), T(0), T(1); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> ∫₁(v), T(0), T(1); settings.kwargs...)[1]
+    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), FP(0), FP(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
 end
 
 function _integral_2d(
     f,
-    geometry2d::G,
-    settings::HAdaptiveCubature
-) where {Dim, T, G<:Meshes.Geometry{Dim,T}}
-    integrand(uv) = f(geometry2d(uv...)) * differential(geometry2d, uv)
-    return HCubature.hcubature(integrand, T[0,0], T[1,1]; settings.kwargs...)[1]
+    geometry,
+    settings::HAdaptiveCubature,
+)
+    return _integral(f, geometry, settings)
+end
+
+function _integral_2d(
+    f,
+    geometry,
+    settings::HAdaptiveCubature,
+    FP::Type{T}
+) where {T<:AbstractFloat}
+    return _integral(f, geometry, settings, FP)
 end
 
 
@@ -47,58 +57,69 @@ end
 
 function integral(
     f::F,
-    cyl::Meshes.CylinderSurface{T},
-    settings::GaussLegendre
-) where {F<:Function, T}
-    error("Integrating a CylinderSurface{T} with GaussLegendre not supported.")
+    cyl::Meshes.CylinderSurface,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
+    error("Integrating a CylinderSurface with GaussLegendre not supported.")
     # TODO Planned to support in the future
-    # Waiting for resolution on whether CylinderSurface includes the terminating disks
-    # on its surface by definition, and whether there will be parametric function to
-    # generate those.
 end
 
 function integral(
     f::F,
-    cyl::Meshes.CylinderSurface{T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A CylinderSurface is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
-    # Integrate the rounded sides of the cylinder's surface
+    cyl::Meshes.CylinderSurface,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
+    # Integrate the curved sides of the CylinderSurface
     # \int ( \int f(r̄) dz ) dφ
     function sides_inner∫(φ)
-        sidelength = norm(cyl(φ,T(1)) - cyl(φ,T(0)))
-        return sidelength * QuadGK.quadgk(z -> f(cyl(φ,z)), T(0), T(1); settings.kwargs...)[1]
+        sidelength = norm(cyl(φ,FP(1)) - cyl(φ,FP(0)))
+        return sidelength * QuadGK.quadgk(z -> f(cyl(φ,z)), FP(0), FP(1); settings.kwargs...)[1]
     end
-    sides = (T(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), T(0), T(1); settings.kwargs...)[1]
+    sides = (FP(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), FP(0), FP(1); settings.kwargs...)[1]
 
-    # Integrate the top and bottom disks
-    # \int ( \int r f(r̄) dr ) dφ
-    function disk_inner∫(φ,plane,z)
-        # Parameterize the top surface of the cylinder
-        rimedge = cyl(φ,T(z))
-        centerpoint = plane.p
-        r̄ = rimedge - centerpoint
-        radius = norm(r̄)
-        point(r) = centerpoint + (r / radius) * r̄
+    # Integrate the Disk at the top of the CylinderSurface
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral_2d(f, disk_top, settings, FP)
 
-        return radius^2 * QuadGK.quadgk(r -> r * f(point(r)), T(0), T(1); settings.kwargs...)[1]
-    end
-    top    = T(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.top,1), T(0), T(1); settings.kwargs...)[1]
-    bottom = T(2π) .* QuadGK.quadgk(φ -> disk_inner∫(φ,cyl.bot,0), T(0), T(1); settings.kwargs...)[1]
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
 
     return sides + top + bottom
 end
 
 function integral(
     f::F,
-    cyl::Meshes.CylinderSurface{T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    error("Integrating a CylinderSurface{T} with HAdaptiveCubature not supported.")
-    # TODO Planned to support in the future
+    cyl::Meshes.CylinderSurface,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
+    Dim = Meshes.paramdim(cyl)
+
+    integrand(t) = f(cyl(t...)) * differential(cyl, t)
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = fill(FP(0.5),Dim)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); settings.kwargs...)[1]
+    # Reapply units
+    sides = value .* integrandunits
+
+    # Integrate the Disk at the top of the CylinderSurface
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral_2d(f, disk_top, settings, FP)
+
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
+
+    return sides + top + bottom
 end
 
 ################################################################################
@@ -107,66 +128,71 @@ end
 
 function integral(
     f::F,
-    plane::Meshes.Plane{T},
-    settings::GaussLegendre
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
+    plane::Meshes.Plane,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f over the Plane
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj)
+    domainunits = _units(plane(0,0))
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
     return sum(integrand, zip(wws,xxs))
 end
 
 function integral(
     f::F,
-    plane::Meshes.Plane{T},
-    settings::GaussKronrod
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
+    plane::Meshes.Plane,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Integrate f over the Plane
-    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)), T(-Inf), T(Inf); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> inner∫(v), T(-Inf), T(Inf); settings.kwargs...)[1]
+    domainunits = _units(plane(0,0))
+    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
     f::F,
-    plane::Meshes.Plane{T},
-    settings::HAdaptiveCubature
-) where {F<:Function, T}
-    # Validate the provided integrand function
-    # A Plane is definitionally embedded in 3D-space
-    _validate_integrand(f,3,T)
-
+    plane::Meshes.Plane,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, normalize(plane.u), normalize(plane.v))
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f over the Plane
-    integrand(x::AbstractVector) = f(plane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2])
-    return HCubature.hcubature(integrand, T[-1, -1], T[1, 1]; settings.kwargs...)[1]
+    domainunits = _units(plane(0,0))
+    integrand(x::AbstractVector) = f(plane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = FP[0.5, 0.5]
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[-1,-1], FP[1,1]; settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 ################################################################################
@@ -183,14 +209,12 @@ triangle.
 """
 function integral(
     f::F,
-    triangle::Meshes.Ngon{3,Dim,T},
-    settings::GaussLegendre
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    triangle::Meshes.Ngon{3},
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = _gausslegendre(T, settings.n)
+    xs, ws = _gausslegendre(FP, settings.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
@@ -216,7 +240,7 @@ function integral(
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
     # Apply a linear domain-correction factor
-    return T(π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
+    return FP(π/4) * area(triangle) .* sum(integrand, zip(wws,xxs))
 end
 
 """
@@ -227,16 +251,14 @@ Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 """
 function integral(
     f::F,
-    triangle::Meshes.Ngon{3,Dim,T},
-    settings::GaussKronrod
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    triangle::Meshes.Ngon{3},
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), T(0), T(1-u); settings.kwargs...)[1]
-    outer∫ = QuadGK.quadgk(inner∫, T(0), T(1); settings.kwargs...)[1]
+    inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), FP(0), FP(1-u); settings.kwargs...)[1]
+    outer∫ = QuadGK.quadgk(inner∫, FP(0), FP(1); settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * area(triangle) .* outer∫
@@ -251,12 +273,10 @@ an h-adaptive cubature rule.
 """
 function integral(
     f::F,
-    triangle::Meshes.Ngon{3,Dim,T},
-    settings::HAdaptiveCubature
-) where {F<:Function, Dim, T}
-    # Validate the provided integrand function
-    _validate_integrand(f,Dim,T)
-
+    triangle::Meshes.Ngon{3},
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )
@@ -269,7 +289,7 @@ function integral(
         v = R * (1 - b / (a + b))
         return f(triangle(u, v)) * R / (a + b)^2
     end
-    intval = HCubature.hcubature(integrand, T[0, 0], T[1, π/2], settings.kwargs...)[1]
+    intval = HCubature.hcubature(integrand, FP[0, 0], FP[1, π/2], settings.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * area(triangle) .* intval
