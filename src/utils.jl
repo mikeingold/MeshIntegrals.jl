@@ -143,3 +143,6 @@ function _gausslegendre(T, n)
     xs, ws = FastGaussQuadrature.gausslegendre(n)
     return T.(xs), T.(ws)
 end
+
+# Extract the length units used by the CRS of a Point
+_units(pt::Meshes.Point{M,CRS}) where {M,CRS} = first(CoordRefSystems.units(CRS))

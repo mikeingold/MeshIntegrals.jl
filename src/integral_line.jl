@@ -206,7 +206,8 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1])
+    domainunits = _units(line(0))
+    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1]) * domainunits
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
@@ -277,8 +278,20 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
     
     # Integrate f along the Ray
-    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1])
-    return HCubature.hcubature(integrand, FP[0], FP[1]; settings.kwargs...)[1]
+    domainunits = _units(line(0))
+    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1]) * domainunits
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = FP[0.5]
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
 end
 
 ################################################################################

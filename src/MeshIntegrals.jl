@@ -1,4 +1,5 @@
 module MeshIntegrals
+    using CoordRefSystems
     using LinearAlgebra
     using Meshes
     using Unitful
