@@ -34,7 +34,8 @@ function _integral_3d(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    integrandunits = Unitful.unit.(integrand(fill(0.5,3)))
+    testpoint_parametriccoord = fill(FP(0.5),3)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
