@@ -172,7 +172,9 @@ end
         ray = Ray(origin3d(Float64), ẑ(Float64))
 
         function f(p::P) where {P<:Meshes.Point}
-            x, y, z = p.coords
+            x = p.coords.x
+            y = p.coords.y
+            z = p.coords.z
             2 * exp(-z^2)
         end
         fv(p) = fill(f(p),3)
@@ -191,7 +193,9 @@ end
         plane = Plane(origin3d(Float64), ẑ(Float64))
 
         function f(p::P) where {P<:Meshes.Point}
-            x, y, z = p.coords
+            x = p.coords.x
+            y = p.coords.y
+            z = p.coords.z
             exp(-x^2 - y^2)
         end
         fv(p) = fill(f(p),3)
