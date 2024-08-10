@@ -69,6 +69,30 @@ function integral(
     end
 end
 
+# General solution for HAdaptiveCubature methods
+function _integral(
+    f,
+    geometry,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    Dim = Meshes.paramdim(geometry)
+
+    integrand(t) = f(geometry(t...)) * differential(geometry, t)
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = fill(FP(0.5),Dim)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); settings.kwargs...)[1]
+
+    # Reapply units
+    return value .* integrandunits
+end
+
 ################################################################################
 #                    Line, Surface, and Volume Aliases
 ################################################################################
