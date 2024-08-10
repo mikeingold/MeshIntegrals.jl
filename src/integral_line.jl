@@ -175,7 +175,8 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    integrand(x) = f(line(t(x))) * t′(x)
+    domainunits = _units(line(0))
+    integrand(x) = f(line(t(x))) * t′(x) * domainunits
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
@@ -189,7 +190,9 @@ function integral(
     line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Integrate f along the Line
-    return QuadGK.quadgk(t -> f(line(t)), FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    domainunits = _units(line(0))
+    integrand(t) = f(line(t)) * domainunits
+    return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(

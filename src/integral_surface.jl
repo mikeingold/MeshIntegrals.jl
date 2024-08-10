@@ -145,7 +145,8 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f over the Plane
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj)
+    domainunits = _units(plane(0,0))
+    integrand(((wi,wj), (xi,xj))) = wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
     return sum(integrand, zip(wws,xxs))
 end
 
@@ -159,8 +160,9 @@ function integral(
     plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
     # Integrate f over the Plane
-    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)), FP(-Inf), FP(Inf); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> inner∫(v), FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    domainunits = _units(plane(0,0))
+    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
