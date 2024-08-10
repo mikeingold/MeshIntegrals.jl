@@ -153,18 +153,20 @@ end
         line = Line(pt_e(Float64), pt_w(Float64))
 
         function f(p::P) where {P<:Meshes.Point}
-            x, y, z = p.coords
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             exp(-x^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)
-        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)
-        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)
+        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)*u"m"
+        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)*u"m"
+        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
 
-        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π),3)
-        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π),3)
-        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
     end
 
     # Custom tests for Ray (no measure available for reference)
@@ -172,20 +174,20 @@ end
         ray = Ray(origin3d(Float64), ẑ(Float64))
 
         function f(p::P) where {P<:Meshes.Point}
-            x = p.coords.x
-            y = p.coords.y
-            z = p.coords.z
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             2 * exp(-z^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)
-        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)
-        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)
+        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)*u"m"
+        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)*u"m"
+        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
 
-        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π),3)
-        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π),3)
-        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π),3)
+        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
+        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
     end
 
     # Custom tests for Plane (no measure available for reference)
@@ -193,20 +195,20 @@ end
         plane = Plane(origin3d(Float64), ẑ(Float64))
 
         function f(p::P) where {P<:Meshes.Point}
-            x = p.coords.x
-            y = p.coords.y
-            z = p.coords.z
+            x = ustrip(u"m", p.coords.x)
+            y = ustrip(u"m", p.coords.y)
+            z = ustrip(u"m", p.coords.z)
             exp(-x^2 - y^2)
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, plane, GaussLegendre(100)) ≈ π
-        @test integral(f, plane, GaussKronrod()) ≈ π
-        @test integral(f, plane, HAdaptiveCubature()) ≈ π
+        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m"
+        @test integral(f, plane, GaussKronrod()) ≈ π*u"m"
+        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m"
 
-        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π,3)
-        @test integral(fv, plane, GaussKronrod()) ≈ fill(π,3)
-        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π,3)
+        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m",3)
+        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m",3)
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m",3)
     end
 end
 
