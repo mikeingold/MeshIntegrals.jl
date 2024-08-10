@@ -203,13 +203,13 @@ end
         end
         fv(p) = fill(f(p),3)
 
-        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m"
-        @test integral(f, plane, GaussKronrod()) ≈ π*u"m"
-        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m"
+        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m^2"
+        @test integral(f, plane, GaussKronrod()) ≈ π*u"m^2"
+        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m^2"
 
-        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m",3)
-        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m",3)
-        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m",3)
+        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m^2",3)
+        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m^2",3)
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m^2",3)
     end
 end
 

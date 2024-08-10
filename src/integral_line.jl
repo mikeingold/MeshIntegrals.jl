@@ -247,7 +247,8 @@ function integral(
     t′(x) = t₂′(t₁(x)) * t₁′(x)
 
     # Integrate f along the Ray
-    integrand(x) = f(ray(t(x))) * t′(x)
+    domainunits = _units(ray(0))
+    integrand(x) = f(ray(t(x))) * t′(x) * domainunits
     return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
 end
 
@@ -261,7 +262,8 @@ function integral(
     ray = Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Integrate f along the Ray
-    return QuadGK.quadgk(t -> f(ray(t)), FP(0), FP(Inf); settings.kwargs...)[1]
+    domainunits = _units(ray(0))
+    return QuadGK.quadgk(t -> f(ray(t)) * domainunits, FP(0), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
@@ -278,7 +280,7 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
     
     # Integrate f along the Ray
-    domainunits = _units(line(0))
+    domainunits = _units(ray(0))
     integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1]) * domainunits
 
     # HCubature doesn't support functions that output Unitful Quantity types
