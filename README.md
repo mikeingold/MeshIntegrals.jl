@@ -1,5 +1,9 @@
 # MeshIntegrals.jl
 
+[![Build Status](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
+[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
+
 This package implements methods for numerically-computing integrals over geometric polytopes
 from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using the following `::IntegrationAlgorithms`:
 - Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl): `GaussLegendre(n)`
