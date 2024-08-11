@@ -33,15 +33,15 @@ unit_circle_bz = BezierCurve(
 
 # A Real-valued function
 f(x, y, z) = abs(x + y)
-f(p) = f(p.coords...)
+f(p) = f(p.coords.x, p.coords.y, p.coords.z)
 
 integral(f, unit_circle_xy, GaussKronrod())
-    # 56.500 μs (1819 allocations: 100.95 KiB)
-    # ans == 5.656854249502878
+    # 0.000170 seconds (5.00 k allocations: 213.531 KiB)
+    # ans == 5.656854249525293 m^2
 
 integral(f, unit_circle_bz, GaussKronrod())
-    # 9.638 ms (18830 allocations: 78.40 MiB)
-    # ans = 5.551055333711397
+    # 0.017122 seconds (18.93 k allocations: 78.402 MiB)
+    # ans = 5.551055333711397 m^2
 ```
 
 # Support Matrix
