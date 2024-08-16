@@ -33,7 +33,7 @@ unit_circle_bz = BezierCurve(
 
 # A Real-valued function
 f(x, y, z) = abs(x + y)
-f(p) = f(p.coords.x, p.coords.y, p.coords.z)
+f(p) = f(to(p)...)
 
 integral(f, unit_circle_xy, GaussKronrod())
     # 0.000170 seconds (5.00 k allocations: 213.531 KiB)
