@@ -18,4 +18,5 @@ module MeshIntegrals
     include("integral_volume.jl")
     export GaussKronrod, GaussLegendre, HAdaptiveCubature
     export integral, lineintegral, surfaceintegral, volumeintegral
+
 end
