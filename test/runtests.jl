@@ -85,6 +85,7 @@ end
     pt_w(T) = Point(T(-1), T( 0), T(0))
     pt_e(T) = Point(T( 1), T( 0), T(0))
     pt_s(T) = Point(T( 0), T(-1), T(0))
+    pt_z(T) = Point(T( 0), T( 0), T(1))
     
     # Test Geometries
     ball2d(T)   = Ball(origin2d(T), T(2.0))
@@ -94,9 +95,11 @@ end
     box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
+    conesurf(T) = ConeSurface(disk(T), pt_z(T))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
     disk(T)     = Disk(plane_xy(T), T(2.5))
+    frusurf(T)  = FrustumSurface(Disk(plane_xy(T),T(1.2)), Disk(Plane(Point(T(0),T(0),T(π)),ẑ(T)),T(2.5)))
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
     rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
@@ -119,12 +122,12 @@ end
         # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone
-        # ConeSurface
+        SupportItem("ConeSurface{$T}", T, conesurf(T),      1, 0, 1, 0,   1, 1, 1),
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum
-        # FrustumSurface
+        SupportItem("FrustumSurface{$T}", T, frusurf(T),    1, 0, 1, 0,   1, 1, 1),
         # Line -- custom tests below
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         # Plane -- custom tests below
