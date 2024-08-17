@@ -53,36 +53,36 @@ integral(f, unit_circle_bz, GaussKronrod())
 | :white_check_mark: | Implemented, passes tests |
 | :x: | Planned but not yet implemented |
 | :warning: | Unable to implement: parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
+| :stop_sign: | Not supported |
 
 ### Integral
 | Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
-| `Ball{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ball{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
-| `Ball{Dim,T}` | :warning: | :warning: | :warning: |
-| `BezierCurve{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box{1,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box{3,T}` | :white_check_mark: | :x: | :white_check_mark: |
-| `Box{Dim,T}` | :x: | :x: | :x: |
-| `Circle{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Cone{T}` | :warning: | :warning: | :warning: |
-| `ConeSurface{T}` | :x: | :x: | :x: |
-| `Cylinder{T}` | :white_check_mark: | :x: | :white_check_mark: |
-| `CylinderSurface{T}` | :x: | :white_check_mark: | :x: |
-| `Disk{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Frustum{T}` | :warning: | :warning: | :warning: |
-| `FrustumSurface{T}` | :warning: | :warning: | :warning: |
-| `Line{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `ParaboloidSurface{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Plane{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ray{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ring{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Rope{Dim,T,V}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Segment{Dim,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `SimpleMesh{Dim,T,V}` | :x: | :x: | :x: |
-| `Sphere{2,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Sphere{3,T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Tetrahedron{3,T}` | :x: | :white_check_mark: | :x: |
-| `Triangle{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Torus{T}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ball` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ball` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
+| `BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box` in `𝔼{1}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Box` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
+| `Box` in `𝔼{N}` | :x: | :x: | :x: |
+| `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Cone` | :warning: | :warning: | :warning: |
+| `ConeSurface` | :x: | :x: | :x: |
+| `Cylinder` | :white_check_mark: | :x: | :white_check_mark: |
+| `CylinderSurface` | :x: | :white_check_mark: | :white_check_mark: |
+| `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Frustum` | :warning: | :warning: | :warning: |
+| `FrustumSurface` | :x: | :x: | :x: |
+| `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Plane` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ray` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ring` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Rope` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `SimpleMesh` | :x: | :x: | :x: |
+| `Sphere` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Sphere` in `𝔼{3}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Tetrahedron` in `𝔼{3}` | :x: | :white_check_mark: | :x: |
+| `Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Torus` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
