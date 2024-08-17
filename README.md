@@ -68,7 +68,7 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Cone` | :warning: | :warning: | :warning: |
 | `ConeSurface` | :x: | :x: | :x: |
-| `Cylinder` | :white_check_mark: | :x: | :white_check_mark: |
+| `Cylinder` | :white_check_mark: | :stop_sign: | :white_check_mark: |
 | `CylinderSurface` | :x: | :white_check_mark: | :white_check_mark: |
 | `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Frustum` | :warning: | :warning: | :warning: |
