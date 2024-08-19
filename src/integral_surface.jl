@@ -131,16 +131,12 @@ function integral(
     settings::I,
     FP::Type{T} = Float64
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
-    # The generic method only parameterizes the sides of the cylinder
+    # The generic method only parameterizes the sides
     sides = _integral_2d(f, frust, settings, FP)
 
-    # Integrate the Disk at the top of the CylinderSurface
-    disk_top = Meshes.Disk(frust.top, frust.radius)
-    top = _integral_2d(f, disk_top, settings, FP)
-
-    # Integrate the Disk at the bottom of the CylinderSurface
-    disk_bottom = Meshes.Disk(frust.bot, frust.radius)
-    bottom = _integral_2d(f, disk_bottom, settings, FP)
+    # Integrate the Disks at the top and bottom
+    top = _integral_2d(f, frust.top, settings, FP)
+    bottom = _integral_2d(f, frust.bot, settings, FP)
 
     return sides + top + bottom
 end
@@ -151,16 +147,12 @@ function integral(
     settings::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
-    # The generic method only parameterizes the sides of the cylinder
+    # The generic method only parameterizes the sides
     sides = _integral(f, frust, settings, FP)
 
-    # Integrate the Disk at the top of the CylinderSurface
-    disk_top = Meshes.Disk(frust.top, frust.radius)
-    top = _integral(f, disk_top, settings, FP)
-
-    # Integrate the Disk at the bottom of the CylinderSurface
-    disk_bottom = Meshes.Disk(frust.bot, frust.radius)
-    bottom = _integral(f, disk_bottom, settings, FP)
+    # Integrate the Disks at the top and bottom
+    top = _integral(f, frust.top, settings, FP)
+    bottom = _integral(f, frust.bot, settings, FP)
 
     return sides + top + bottom
 end
