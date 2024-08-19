@@ -124,7 +124,7 @@ end
         # Cone
         SupportItem("ConeSurface{$T}", T, conesurf(T),      1, 0, 1, 0,   1, 1, 1),
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
-        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   0, 1, 1),
+        SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum
         SupportItem("FrustumSurface{$T}", T, frusurf(T),    1, 0, 1, 0,   1, 1, 1),

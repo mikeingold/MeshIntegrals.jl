@@ -55,14 +55,25 @@ end
 #                  Specialized Methods for CylinderSurface
 ################################################################################
 
+#=
 function integral(
     f::F,
     cyl::Meshes.CylinderSurface,
     settings::GaussLegendre,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
-    error("Integrating a CylinderSurface with GaussLegendre not supported.")
-    # TODO Planned to support in the future
+    # The generic method only parameterizes the sides of the cylinder
+    sides = _integral_2d(f, cyl, settings, FP)
+
+    # Integrate the Disk at the top of the CylinderSurface
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral_2d(f, disk_top, settings, FP)
+
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
+
+    return sides + top + bottom
 end
 
 function integral(
@@ -110,6 +121,28 @@ function integral(
     value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); settings.kwargs...)[1]
     # Reapply units
     sides = value .* integrandunits
+
+    # Integrate the Disk at the top of the CylinderSurface
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral_2d(f, disk_top, settings, FP)
+
+    # Integrate the Disk at the bottom of the CylinderSurface
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral_2d(f, disk_bottom, settings, FP)
+
+    return sides + top + bottom
+end
+
+=#
+
+function integral(
+    f::F,
+    cyl::Meshes.CylinderSurface,
+    settings::I,
+    FP::Type{T} = Float64
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # The generic method only parameterizes the sides of the cylinder
+    sides = _integral_2d(f, cyl, settings, FP)
 
     # Integrate the Disk at the top of the CylinderSurface
     disk_top = Meshes.Disk(cyl.top, cyl.radius)
