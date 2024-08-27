@@ -95,6 +95,7 @@ end
     box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
+    cone(T)     = Cone(disk(T), pt_z(T))
     conesurf(T) = ConeSurface(disk(T), pt_z(T))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
@@ -121,7 +122,7 @@ end
         SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
-        # Cone
+        SupportItem("Cone{$T}", T, cone(T),                 1, 0, 0, 1,   1, 1, 1),
         SupportItem("ConeSurface{$T}", T, conesurf(T),      1, 0, 1, 0,   1, 1, 1),
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
