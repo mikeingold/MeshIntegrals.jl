@@ -223,7 +223,7 @@ end
         cone_h = T(2.5)
 
         cone = let
-            base = Disk(xy_plane(T), cone_r)
+            base = Disk(plane_xy(T), cone_r)
             Cone(base, Point(0, 0, cone_h))
         end
 
