@@ -234,11 +234,11 @@ end
         cone_volume = _volume_cone_rightcircular(cone_r * u"m", cone_h * u"m")
 
         @test integral(f, cone, GaussLegendre(100)) ≈ cone_volume
-        @test integral(f, cone, GaussKronrod()) ≈ cone_volume
+        @test_throws "not supported" integral(f, cone, GaussKronrod())
         @test integral(f, cone, HAdaptiveCubature()) ≈ cone_volume
 
         @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_volume, 3)
-        @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_volume, 3)
+        @test_throws "not supported" integral(fv, cone, GaussKronrod())
         @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_volume, 3)
     end
 end
