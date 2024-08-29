@@ -64,15 +64,14 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `Box` in `𝔼{1}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `Box` in `𝔼{N}` | :x: | :x: | :x: |
 | `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Cone` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ConeSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Cylinder` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `CylinderSurface` | :x: | :white_check_mark: | :white_check_mark: |
+| `CylinderSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Frustum` | :warning: | :warning: | :warning: |
-| `FrustumSurface` | :x: | :x: | :x: |
+| `FrustumSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Plane` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
