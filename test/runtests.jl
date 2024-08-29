@@ -95,7 +95,6 @@ end
     box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
-    cone(T)     = Cone(disk(T), pt_z(T))
     conesurf(T) = ConeSurface(disk(T), pt_z(T))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
@@ -122,7 +121,7 @@ end
         SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
         # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Cone{$T}", T, cone(T),                 1, 0, 0, 1,   1, 1, 1),
+        # Cone -- custom tests below
         SupportItem("ConeSurface{$T}", T, conesurf(T),      1, 0, 1, 0,   1, 1, 1),
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
@@ -214,6 +213,33 @@ end
         @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m^2",3)
         @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m^2",3)
         @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m^2",3)
+    end
+
+    # Custom tests for Cone
+    @testset "Meshes.Cone" begin
+        T = Float64
+
+        cone_r = T(2.5)
+        cone_h = T(2.5)
+
+        cone = let
+            base = Disk(xy_plane(T), cone_r)
+            Cone(base, Point(0, 0, cone_h))
+        end
+
+        f(p) = T(1)
+        fv(p) = fill(f(p), 3)
+
+        _volume_cone_rightcircular(h, r) = T(π) * r^2 * h / 3
+        cone_volume = _volume_cone_rightcircular(cone_r * u"m", cone_h * u"m")
+
+        @test integral(f, cone, GaussLegendre(100)) ≈ cone_volume
+        @test integral(f, cone, GaussKronrod()) ≈ cone_volume
+        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_volume
+
+        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_volume, 3)
+        @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_volume, 3)
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_volume, 3)
     end
 end
 
