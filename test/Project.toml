@@ -9,6 +9,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 Aqua = "0.8"
 Meshes = "0.50"
-MeshIntegrals = "0.12"
+MeshIntegrals = "0.13"
 QuadGK = "2"
 Unitful = "1"
