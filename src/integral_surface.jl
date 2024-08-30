@@ -33,23 +33,6 @@ function _integral_2d(
     return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
 end
 
-function _integral_2d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-)
-    return _integral(f, geometry, settings)
-end
-
-function _integral_2d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
-) where {T<:AbstractFloat}
-    return _integral(f, geometry, settings, FP)
-end
-
 
 ################################################################################
 #    Specialized Methods for ConeSurface, CylinderSurface, and FrustumSurface

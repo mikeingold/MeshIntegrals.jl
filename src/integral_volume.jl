@@ -34,23 +34,6 @@ function _integral_3d(
     error("Integrating this volume type with GaussKronrod not supported.")
 end
 
-function _integral_3d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-)
-    return _integral(f, geometry, settings)
-end
-
-function _integral_3d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
-) where {T<:AbstractFloat}
-    return _integral(f, geometry, settings, FP)
-end
-
 
 ################################################################################
 #                  Specialized Methods for Tetrahedron
