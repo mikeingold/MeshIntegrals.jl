@@ -114,15 +114,13 @@ end
     # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
         SupportItem("Ball{2,$T}", T, ball2d(T),             1, 0, 1, 0,   1, 1, 1),
         SupportItem("Ball{3,$T}", T, ball3d(T),             1, 0, 0, 1,   1, 0, 1),
-        # Ball{Dim,T}
         SupportItem("BezierCurve{$T}", T, bezier(T),        1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{1,$T}", T, box1d(T),               1, 1, 0, 0,   1, 1, 1),
         SupportItem("Box{2,$T}", T, box2d(T),               1, 0, 1, 0,   1, 1, 1),
         SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
-        # Box{Dim,T}
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
         # Cone -- custom tests below
-        SupportItem("ConeSurface{$T}", T, conesurf(T),      1, 0, 1, 0,   1, 1, 1),
+        # ConeSurface -- custom tests below
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
@@ -240,6 +238,33 @@ end
         @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_volume, 3)
         @test_throws "not supported" integral(fv, cone, GaussKronrod())
         @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_volume, 3)
+    end
+
+    # Custom tests for ConeSurface
+    @testset "Meshes.ConeSurface" begin
+        T = Float64
+
+        cone_r = T(2.5)
+        cone_h = T(2.5)
+
+        cone = let
+            base = Disk(plane_xy(T), cone_r)
+            ConeSurface(base, Point(0, 0, cone_h))
+        end
+
+        f(p) = T(1)
+        fv(p) = fill(f(p), 3)
+
+        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
+        cone_area = _area_cone_rightcircular(cone_r * u"m", cone_h * u"m")
+
+        @test integral(f, cone, GaussLegendre(100)) ≈ cone_area
+        @test integral(f, cone, GaussKronrod()) ≈ cone_area
+        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_area
+
+        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_area, 3)
+        @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_area, 3)
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_area, 3)
     end
 end
 
