@@ -276,7 +276,7 @@ end
         frustum = let
             plane_bot = Plane(Point(0,0,0), Vec(0,0,1))
             disk_bot = Disk(plane_bot, bot_r)
-            plane_top = Plane(Point(0,0,T(5)), Vec(0,0,1))
+            plane_top = Plane(Point(0,0,T(0.5)*cone_h), Vec(0,0,1))
             disk_top = Disk(plane_top, top_r)
             FrustumSurface(disk_bot, disk_top)
         end
