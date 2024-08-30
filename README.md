@@ -1,10 +1,13 @@
 # MeshIntegrals.jl
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
+[![ColPrac](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet?style=flat-square)](https://github.com/SciML/ColPrac)
+
 [![Build Status](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/mikeingold/MeshIntegrals.jl/graph/badge.svg)](https://codecov.io/gh/mikeingold/MeshIntegrals.jl)
 [![Coveralls](https://coveralls.io/repos/github/mikeingold/MeshIntegrals.jl/badge.svg?branch=main)](https://coveralls.io/github/mikeingold/MeshIntegrals.jl?branch=main)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
+
 
 This package implements methods for numerically-computing integrals over geometric polytopes
 from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using the following `::IntegrationAlgorithms`:
