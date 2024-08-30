@@ -30,7 +30,7 @@ function _integral_3d(
     geometry,
     settings::GaussKronrod,
     FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
+) where {T<:AbstractFloat}
     error("Integrating this volume type with GaussKronrod not supported.")
 end
 
