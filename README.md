@@ -1,10 +1,13 @@
 # MeshIntegrals.jl
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
+[![ColPrac](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet?style=flat-square)](https://github.com/SciML/ColPrac)
+
 [![Build Status](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/mikeingold/MeshIntegrals.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/mikeingold/MeshIntegrals.jl/graph/badge.svg)](https://codecov.io/gh/mikeingold/MeshIntegrals.jl)
 [![Coveralls](https://coveralls.io/repos/github/mikeingold/MeshIntegrals.jl/badge.svg?branch=main)](https://coveralls.io/github/mikeingold/MeshIntegrals.jl?branch=main)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
+
 
 This package implements methods for numerically-computing integrals over geometric polytopes
 from [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) using the following `::IntegrationAlgorithms`:
@@ -51,8 +54,7 @@ integral(f, unit_circle_bz, GaussKronrod())
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :x: | Planned but not yet implemented |
-| :warning: | Unable to implement: parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
+| :x: | Not yet supported |
 | :stop_sign: | Not supported |
 
 ### Integral
@@ -64,15 +66,14 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `Box` in `𝔼{1}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Box` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `Box` in `𝔼{N}` | :x: | :x: | :x: |
 | `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Cone` | :warning: | :warning: | :warning: |
-| `ConeSurface` | :x: | :x: | :x: |
+| `Cone` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `ConeSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Cylinder` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `CylinderSurface` | :x: | :white_check_mark: | :white_check_mark: |
+| `CylinderSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Frustum` | :warning: | :warning: | :warning: |
-| `FrustumSurface` | :x: | :x: | :x: |
+| `Frustum` | :stop_sign: | :stop_sign: | :stop_sign: |
+| `FrustumSurface` | :stop_sign: | :stop_sign: | :stop_sign: |
 | `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Plane` | :white_check_mark: | :white_check_mark: | :white_check_mark: |

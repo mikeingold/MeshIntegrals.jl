@@ -33,57 +33,25 @@ function _integral_2d(
     return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
 end
 
-function _integral_2d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-)
-    return _integral(f, geometry, settings)
-end
-
-function _integral_2d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
-) where {T<:AbstractFloat}
-    return _integral(f, geometry, settings, FP)
-end
-
 
 ################################################################################
-#                  Specialized Methods for CylinderSurface
+#    Specialized Methods for ConeSurface, CylinderSurface, and FrustumSurface
 ################################################################################
 
 function integral(
     f::F,
     cyl::Meshes.CylinderSurface,
-    settings::GaussLegendre,
+    settings::I,
     FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
-    error("Integrating a CylinderSurface with GaussLegendre not supported.")
-    # TODO Planned to support in the future
-end
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # The generic method only parameterizes the sides
+    sides = _integral_2d(f, cyl, settings, FP)
 
-function integral(
-    f::F,
-    cyl::Meshes.CylinderSurface,
-    settings::GaussKronrod,
-    FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
-    # Integrate the curved sides of the CylinderSurface
-    # \int ( \int f(r̄) dz ) dφ
-    function sides_inner∫(φ)
-        sidelength = norm(cyl(φ,FP(1)) - cyl(φ,FP(0)))
-        return sidelength * QuadGK.quadgk(z -> f(cyl(φ,z)), FP(0), FP(1); settings.kwargs...)[1]
-    end
-    sides = (FP(2π) * cyl.radius) .* QuadGK.quadgk(φ -> sides_inner∫(φ), FP(0), FP(1); settings.kwargs...)[1]
-
-    # Integrate the Disk at the top of the CylinderSurface
+    # Integrate the Disk at the top
     disk_top = Meshes.Disk(cyl.top, cyl.radius)
     top = _integral_2d(f, disk_top, settings, FP)
 
-    # Integrate the Disk at the bottom of the CylinderSurface
+    # Integrate the Disk at the bottom
     disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
     bottom = _integral_2d(f, disk_bottom, settings, FP)
 
@@ -96,28 +64,78 @@ function integral(
     settings::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
-    Dim = Meshes.paramdim(cyl)
+    # The generic method only parameterizes the sides
+    sides = _integral(f, cyl, settings, FP)
 
-    integrand(t) = f(cyl(t...)) * differential(cyl, t)
-
-    # HCubature doesn't support functions that output Unitful Quantity types
-    # Establish the units that are output by f
-    testpoint_parametriccoord = fill(FP(0.5),Dim)
-    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
-    # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
-    # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); settings.kwargs...)[1]
-    # Reapply units
-    sides = value .* integrandunits
-
-    # Integrate the Disk at the top of the CylinderSurface
+    # Integrate the Disk at the top
     disk_top = Meshes.Disk(cyl.top, cyl.radius)
-    top = _integral_2d(f, disk_top, settings, FP)
+    top = _integral(f, disk_top, settings, FP)
 
-    # Integrate the Disk at the bottom of the CylinderSurface
+    # Integrate the Disk at the bottom
     disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
-    bottom = _integral_2d(f, disk_bottom, settings, FP)
+    bottom = _integral(f, disk_bottom, settings, FP)
+
+    return sides + top + bottom
+end
+
+function integral(
+    f::F,
+    cone::Meshes.ConeSurface,
+    settings::I,
+    FP::Type{T} = Float64
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # The generic method only parameterizes the sides
+    sides = _integral_2d(f, cone, settings, FP)
+
+    # Integrate the Disk at the base
+    base = _integral_2d(f, cone.base, settings, FP)
+
+    return sides + base
+end
+
+function integral(
+    f::F,
+    cone::Meshes.ConeSurface,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
+    # The generic method only parameterizes the sides
+    sides = _integral(f, cone, settings, FP)
+
+    # Integrate the Disk at the base
+    base = _integral(f, cone.base, settings, FP)
+
+    return sides + base
+end
+
+function integral(
+    f::F,
+    frust::Meshes.FrustumSurface,
+    settings::I,
+    FP::Type{T} = Float64
+) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    # The generic method only parameterizes the sides
+    sides = _integral_2d(f, frust, settings, FP)
+
+    # Integrate the Disks at the top and bottom
+    top = _integral_2d(f, frust.top, settings, FP)
+    bottom = _integral_2d(f, frust.bot, settings, FP)
+
+    return sides + top + bottom
+end
+
+function integral(
+    f::F,
+    frust::Meshes.FrustumSurface,
+    settings::HAdaptiveCubature,
+    FP::Type{T} = Float64
+) where {F<:Function, T<:AbstractFloat}
+    # The generic method only parameterizes the sides
+    sides = _integral(f, frust, settings, FP)
+
+    # Integrate the Disks at the top and bottom
+    top = _integral(f, frust.top, settings, FP)
+    bottom = _integral(f, frust.bot, settings, FP)
 
     return sides + top + bottom
 end

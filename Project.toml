@@ -1,7 +1,7 @@
 name = "MeshIntegrals"
 uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.12.2"
+version = "0.13.0"
 
 [deps]
 CoordRefSystems = "b46f11dc-f210-4604-bfba-323c1ec968cb"
@@ -13,11 +13,11 @@ QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-CoordRefSystems = "0.10, 0.11"
+CoordRefSystems = "0.12, 0.13"
 FastGaussQuadrature = "1"
 HCubature = "1.5"
 LinearAlgebra = "1"
-Meshes = "0.47 - 0.49"
+Meshes = "0.50"
 QuadGK = "2"
 Unitful = "1"
 julia = "1.6"

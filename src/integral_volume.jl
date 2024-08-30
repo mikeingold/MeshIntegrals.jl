@@ -24,21 +24,14 @@ function _integral_3d(
     return FP(1/8) .* sum(integrand, zip(wws,xxs))
 end
 
+# Integrating volumes with GaussKronrod not supported by default
 function _integral_3d(
     f,
     geometry,
-    settings::HAdaptiveCubature,
-)
-    return _integral(f, geometry, settings)
-end
-
-function _integral_3d(
-    f,
-    geometry,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    return _integral(f, geometry, settings, FP)
+    error("Integrating this volume type with GaussKronrod not supported.")
 end
 
 
@@ -76,36 +69,4 @@ function integral(
     FP::Type{T} = Float64,
 ) where {F<:Function, T<:AbstractFloat}
     error("Integrating a Tetrahedron with HAdaptiveCubature not supported.")
-end
-
-
-################################################################################
-#                         Unsupported Placeholders
-################################################################################
-
-function integral(
-    f::F,
-    ball::Meshes.Ball{Meshes.𝔼{3},CRS,ℒ},
-    settings::GaussKronrod,
-    FP::Type{T} = Float64
-) where {F<:Function, CRS, ℒ, T<:AbstractFloat}
-    error("Integrating a Ball in 𝔼{3} with GaussKronrod not supported.")
-end
-
-function integral(
-    f::F,
-    box::Meshes.Box{Meshes.𝔼{3},CRS},
-    settings::GaussKronrod,
-    FP::Type{T} = Float64,
-) where {F<:Function, CRS, T<:AbstractFloat}
-    error("Integrating a Box in 𝔼{3} with GaussKronrod not supported.")
-end
-
-function integral(
-    f::F,
-    box::Meshes.Cylinder,
-    settings::GaussKronrod,
-    FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
-    error("Integrating a Cylinder with GaussKronrod not supported.")
 end
