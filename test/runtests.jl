@@ -264,8 +264,6 @@ end
         @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_area, 3)
     end
 
-    
-
     # Custom tests for FrustumSurface
     @testset "Meshes.FrustumSurface" begin
         T = Float64
@@ -293,13 +291,13 @@ end
             area_projected - area_missing
         end
 
-        @test integral(f, cone, GaussLegendre(100)) ≈ frustum_area
-        @test integral(f, cone, GaussKronrod()) ≈ frustum_area
-        @test integral(f, cone, HAdaptiveCubature()) ≈ frustum_area
+        @test integral(f, frustum, GaussLegendre(100)) ≈ frustum_area
+        @test integral(f, frustum, GaussKronrod()) ≈ frustum_area
+        @test integral(f, frustum, HAdaptiveCubature()) ≈ frustum_area
 
-        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(frustum_area, 3)
-        @test integral(fv, cone, GaussKronrod()) ≈ fill(frustum_area, 3)
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
+        @test integral(fv, frustum, GaussLegendre(100)) ≈ fill(frustum_area, 3)
+        @test integral(fv, frustum, GaussKronrod()) ≈ fill(frustum_area, 3)
+        @test integral(fv, frustum, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
     end
 end
 
