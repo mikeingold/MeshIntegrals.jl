@@ -54,8 +54,7 @@ integral(f, unit_circle_bz, GaussKronrod())
 | Symbol | Meaning |
 |--------|---------|
 | :white_check_mark: | Implemented, passes tests |
-| :x: | Planned but not yet implemented |
-| :warning: | Unable to implement: parameterization not available (see [Issue #28](https://github.com/mikeingold/MeshIntegrals.jl/issues/28)) |
+| :x: | Not yet supported |
 | :stop_sign: | Not supported |
 
 ### Integral
@@ -73,8 +72,8 @@ integral(f, unit_circle_bz, GaussKronrod())
 | `Cylinder` | :white_check_mark: | :stop_sign: | :white_check_mark: |
 | `CylinderSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Frustum` | :warning: | :warning: | :warning: |
-| `FrustumSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Frustum` | :stop_sign: | :stop_sign: | :stop_sign: |
+| `FrustumSurface` | :stop_sign: | :stop_sign: | :stop_sign: |
 | `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `Plane` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
