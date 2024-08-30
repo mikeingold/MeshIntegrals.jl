@@ -95,11 +95,9 @@ end
     box2d(T)    = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T)    = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T)   = Circle(plane_xy(T), T(2.5))
-    conesurf(T) = ConeSurface(disk(T), pt_z(T))
     cyl(T)      = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
     disk(T)     = Disk(plane_xy(T), T(2.5))
-    frusurf(T)  = FrustumSurface(Disk(plane_xy(T),T(1.2)), Disk(Plane(Point(T(0),T(0),T(π)),ẑ(T)),T(2.5)))
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
     rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
@@ -124,8 +122,7 @@ end
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
-        # Frustum
-        SupportItem("FrustumSurface{$T}", T, frusurf(T),    1, 0, 1, 0,   1, 1, 1),
+        # Frustum -- not yet supported
         # Line -- custom tests below
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         # Plane -- custom tests below
@@ -265,6 +262,44 @@ end
         @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_area, 3)
         @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_area, 3)
         @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_area, 3)
+    end
+
+    
+
+    # Custom tests for FrustumSurface
+    @testset "Meshes.FrustumSurface" begin
+        T = Float64
+
+        # Create a frustum whose radius halves at the top,
+        # i.e. the bottom half of a cone by height
+        bot_r = T(5//2)
+        top_r = T(5//4)
+        cone_h = T(2π)
+        frustum = let
+            plane_bot = Plane(Point(0,0,0), Vec(0,0,1))
+            disk_bot = Disk(plane_xy(T), bot_r)
+            plane_top = Plane(Point(0,0,T(5)), Vec(0,0,1))
+            disk_top = Disk(plane_xy(T), top_r)
+            FrustumSurface(disk_bot, disk_top)
+        end
+
+        f(p) = T(1)
+        fv(p) = fill(f(p), 3)
+
+        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
+        frustum_area = let
+            area_projected = _area_cone_rightcircular(top_r * u"m", cone_h * u"m")
+            area_missing = _area_cone_rightcircular(top_r * u"m", T(0.5) * cone_h * u"m")
+            area_projected - area_missing
+        end
+
+        @test integral(f, cone, GaussLegendre(100)) ≈ frustum_area
+        @test integral(f, cone, GaussKronrod()) ≈ frustum_area
+        @test integral(f, cone, HAdaptiveCubature()) ≈ frustum_area
+
+        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(frustum_area, 3)
+        @test integral(fv, cone, GaussKronrod()) ≈ fill(frustum_area, 3)
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
     end
 end
 
