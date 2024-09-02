@@ -8,7 +8,7 @@ abstract type IntegrationAlgorithm end
     GaussKronrod(kwargs...)
 
 Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule implemented
-by QuadGK.jl. All standard [`QuadGK.quadgk`](@ref) keyword arguments are supported.
+by QuadGK.jl. All standard `QuadGK.quadgk` keyword arguments are supported.
 """
 struct GaussKronrod <: IntegrationAlgorithm
     kwargs
@@ -35,7 +35,7 @@ end
     GaussKronrod(kwargs...)
 
 Numerically integrate areas and surfaces using the h-adaptive cubature rule
-implemented by HCubature.jl. All standard [`HCubature.hcubature`](@ref) keyword
+implemented by HCubature.jl. All standard `HCubature.hcubature` keyword
 arguments are supported.
 """
 struct HAdaptiveCubature <: IntegrationAlgorithm
