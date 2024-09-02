@@ -4,10 +4,14 @@ using MeshIntegrals
 makedocs(
     sitename="MeshIntegrals.jl",
     pages = [
-        "index.md",
+        "Home" => [
+            "About" => "index.md",
+            "Support Matrix" => "supportmatrix.md"
+        ],
         "Derivations" => [
             "Integrating a Triangle" => "triangle.md"
-        ]
+        ],
+        "Public API" => "api.md"
     ]
 )
 
