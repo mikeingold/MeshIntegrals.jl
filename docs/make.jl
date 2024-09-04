@@ -6,7 +6,8 @@ makedocs(
     pages = [
         "Home" => [
             "About" => "index.md",
-            "Support Matrix" => "supportmatrix.md"
+            "Support Matrix" => "supportmatrix.md",
+            "Integration Algorithms" => "algorithms.md"
         ],
         "Derivations" => [
             "Integrating a Triangle" => "triangle.md"
