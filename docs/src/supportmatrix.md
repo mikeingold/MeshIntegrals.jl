@@ -1,38 +1,51 @@
 # Support Matrix
 
-| Symbol | Meaning |
-|--------|---------|
-| :white_check_mark: | Implemented, passes tests |
-| :x: | Not yet supported |
-| :stop_sign: | Not supported |
+While this library aims to support all possible integration algorithms and **Meshes.jl**
+geometry types, some combinations are ill-suited and some others are simplu not yet
+implemented. The following Support Matrix aims to capture the current development state of
+all geometry/algorithm combinations. Entries with a green check mark are fully supported
+and have passing unit tests that provide some confidence they produce accurate results.
 
-### Integral
-| Geometry | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
+In general, Gauss-Kronrod integration rules are recommended (and the default) for geometries
+with one parametric dimension, e.g.: `Segment`, `BezierCurve`, and `Rope`. Gauss-Kronrod
+rules can also be applied to some geometries with more dimensions by nesting multiple
+integration solves, but this is inefficient. These Gauss-Kronrod rules are supported (but
+not recommended) for surface-like geometries, but not for volume-like geometries. For
+geometries with more than one parametric dimension, e.g. surfaces and volumes, H-Adaptive
+Cubature integration rules are recommended (and the default).
+
+| Symbol | Support Level |
+|--------|---------|
+| ✅ | Supported, passes unit tests |
+| 🎗️ | Planned to support in the future |
+| 🛑 | Not supported |
+
+| `Meshes.Geometry` | Gauss-Legendre | Gauss-Kronrod | H-Adaptive Cubature |
 |----------|----------------|---------------|---------------------|
-| `Ball` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ball` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `BezierCurve` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box` in `𝔼{1}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Box` in `𝔼{3}` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `Circle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Cone` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `ConeSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Cylinder` | :white_check_mark: | :stop_sign: | :white_check_mark: |
-| `CylinderSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Disk` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Frustum` | :stop_sign: | :stop_sign: | :stop_sign: |
-| `FrustumSurface` | :stop_sign: | :stop_sign: | :stop_sign: |
-| `Line` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `ParaboloidSurface` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Plane` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ray` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Ring` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Rope` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Segment` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `SimpleMesh` | :x: | :x: | :x: |
-| `Sphere` in `𝔼{2}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Sphere` in `𝔼{3}` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Tetrahedron` in `𝔼{3}` | :x: | :white_check_mark: | :x: |
-| `Triangle` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `Torus` | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `Ball` in `𝔼{2}` | ✅ | ✅ | ✅ |
+| `Ball` in `𝔼{3}` | ✅ | 🛑 | ✅ |
+| `BezierCurve` | ✅ | ✅ | ✅ |
+| `Box` in `𝔼{1}` | ✅ | ✅ | ✅ |
+| `Box` in `𝔼{2}` | ✅ | ✅ | ✅ |
+| `Box` in `𝔼{3}` | ✅ | 🛑 | ✅ |
+| `Circle` | ✅ | ✅ | ✅ |
+| `Cone` | ✅ | ✅ | ✅ |
+| `ConeSurface` | ✅ | ✅ | ✅ |
+| `Cylinder` | ✅ | 🛑 | ✅ |
+| `CylinderSurface` | ✅ | ✅ | ✅ |
+| `Disk` | ✅ | ✅ | ✅ |
+| `Frustum` | 🛑 | 🛑 | 🛑 |
+| `FrustumSurface` | 🛑 | 🛑 | 🛑 |
+| `Line` | ✅ | ✅ | ✅ |
+| `ParaboloidSurface` | ✅ | ✅ | ✅ |
+| `Plane` | ✅ | ✅ | ✅ |
+| `Ray` | ✅ | ✅ | ✅ |
+| `Ring` | ✅ | ✅ | ✅ |
+| `Rope` | ✅ | ✅ | ✅ |
+| `Segment` | ✅ | ✅ | ✅ |
+| `SimpleMesh` | 🎗️ | 🎗️ | 🎗️ |
+| `Sphere` in `𝔼{2}` | ✅ | ✅ | ✅ |
+| `Sphere` in `𝔼{3}` | ✅ | ✅ | ✅ |
+| `Tetrahedron` in `𝔼{3}` | 🎗️ | ✅ | 🎗️ |
+| `Triangle` | ✅ | ✅ | ✅ |
+| `Torus` | ✅ | ✅ | ✅ |
