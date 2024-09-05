@@ -17,4 +17,6 @@ makedocs(
     ]
 )
 
-deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git")
+deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git",
+           devbranch = "main",
+           push_preview = true)
