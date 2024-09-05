@@ -7,7 +7,6 @@ makedocs(
         "Home" => [
             "About" => "index.md",
             "Support Matrix" => "supportmatrix.md",
-            "Integration Algorithms" => "algorithms.md",
             "Example Usage" => "usage.md"
         ],
         "Derivations" => [
@@ -17,4 +16,6 @@ makedocs(
     ]
 )
 
-deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git")
+deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git",
+           devbranch = "main",
+           push_preview = true)

@@ -1,5 +1,7 @@
 # MeshIntegrals.jl
 
+[![Docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://mikeingold.github.io/MeshIntegrals.jl/stable/)
+[![Docs-dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mikeingold.github.io/MeshIntegrals.jl/dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](https://opensource.org/licenses/MIT)
 [![ColPrac](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet?style=flat-square)](https://github.com/SciML/ColPrac)
 
