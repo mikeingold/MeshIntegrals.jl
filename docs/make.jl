@@ -7,7 +7,6 @@ makedocs(
         "Home" => [
             "About" => "index.md",
             "Support Matrix" => "supportmatrix.md",
-            "Integration Algorithms" => "algorithms.md",
             "Example Usage" => "usage.md"
         ],
         "Derivations" => [
