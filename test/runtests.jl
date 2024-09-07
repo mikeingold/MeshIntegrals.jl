@@ -156,33 +156,6 @@ end
         map(autotest, SUPPORT_MATRIX(Float64))
     end
 
-    # Custom tests for Cone
-    @testset "Meshes.Cone" begin
-        T = Float64
-
-        cone_r = T(2.5)
-        cone_h = T(2.5)
-
-        cone = let
-            base = Disk(plane_xy(T), cone_r)
-            Cone(base, Point(0, 0, cone_h))
-        end
-
-        f(p) = T(1)
-        fv(p) = fill(f(p), 3)
-
-        _volume_cone_rightcircular(h, r) = T(π) * r^2 * h / 3
-        cone_volume = _volume_cone_rightcircular(cone_r * u"m", cone_h * u"m")
-
-        @test integral(f, cone, GaussLegendre(100)) ≈ cone_volume
-        @test_throws "not supported" integral(f, cone, GaussKronrod())
-        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_volume
-
-        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_volume, 3)
-        @test_throws "not supported" integral(fv, cone, GaussKronrod())
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_volume, 3)
-    end
-
     # Custom tests for ConeSurface
     @testset "Meshes.ConeSurface" begin
         T = Float64
@@ -255,6 +228,37 @@ end
 ################################################################################
 
 @testset "New Independent Tests" begin
+
+    @testset "Meshes.Cone" begin
+        r = 2.5u"m"
+        h = 2.5u"m"
+        origin = Point(0, 0, 0)
+        xy_plane = Plane(origin, Vec(0, 0, 1))
+        base = Disk(xy_plane, r)
+        cone = Cone(base, Point(0, 0, h))
+
+        f(p) = 1.0
+        fv(p) = fill(f(p), 3)
+
+        _volume_cone_rightcircular(h, r) = π * r^2 * h / 3
+
+        # Scalar integrand
+        sol = _volume_cone_rightcircular(r, h)
+        @test integral(f, cone, GaussLegendre(100)) ≈ sol
+        @test_throws "not supported" integral(f, cone, GaussKronrod())
+        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
+        @test_throws "not supported" integral(fv, cone, GaussKronrod())
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, cone)
+        @test_throws "not supported" surfaceintegral(f, cone)
+        @test volumeintegral(f, cone) ≈ sol
+    end
 
     @testset "Meshes.Line" begin
         a = Point(0.0u"m", 0.0u"m", 0.0u"m")
