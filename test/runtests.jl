@@ -1,12 +1,25 @@
+################################################################################
+#                                Aqua.jl Tests
+################################################################################
+
 using Aqua
-using MeshIntegrals
-using Meshes
-using Test
-using Unitful
+
+@testset "Aqua.jl" begin
+    # As of v0.11.4:
+    # - Ambiguities check disabled since it fails due to upstream findings
+    # - Verified that no ambiguities exist within MeshIntegrals.jl
+    Aqua.test_all(MeshIntegrals; ambiguities=false)
+end
+
 
 ################################################################################
 #                                Infrastructure
 ################################################################################
+
+using MeshIntegrals
+using Meshes
+using Test
+using Unitful
 
 struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
     name::String
@@ -257,6 +270,11 @@ end
     =#
 end
 
+    
+################################################################################
+#                                New Tests
+################################################################################
+
 @testset "New Independent Tests" begin
 
     @testset "Meshes.Line" begin
@@ -319,14 +337,4 @@ end
         @test_throws "not supported" volumeintegral(f, line)
     end
 
-end
-
-################################################################################
-#                                Aqua.jl Tests
-################################################################################
-
-@testset "Aqua.jl" begin
-    # As of v0.11.4 -- Ambiguities check disabled since it fails due to upstream findings
-    #   Verified that no ambiguities exist within MeshIntegrals.jl
-    Aqua.test_all(MeshIntegrals; ambiguities=false)
 end
