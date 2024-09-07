@@ -1,8 +1,13 @@
+using Aqua
+using Meshes
+using MeshIntegrals
+using Test
+using Unitful
+
+
 ################################################################################
 #                                Aqua.jl Tests
 ################################################################################
-
-using Aqua
 
 @testset "Aqua.jl" begin
     # As of v0.11.4:
@@ -15,11 +20,6 @@ end
 ################################################################################
 #                                Infrastructure
 ################################################################################
-
-using MeshIntegrals
-using Meshes
-using Test
-using Unitful
 
 struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
     name::String
