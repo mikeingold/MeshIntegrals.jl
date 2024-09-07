@@ -165,7 +165,7 @@ end
 
         cone = let
             base = Disk(plane_xy(T), cone_r)
-            ConeSurface(base, Point(0, 0, cone_h))
+            ConeSurface(base, Point(0.0u"m", 0.0u"m", cone_h))
         end
 
         f(p) = T(1)
