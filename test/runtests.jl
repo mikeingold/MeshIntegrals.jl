@@ -156,27 +156,6 @@ end
         map(autotest, SUPPORT_MATRIX(Float64))
     end
 
-    # Custom tests for Plane (no measure available for reference)
-    @testset "Meshes.Plane" begin
-        plane = Plane(origin3d(Float64), ẑ(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            exp(-x^2 - y^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m^2"
-        @test integral(f, plane, GaussKronrod()) ≈ π*u"m^2"
-        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m^2"
-
-        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m^2",3)
-        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m^2",3)
-        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m^2",3)
-    end
-
     # Custom tests for Cone
     @testset "Meshes.Cone" begin
         T = Float64
@@ -305,6 +284,36 @@ end
         @test lineintegral(f, line) ≈ sol
         @test_throws "not supported" surfaceintegral(f, line)
         @test_throws "not supported" volumeintegral(f, line)
+    end
+
+    @testset "Meshes.Plane" begin
+        p = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        v = Vec(0.0u"m", 0.0u"m", 1.0u"m")
+        plane = Plane(p, v)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = π * u"m^2"
+        @test integral(f, plane, GaussLegendre(100)) ≈ sol
+        @test integral(f, plane, GaussKronrod()) ≈ sol
+        @test integral(f, plane, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, plane, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, plane, GaussKronrod()) ≈ vsol
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, plane)
+        @test surfaceintegral(f, plane) ≈ sol
+        @test_throws "not supported" volumeintegral(f, plane)
     end
 
     @testset "Meshes.Ray" begin
