@@ -143,53 +143,6 @@ end
         map(autotest, SUPPORT_MATRIX(Float64))
     end
 
-    @testset "Float32 Geometries" begin
-        # TODO temp disabled, see Issue #33
-        #map(autotest, SUPPORT_MATRIX(Float64))
-    end
-
-    # Custom tests for Line (no measure available for reference)
-    @testset "Meshes.Line" begin
-        line = Line(pt_e(Float64), pt_w(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            exp(-x^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)*u"m"
-        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)*u"m"
-        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
-
-        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
-    end
-
-    # Custom tests for Ray (no measure available for reference)
-    @testset "Meshes.Ray" begin
-        ray = Ray(origin3d(Float64), ẑ(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            2 * exp(-z^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)*u"m"
-        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)*u"m"
-        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
-
-        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
-    end
-
     # Custom tests for Plane (no measure available for reference)
     @testset "Meshes.Plane" begin
         plane = Plane(origin3d(Float64), ẑ(Float64))
@@ -302,6 +255,54 @@ end
         @test integral(fv, frustum, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
     end
     =#
+end
+
+@testset "New Independent Tests" begin
+
+    @testset "Meshes.Line" begin
+        a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        b = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        line = Line(a, b)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+        sol = sqrt(π) * u"m"
+        vsol = fill(sol, 3)
+
+        @test integral(f, line, GaussLegendre(100)) ≈ sol
+        @test integral(f, line, GaussKronrod()) ≈ sol
+        @test integral(f, line, HAdaptiveCubature()) ≈ sol
+        @test integral(fv, line, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, line, GaussKronrod()) ≈ vsol
+        @test integral(fv, line, HAdaptiveCubature()) ≈ vsol
+    end
+
+    @testset "Meshes.Ray" begin
+        a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        v = Vec(1.0u"m", 1.0u"m", 1.0u"m")
+        ray = Ray(a, v)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+        sol = sqrt(π) / 2 * u"m"
+        vsol = fill(sol, 3)
+
+        @test integral(f, ray, GaussLegendre(100)) ≈ sol
+        @test integral(f, ray, GaussKronrod()) ≈ sol
+        @test integral(f, ray, HAdaptiveCubature()) ≈ sol
+        @test integral(fv, ray, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, ray, GaussKronrod()) ≈ vsol
+        @test integral(fv, ray, HAdaptiveCubature()) ≈ vsol
+    end
+
 end
 
 ################################################################################
