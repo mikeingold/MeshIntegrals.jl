@@ -341,9 +341,9 @@ end
         @test integral(fv, ray, HAdaptiveCubature()) ≈ vsol
 
         # Integral aliases
-        @test lineintegral(f, line) ≈ sol
-        @test_throws "not supported" surfaceintegral(f, line)
-        @test_throws "not supported" volumeintegral(f, line)
+        @test lineintegral(f, ray) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, ray)
+        @test_throws "not supported" volumeintegral(f, ray)
     end
 
 end
