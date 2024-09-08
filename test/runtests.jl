@@ -228,43 +228,44 @@ end
         @test_throws "not supported" volumeintegral(f, cone)
     end
 
-    #= DISABLED FrustumSurface testing due to long run times and seemingly-incorrect results
-    # Custom tests for FrustumSurface
     @testset "Meshes.FrustumSurface" begin
-        T = Float64
-
         # Create a frustum whose radius halves at the top,
         # i.e. the bottom half of a cone by height
-        bot_r = T(5//2)
-        top_r = T(5//4)
-        cone_h = T(2π)
-        frustum = let
-            plane_bot = Plane(Point(0,0,0), Vec(0,0,1))
-            disk_bot = Disk(plane_bot, bot_r)
-            plane_top = Plane(Point(0,0,T(0.5)*cone_h), Vec(0,0,1))
-            disk_top = Disk(plane_top, top_r)
-            FrustumSurface(disk_bot, disk_top)
-        end
+        r_bot = 2.5u"m"
+        r_top = 1.25u"m"
+        cone_h = 2π * u"m"
+        origin = Point(0, 0, 0)
+        z = Vec(0, 0, 1)
+        plane_bot = Plane(origin, z)
+        disk_bot = Disk(plane_bot, r_bot)
+        center_top = Point(0.0u"m", 0.0u"m", 0.5cone_h)
+        plane_top = Plane(center_top, z)
+        disk_top = Disk(plane_top, r_top)
+        frustum = FrustumSurface(disk_bot, disk_top)
 
-        f(p) = T(1)
+        f(p) = 1.0
         fv(p) = fill(f(p), 3)
 
-        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
-        frustum_area = let
-            area_projected = _area_cone_rightcircular(top_r * u"m", cone_h * u"m")
-            area_missing = _area_cone_rightcircular(top_r * u"m", T(0.5) * cone_h * u"m")
-            area_projected - area_missing
+        _area_base(r) = π * r^2
+        _area_cone_walls(h, r) = π * r * hypot(h, r)
+
+        # Scalar integrand
+        sol = let
+            area_walls_projected = _area_cone_walls(cone_h, r_bot)
+            area_walls_missing = _area_cone_walls(0.5cone_h, r_top)
+            area_walls = area_walls_projected - area_walls_missing
+            area_walls + _area_base(r_top) + _area_base(r_bot)
         end
+        @test integral(f, frustum, GaussLegendre(100)) ≈ sol
+        @test integral(f, frustum, GaussKronrod()) ≈ sol
+        @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
 
-        @test integral(f, frustum, GaussLegendre(100)) ≈ frustum_area
-        @test integral(f, frustum, GaussKronrod()) ≈ frustum_area
-        @test integral(f, frustum, HAdaptiveCubature()) ≈ frustum_area
-
-        @test integral(fv, frustum, GaussLegendre(100)) ≈ fill(frustum_area, 3)
-        @test integral(fv, frustum, GaussKronrod()) ≈ fill(frustum_area, 3)
-        @test integral(fv, frustum, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, frustum, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, frustum, GaussKronrod()) ≈ vsol
+        @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
     end
-    =#
 
     @testset "Meshes.Line" begin
         a = Point(0.0u"m", 0.0u"m", 0.0u"m")
