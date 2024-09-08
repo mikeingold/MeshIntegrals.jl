@@ -84,7 +84,7 @@ function surfaceintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 2
-        return integral(f, geometry, GaussKronrod())
+        return integral(f, geometry, HAdaptiveCubature())
     else
         error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -145,7 +145,7 @@ function volumeintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 3
-        return integral(f, geometry, GaussKronrod())
+        return integral(f, geometry, HAdaptiveCubature())
     else
         error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end

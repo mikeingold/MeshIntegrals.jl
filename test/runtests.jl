@@ -1,11 +1,24 @@
 using Aqua
-using MeshIntegrals
 using Meshes
+using MeshIntegrals
 using Test
 using Unitful
 
+
 ################################################################################
-#                                Infrastructure
+#                                Aqua.jl Tests
+################################################################################
+
+@testset "Aqua.jl" begin
+    # As of v0.11.4:
+    # - Ambiguities check disabled since it fails due to upstream findings
+    # - Verified that no ambiguities exist within MeshIntegrals.jl
+    Aqua.test_all(MeshIntegrals; ambiguities=false)
+end
+
+
+################################################################################
+#                          Automatic test generation
 ################################################################################
 
 struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
@@ -68,10 +81,7 @@ function autotest(item::SupportItem)
         end
     end
 end
-
-################################################################################
-#                                  Integrals
-################################################################################
+    
 
 @testset "Integrals" begin
     # Spatial descriptors
@@ -117,17 +127,11 @@ end
         SupportItem("Box{2,$T}", T, box2d(T),               1, 0, 1, 0,   1, 1, 1),
         SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
-        # Cone -- custom tests below
-        # ConeSurface -- custom tests below
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum -- not yet supported
-        # FrustumSurface -- not yet supported
-        # Line -- custom tests below
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
-        # Plane -- custom tests below
-        # Ray -- custom tests below
         SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
@@ -142,174 +146,209 @@ end
     @testset "Float64 Geometries" begin
         map(autotest, SUPPORT_MATRIX(Float64))
     end
-
-    @testset "Float32 Geometries" begin
-        # TODO temp disabled, see Issue #33
-        #map(autotest, SUPPORT_MATRIX(Float64))
-    end
-
-    # Custom tests for Line (no measure available for reference)
-    @testset "Meshes.Line" begin
-        line = Line(pt_e(Float64), pt_w(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            exp(-x^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, line, GaussLegendre(100)) ≈ sqrt(π)*u"m"
-        @test integral(f, line, GaussKronrod()) ≈ sqrt(π)*u"m"
-        @test integral(f, line, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
-
-        @test integral(fv, line, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, line, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, line, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
-    end
-
-    # Custom tests for Ray (no measure available for reference)
-    @testset "Meshes.Ray" begin
-        ray = Ray(origin3d(Float64), ẑ(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            2 * exp(-z^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, ray, GaussLegendre(100)) ≈ sqrt(π)*u"m"
-        @test integral(f, ray, GaussKronrod()) ≈ sqrt(π)*u"m"
-        @test integral(f, ray, HAdaptiveCubature()) ≈ sqrt(π)*u"m"
-
-        @test integral(fv, ray, GaussLegendre(100)) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, ray, GaussKronrod()) ≈ fill(sqrt(π)*u"m",3)
-        @test integral(fv, ray, HAdaptiveCubature()) ≈ fill(sqrt(π)*u"m",3)
-    end
-
-    # Custom tests for Plane (no measure available for reference)
-    @testset "Meshes.Plane" begin
-        plane = Plane(origin3d(Float64), ẑ(Float64))
-
-        function f(p::P) where {P<:Meshes.Point}
-            x = ustrip(u"m", p.coords.x)
-            y = ustrip(u"m", p.coords.y)
-            z = ustrip(u"m", p.coords.z)
-            exp(-x^2 - y^2)
-        end
-        fv(p) = fill(f(p),3)
-
-        @test integral(f, plane, GaussLegendre(100)) ≈ π*u"m^2"
-        @test integral(f, plane, GaussKronrod()) ≈ π*u"m^2"
-        @test integral(f, plane, HAdaptiveCubature()) ≈ π*u"m^2"
-
-        @test integral(fv, plane, GaussLegendre(100)) ≈ fill(π*u"m^2",3)
-        @test integral(fv, plane, GaussKronrod()) ≈ fill(π*u"m^2",3)
-        @test integral(fv, plane, HAdaptiveCubature()) ≈ fill(π*u"m^2",3)
-    end
-
-    # Custom tests for Cone
-    @testset "Meshes.Cone" begin
-        T = Float64
-
-        cone_r = T(2.5)
-        cone_h = T(2.5)
-
-        cone = let
-            base = Disk(plane_xy(T), cone_r)
-            Cone(base, Point(0, 0, cone_h))
-        end
-
-        f(p) = T(1)
-        fv(p) = fill(f(p), 3)
-
-        _volume_cone_rightcircular(h, r) = T(π) * r^2 * h / 3
-        cone_volume = _volume_cone_rightcircular(cone_r * u"m", cone_h * u"m")
-
-        @test integral(f, cone, GaussLegendre(100)) ≈ cone_volume
-        @test_throws "not supported" integral(f, cone, GaussKronrod())
-        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_volume
-
-        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_volume, 3)
-        @test_throws "not supported" integral(fv, cone, GaussKronrod())
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_volume, 3)
-    end
-
-    # Custom tests for ConeSurface
-    @testset "Meshes.ConeSurface" begin
-        T = Float64
-
-        cone_r = T(2.5)
-        cone_h = T(2.5)
-
-        cone = let
-            base = Disk(plane_xy(T), cone_r)
-            ConeSurface(base, Point(0, 0, cone_h))
-        end
-
-        f(p) = T(1)
-        fv(p) = fill(f(p), 3)
-
-        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
-        cone_area = _area_cone_rightcircular(cone_r * u"m", cone_h * u"m")
-
-        @test integral(f, cone, GaussLegendre(100)) ≈ cone_area
-        @test integral(f, cone, GaussKronrod()) ≈ cone_area
-        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_area
-
-        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_area, 3)
-        @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_area, 3)
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_area, 3)
-    end
-
-    #= DISABLED FrustumSurface testing due to long run times and seemingly-incorrect results
-    # Custom tests for FrustumSurface
-    @testset "Meshes.FrustumSurface" begin
-        T = Float64
-
-        # Create a frustum whose radius halves at the top,
-        # i.e. the bottom half of a cone by height
-        bot_r = T(5//2)
-        top_r = T(5//4)
-        cone_h = T(2π)
-        frustum = let
-            plane_bot = Plane(Point(0,0,0), Vec(0,0,1))
-            disk_bot = Disk(plane_bot, bot_r)
-            plane_top = Plane(Point(0,0,T(0.5)*cone_h), Vec(0,0,1))
-            disk_top = Disk(plane_top, top_r)
-            FrustumSurface(disk_bot, disk_top)
-        end
-
-        f(p) = T(1)
-        fv(p) = fill(f(p), 3)
-
-        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
-        frustum_area = let
-            area_projected = _area_cone_rightcircular(top_r * u"m", cone_h * u"m")
-            area_missing = _area_cone_rightcircular(top_r * u"m", T(0.5) * cone_h * u"m")
-            area_projected - area_missing
-        end
-
-        @test integral(f, frustum, GaussLegendre(100)) ≈ frustum_area
-        @test integral(f, frustum, GaussKronrod()) ≈ frustum_area
-        @test integral(f, frustum, HAdaptiveCubature()) ≈ frustum_area
-
-        @test integral(fv, frustum, GaussLegendre(100)) ≈ fill(frustum_area, 3)
-        @test integral(fv, frustum, GaussKronrod()) ≈ fill(frustum_area, 3)
-        @test integral(fv, frustum, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
-    end
-    =#
 end
 
+    
 ################################################################################
-#                                Aqua.jl Tests
+#                                New Tests
 ################################################################################
 
-@testset "Aqua.jl" begin
-    # As of v0.11.4 -- Ambiguities check disabled since it fails due to upstream findings
-    #   Verified that no ambiguities exist within MeshIntegrals.jl
-    Aqua.test_all(MeshIntegrals; ambiguities=false)
+@testset "Function-Geometry-Algorithm Combinations" begin
+# This section tests for:
+# - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
+# - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
+
+    @testset "Meshes.Cone" begin
+        r = 2.5u"m"
+        h = 2.5u"m"
+        origin = Point(0, 0, 0)
+        xy_plane = Plane(origin, Vec(0, 0, 1))
+        base = Disk(xy_plane, r)
+        apex = Point(0.0u"m", 0.0u"m", h)
+        cone = Cone(base, apex)
+
+        f(p) = 1.0
+        fv(p) = fill(f(p), 3)
+
+        _volume_cone_rightcircular(h, r) = π * r^2 * h / 3
+
+        # Scalar integrand
+        sol = _volume_cone_rightcircular(r, h)
+        @test integral(f, cone, GaussLegendre(100)) ≈ sol
+        @test_throws "not supported" integral(f, cone, GaussKronrod())
+        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
+        @test_throws "not supported" integral(fv, cone, GaussKronrod())
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, cone)
+        @test_throws "not supported" surfaceintegral(f, cone)
+        @test volumeintegral(f, cone) ≈ sol
+    end
+
+    @testset "Meshes.ConeSurface" begin
+        r = 2.5u"m"
+        h = 2.5u"m"
+        origin = Point(0, 0, 0)
+        xy_plane = Plane(origin, Vec(0, 0, 1))
+        base = Disk(xy_plane, r)
+        apex = Point(0.0u"m", 0.0u"m", h)
+        cone = ConeSurface(base, apex)
+
+        f(p) = 1.0
+        fv(p) = fill(f(p), 3)
+
+        _area_cone_rightcircular(h, r) = (π * r^2) + (π * r * hypot(h, r))
+
+        # Scalar integrand
+        sol = _area_cone_rightcircular(h, r)
+        @test integral(f, cone, GaussLegendre(100)) ≈ sol
+        @test integral(f, cone, GaussKronrod()) ≈ sol
+        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, cone, GaussKronrod()) ≈ vsol
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, cone)
+        @test surfaceintegral(f, cone) ≈ sol
+        @test_throws "not supported" volumeintegral(f, cone)
+    end
+
+    @testset "Meshes.FrustumSurface" begin
+        # Create a frustum whose radius halves at the top,
+        # i.e. the bottom half of a cone by height
+        r_bot = 2.5u"m"
+        r_top = 1.25u"m"
+        cone_h = 2π * u"m"
+        origin = Point(0, 0, 0)
+        z = Vec(0, 0, 1)
+        plane_bot = Plane(origin, z)
+        disk_bot = Disk(plane_bot, r_bot)
+        center_top = Point(0.0u"m", 0.0u"m", 0.5cone_h)
+        plane_top = Plane(center_top, z)
+        disk_top = Disk(plane_top, r_top)
+        frustum = FrustumSurface(disk_bot, disk_top)
+
+        f(p) = 1.0
+        fv(p) = fill(f(p), 3)
+
+        _area_base(r) = π * r^2
+        _area_cone_walls(h, r) = π * r * hypot(h, r)
+
+        # Scalar integrand
+        sol = let
+            area_walls_projected = _area_cone_walls(cone_h, r_bot)
+            area_walls_missing = _area_cone_walls(0.5cone_h, r_top)
+            area_walls = area_walls_projected - area_walls_missing
+            area_walls + _area_base(r_top) + _area_base(r_bot)
+        end
+        @test integral(f, frustum, GaussLegendre(100)) ≈ sol
+        @test integral(f, frustum, GaussKronrod()) ≈ sol
+        @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, frustum, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, frustum, GaussKronrod()) ≈ vsol
+        @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
+    end
+
+    @testset "Meshes.Line" begin
+        a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        b = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        line = Line(a, b)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = sqrt(π) * u"m"
+        @test integral(f, line, GaussLegendre(100)) ≈ sol
+        @test integral(f, line, GaussKronrod()) ≈ sol
+        @test integral(f, line, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, line, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, line, GaussKronrod()) ≈ vsol
+        @test integral(fv, line, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, line) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, line)
+        @test_throws "not supported" volumeintegral(f, line)
+    end
+
+    @testset "Meshes.Plane" begin
+        p = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        v = Vec(0.0u"m", 0.0u"m", 1.0u"m")
+        plane = Plane(p, v)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = π * u"m^2"
+        @test integral(f, plane, GaussLegendre(100)) ≈ sol
+        @test integral(f, plane, GaussKronrod()) ≈ sol
+        @test integral(f, plane, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, plane, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, plane, GaussKronrod()) ≈ vsol
+        @test integral(fv, plane, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, plane)
+        @test surfaceintegral(f, plane) ≈ sol
+        @test_throws "not supported" volumeintegral(f, plane)
+    end
+
+    @testset "Meshes.Ray" begin
+        a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        v = Vec(1.0u"m", 1.0u"m", 1.0u"m")
+        ray = Ray(a, v)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = sqrt(π) / 2 * u"m"
+        @test integral(f, ray, GaussLegendre(100)) ≈ sol
+        @test integral(f, ray, GaussKronrod()) ≈ sol
+        @test integral(f, ray, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, ray, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, ray, GaussKronrod()) ≈ vsol
+        @test integral(fv, ray, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, ray) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, ray)
+        @test_throws "not supported" volumeintegral(f, ray)
+    end
+
 end
