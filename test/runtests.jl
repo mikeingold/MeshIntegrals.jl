@@ -155,32 +155,77 @@ end
     @testset "Float64 Geometries" begin
         map(autotest, SUPPORT_MATRIX(Float64))
     end
+end
 
-    # Custom tests for ConeSurface
-    @testset "Meshes.ConeSurface" begin
-        T = Float64
+    
+################################################################################
+#                                New Tests
+################################################################################
 
-        cone_r = T(2.5)
-        cone_h = T(2.5)
+@testset "New Independent Tests" begin
 
-        cone = let
-            base = Disk(plane_xy(T), cone_r)
-            ConeSurface(base, Point(0.0u"m", 0.0u"m", cone_h))
-        end
+    @testset "Meshes.Cone" begin
+        r = 2.5u"m"
+        h = 2.5u"m"
+        origin = Point(0, 0, 0)
+        xy_plane = Plane(origin, Vec(0, 0, 1))
+        base = Disk(xy_plane, r)
+        apex = Point(0.0u"m", 0.0u"m", h)
+        cone = Cone(base, apex)
 
-        f(p) = T(1)
+        f(p) = 1.0
         fv(p) = fill(f(p), 3)
 
-        _area_cone_rightcircular(h, r) = T(π) * r^2 + T(π) * r * hypot(h, r)
-        cone_area = _area_cone_rightcircular(cone_r * u"m", cone_h * u"m")
+        _volume_cone_rightcircular(h, r) = π * r^2 * h / 3
 
-        @test integral(f, cone, GaussLegendre(100)) ≈ cone_area
-        @test integral(f, cone, GaussKronrod()) ≈ cone_area
-        @test integral(f, cone, HAdaptiveCubature()) ≈ cone_area
+        # Scalar integrand
+        sol = _volume_cone_rightcircular(r, h)
+        @test integral(f, cone, GaussLegendre(100)) ≈ sol
+        @test_throws "not supported" integral(f, cone, GaussKronrod())
+        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
 
-        @test integral(fv, cone, GaussLegendre(100)) ≈ fill(cone_area, 3)
-        @test integral(fv, cone, GaussKronrod()) ≈ fill(cone_area, 3)
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ fill(cone_area, 3)
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
+        @test_throws "not supported" integral(fv, cone, GaussKronrod())
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, cone)
+        @test_throws "not supported" surfaceintegral(f, cone)
+        @test volumeintegral(f, cone) ≈ sol
+    end
+
+    @testset "Meshes.ConeSurface" begin
+        r = 2.5u"m"
+        h = 2.5u"m"
+        origin = Point(0, 0, 0)
+        xy_plane = Plane(origin, Vec(0, 0, 1))
+        base = Disk(xy_plane, r)
+        apex = Point(0.0u"m", 0.0u"m", h)
+        cone = ConeSurface(base, apex)
+
+        f(p) = 1.0
+        fv(p) = fill(f(p), 3)
+
+        _area_cone_rightcircular(h, r) = (π * r^2) + (π * r * hypot(h, r))
+
+        # Scalar integrand
+        sol = _area_cone_rightcircular(h, r)
+        @test integral(f, cone, GaussLegendre(100)) ≈ sol
+        @test integral(f, cone, GaussKronrod()) ≈ sol
+        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, cone, GaussKronrod()) ≈ vsol
+        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test_throws "not supported" lineintegral(f, cone)
+        @test surfaceintegral(f, cone) ≈ sol
+        @test_throws "not supported" volumeintegral(f, cone)
     end
 
     #= DISABLED FrustumSurface testing due to long run times and seemingly-incorrect results
@@ -220,45 +265,6 @@ end
         @test integral(fv, frustum, HAdaptiveCubature()) ≈ fill(frustum_area, 3)
     end
     =#
-end
-
-    
-################################################################################
-#                                New Tests
-################################################################################
-
-@testset "New Independent Tests" begin
-
-    @testset "Meshes.Cone" begin
-        r = 2.5u"m"
-        h = 2.5u"m"
-        origin = Point(0, 0, 0)
-        xy_plane = Plane(origin, Vec(0, 0, 1))
-        base = Disk(xy_plane, r)
-        cone = Cone(base, Point(0, 0, h))
-
-        f(p) = 1.0
-        fv(p) = fill(f(p), 3)
-
-        _volume_cone_rightcircular(h, r) = π * r^2 * h / 3
-
-        # Scalar integrand
-        sol = _volume_cone_rightcircular(r, h)
-        @test integral(f, cone, GaussLegendre(100)) ≈ sol
-        @test_throws "not supported" integral(f, cone, GaussKronrod())
-        @test integral(f, cone, HAdaptiveCubature()) ≈ sol
-
-        # Vector integrand
-        vsol = fill(sol, 3)
-        @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
-        @test_throws "not supported" integral(fv, cone, GaussKronrod())
-        @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
-
-        # Integral aliases
-        @test_throws "not supported" lineintegral(f, cone)
-        @test_throws "not supported" surfaceintegral(f, cone)
-        @test volumeintegral(f, cone) ≈ sol
-    end
 
     @testset "Meshes.Line" begin
         a = Point(0.0u"m", 0.0u"m", 0.0u"m")
