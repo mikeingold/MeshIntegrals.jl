@@ -34,8 +34,8 @@ Cubature integration rules are recommended (and the default).
 | `Cylinder` | ✅ | 🛑 | ✅ |
 | `CylinderSurface` | ✅ | ✅ | ✅ |
 | `Disk` | ✅ | ✅ | ✅ |
-| `Frustum` | 🛑 | 🛑 | 🛑 |
-| `FrustumSurface` | 🛑 | 🛑 | 🛑 |
+| `Frustum` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
+| `FrustumSurface` | ✅ | ✅ | ✅ |
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
@@ -43,9 +43,9 @@ Cubature integration rules are recommended (and the default).
 | `Ring` | ✅ | ✅ | ✅ |
 | `Rope` | ✅ | ✅ | ✅ |
 | `Segment` | ✅ | ✅ | ✅ |
-| `SimpleMesh` | 🎗️ | 🎗️ | 🎗️ |
+| `SimpleMesh` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) |
 | `Sphere` in `𝔼{2}` | ✅ | ✅ | ✅ |
 | `Sphere` in `𝔼{3}` | ✅ | ✅ | ✅ |
-| `Tetrahedron` in `𝔼{3}` | 🎗️ | ✅ | 🎗️ |
+| `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) |
 | `Triangle` | ✅ | ✅ | ✅ |
 | `Torus` | ✅ | ✅ | ✅ |
