@@ -18,7 +18,7 @@ end
 
 
 ################################################################################
-#                                Infrastructure
+#                          Automatic test generation
 ################################################################################
 
 struct SupportItem{T, Dim, CRS, G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
@@ -81,10 +81,7 @@ function autotest(item::SupportItem)
         end
     end
 end
-
-################################################################################
-#                                  Integrals
-################################################################################
+    
 
 @testset "Integrals" begin
     # Spatial descriptors
@@ -130,17 +127,11 @@ end
         SupportItem("Box{2,$T}", T, box2d(T),               1, 0, 1, 0,   1, 1, 1),
         SupportItem("Box{3,$T}", T, box3d(T),               1, 0, 0, 1,   1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T),             1, 1, 0, 0,   1, 1, 1),
-        # Cone -- custom tests below
-        # ConeSurface -- custom tests below
         SupportItem("Cylinder{$T}", T, cyl(T),              1, 0, 0, 1,   1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum -- not yet supported
-        # FrustumSurface -- not yet supported
-        # Line -- custom tests below
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
-        # Plane -- custom tests below
-        # Ray -- custom tests below
         SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
@@ -162,7 +153,10 @@ end
 #                                New Tests
 ################################################################################
 
-@testset "New Independent Tests" begin
+@testset "Function-Geometry-Algorithm Combinations" begin
+# This section tests for:
+# - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
+# - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
     @testset "Meshes.Cone" begin
         r = 2.5u"m"
