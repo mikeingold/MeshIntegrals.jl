@@ -23,7 +23,7 @@ These solvers have support for integrand functions that produce scalars, vectors
 ```julia
 integral(f, geometry)
 ```
-Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod` for 1D, and `HAdaptiveCubature()` for all others.
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
 
 ```julia
 integral(f, geometry, algorithm, FP=Float64)
