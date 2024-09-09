@@ -16,7 +16,7 @@
 - H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl): `GaussKronrod(kwargs...)`
 - H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl): `HAdaptiveCubature(kwargs...)`
 
-These solvers have support for integrand functions that produce scalars, vectors, and **Unitful.jl** `Quantity` types. While HCubature.jl does not natively support `Quantity` type integrands, this package provides a compatibility layer to enable this feature.
+These solvers have support for integrand functions that produce scalars, vectors, and [**Unitful.jl**](https://github.com/PainterQubits/Unitful.jl) `Quantity` types. While HCubature.jl does not natively support `Quantity` type integrands, this package provides a compatibility layer to enable this feature.
 
 ## Usage
 
