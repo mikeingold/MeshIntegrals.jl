@@ -9,6 +9,7 @@ on:
       - 'README.md'
       - '.github/workflows/CompatHelper.yml'
       - '.github/workflows/SpellCheck.yml'
+      - '.github/workflows/TagBot.yml'
       - 'docs/**'
   pull_request:
     paths-ignore:
@@ -16,6 +17,7 @@ on:
       - 'README.md'
       - '.github/workflows/CompatHelper.yml'
       - '.github/workflows/SpellCheck.yml'
+      - '.github/workflows/TagBot.yml'
       - 'docs/**'
   workflow_dispatch:
 
