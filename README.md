@@ -11,41 +11,54 @@
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 
-**MeshIntegrals.jl** uses differential forms to enable fast and easy numerical integration over domains defined via [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) geometries. This is achieved using:
+**MeshIntegrals.jl** uses differential forms to enable fast and easy numerical integration of arbitrary integrand functions over domains defined via [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) geometries. This is achieved using:
 - Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl): `GaussLegendre(n)`
 - H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl): `GaussKronrod(kwargs...)`
 - H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl): `HAdaptiveCubature(kwargs...)`
 
-Functions available:
-- `integral(f, ::Geometry, ::IntegrationAlgorithm)`: integrates a function `f` over a domain defined by `geometry` using a particular `::IntegrationAlgorithm`
-- `lineintegral`, `surfaceintegral`, and `volumeintegral` are available as aliases for `integral` that first verify that `geometry` has the appropriate number of parametric dimensions
+These solvers have support for integrand functions that produce scalars, vectors, and **Unitful.jl** `Quantity` types. While HCubature.jl does not natively support `Quantity` type integrands, this package provides a compatibility layer to enable this feature.
 
-# Example Usage
+## Usage
+
+```julia
+integral(f, geometry)
+```
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod` for 1D, and `HAdaptiveCubature()` for all others.
+
+```julia
+integral(f, geometry, algorithm, FP=Float64)
+```
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration algorithm, e.g. `GaussKronrod()`.
+
+Optionally, a fourth argument can be provided to specify the floating point precision level desired. This setting can be manipulated if your integrand function produces outputs with alternate floating point precision (e.g. `Float16`, `BigFloat`, etc) AND you'd prefer to avoid implicit type promotions.
+
+```julia
+lineintegral(f, geometry)
+surfaceintegral(f, geometry)
+volumeintegral(f, geometry)
+```
+Alias functions are provided for convenience. These are simply wrappers for `integral` that first validate that the provided `geometry` has the expected number of parametric/manifold dimensions. Like with `integral` in the examples above, the `algorithm` can also be specified as a third-argument.
+- `lineintegral` for curve-like geometries or polytopes (e.g. `Segment`, `Ray`, `BezierCurve`, `Rope`, etc)
+- `surfaceintegral` for surfaces (e.g. `Disk`, `Sphere`, `CylinderSurface`, etc)
+- `volumeintegral` for (3D) volumes (e.g. `Ball`, `Cone`, `Torus`, etc)
+
+# Demo
 
 ```julia
 using Meshes
 using MeshIntegrals
 
-# Define a unit circle on the xy-plane
-origin = Point(0,0,0)
-ẑ = Vec(0,0,1)
-xy_plane = Plane(origin,ẑ)
-unit_circle_xy = Circle(xy_plane, 1.0)
-
-# Approximate unit_circle_xy with a high-order Bezier curve
-unit_circle_bz = BezierCurve(
-    [Point(cos(t), sin(t), 0.0) for t in range(0,2pi,length=361)]
+# Define a path that approximates a sine-wave on the xy-plane
+mypath = BezierCurve(
+    [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-pi, pi, length=361)]
 )
 
-# A Real-valued function
-f(x, y, z) = abs(x + y)
-f(p) = f(to(p)...)
+# Map f(::Point) -> f(x, y, z)
+f(p::Meshes.Point) = f(to(p)...)
 
-integral(f, unit_circle_xy, GaussKronrod())
-    # 0.000170 seconds (5.00 k allocations: 213.531 KiB)
-    # ans == 5.656854249525293 m^2
+# Integrand function in units of Volts/meter
+f(x, y, z) = exp(x^2 + y^2) * u"V/m"
 
-integral(f, unit_circle_bz, GaussKronrod())
-    # 0.017122 seconds (18.93 k allocations: 78.402 MiB)
-    # ans = 5.551055333711397 m^2
+integral(f, mypath)
+# TODO -- show result here, maybe calculate analytic solution for comparison?
 ```
