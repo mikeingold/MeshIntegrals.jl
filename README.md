@@ -47,6 +47,7 @@ Alias functions are provided for convenience. These are simply wrappers for `int
 ```julia
 using Meshes
 using MeshIntegrals
+using Unitful
 
 # Define a path that approximates a sine-wave on the xy-plane
 mypath = BezierCurve(
