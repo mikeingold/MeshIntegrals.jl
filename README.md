@@ -55,7 +55,7 @@ mypath = BezierCurve(
 )
 
 # Map f(::Point) -> f(x, y, z)
-f(p::Meshes.Point) = f(ustrip.(u"m", to(p)...))
+f(p::Meshes.Point) = f(ustrip(to(p))...)
 
 # Integrand function in units of Volts/meter
 f(x, y, z) = exp(x^2 + y^2) * u"V/m"
