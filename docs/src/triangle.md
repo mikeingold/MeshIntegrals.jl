@@ -33,7 +33,7 @@ To achieve this, let $R(r, \phi) = r~(\sin\phi + \cos\phi)$. Now, substituting s
 Since $\text{d}R/\text{d}r = \sin\phi + \cos\phi$, a change of integral domain leads to
 ```math
 \int_0^{\pi/2} \int_0^{r_0} f\left( \bar{r}(r,\phi) \right) \, \left(\frac{R}{\sin\phi + \cos\phi}\right) \, \text{d}r \, \text{d}\phi
-    = \int_0^{\pi/2} \int_0^1 f\left( \bar{r}(R,\phi) \right) \, \left(\frac{R}{\sin\phi + \cos\phi}\right)^2 \, \text{d}R \, \text{d}\phi
+    = \int_0^{\pi/2} \int_0^1 f\left( \bar{r}(R,\phi) \right) \, \left(\frac{R}{\left(\sin\phi + \cos\phi\right)^2}\right) \, \text{d}R \, \text{d}\phi
 ```
 
 The second term in this new integrand function serves as a correction factor that corrects for the impact of the non-linear domain transformation. Since all of the integration bounds are now constants, specialized integration methods can be defined for triangles that performs these domain transformations and then solve the new rectangular integration problem using a wider range of solver options.
