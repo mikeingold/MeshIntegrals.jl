@@ -51,7 +51,7 @@ using Unitful
 
 # Define a path that approximates a sine-wave on the xy-plane
 mypath = BezierCurve(
-    [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-, pi, length=361)]
+    [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-pi, pi, length=361)]
 )
 
 # Map f(::Point) -> f(x, y, z) in unitless coordinates
