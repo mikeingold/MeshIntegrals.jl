@@ -12,6 +12,28 @@ Since the geometric transformation from the originally-arbitrary domain to a Bar
     = 2A \int_0^1 \int_0^{1-v} f\left( \bar{r}(u,v) \right) \, \text{d}u \, \text{d}v
 ```
 
-This non-rectangular Barycentric domain prevents a direct application of most numerical integration methods. It can be directly integrated, albeit inefficiently, using nested Gauss-Kronrod quadrature rules. Alternatively, additional transformation could be applied to map this domain onto a rectangular domain.
+Since the integral domain is a right-triangle in the Barycentric domain, a nested application of Gauss-Kronrod quadrature rules is capable of computing the result, albeit inefficiently. However, many numerical integration methods that require rectangular bounds can not be directly applied.
 
-**WORK IN PROGRESS:** continued derivation to detail this barycentric-rectangular domain transformation
+In order to enable integration methods that operate over rectangular bounds, two coordinate system transformations are applied: the first maps from Barycentric coordinates $(u, v)$ to polar coordinates $(r, \phi)$, and the second is a non-linear map from polar coordinates to a new curvilinear basis $(R, \phi)$.
+
+For the first transformation, let $u = r~\cos\phi$ and $v = r~\sin\phi$ where $\text{d}u~\text{d}v = r~\text{d}r~\text{d}\phi$. The Barycentric triangle's hypotenuse boundary line is described by the function $v(u) = 1 - u$. Substituting in the previous definitions leads to a new boundary line function in polar coordinate space $r(\phi) = 1 / (\sin\phi + \cos\phi)$.
+```math
+\int_0^1 \int_0^{1-v} f\left( \bar{r}(u,v) \right) \, \text{d}u \, \text{d}v =
+    \int_0^{\pi/2} \int_0^{1/(\sin\phi+\cos\phi)} f\left( \bar{r}(r,\phi) \right) \, r \, \text{d}r \, \text{d}\phi
+```
+
+These integral boundaries remain non-rectangular, so an additional transformation will be applied to a curvilinear $(R, \phi)$ space that normalizes all of the hypotenuse boundary line points to $R=1$. To achieve this, a function $R(r,\phi)$ is required such that $R(r_0, \phi) = 1$ where $r_0 = 1 / (\sin\phi + \cos\phi)$
+
+To achieve this, let $R(r, \phi) = r~(\sin\phi + \cos\phi)$. Now, substituting some terms leads to
+```math
+\int_0^{\pi/2} \int_0^{1/(\sin\phi+\cos\phi)} f\left( \bar{r}(r,\phi) \right) \, r \, \text{d}r \, \text{d}\phi
+    = \int_0^{\pi/2} \int_0^{r_0} f\left( \bar{r}(r,\phi) \right) \, \left(\frac{R}{\sin\phi + \cos\phi}\right) \, \text{d}r \, \text{d}\phi
+```
+
+Since $\text{d}R/\text{d}r = \sin\phi + \cos\phi$, a change of integral domain leads to
+```math
+\int_0^{\pi/2} \int_0^{r_0} f\left( \bar{r}(r,\phi) \right) \, \left(\frac{R}{\sin\phi + \cos\phi}\right) \, \text{d}r \, \text{d}\phi
+    = \int_0^{\pi/2} \int_0^1 f\left( \bar{r}(R,\phi) \right) \, \left(\frac{R}{\left(\sin\phi + \cos\phi\right)^2}\right) \, \text{d}R \, \text{d}\phi
+```
+
+The second term in this new integrand function serves as a correction factor that corrects for the impact of the non-linear domain transformation. Since all of the integration bounds are now constants, specialized integration methods can be defined for triangles that performs these domain transformations and then solve the new rectangular integration problem using a wider range of solver options.
