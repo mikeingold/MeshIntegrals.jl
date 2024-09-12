@@ -51,15 +51,15 @@ using Unitful
 
 # Define a path that approximates a sine-wave on the xy-plane
 mypath = BezierCurve(
-    [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-pi, pi, length=361)]
+    [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-, pi, length=361)]
 )
 
-# Map f(::Point) -> f(x, y, z)
+# Map f(::Point) -> f(x, y, z) in unitless coordinates
 f(p::Meshes.Point) = f(ustrip(to(p))...)
 
-# Integrand function in units of Volts/meter
-f(x, y, z) = exp(x^2 + y^2) * u"V/m"
+# Integrand function in units of Ohms/meter
+f(x, y, z) = (1 / sqrt(1 + cos(x)^2)) * u"Ω/m"
 
 integral(f, mypath)
-# TODO -- show result here, maybe calculate analytic solution for comparison?
+# -> Approximately 2*Pi Ω
 ```
