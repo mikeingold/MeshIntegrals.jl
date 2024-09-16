@@ -83,7 +83,7 @@ function autotest(item::SupportItem)
 end
     
 
-@testset "Integrals" begin
+@testset verbose=true showtiming=true "Integrals" begin
     # Spatial descriptors
     origin3d(T) = Point(T(0), T(0), T(0))
     origin2d(T) = Point(T(0), T(0))
@@ -151,7 +151,7 @@ end
 #                                New Tests
 ################################################################################
 
-@testset "Function-Geometry-Algorithm Combinations" begin
+@testset verbose=true showtiming=true "Function-Geometry-Algorithm Combinations" begin
 # This section tests for:
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
