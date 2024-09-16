@@ -111,7 +111,6 @@ end
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
     rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
-    segment(T)  = Segment(pt_e(T), pt_n(T))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
     tetra(T)    = Tetrahedron(pt_n(T), pt_w(T), pt_e(T), pt_n(T)+ẑ(T))
@@ -134,7 +133,6 @@ end
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
         SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
@@ -349,6 +347,38 @@ end
         @test lineintegral(f, ray) ≈ sol
         @test_throws "not supported" surfaceintegral(f, ray)
         @test_throws "not supported" volumeintegral(f, ray)
+    end
+
+    @testset "Meshes.Segment" begin
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(sqrt(1/3)*u"m", sqrt(1/3)*u"m", sqrt(1/3)*u"m")    # TODO make f(theta, phi) on unit sphere
+        segment = Segment(pt_a, pt_b)
+
+        a, b = (7.1, 4.6)  # arbitrary constants > 0
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(r*log(a) + (1-r)*log(b))
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = (a - b) / (log(a) - log(b)) * u"m"
+        @test integral(f, segment, GaussLegendre(100)) ≈ sol
+        @test integral(f, segment, GaussKronrod()) ≈ sol
+        @test integral(f, segment, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, segment, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, segment, GaussKronrod()) ≈ vsol
+        @test integral(fv, segment, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, segment) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, segment)
+        @test_throws "not supported" volumeintegral(f, segment)
     end
 
 end
