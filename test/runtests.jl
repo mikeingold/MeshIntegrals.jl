@@ -393,11 +393,11 @@ end
         box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
         box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
             
-        # Check various versions of integral(f, geometry, alg, FP)
+        # Check various versions of integral(f, geometry, settings, FP)
         @test integral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"
-        @test integral(f -> one(Float32), box1d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
-        @test integral(f -> one(Float32), box2d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
-        @test integral(f -> one(Float32), box3d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
 
         # Check accuracy and type stability of line integral
         int1d = lineintegral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32)
