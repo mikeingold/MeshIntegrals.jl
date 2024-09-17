@@ -406,7 +406,7 @@ end
         # Check accuracy and type stability of surface integral
         box2d = Box(fill(0.0f0u"m", 2), fill(1.0f0u"m", 2))
         int2d = surfaceintegral(f -> one(Float32), box2d, HAdaptiveCubature(), Float32)
-        @test int2d ≈ 1.0f0u"m^2")
+        @test int2d ≈ 1.0f0u"m^2"
         @test typeof(int2d.val) == Float32
 
         # Check accuracy and type stability of volume integral
