@@ -396,8 +396,8 @@ end
         # Check various versions of integral(f, geometry, settings, FP)
         @test integral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"
         @test integral(f -> one(Float32), box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
-        @test integral(f -> one(Float32), box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
-        @test integral(f -> one(Float32), box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"
+        @test integral(f -> one(Float32), box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^3"
 
         # Check accuracy and type stability of line integral
         int1d = lineintegral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32)
