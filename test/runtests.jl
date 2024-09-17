@@ -387,7 +387,16 @@ end
 
 @testset verbose=true showtiming=true "Alternate FP Types" begin
 
-    @testset "Integral Aliases" beginex
+    @testset "Integral Aliases" begin
+        # Check various versions of integral(f, geometry, alg, FP)
+        box1d = Box(fill(0.0f0u"m", 1), fill(1.0f0u"m", 1))
+        box2d = Box(fill(0.0f0u"m", 2), fill(1.0f0u"m", 2))
+        box3d = Box(fill(0.0f0u"m", 3), fill(1.0f0u"m", 3))
+        @test integral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box1d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box2d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
+        @test integral(f -> one(Float32), box3d, GaussLegendre(), Float32) ≈ 1.0f0u"m"
+
         # Check accuracy and type stability of line integral
         box1d = Box(fill(0.0f0u"m", 1), fill(1.0f0u"m", 1))
         int1d = lineintegral(f -> one(Float32), box1d, HAdaptiveCubature(), Float32)
