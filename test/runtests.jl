@@ -387,18 +387,20 @@ end
 
 @testset verbose=true showtiming=true "Alternate FP Types" begin
 
+    @testset "Integral in 1-3D" begin
+        # Check various versions of integral(f, geometry, settings, FP)
+        @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test integral(f32, box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"      atol=0.01f0u"m"
+        @test integral(f32, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"    atol=0.02f0u"m^2"
+        @test integral(f32, box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^3"    atol=0.03f0u"m^3"
+    end
+
     @testset "Integral Aliases" begin
         f32 = p -> one(Float32)
         box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
         box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
         box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
         box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
-            
-        # Check various versions of integral(f, geometry, settings, FP)
-        @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.01f0u"m"
-        @test integral(f32, box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"      atol=0.01f0u"m"
-        @test integral(f32, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"    atol=0.02f0u"m^2"
-        @test integral(f32, box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^3"    atol=0.03f0u"m^3"
 
         # Check line integral in Float32
         int1d = lineintegral(f32, box1d, HAdaptiveCubature(), Float32)
