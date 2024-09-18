@@ -398,7 +398,7 @@ end
         @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"
         @test integral(f32, box1d, GaussLegendre(1000), Float32) ≈ 1.0f0u"m"
         @test integral(f32, box2d, GaussLegendre(1000), Float32) ≈ 1.0f0u"m^2"
-        @test integral(f32), box3d, GaussLegendre(1000), Float32) ≈ 1.0f0u"m^3"
+        @test integral(f32, box3d, GaussLegendre(1000), Float32) ≈ 1.0f0u"m^3"
 
         # Check line integral in Float32
         int1d = lineintegral(f32, box1d, HAdaptiveCubature(), Float32)
