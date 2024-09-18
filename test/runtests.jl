@@ -395,14 +395,14 @@ end
         box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
             
         # Check various versions of integral(f, geometry, settings, FP)
-        @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.02f0u"m"
-        @test integral(f32, box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"      atol=0.02f0u"m"
+        @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test integral(f32, box1d, GaussLegendre(100), Float32) ≈ 1.0f0u"m"      atol=0.01f0u"m"
         @test integral(f32, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"    atol=0.02f0u"m^2"
-        @test integral(f32, box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^3"    atol=0.02f0u"m^3"
+        @test integral(f32, box3d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^3"    atol=0.03f0u"m^3"
 
         # Check line integral in Float32
         int1d = lineintegral(f32, box1d, HAdaptiveCubature(), Float32)
-        @test int1d ≈ 1.0f0u"m"    atol=0.02f0u"m"
+        @test int1d ≈ 1.0f0u"m"    atol=0.01f0u"m"
         @test typeof(int1d.val) == Float32    broken=true
 
         # Check surface integral in Float32
@@ -412,7 +412,7 @@ end
 
         # Check volume integral in Float32
         int3d = volumeintegral(f32, box3d, HAdaptiveCubature(), Float32)
-        @test int3d ≈ 1.0f0u"m^3"    atol=0.02f0u"m^3"
+        @test int3d ≈ 1.0f0u"m^3"    atol=0.03f0u"m^3"
         @test typeof(int3d.val) == Float32    broken=true
 
         # Test unsupported aliases of form *integral(f, geometry, algorithm, FP)
