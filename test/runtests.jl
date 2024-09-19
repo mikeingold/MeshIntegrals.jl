@@ -352,11 +352,11 @@ end
         pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
         pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
         pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
-        rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b, pt_a)
+        rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b)
 
         function f(p::P) where {P<:Meshes.Point}
             x, y, z = (p.coords.x, p.coords.y, p.coords.z)
-            (x + 2y + 3z) * u"A/m"
+            (x + 2y + 3z) * u"A/m^2"
         end
         fv(p) = fill(f(p), 3)
 
@@ -387,7 +387,7 @@ end
 
         function f(p::P) where {P<:Meshes.Point}
             x, y, z = (p.coords.x, p.coords.y, p.coords.z)
-            (x + 2y + 3z) * u"A/m"
+            (x + 2y + 3z) * u"A/m^2"
         end
         fv(p) = fill(f(p), 3)
 
