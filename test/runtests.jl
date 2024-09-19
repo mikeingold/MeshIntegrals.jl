@@ -443,47 +443,49 @@ end
 
 end
 
-@testset verbose=true showtiming=true "Alternate FP Types" begin
-
-    @testset "Integral in 1-3D" begin
-        f32 = p -> one(Float32)
-        box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
-        box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
-        box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
-
-        # Check various versions of integral(f, geometry, settings, FP)
-        @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.01f0u"m"
-        @test integral(f32, box1d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m"     atol=0.01f0u"m"
-        @test integral(f32, box2d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
-        @test integral(f32, box3d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
-    end
-
-    @testset "Integral Aliases" begin
+@testset verbose=true showtiming=true "Alternate Floating Point Types" begin
+# For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
+# have expected level of accuracy and are produce results in appropriate type
+    
+    @testset "Float32" begin
+        # Rectangular volume with unit integrand
         f32 = p -> one(Float32)
         box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
         box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
         box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
         box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
 
-        # Check line integral in Float32
-        int1d = lineintegral(f32, box1d, HAdaptiveCubature(), Float32)
-        @test int1d ≈ 1.0f0u"m"    atol=0.01f0u"m"
-        @test typeof(int1d.val) == Float32    broken=true
+        # Check HCubature integrals (same method invoked for all dimensions)
+        int_HC = integral(f32, box1d, HAdaptiveCubature(), Float32)
+        @test int_HC ≈ 1.0f0u"m"    atol=0.01f0u"m"
+        @test typeof(int_HC.val) == Float32    broken=true
 
-        # Check surface integral in Float32
-        int2d = surfaceintegral(f32, box2d, HAdaptiveCubature(), Float32)
-        @test int2d ≈ 1.0f0u"m^2"    atol=0.02f0u"m^2"
-        @test typeof(int2d.val) == Float32    broken=true
+        # Check Gauss-Legendre integral in 1D
+        int_GL_1D = integral(f32, box1d, GaussLegendre(100), Float32)
+        @test int_GL_1D ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test typeof(int_GL_1D.val) == Float32    broken=true
 
-        # Check volume integral in Float32
-        int3d = volumeintegral(f32, box3d, HAdaptiveCubature(), Float32)
-        @test int3d ≈ 1.0f0u"m^3"    atol=0.03f0u"m^3"
-        @test typeof(int3d.val) == Float32    broken=true
+        # Check Gauss-Legendre integral in 2D
+        int_GL_2D = integral(f32, box2d, GaussLegendre(100), Float32)
+        @test int_GL_2D ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
+        @test typeof(int_GL_2D.val) == Float32    broken=true
 
-        # Test unsupported aliases of form *integral(f, geometry, algorithm, FP)
+        # Check Gauss-Legendre integral in 3D
+        int_GL_3D = integral(f32, box3d, GaussLegendre(100), Float32)
+        @test int_GL_3D ≈ 1.0f0u"m^3"   atol=0.02f0u"m^3"
+        @test typeof(int_GL_3D.val) == Float32    broken=true
+
+        # Check alias functions for accuracy
+        @test lineintegral(f32, box1d, GaussLegendre(100), Float32)    ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test surfaceintegral(f32, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
+        @test volumeintegral(f32, box3d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
+
+        # Check for unsupported use of alias functions
         @test_throws "not supported" lineintegral(f32, box4d, HAdaptiveCubature(), Float32)
         @test_throws "not supported" surfaceintegral(f32, box4d, HAdaptiveCubature(), Float32)
         @test_throws "not supported" volumeintegral(f32, box4d, HAdaptiveCubature(), Float32)
     end
+
+        # TODO BigFloat tests
         
 end
