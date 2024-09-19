@@ -347,6 +347,37 @@ end
         @test_throws "not supported" volumeintegral(f, ray)
     end
 
+    @testset "Meshes.Ring" begin
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
+        pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
+        pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b, pt_a)
+
+        function f(p::P) where {P<:Meshes.Point}
+            x, y, z = (p.coords.x, p.coords.y, p.coords.z)
+            (x + 2y + 3z) * u"A/m"
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = 14.0u"A"
+        @test integral(f, rope, GaussLegendre(100)) ≈ sol
+        @test integral(f, rope, GaussKronrod()) ≈ sol
+        @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, rope, GaussKronrod()) ≈ vsol
+        @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, rope) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, rope)
+        @test_throws "not supported" volumeintegral(f, rope)
+    end
+
     @testset "Meshes.Rope" begin
         pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
         pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
