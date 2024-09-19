@@ -448,6 +448,8 @@ end
     @testset "Integral in 1-3D" begin
         f32 = p -> one(Float32)
         box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
+        box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
+        box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
 
         # Check various versions of integral(f, geometry, settings, FP)
         @test integral(f32, box1d, HAdaptiveCubature(), Float32) ≈ 1.0f0u"m"     atol=0.01f0u"m"
