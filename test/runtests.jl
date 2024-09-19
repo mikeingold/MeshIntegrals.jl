@@ -110,7 +110,6 @@ end
     disk(T)     = Disk(plane_xy(T), T(2.5))
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
-    rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
     tetra(T)    = Tetrahedron(pt_n(T), pt_w(T), pt_e(T), pt_n(T)+ẑ(T))
@@ -132,7 +131,6 @@ end
         # Frustum -- not yet supported
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
         SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
@@ -347,6 +345,38 @@ end
         @test lineintegral(f, ray) ≈ sol
         @test_throws "not supported" surfaceintegral(f, ray)
         @test_throws "not supported" volumeintegral(f, ray)
+    end
+
+    @testset "Meshes.Rope" begin
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
+        pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
+        pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        rope = Rope(pt_a, pt_b, pt_c, pt_d)
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            x + 2y + 3z
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = 6.0u"m"
+        @test integral(f, rope, GaussLegendre(100)) ≈ sol
+        @test integral(f, rope, GaussKronrod()) ≈ sol
+        @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, rope, GaussKronrod()) ≈ vsol
+        @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, rope) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, rope)
+        @test_throws "not supported" volumeintegral(f, rope)
     end
 
     @testset "Meshes.Segment" begin
