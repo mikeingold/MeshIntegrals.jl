@@ -355,14 +355,13 @@ end
         rope = Rope(pt_a, pt_b, pt_c, pt_d)
 
         function f(p::P) where {P<:Meshes.Point}
-            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-            r = ustrip(u"m", ur)
-            x + 2y + 3z
+            x, y, z = (p.coords.x, p.coords.y, p.coords.z)
+            (x + 2y + 3z) * u"A/m"
         end
         fv(p) = fill(f(p), 3)
 
         # Scalar integrand
-        sol = 6.0u"m"
+        sol = 6.0u"A"
         @test integral(f, rope, GaussLegendre(100)) ≈ sol
         @test integral(f, rope, GaussKronrod()) ≈ sol
         @test integral(f, rope, HAdaptiveCubature()) ≈ sol
