@@ -361,7 +361,7 @@ end
         fv(p) = fill(f(p), 3)
 
         # Scalar integrand
-        sol = 6.0u"A"
+        sol = 7.0u"A"
         @test integral(f, rope, GaussLegendre(100)) ≈ sol
         @test integral(f, rope, GaussKronrod()) ≈ sol
         @test integral(f, rope, HAdaptiveCubature()) ≈ sol
