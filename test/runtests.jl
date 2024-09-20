@@ -447,7 +447,7 @@ end
 # For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
 # have expected level of accuracy and are produce results in appropriate type
     
-    @testset "$FP" for FP in (Float32,)    # TODO BigFloat tests
+    @testset "$FP" for FP in (Float32, BigFloat)
         # Rectangular volume with unit integrand
         f = p -> one(FP)
         box1d = Box(Point(fill(zero(FP)*u"m", 1)...), Point(fill(one(FP)*u"m", 1)...))
