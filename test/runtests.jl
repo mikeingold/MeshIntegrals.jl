@@ -447,45 +447,48 @@ end
 # For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
 # have expected level of accuracy and are produce results in appropriate type
     
-    @testset "$FP" for FP in (Float32,)
+    @testset "$FP" for FP in (Float32,)    # TODO BigFloat tests
         # Rectangular volume with unit integrand
-        f32 = p -> one(FP)
-        box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
-        box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
-        box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
-        box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
+        f = p -> one(FP)
+        box1d = Box(Point(fill(zero(FP)*u"m", 1)...), Point(fill(one(FP)*u"m", 1)...))
+        box2d = Box(Point(fill(zero(FP)*u"m", 2)...), Point(fill(one(FP)*u"m", 2)...))
+        box3d = Box(Point(fill(zero(FP)*u"m", 3)...), Point(fill(one(FP)*u"m", 3)...))
+        box4d = Box(Point(fill(zero(FP)*u"m", 4)...), Point(fill(one(FP)*u"m", 4)...))
 
         # Check HCubature integrals (same method invoked for all dimensions)
-        int_HC = integral(f32, box1d, HAdaptiveCubature(), Float32)
-        @test int_HC ≈ 1.0f0u"m"    atol=0.01f0u"m"
-        @test typeof(int_HC.val) == Float32    broken=true
+        int_HC = integral(f, box1d, HAdaptiveCubature(), FP)
+        @test int_HC ≈ 1.0u"m"    atol=0.01u"m"
+        @test typeof(int_HC.val) == FP    broken=true
 
         # Check Gauss-Legendre integral in 1D
-        int_GL_1D = integral(f32, box1d, GaussLegendre(100), Float32)
-        @test int_GL_1D ≈ 1.0f0u"m"     atol=0.01f0u"m"
-        @test typeof(int_GL_1D.val) == Float32    broken=true
+        int_GL_1D = integral(f, box1d, GaussLegendre(100), FP)
+        @test int_GL_1D ≈ 1.0u"m"     atol=0.01u"m"
+        @test typeof(int_GL_1D.val) == FP    broken=true
 
         # Check Gauss-Legendre integral in 2D
-        int_GL_2D = integral(f32, box2d, GaussLegendre(100), Float32)
-        @test int_GL_2D ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
-        @test typeof(int_GL_2D.val) == Float32    broken=true
+        int_GL_2D = integral(f, box2d, GaussLegendre(100), FP)
+        @test int_GL_2D ≈ 1.0u"m^2"   atol=0.02u"m^2"
+        @test typeof(int_GL_2D.val) == FP    broken=true
 
         # Check Gauss-Legendre integral in 3D
-        int_GL_3D = integral(f32, box3d, GaussLegendre(100), Float32)
-        @test int_GL_3D ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
-        @test typeof(int_GL_3D.val) == Float32    broken=true
-
-        # Check alias functions for accuracy
-        @test lineintegral(f32, box1d, GaussLegendre(100), Float32)    ≈ 1.0f0u"m"     atol=0.01f0u"m"
-        @test surfaceintegral(f32, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
-        @test volumeintegral(f32, box3d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
-
-        # Check for unsupported use of alias functions
-        @test_throws "not supported" lineintegral(f32, box4d, HAdaptiveCubature(), Float32)
-        @test_throws "not supported" surfaceintegral(f32, box4d, HAdaptiveCubature(), Float32)
-        @test_throws "not supported" volumeintegral(f32, box4d, HAdaptiveCubature(), Float32)
+        int_GL_3D = integral(f, box3d, GaussLegendre(100), FP)
+        @test int_GL_3D ≈ 1.0u"m^3"   atol=0.03u"m^3"
+        @test typeof(int_GL_3D.val) == FP    broken=true
     end
 
-        # TODO BigFloat tests
-        
+    @testset "Integral Aliases" begin
+        f = p -> one(Float32)
+        box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
+            
+        # Check alias functions for accuracy
+        @test lineintegral(f, box1d, GaussLegendre(100), FP)    ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test surfaceintegral(f, box2d, GaussLegendre(100), FP) ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
+        @test volumeintegral(f, box3d, GaussLegendre(100), FP)  ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
+
+        # Check for unsupported use of alias functions
+        @test_throws "not supported" lineintegral(f, box4d, HAdaptiveCubature(), FP)
+        @test_throws "not supported" surfaceintegral(f, box4d, HAdaptiveCubature(), FP)
+        @test_throws "not supported" volumeintegral(f, box4d, HAdaptiveCubature(), FP)
+    end
+
 end
