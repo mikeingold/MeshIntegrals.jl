@@ -83,7 +83,7 @@ function autotest(item::SupportItem)
 end
     
 
-@testset verbose=true showtiming=true "Integrals" begin
+@testset verbose=true "Integrals" begin
     # Spatial descriptors
     origin3d(T) = Point(T(0), T(0), T(0))
     origin2d(T) = Point(T(0), T(0))
