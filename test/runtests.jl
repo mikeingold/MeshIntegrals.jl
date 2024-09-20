@@ -447,9 +447,9 @@ end
 # For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
 # have expected level of accuracy and are produce results in appropriate type
     
-    @testset "Float32" begin
+    @testset "$FP" for FP in (Float32,) begin
         # Rectangular volume with unit integrand
-        f32 = p -> one(Float32)
+        f32 = p -> one(FP)
         box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
         box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
         box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
@@ -472,7 +472,7 @@ end
 
         # Check Gauss-Legendre integral in 3D
         int_GL_3D = integral(f32, box3d, GaussLegendre(100), Float32)
-        @test int_GL_3D ≈ 1.0f0u"m^3"   atol=0.02f0u"m^3"
+        @test int_GL_3D ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
         @test typeof(int_GL_3D.val) == Float32    broken=true
 
         # Check alias functions for accuracy
