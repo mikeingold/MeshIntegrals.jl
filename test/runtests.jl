@@ -457,22 +457,22 @@ end
         # Check HCubature integrals (same method invoked for all dimensions)
         int_HC = integral(f, box1d, HAdaptiveCubature(), FP)
         @test int_HC ≈ 1.0u"m"    atol=0.01u"m"
-        @test typeof(int_HC.val) == FP    broken=true
+        @test typeof(int_HC.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 1D
         int_GL_1D = integral(f, box1d, GaussLegendre(100), FP)
         @test int_GL_1D ≈ 1.0u"m"     atol=0.01u"m"
-        @test typeof(int_GL_1D.val) == FP    broken=true
+        @test typeof(int_GL_1D.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 2D
         int_GL_2D = integral(f, box2d, GaussLegendre(100), FP)
         @test int_GL_2D ≈ 1.0u"m^2"   atol=0.02u"m^2"
-        @test typeof(int_GL_2D.val) == FP    broken=true
+        @test typeof(int_GL_2D.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 3D
         int_GL_3D = integral(f, box3d, GaussLegendre(100), FP)
         @test int_GL_3D ≈ 1.0u"m^3"   atol=0.03u"m^3"
-        @test typeof(int_GL_3D.val) == FP    broken=true
+        @test typeof(int_GL_3D.val) == FP    broken=(FP==Float32)
     end
 
     @testset "Integral Aliases" begin
