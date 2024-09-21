@@ -147,7 +147,7 @@ end
 #                                New Tests
 ################################################################################
 
-@testset verbose=true showtiming=true "Function-Geometry-Algorithm Combinations" begin
+@testset verbose=true "Function-Geometry-Algorithm Combinations" begin
 # This section tests for:
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
@@ -443,7 +443,7 @@ end
 
 end
 
-@testset verbose=true showtiming=true "Alternate Floating Point Types" begin
+@testset verbose=true "Alternate Floating Point Types" begin
 # For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
 # have expected level of accuracy and are produce results in appropriate type
     
