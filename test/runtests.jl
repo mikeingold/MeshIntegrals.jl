@@ -446,8 +446,16 @@ end
 @testset verbose=true "Alternate Floating Point Types" begin
 # For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
 # have expected level of accuracy and are produce results in appropriate type
+
+    # Base value for atol when integrating with a particular FP type
+    baseatol = Dict(
+        Float32 => 0.01f0,
+        BigFloat => BigFloat(0.001)
+    )
     
     @testset "$FP" for FP in (Float32, BigFloat)
+    # typeof @test's are currently broken for Float32, see GitHub Issue 74
+
         # Rectangular volume with unit integrand
         f = p -> one(FP)
         box1d = Box(Point(fill(zero(FP)*u"m", 1)...), Point(fill(one(FP)*u"m", 1)...))
@@ -456,22 +464,22 @@ end
 
         # Check HCubature integrals (same method invoked for all dimensions)
         int_HC = integral(f, box1d, HAdaptiveCubature(), FP)
-        @test int_HC ≈ 1.0u"m"    atol=0.01u"m"
+        @test int_HC ≈ one(FP)*u"m"    atol=baseatol[FP]*u"m"
         @test typeof(int_HC.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 1D
         int_GL_1D = integral(f, box1d, GaussLegendre(100), FP)
-        @test int_GL_1D ≈ 1.0u"m"     atol=0.01u"m"
+        @test int_GL_1D ≈ one(FP)*u"m"     atol=baseatol[FP]*u"m"
         @test typeof(int_GL_1D.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 2D
         int_GL_2D = integral(f, box2d, GaussLegendre(100), FP)
-        @test int_GL_2D ≈ 1.0u"m^2"   atol=0.02u"m^2"
+        @test int_GL_2D ≈ one(FP)*u"m^2"   atol=2baseatol[FP]*u"m^2"
         @test typeof(int_GL_2D.val) == FP    broken=(FP==Float32)
 
         # Check Gauss-Legendre integral in 3D
         int_GL_3D = integral(f, box3d, GaussLegendre(100), FP)
-        @test int_GL_3D ≈ 1.0u"m^3"   atol=0.03u"m^3"
+        @test int_GL_3D ≈ one(FP)*u"m^3"   atol=3baseatol[FP]*u"m^3"
         @test typeof(int_GL_3D.val) == FP    broken=(FP==Float32)
     end
 
