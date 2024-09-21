@@ -83,7 +83,7 @@ function autotest(item::SupportItem)
 end
     
 
-@testset "Integrals" begin
+@testset verbose=true "Integrals" begin
     # Spatial descriptors
     origin3d(T) = Point(T(0), T(0), T(0))
     origin2d(T) = Point(T(0), T(0))
@@ -109,9 +109,6 @@ end
     cylsurf(T)  = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
     disk(T)     = Disk(plane_xy(T), T(2.5))
     parab(T)    = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
-    ring(T)     = Ring(pt_e(T), pt_n(T), pt_w(T), pt_s(T))
-    rope(T)     = Rope(pt_e(T), pt_n(T), pt_w(T), pt_s(T), pt_e(T))
-    segment(T)  = Segment(pt_e(T), pt_n(T))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
     tetra(T)    = Tetrahedron(pt_n(T), pt_w(T), pt_e(T), pt_n(T)+ẑ(T))
@@ -132,9 +129,6 @@ end
         SupportItem("Disk{$T}", T, disk(T),                 1, 0, 1, 0,   1, 1, 1),
         # Frustum -- not yet supported
         SupportItem("ParaboloidSurface{$T}", T, parab(T),   1, 0, 1, 0,   1, 1, 1),
-        SupportItem("Ring{$T}", T, ring(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Rope{$T}", T, rope(T),                 1, 1, 0, 0,   1, 1, 1),
-        SupportItem("Segment{$T}", T, segment(T),           1, 1, 0, 0,   1, 1, 1),
         # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T),         1, 1, 0, 0,   1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T),         1, 0, 1, 0,   1, 1, 1),
@@ -153,7 +147,7 @@ end
 #                                New Tests
 ################################################################################
 
-@testset "Function-Geometry-Algorithm Combinations" begin
+@testset verbose=true "Function-Geometry-Algorithm Combinations" begin
 # This section tests for:
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
@@ -349,6 +343,162 @@ end
         @test lineintegral(f, ray) ≈ sol
         @test_throws "not supported" surfaceintegral(f, ray)
         @test_throws "not supported" volumeintegral(f, ray)
+    end
+
+    @testset "Meshes.Ring" begin
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
+        pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
+        pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b)
+
+        function f(p::P) where {P<:Meshes.Point}
+            x, y, z = (p.coords.x, p.coords.y, p.coords.z)
+            (x + 2y + 3z) * u"A/m^2"
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = 14.0u"A"
+        @test integral(f, rope, GaussLegendre(100)) ≈ sol
+        @test integral(f, rope, GaussKronrod()) ≈ sol
+        @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, rope, GaussKronrod()) ≈ vsol
+        @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, rope) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, rope)
+        @test_throws "not supported" volumeintegral(f, rope)
+    end
+
+    @testset "Meshes.Rope" begin
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
+        pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
+        pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
+        rope = Rope(pt_a, pt_b, pt_c, pt_d)
+
+        function f(p::P) where {P<:Meshes.Point}
+            x, y, z = (p.coords.x, p.coords.y, p.coords.z)
+            (x + 2y + 3z) * u"A/m^2"
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = 7.0u"A"
+        @test integral(f, rope, GaussLegendre(100)) ≈ sol
+        @test integral(f, rope, GaussKronrod()) ≈ sol
+        @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, rope, GaussKronrod()) ≈ vsol
+        @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, rope) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, rope)
+        @test_throws "not supported" volumeintegral(f, rope)
+    end
+
+    @testset "Meshes.Segment" begin
+        # Connect a line segment from the origin to an arbitrary point on the unit sphere
+        phi, theta = (7pi/6, pi/3)  # Arbitrary spherical angles
+        pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
+        pt_b = Point(sin(theta)*cos(phi)*u"m", sin(theta)*sin(phi)*u"m", cos(theta)*u"m")
+        segment = Segment(pt_a, pt_b)
+
+        a, b = (7.1, 4.6)  # arbitrary constants > 0
+
+        function f(p::P) where {P<:Meshes.Point}
+            ur = hypot(p.coords.x, p.coords.y, p.coords.z)
+            r = ustrip(u"m", ur)
+            exp(r*log(a) + (1-r)*log(b))
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = (a - b) / (log(a) - log(b)) * u"m"
+        @test integral(f, segment, GaussLegendre(100)) ≈ sol
+        @test integral(f, segment, GaussKronrod()) ≈ sol
+        @test integral(f, segment, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, segment, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, segment, GaussKronrod()) ≈ vsol
+        @test integral(fv, segment, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, segment) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, segment)
+        @test_throws "not supported" volumeintegral(f, segment)
+    end
+
+end
+
+@testset verbose=true "Alternate Floating Point Types" begin
+# For integral(f, geometry, settings, FP) where FP is not Float64, ensure results
+# have expected level of accuracy and are produce results in appropriate type
+
+    # Base value for atol when integrating with a particular FP type
+    baseatol = Dict(
+        Float32 => 0.01f0,
+        BigFloat => BigFloat(0.001)
+    )
+    
+    @testset "$FP" for FP in (Float32, BigFloat)
+    # typeof @test's are currently broken for Float32, see GitHub Issue 74
+
+        # Rectangular volume with unit integrand
+        f = p -> one(FP)
+        box1d = Box(Point(fill(zero(FP)*u"m", 1)...), Point(fill(one(FP)*u"m", 1)...))
+        box2d = Box(Point(fill(zero(FP)*u"m", 2)...), Point(fill(one(FP)*u"m", 2)...))
+        box3d = Box(Point(fill(zero(FP)*u"m", 3)...), Point(fill(one(FP)*u"m", 3)...))
+
+        # Check HCubature integrals (same method invoked for all dimensions)
+        int_HC = integral(f, box1d, HAdaptiveCubature(), FP)
+        @test int_HC ≈ one(FP)*u"m"    atol=baseatol[FP]*u"m"
+        @test typeof(int_HC.val) == FP    broken=(FP==Float32)
+
+        # Check Gauss-Legendre integral in 1D
+        int_GL_1D = integral(f, box1d, GaussLegendre(100), FP)
+        @test int_GL_1D ≈ one(FP)*u"m"     atol=baseatol[FP]*u"m"
+        @test typeof(int_GL_1D.val) == FP    broken=(FP==Float32)
+
+        # Check Gauss-Legendre integral in 2D
+        int_GL_2D = integral(f, box2d, GaussLegendre(100), FP)
+        @test int_GL_2D ≈ one(FP)*u"m^2"   atol=2baseatol[FP]*u"m^2"
+        @test typeof(int_GL_2D.val) == FP    broken=(FP==Float32)
+
+        # Check Gauss-Legendre integral in 3D
+        int_GL_3D = integral(f, box3d, GaussLegendre(100), FP)
+        @test int_GL_3D ≈ one(FP)*u"m^3"   atol=3baseatol[FP]*u"m^3"
+        @test typeof(int_GL_3D.val) == FP    broken=(FP==Float32)
+    end
+
+    @testset "Integral Aliases" begin
+        f = p -> one(Float32)
+        box1d = Box(Point(fill(zero(Float32)*u"m", 1)...), Point(fill(one(Float32)*u"m", 1)...))
+        box2d = Box(Point(fill(zero(Float32)*u"m", 2)...), Point(fill(one(Float32)*u"m", 2)...))
+        box3d = Box(Point(fill(zero(Float32)*u"m", 3)...), Point(fill(one(Float32)*u"m", 3)...))
+        box4d = Box(Point(fill(zero(Float32)*u"m", 4)...), Point(fill(one(Float32)*u"m", 4)...))
+            
+        # Check alias functions for accuracy
+        @test lineintegral(f, box1d, GaussLegendre(100), Float32)    ≈ 1.0f0u"m"     atol=0.01f0u"m"
+        @test surfaceintegral(f, box2d, GaussLegendre(100), Float32) ≈ 1.0f0u"m^2"   atol=0.02f0u"m^2"
+        @test volumeintegral(f, box3d, GaussLegendre(100), Float32)  ≈ 1.0f0u"m^3"   atol=0.03f0u"m^3"
+
+        # Check for unsupported use of alias functions
+        @test_throws "not supported" lineintegral(f, box4d, HAdaptiveCubature(), Float32)
+        @test_throws "not supported" surfaceintegral(f, box4d, HAdaptiveCubature(), Float32)
+        @test_throws "not supported" volumeintegral(f, box4d, HAdaptiveCubature(), Float32)
     end
 
 end
