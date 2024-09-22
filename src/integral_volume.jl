@@ -13,7 +13,7 @@ function _integral_3d(
     # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
     xs, ws = _gausslegendre(FP, settings.n)
     weights = Iterators.product(ntuple(Returns(ws), N)...)
-    nodes = Iterators.product(ntuple(Returns(ws), N)...)
+    nodes = Iterators.product(ntuple(Returns(xs), N)...)
 
     # Domain transformation: x [-1,1] ↦ u [0,1]
     t(x) = FP(1//2) * x + FP(1//2)
