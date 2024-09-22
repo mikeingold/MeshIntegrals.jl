@@ -29,33 +29,30 @@ function jacobian(
 
     # Central finite difference
     function ∂ₙr_central!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
-        a = ts - εv
-        b = ts + εv
+        a = ts .- εv
+        b = ts .+ εv
         return (geometry(b...) - geometry(a...)) / 2ε
     end
 
     # Left finite difference
     function ∂ₙr_left!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
-        a = ts - εv
+        a = ts .- εv
         b = ts
         return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Right finite difference
     function ∂ₙr_right!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
         a = ts
-        b = ts + εv
+        b = ts .+ εv
         return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Allocate a re-usable ε vector
-    εv = similar(ts)
+    εv = zeros(T, length(ts))
 
     ∂ₙr(n) = ∂ₙr!(εv,ts,n)
     return map(∂ₙr, 1:length(ts))
