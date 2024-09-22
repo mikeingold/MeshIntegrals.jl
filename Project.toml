@@ -1,7 +1,6 @@
 name = "MeshIntegrals"
 uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
-authors = ["Mike Ingold <mike.ingold@gmail.com>"]
-version = "0.13.4"
+version = "0.14.0"
 
 [deps]
 CoordRefSystems = "b46f11dc-f210-4604-bfba-323c1ec968cb"
