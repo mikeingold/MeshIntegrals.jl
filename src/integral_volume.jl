@@ -4,24 +4,26 @@
 
 function _integral_3d(
     f,
-    geometry3d,
+    geometry,
     settings::GaussLegendre,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
+    N = Meshes.paramdim(geometry)
+
+    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
     xs, ws = _gausslegendre(FP, settings.n)
-    wws = Iterators.product(ws, ws, ws)
-    xxs = Iterators.product(xs, xs, xs)
+    weights = Iterators.product(Iterators.repeat(ws, N))
+    nodes = Iterators.product(Iterators.repeat(xs, N))
 
-    # Domain transformation: x [-1,1] ↦ s,t,u [0,1]
-    t(x) = FP(1/2) * x + FP(1/2)
+    # Domain transformation: x [-1,1] ↦ u [0,1]
+    t(x) = FP(1//2) * x + FP(1//2)
 
-    function integrand(((wi,wj,wk), (xi,xj,xk)))
-        ts = t.([xi, xj, xk])
-        wi * wj * wk * f(geometry3d(ts...)) * differential(geometry3d, ts)
+    function integrand((weights, nodes))
+        ts = t.(nodes)
+        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
     end
 
-    return FP(1/8) .* sum(integrand, zip(wws,xxs))
+    return FP(1//(2^N)) .* sum(integrand, zip(weights, nodes))
 end
 
 # Integrating volumes with GaussKronrod not supported by default
