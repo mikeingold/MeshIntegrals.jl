@@ -76,49 +76,37 @@ function integral(
     _integral(f, geometry, HAdaptiveCubature())
 end
 
-# If algorithm is HAdaptiveCubature, use the generalized n-dim solution
-function integral(
-    f::F,
-    geometry::G,
-    settings::HAdaptiveCubature
-) where {F<:Function, G<:Meshes.Geometry}
-    _integral(f, geometry, settings)
-end
-
-# If algorithm is HAdaptiveCubature, and FP specified, use the generalized n-dim solution
-function integral(
-    f::F,
-    geometry::G,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
-) where {F<:Function, G<:Meshes.Geometry, T<:AbstractFloat}
-    _integral(f, geometry, settings, FP)
-end
-
-# If algorithm is not HAdaptiveCubature, specialize on number of dimensions
+# with algorithm but without T specified
 function integral(
     f::F,
     geometry::G,
     settings::I
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    # Run the appropriate integral type
-    Dim = Meshes.paramdim(geometry)
-    if Dim == 1
-        return _integral_1d(f, geometry, settings)
-    elseif Dim == 2
-        return _integral_2d(f, geometry, settings)
-    elseif Dim == 3
-        return _integral_3d(f, geometry, settings)
-    end
+    _integral(f, geometry, settings, FP)
 end
 
-# If algorithm is not HAdaptiveCubature, and FP specified, specialize on number of dimensions
+# with algorithm and T specified
 function integral(
     f::F,
     geometry::G,
     settings::I,
     FP::Type{T}
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    _integral(f, geometry, settings, FP)
+end
+
+
+################################################################################
+#                    Generalized (n-Dimensional) Worker Methods
+################################################################################
+
+# GaussKronrod
+function _integral(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Run the appropriate integral type
     Dim = Meshes.paramdim(geometry)
     if Dim == 1
@@ -130,12 +118,25 @@ function integral(
     end
 end
 
+# GaussLegendre
+function _integral(
+    f,
+    geometry,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    # Run the appropriate integral type
+    Dim = Meshes.paramdim(geometry)
+    if Dim == 1
+        return _integral_1d(f, geometry, settings, FP)
+    elseif Dim == 2
+        return _integral_2d(f, geometry, settings, FP)
+    elseif Dim == 3
+        return _integral_3d(f, geometry, settings, FP)
+    end
+end
 
-################################################################################
-#                    Generalized (n-Dimensional) Worker Methods
-################################################################################
-
-# General solution for HAdaptiveCubature methods
+# HAdaptiveCubature
 function _integral(
     f,
     geometry,
@@ -158,3 +159,4 @@ function _integral(
     # Reapply units
     return value .* integrandunits
 end
+
