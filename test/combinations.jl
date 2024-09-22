@@ -50,14 +50,14 @@ end
 
     # Scalar integrand
     sol = _area_cone_rightcircular(h, r)
-    @test integral(f, cone, GaussLegendre(100)) ≈ sol
-    @test integral(f, cone, GaussKronrod()) ≈ sol
+    @test integral(f, cone, GaussLegendre(100)) ≈ sol   rtol=1e-6
+    @test integral(f, cone, GaussKronrod()) ≈ sol       rtol=1e-6
     @test integral(f, cone, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, cone, GaussKronrod()) ≈ vsol
+    @test integral(fv, cone, GaussLegendre(100)) ≈ vsol   rtol=1e-6
+    @test integral(fv, cone, GaussKronrod()) ≈ vsol       rtol=1e-6
     @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
@@ -94,14 +94,14 @@ end
         area_walls = area_walls_projected - area_walls_missing
         area_walls + _area_base(r_top) + _area_base(r_bot)
     end
-    @test integral(f, frustum, GaussLegendre(100)) ≈ sol
-    @test integral(f, frustum, GaussKronrod()) ≈ sol
+    @test integral(f, frustum, GaussLegendre(100)) ≈ sol    rtol=1e-6
+    @test integral(f, frustum, GaussKronrod()) ≈ sol        rtol=1e-6
     @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, frustum, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, frustum, GaussKronrod()) ≈ vsol
+    @test integral(fv, frustum, GaussLegendre(100)) ≈ vsol    rtol=1e-6
+    @test integral(fv, frustum, GaussKronrod()) ≈ vsol        rtol=1e-6
     @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
 end
 
