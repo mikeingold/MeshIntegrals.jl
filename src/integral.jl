@@ -55,6 +55,16 @@ end
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular `integration algorithm` with floating point
 precision of type `FP`.
+
+# Arguments
+- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `geometry`: some `Meshes.Geometry` that defines the integration domain
+- `algorithm`: optionally, the `IntegrationAlgorithm` used for the integration (by default `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
+- `FP`: optionally, the floating point precision desired (`Float64` by default)
+
+Note that reducing `FP` below `Float64` will incur some loss of precision. By
+contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
+(at the expense of longer runtimes).
 """
 function integral end
 
