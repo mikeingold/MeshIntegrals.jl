@@ -82,7 +82,7 @@ function integral(
     geometry::G,
     settings::I
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    _integral(f, geometry, settings, FP)
+    _integral(f, geometry, settings)
 end
 
 # with algorithm and T specified
