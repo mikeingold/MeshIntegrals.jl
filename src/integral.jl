@@ -76,21 +76,12 @@ function integral(
     _integral(f, geometry, HAdaptiveCubature())
 end
 
-# with algorithm but without T specified
-function integral(
-    f::F,
-    geometry::G,
-    settings::I
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    _integral(f, geometry, settings)
-end
-
 # with algorithm and T specified
 function integral(
     f::F,
     geometry::G,
     settings::I,
-    FP::Type{T}
+    FP::Type{T} = Float64
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm, T<:AbstractFloat}
     _integral(f, geometry, settings, FP)
 end
