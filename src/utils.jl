@@ -67,7 +67,10 @@ end
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
-function differential(geometry, ts::AbstractVector)
+function differential(
+    geometry,
+    ts
+)
     J = jacobian(geometry, ts)
 
     # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
