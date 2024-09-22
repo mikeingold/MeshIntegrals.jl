@@ -19,7 +19,7 @@ function _integral_3d(
     t(x) = FP(1//2) * x + FP(1//2)
 
     function integrand((weights, nodes))
-        ts = t.([nodes...])
+        ts = t.(nodes)
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
     end
 

@@ -10,9 +10,11 @@ central-finite-difference approximation with step size `ε`.
 """
 function jacobian(
     geometry,
-    ts::AbstractVector{T};
+    ts;
     ε=1e-6
-) where {T<:AbstractFloat}
+)
+    T = eltype(ts)
+
     # Get the partial derivative along the n'th axis via finite difference approximation
     #   where ts is the current parametric position (εv is a reusable buffer)
     function ∂ₙr!(εv, ts, n)
