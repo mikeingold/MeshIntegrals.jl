@@ -5,23 +5,6 @@
 function _integral_1d(
     f,
     geometry,
-    settings::GaussLegendre,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(FP, settings.n)
-
-    # Change of variables: x [-1,1] ↦ t [0,1]
-    t(x) = FP(1/2) * x + FP(1/2)
-
-    # Integrate f along the geometry and apply a domain-correction factor for [-1,1] ↦ [0, 1]
-    integrand((w,x)) = w * f(geometry(t(x))) * differential(geometry, [t(x)])
-    return FP(1/2) * sum(integrand, zip(ws, xs))
-end
-
-function _integral_1d(
-    f,
-    geometry,
     settings::GaussKronrod,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}

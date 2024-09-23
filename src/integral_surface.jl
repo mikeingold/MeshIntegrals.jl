@@ -5,26 +5,6 @@
 function _integral_2d(
     f,
     geometry2d,
-    settings::GaussLegendre,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = _gausslegendre(FP, settings.n)
-    wws = Iterators.product(ws, ws)
-    xxs = Iterators.product(xs, xs)
-
-    # Domain transformation: x [-1,1] ↦ t [0,1]
-    t(x) = FP(1/2) * x + FP(1/2)
-    point(xi, xj) = geometry2d(t(xi), t(xj))
-
-    # Integrate f over the geometry
-    integrand(((wi,wj), (xi,xj))) = wi * wj * f(point(xi,xj)) * differential(geometry2d, t.([xi, xj]))
-    return FP(1/4) .* sum(integrand, zip(wws,xxs))
-end
-
-function _integral_2d(
-    f,
-    geometry2d,
     settings::GaussKronrod,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}

@@ -116,15 +116,22 @@ function _integral(
     settings::GaussLegendre,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    # Run the appropriate integral type
-    Dim = Meshes.paramdim(geometry)
-    if Dim == 1
-        return _integral_1d(f, geometry, settings, FP)
-    elseif Dim == 2
-        return _integral_2d(f, geometry, settings, FP)
-    elseif Dim == 3
-        return _integral_3d(f, geometry, settings, FP)
+    N = Meshes.paramdim(geometry)
+
+    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
+    xs, ws = _gausslegendre(FP, settings.n)
+    weights = Iterators.product(ntuple(Returns(ws), N)...)
+    nodes = Iterators.product(ntuple(Returns(xs), N)...)
+
+    # Domain transformation: x [-1,1] ↦ t [0,1]
+    t(x) = FP(1//2) * x + FP(1//2)
+
+    function integrand((weights, nodes))
+        ts = t.(nodes)
+        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
     end
+
+    return FP(1//(2^N)) .* sum(integrand, zip(weights, nodes))
 end
 
 # HAdaptiveCubature

@@ -2,30 +2,6 @@
 #                       Generalized 3D Methods
 ################################################################################
 
-function _integral_3d(
-    f,
-    geometry,
-    settings::GaussLegendre,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    N = Meshes.paramdim(geometry)
-
-    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
-    xs, ws = _gausslegendre(FP, settings.n)
-    weights = Iterators.product(ntuple(Returns(ws), N)...)
-    nodes = Iterators.product(ntuple(Returns(xs), N)...)
-
-    # Domain transformation: x [-1,1] ↦ u [0,1]
-    t(x) = FP(1//2) * x + FP(1//2)
-
-    function integrand((weights, nodes))
-        ts = t.(nodes)
-        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
-    end
-
-    return FP(1//(2^N)) .* sum(integrand, zip(weights, nodes))
-end
-
 # Integrating volumes with GaussKronrod not supported by default
 function _integral_3d(
     f,
