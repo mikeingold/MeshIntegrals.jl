@@ -23,4 +23,5 @@ module MeshIntegrals
 
     # Integration methods specialzed for particular geometries
     include("specializations/BezierCurve.jl")
+    include("specializations/Line.jl")
 end
