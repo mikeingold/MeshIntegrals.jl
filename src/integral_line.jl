@@ -1,19 +1,4 @@
 ################################################################################
-#                          Generalized 1D Methods
-################################################################################
-
-function _integral_1d(
-    f,
-    geometry,
-    settings::GaussKronrod,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, [t])
-    return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
-end
-
-
-################################################################################
 #                    Specialized Methods for Ring, Rope
 ################################################################################
 

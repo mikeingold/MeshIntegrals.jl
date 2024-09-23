@@ -113,3 +113,37 @@ function _integral(
     return value .* integrandunits
 end
 
+################################################################################
+#                    Specialized GaussKronrod Methods
+################################################################################
+
+function _integral_1d(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    integrand(t) = f(geometry(t)) * differential(geometry, [t])
+    return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
+end
+
+function _integral_2d(
+    f,
+    geometry2d,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
+    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), FP(0), FP(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
+end
+
+# Integrating volumes with GaussKronrod not supported by default
+function _integral_3d(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    error("Integrating this volume type with GaussKronrod not supported.")
+end
