@@ -20,4 +20,7 @@ module MeshIntegrals
     include("integral_surface.jl")
     include("integral_volume.jl")
     export integral, lineintegral, surfaceintegral, volumeintegral
+
+    # Integration methods specialzed for particular geometries
+    include("specializations/BezierCurve.jl")
 end
