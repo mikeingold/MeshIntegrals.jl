@@ -25,6 +25,7 @@ module MeshIntegrals
     include("specializations/BezierCurve.jl")
     include("specializations/ConeSurface.jl")
     include("specializations/CylinderSurface.jl")
+    include("specializations/FrustumSurface.jl")
     include("specializations/Line.jl")
     include("specializations/Ray.jl")
     include("specializations/Tetrahedron.jl")
