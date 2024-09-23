@@ -29,6 +29,8 @@ module MeshIntegrals
     include("specializations/Line.jl")
     include("specializations/Plane.jl")
     include("specializations/Ray.jl")
+    include("specializations/Ring.jl")
+    include("specializations/Rope.jl")
     include("specializations/Tetrahedron.jl")
     include("specializations/Triangle.jl")
 end
