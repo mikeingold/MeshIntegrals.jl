@@ -23,7 +23,7 @@ function lineintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 1
-        return integral(f, geometry, GaussKronrod())
+        return _integral(f, geometry, GaussKronrod())
     else
         error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -37,7 +37,7 @@ function lineintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 1
-        return integral(f, geometry, settings)
+        return _integral(f, geometry, settings)
     else
         error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -52,7 +52,7 @@ function lineintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 1
-        return integral(f, geometry, settings, FP)
+        return _integral(f, geometry, settings, FP)
     else
         error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -84,7 +84,7 @@ function surfaceintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 2
-        return integral(f, geometry, HAdaptiveCubature())
+        return _integral(f, geometry, HAdaptiveCubature())
     else
         error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -98,7 +98,7 @@ function surfaceintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 2
-        return integral(f, geometry, settings)
+        return _integral(f, geometry, settings)
     else
         error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -113,7 +113,7 @@ function surfaceintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 2
-        return integral(f, geometry, settings, FP)
+        return _integral(f, geometry, settings, FP)
     else
         error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -145,7 +145,7 @@ function volumeintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 3
-        return integral(f, geometry, HAdaptiveCubature())
+        return _integral(f, geometry, HAdaptiveCubature())
     else
         error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -159,7 +159,7 @@ function volumeintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 3
-        return integral(f, geometry, settings)
+        return _integral(f, geometry, settings)
     else
         error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
@@ -174,7 +174,7 @@ function volumeintegral(
     Dim = Meshes.paramdim(geometry)
 
     if Dim == 3
-        return integral(f, geometry, settings, FP)
+        return _integral(f, geometry, settings, FP)
     else
         error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
     end
