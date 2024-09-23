@@ -21,7 +21,7 @@ module MeshIntegrals
     include("integral_volume.jl")
     export integral, lineintegral, surfaceintegral, volumeintegral
 
-    # Integration methods specialzed for particular geometries
+    # Integration methods specialized for particular geometries
     include("specializations/BezierCurve.jl")
     include("specializations/ConeSurface.jl")
     include("specializations/CylinderSurface.jl")
