@@ -5,20 +5,20 @@
 function lineintegral(
     f::F,
     curve::Meshes.BezierCurve,
-    settings::I,
+    rule::I,
     FP::Type{T};
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
-    return integral(f, curve, settings, FP; alg=alg)
+) where {F<:Function, I<:IntegrationRule, T<:AbstractFloat}
+    return integral(f, curve, rule, FP; alg=alg)
 end
 
 function lineintegral(
     f::F,
     curve::Meshes.BezierCurve,
-    settings::I;
+    rule::I;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
-) where {F<:Function, I<:IntegrationAlgorithm}
-    return integral(f, curve, settings; alg=alg)
+) where {F<:Function, I<:IntegrationRule}
+    return integral(f, curve, rule; alg=alg)
 end
 
 """
@@ -34,12 +34,12 @@ especially for curves with a large number of control points.
 function integral(
     f::F,
     curve::Meshes.BezierCurve,
-    settings::GaussLegendre,
+    rule::GaussLegendre,
     FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(FP, settings.n)
+    xs, ws = _gausslegendre(FP, rule.n)
 
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = FP(1/2) * x + FP(1/2)
@@ -62,13 +62,13 @@ especially for curves with a large number of control points.
 function integral(
     f::F,
     curve::Meshes.BezierCurve,
-    settings::GaussKronrod,
+    rule::GaussKronrod,
     FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function, T<:AbstractFloat}
     len = length(curve)
     point(t) = curve(t, alg)
-    return QuadGK.quadgk(t -> len * f(point(t)), FP(0), FP(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(t -> len * f(point(t)), FP(0), FP(1); rule.kwargs...)[1]
 end
 
 """
@@ -84,7 +84,7 @@ especially for curves with a large number of control points.
 function integral(
     f::F,
     curve::Meshes.BezierCurve,
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T} = Float64;
     alg::Meshes.BezierEvalMethod=Meshes.Horner()
 ) where {F<:Function, T<:AbstractFloat}
@@ -99,7 +99,7 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; settings.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
