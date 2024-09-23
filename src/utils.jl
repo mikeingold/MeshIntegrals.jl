@@ -10,9 +10,11 @@ central-finite-difference approximation with step size `ε`.
 """
 function jacobian(
     geometry,
-    ts::AbstractVector{T};
+    ts;
     ε=1e-6
-) where {T<:AbstractFloat}
+)
+    T = eltype(ts)
+
     # Get the partial derivative along the n'th axis via finite difference approximation
     #   where ts is the current parametric position (εv is a reusable buffer)
     function ∂ₙr!(εv, ts, n)
@@ -27,33 +29,30 @@ function jacobian(
 
     # Central finite difference
     function ∂ₙr_central!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
-        a = ts - εv
-        b = ts + εv
+        a = ts .- εv
+        b = ts .+ εv
         return (geometry(b...) - geometry(a...)) / 2ε
     end
 
     # Left finite difference
     function ∂ₙr_left!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
-        a = ts - εv
+        a = ts .- εv
         b = ts
         return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Right finite difference
     function ∂ₙr_right!(εv, ts, n)
-        εv .= T(0)
         εv[n] = ε
         a = ts
-        b = ts + εv
+        b = ts .+ εv
         return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Allocate a re-usable ε vector
-    εv = similar(ts)
+    εv = zeros(T, length(ts))
 
     ∂ₙr(n) = ∂ₙr!(εv,ts,n)
     return map(∂ₙr, 1:length(ts))
@@ -65,7 +64,10 @@ end
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
-function differential(geometry, ts::AbstractVector)
+function differential(
+    geometry,
+    ts
+)
     J = jacobian(geometry, ts)
 
     # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))

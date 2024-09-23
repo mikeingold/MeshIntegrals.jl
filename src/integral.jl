@@ -1,49 +1,4 @@
 ################################################################################
-#                         Integration Algorithms
-################################################################################
-
-abstract type IntegrationAlgorithm end
-
-"""
-    GaussKronrod(kwargs...)
-
-Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule implemented
-by QuadGK.jl. All standard `QuadGK.quadgk` keyword arguments are supported.
-"""
-struct GaussKronrod <: IntegrationAlgorithm
-    kwargs
-    GaussKronrod(; kwargs...) = new(kwargs)
-end
-
-"""
-    GaussLegendre(n)
-
-Numerically integrate using an `n`'th-order Gauss-Legendre quadrature rule. nodes
-and weights are efficiently calculated using FastGaussQuadrature.jl.
-
-So long as the integrand function can be well-approximated by a polynomial of
-order `2n-1`, this method should yield results with 16-digit accuracy in `O(n)`
-time. If the function is know to have some periodic content, then `n` should
-(at a minimum) be greater than the expected number of periods over the geometry,
-e.g. `length(geometry)/lambda`.
-"""
-struct GaussLegendre <: IntegrationAlgorithm
-    n::Int64
-end
-
-"""
-    GaussKronrod(kwargs...)
-
-Numerically integrate areas and surfaces using the h-adaptive cubature rule
-implemented by HCubature.jl. All standard `HCubature.hcubature` keyword
-arguments are supported.
-"""
-struct HAdaptiveCubature <: IntegrationAlgorithm
-    kwargs
-    HAdaptiveCubature(; kwargs...) = new(kwargs)
-end
-
-################################################################################
 #                         Master Integral Function
 ################################################################################
 
@@ -68,57 +23,38 @@ contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
 """
 function integral end
 
-# If only f and geometry are specified, default to HAdaptiveCubature
+# If only f and geometry are specified, select default algorithm
 function integral(
     f::F,
     geometry::G
 ) where {F<:Function, G<:Meshes.Geometry}
-    _integral(f, geometry, HAdaptiveCubature())
+    N = Meshes.paramdim(geometry)
+    rule = (N == 1) ? GaussKronrod() : HAdaptiveCubature()
+    _integral(f, geometry, rule)
 end
 
-# If algorithm is HAdaptiveCubature, use the generalized n-dim solution
-function integral(
-    f::F,
-    geometry::G,
-    settings::HAdaptiveCubature
-) where {F<:Function, G<:Meshes.Geometry}
-    _integral(f, geometry, settings)
-end
-
-# If algorithm is HAdaptiveCubature, and FP specified, use the generalized n-dim solution
-function integral(
-    f::F,
-    geometry::G,
-    settings::HAdaptiveCubature,
-    FP::Type{T}
-) where {F<:Function, G<:Meshes.Geometry, T<:AbstractFloat}
-    _integral(f, geometry, settings, FP)
-end
-
-# If algorithm is not HAdaptiveCubature, specialize on number of dimensions
-function integral(
-    f::F,
-    geometry::G,
-    settings::I
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm}
-    # Run the appropriate integral type
-    Dim = Meshes.paramdim(geometry)
-    if Dim == 1
-        return _integral_1d(f, geometry, settings)
-    elseif Dim == 2
-        return _integral_2d(f, geometry, settings)
-    elseif Dim == 3
-        return _integral_3d(f, geometry, settings)
-    end
-end
-
-# If algorithm is not HAdaptiveCubature, and FP specified, specialize on number of dimensions
+# with algorithm and T specified
 function integral(
     f::F,
     geometry::G,
     settings::I,
-    FP::Type{T}
+    FP::Type{T} = Float64
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationAlgorithm, T<:AbstractFloat}
+    _integral(f, geometry, settings, FP)
+end
+
+
+################################################################################
+#                    Generalized (n-Dimensional) Worker Methods
+################################################################################
+
+# GaussKronrod
+function _integral(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
     # Run the appropriate integral type
     Dim = Meshes.paramdim(geometry)
     if Dim == 1
@@ -130,12 +66,32 @@ function integral(
     end
 end
 
+# GaussLegendre
+function _integral(
+    f,
+    geometry,
+    settings::GaussLegendre,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    N = Meshes.paramdim(geometry)
 
-################################################################################
-#                    Generalized (n-Dimensional) Worker Methods
-################################################################################
+    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
+    xs, ws = _gausslegendre(FP, settings.n)
+    weights = Iterators.product(ntuple(Returns(ws), N)...)
+    nodes = Iterators.product(ntuple(Returns(xs), N)...)
 
-# General solution for HAdaptiveCubature methods
+    # Domain transformation: x [-1,1] ↦ t [0,1]
+    t(x) = FP(1//2) * x + FP(1//2)
+
+    function integrand((weights, nodes))
+        ts = t.(nodes)
+        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
+    end
+
+    return FP(1//(2^N)) .* sum(integrand, zip(weights, nodes))
+end
+
+# HAdaptiveCubature
 function _integral(
     f,
     geometry,
@@ -157,4 +113,39 @@ function _integral(
 
     # Reapply units
     return value .* integrandunits
+end
+
+################################################################################
+#                    Specialized GaussKronrod Methods
+################################################################################
+
+function _integral_1d(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    integrand(t) = f(geometry(t)) * differential(geometry, [t])
+    return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
+end
+
+function _integral_2d(
+    f,
+    geometry2d,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
+    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), FP(0), FP(1); settings.kwargs...)[1]
+    return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
+end
+
+# Integrating volumes with GaussKronrod not supported by default
+function _integral_3d(
+    f,
+    geometry,
+    settings::GaussKronrod,
+    FP::Type{T} = Float64
+) where {T<:AbstractFloat}
+    error("Integrating this volume type with GaussKronrod not supported.")
 end

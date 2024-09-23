@@ -1,41 +1,4 @@
 ################################################################################
-#                       Generalized 3D Methods
-################################################################################
-
-function _integral_3d(
-    f,
-    geometry3d,
-    settings::GaussLegendre,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = _gausslegendre(FP, settings.n)
-    wws = Iterators.product(ws, ws, ws)
-    xxs = Iterators.product(xs, xs, xs)
-
-    # Domain transformation: x [-1,1] ↦ s,t,u [0,1]
-    t(x) = FP(1/2) * x + FP(1/2)
-
-    function integrand(((wi,wj,wk), (xi,xj,xk)))
-        ts = t.([xi, xj, xk])
-        wi * wj * wk * f(geometry3d(ts...)) * differential(geometry3d, ts)
-    end
-
-    return FP(1/8) .* sum(integrand, zip(wws,xxs))
-end
-
-# Integrating volumes with GaussKronrod not supported by default
-function _integral_3d(
-    f,
-    geometry,
-    settings::GaussKronrod,
-    FP::Type{T} = Float64
-) where {T<:AbstractFloat}
-    error("Integrating this volume type with GaussKronrod not supported.")
-end
-
-
-################################################################################
 #                  Specialized Methods for Tetrahedron
 ################################################################################
 
