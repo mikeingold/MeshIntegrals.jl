@@ -98,13 +98,13 @@ function _integral(
     rule::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
     integrand(t) = f(geometry(t...)) * differential(geometry, t)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = fill(FP(0.5),Dim)
+    testpoint_parametriccoord = fill(FP(0.5), N)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
@@ -125,8 +125,8 @@ function _integral_1d(
     rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, [t])
-    return QuadGK.quadgk(integrand, FP(0), FP(1); settings.kwargs...)[1]
+    integrand(t) = f(geometry(t)) * differential(geometry, (t))
+    return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
 function _integral_2d(
@@ -135,9 +135,9 @@ function _integral_2d(
     rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
-    integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, [u,v])
-    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), FP(0), FP(1); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> ∫₁(v), FP(0), FP(1); settings.kwargs...)[1]
+    integrand(u,v) = f(geometry2d(u,v)) * differential(geometry2d, (u,v))
+    ∫₁(v) = QuadGK.quadgk(u -> integrand(u,v), zero(FP), one(FP); rule.kwargs...)[1]
+    return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
 end
 
 # Integrating volumes with GaussKronrod not supported by default
