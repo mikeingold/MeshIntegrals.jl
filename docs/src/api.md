@@ -14,7 +14,7 @@ MeshIntegrals.surfaceintegral
 MeshIntegrals.volumeintegral
 ```
 
-## Integration Algorithms
+## Integration Rules
 
 ```@docs
 MeshIntegrals.GaussKronrod

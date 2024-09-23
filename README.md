@@ -26,9 +26,9 @@ integral(f, geometry)
 Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
 
 ```julia
-integral(f, geometry, algorithm, FP=Float64)
+integral(f, geometry, rule, FP=Float64)
 ```
-Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration algorithm, e.g. `GaussKronrod()`.
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`.
 
 Optionally, a fourth argument can be provided to specify the floating point precision level desired. This setting can be manipulated if your integrand function produces outputs with alternate floating point precision (e.g. `Float16`, `BigFloat`, etc) AND you'd prefer to avoid implicit type promotions.
 
@@ -37,7 +37,7 @@ lineintegral(f, geometry)
 surfaceintegral(f, geometry)
 volumeintegral(f, geometry)
 ```
-Alias functions are provided for convenience. These are simply wrappers for `integral` that first validate that the provided `geometry` has the expected number of parametric/manifold dimensions. Like with `integral` in the examples above, the `algorithm` can also be specified as a third-argument.
+Alias functions are provided for convenience. These are simply wrappers for `integral` that first validate that the provided `geometry` has the expected number of parametric/manifold dimensions. Like with `integral` in the examples above, the `rule` can also be specified as a third-argument.
 - `lineintegral` for curve-like geometries or polytopes (e.g. `Segment`, `Ray`, `BezierCurve`, `Rope`, etc)
 - `surfaceintegral` for surfaces (e.g. `Disk`, `Sphere`, `CylinderSurface`, etc)
 - `volumeintegral` for (3D) volumes (e.g. `Ball`, `Cone`, `Torus`, etc)

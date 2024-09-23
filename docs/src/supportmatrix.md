@@ -1,9 +1,9 @@
 # Support Matrix
 
-While this library aims to support all possible integration algorithms and **Meshes.jl**
+While this library aims to support all possible integration rules and **Meshes.jl**
 geometry types, some combinations are ill-suited and some others are simplu not yet
 implemented. The following Support Matrix aims to capture the current development state of
-all geometry/algorithm combinations. Entries with a green check mark are fully supported
+all geometry/rule combinations. Entries with a green check mark are fully supported
 and have passing unit tests that provide some confidence they produce accurate results.
 
 In general, Gauss-Kronrod integration rules are recommended (and the default) for geometries
