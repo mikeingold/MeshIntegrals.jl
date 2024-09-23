@@ -23,7 +23,7 @@ contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
 """
 function integral end
 
-# If only f and geometry are specified, default to HAdaptiveCubature
+# If only f and geometry are specified, select default algorithm
 function integral(
     f::F,
     geometry::G
