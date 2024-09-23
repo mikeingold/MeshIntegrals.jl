@@ -11,11 +11,13 @@ module MeshIntegrals
     include("utils.jl")
     export jacobian, derivative, unitdirection
 
+    include("integration_algorithms.jl")
+    export GaussKronrod, GaussLegendre, HAdaptiveCubature
+
     include("integral.jl")
     include("integral_aliases.jl")
     include("integral_line.jl")
     include("integral_surface.jl")
     include("integral_volume.jl")
-    export GaussKronrod, GaussLegendre, HAdaptiveCubature
     export integral, lineintegral, surfaceintegral, volumeintegral
 end
