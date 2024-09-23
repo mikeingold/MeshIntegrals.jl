@@ -16,9 +16,6 @@ module MeshIntegrals
 
     include("integral.jl")
     include("integral_aliases.jl")
-    include("integral_line.jl")
-    include("integral_surface.jl")
-    include("integral_volume.jl")
     export integral, lineintegral, surfaceintegral, volumeintegral
 
     # Integration methods specialized for particular geometries
