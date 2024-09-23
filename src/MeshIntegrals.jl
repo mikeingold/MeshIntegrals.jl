@@ -23,6 +23,7 @@ module MeshIntegrals
 
     # Integration methods specialzed for particular geometries
     include("specializations/BezierCurve.jl")
+    include("specializations/CylinderSurface.jl")
     include("specializations/Line.jl")
     include("specializations/Ray.jl")
     include("specializations/Tetrahedron.jl")
