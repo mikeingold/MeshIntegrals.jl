@@ -28,7 +28,9 @@ function integral(
     f::F,
     geometry::G
 ) where {F<:Function, G<:Meshes.Geometry}
-    _integral(f, geometry, HAdaptiveCubature())
+    N = Meshes.paramdim(geometry)
+    rule = (N == 1) ? GaussKronrod() : HAdaptiveCubature()
+    _integral(f, geometry, rule)
 end
 
 # with algorithm and T specified
