@@ -12,7 +12,7 @@ module MeshIntegrals
     export jacobian, derivative, unitdirection
 
     include("integration_rules.jl")
-    export GaussKronrod, GaussLegendre, HAdaptiveCubature
+    export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature
 
     include("integral.jl")
     export integral
