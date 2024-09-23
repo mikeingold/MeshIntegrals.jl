@@ -11,12 +11,14 @@ module MeshIntegrals
     include("utils.jl")
     export jacobian, derivative, unitdirection
 
-    include("integration_algorithms.jl")
+    include("integration_rules.jl")
     export GaussKronrod, GaussLegendre, HAdaptiveCubature
 
     include("integral.jl")
+    export integral
+
     include("integral_aliases.jl")
-    export integral, lineintegral, surfaceintegral, volumeintegral
+    export lineintegral, surfaceintegral, volumeintegral
 
     # Integration methods specialized for particular geometries
     include("specializations/BezierCurve.jl")
