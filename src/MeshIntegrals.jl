@@ -25,4 +25,5 @@ module MeshIntegrals
     include("specializations/BezierCurve.jl")
     include("specializations/Line.jl")
     include("specializations/Tetrahedron.jl")
+    include("specializations/Triangle.jl")
 end
