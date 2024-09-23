@@ -18,7 +18,7 @@ end
 """
     GaussLegendre(n)
 
-Numerically integrate using an `n`'th-order Gauss-Legendre quadrature rule. nodes
+Numerically integrate using an `n`'th-order Gauss-Legendre quadrature rule. Nodes
 and weights are efficiently calculated using FastGaussQuadrature.jl.
 
 So long as the integrand function can be well-approximated by a polynomial of
@@ -32,7 +32,7 @@ struct GaussLegendre <: IntegrationAlgorithm
 end
 
 """
-    GaussKronrod(kwargs...)
+    HAdaptiveCubature(kwargs...)
 
 Numerically integrate areas and surfaces using the h-adaptive cubature rule
 implemented by HCubature.jl. All standard `HCubature.hcubature` keyword
