@@ -13,11 +13,11 @@ triangle.
 function integral(
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::GaussLegendre,
+    rule::GaussLegendre,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
-    xs, ws = _gausslegendre(FP, settings.n)
+    xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
@@ -55,13 +55,13 @@ Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 function integral(
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::GaussKronrod,
+    rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
-    inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), FP(0), FP(1-u); settings.kwargs...)[1]
-    outer∫ = QuadGK.quadgk(inner∫, FP(0), FP(1); settings.kwargs...)[1]
+    inner∫(u) = QuadGK.quadgk(v -> f(triangle(u,v)), zero(FP), FP(1-u); rule.kwargs...)[1]
+    outer∫ = QuadGK.quadgk(inner∫, zero(FP), one(FP); rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * area(triangle) .* outer∫
@@ -77,7 +77,7 @@ an h-adaptive cubature rule.
 function integral(
     f::F,
     triangle::Meshes.Ngon{3},
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Integrate the Barycentric triangle by transforming it into polar coordinates
@@ -92,7 +92,7 @@ function integral(
         v = R * (1 - b / (a + b))
         return f(triangle(u, v)) * R / (a + b)^2
     end
-    intval = HCubature.hcubature(integrand, FP[0, 0], FP[1, π/2], settings.kwargs...)[1]
+    intval = HCubature.hcubature(integrand, FP[0, 0], FP[1, π/2], rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * area(triangle) .* intval

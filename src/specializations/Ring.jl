@@ -5,37 +5,37 @@
 function integral(
     f::F,
     ring::Meshes.Ring,
-    settings::HAdaptiveCubature
+    rule::HAdaptiveCubature
 ) where {F<:Function}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> _integral(f, segment, settings), segments(ring))
+    return sum(segment -> _integral(f, segment, rule), segments(ring))
 end
 
 function integral(
     f::F,
     ring::Meshes.Ring,
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T}
 ) where {F<:Function, T<:AbstractFloat}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> _integral(f, segment, settings, FP), segments(ring))
+    return sum(segment -> _integral(f, segment, rule, FP), segments(ring))
 end
 
 function integral(
     f::F,
     ring::Meshes.Ring,
-    settings::I
+    rule::I
 ) where {F<:Function, I<:IntegrationAlgorithm}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> integral(f, segment, settings), segments(ring))
+    return sum(segment -> integral(f, segment, rule), segments(ring))
 end
 
 function integral(
     f::F,
     ring::Meshes.Ring,
-    settings::I,
+    rule::I,
     FP::Type{T}
 ) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
     # Convert the Ring into Segments, sum the integrals of those 
-    return sum(segment -> integral(f, segment, settings, FP), segments(ring))
+    return sum(segment -> integral(f, segment, rule, FP), segments(ring))
 end
