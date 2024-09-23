@@ -20,12 +20,12 @@ function lineintegral(
     f::F,
     geometry::G,
 ) where {F<:Function, G<:Meshes.Geometry}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 1
+    if N == 1
         return integral(f, geometry, GaussKronrod())
     else
-        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -34,12 +34,12 @@ function lineintegral(
     geometry::G,
     rule::I
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 1
+    if N == 1
         return integral(f, geometry, rule)
     else
-        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -49,12 +49,12 @@ function lineintegral(
     rule::I,
     FP::Type{T}
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 1
+    if N == 1
         return integral(f, geometry, rule, FP)
     else
-        error("Performing a line integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -81,12 +81,12 @@ function surfaceintegral(
     f::F,
     geometry::G,
 ) where {F<:Function, G<:Meshes.Geometry}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 2
+    if N == 2
         return integral(f, geometry, HAdaptiveCubature())
     else
-        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -95,12 +95,12 @@ function surfaceintegral(
     geometry::G,
     rule::I
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 2
+    if N == 2
         return integral(f, geometry, rule)
     else
-        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -110,12 +110,12 @@ function surfaceintegral(
     rule::I,
     FP::Type{T}
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 2
+    if N == 2
         return integral(f, geometry, rule, FP)
     else
-        error("Performing a surface integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -142,12 +142,12 @@ function volumeintegral(
     f::F,
     geometry::G,
 ) where {F<:Function, G<:Meshes.Geometry}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 3
+    if N == 3
         return integral(f, geometry, HAdaptiveCubature())
     else
-        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -156,12 +156,12 @@ function volumeintegral(
     geometry::G,
     rule::I
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 3
+    if N == 3
         return integral(f, geometry, rule)
     else
-        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
     end
 end
 
@@ -171,11 +171,11 @@ function volumeintegral(
     rule::I,
     FP::Type{T}
 ) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
-    Dim = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
-    if Dim == 3
+    if N == 3
         return integral(f, geometry, rule, FP)
     else
-        error("Performing a volume integral on a geometry with $Dim parametric dimensions not supported.")
+        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
     end
 end
