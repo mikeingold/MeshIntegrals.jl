@@ -56,12 +56,12 @@ function _integral(
     FP::Type{T} = Float64
 ) where {T<:AbstractFloat}
     # Run the appropriate integral type
-    Dim = Meshes.paramdim(geometry)
-    if Dim == 1
+    N = Meshes.paramdim(geometry)
+    if N == 1
         return _integral_1d(f, geometry, rule, FP)
-    elseif Dim == 2
+    elseif N == 2
         return _integral_2d(f, geometry, rule, FP)
-    elseif Dim == 3
+    elseif N == 3
         return _integral_3d(f, geometry, rule, FP)
     end
 end
@@ -109,7 +109,7 @@ function _integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zeros(FP,Dim), ones(FP,Dim); rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, zeros(FP,N), ones(FP,N); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
