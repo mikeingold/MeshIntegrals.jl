@@ -5,11 +5,11 @@
 function integral(
     f::F,
     line::Meshes.Line,
-    settings::GaussLegendre,
+    rule::GaussLegendre,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(FP, settings.n)
+    xs, ws = _gausslegendre(FP, rule.n)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
@@ -27,7 +27,7 @@ end
 function integral(
     f::F,
     line::Meshes.Line,
-    settings::GaussKronrod,
+    rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
@@ -36,13 +36,13 @@ function integral(
     # Integrate f along the Line
     domainunits = _units(line(0))
     integrand(t) = f(line(t)) * domainunits
-    return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
 
 function integral(
     f::F,
     line::Meshes.Line,
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
@@ -63,7 +63,7 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[-1], FP[1]; settings.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, FP[-1], FP[1]; rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits

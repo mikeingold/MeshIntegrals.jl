@@ -5,11 +5,11 @@
 function integral(
     f::F,
     ray::Meshes.Ray,
-    settings::GaussLegendre,
+    rule::GaussLegendre,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(FP, settings.n)
+    xs, ws = _gausslegendre(FP, rule.n)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Ray(ray.p, Meshes.unormalize(ray.v))
@@ -31,7 +31,7 @@ end
 function integral(
     f::F,
     ray::Meshes.Ray,
-    settings::GaussKronrod,
+    rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -39,13 +39,13 @@ function integral(
 
     # Integrate f along the Ray
     domainunits = _units(ray(0))
-    return QuadGK.quadgk(t -> f(ray(t)) * domainunits, FP(0), FP(Inf); settings.kwargs...)[1]
+    return QuadGK.quadgk(t -> f(ray(t)) * domainunits, zero(FP), FP(Inf); rule.kwargs...)[1]
 end
 
 function integral(
     f::F,
     ray::Meshes.Ray,
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -66,7 +66,7 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; settings.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits

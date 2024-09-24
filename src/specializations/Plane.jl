@@ -5,11 +5,11 @@
 function integral(
     f::F,
     plane::Meshes.Plane,
-    settings::GaussLegendre,
+    rule::GaussLegendre,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-    xs, ws = _gausslegendre(FP, settings.n)
+    xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
     xxs = Iterators.product(xs, xs)
 
@@ -29,7 +29,7 @@ end
 function integral(
     f::F,
     plane::Meshes.Plane,
-    settings::GaussKronrod,
+    rule::GaussKronrod,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
@@ -37,14 +37,14 @@ function integral(
 
     # Integrate f over the Plane
     domainunits = _units(plane(0,0))
-    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
-    return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    inner∫(v) = QuadGK.quadgk(u -> f(plane(u,v)) * domainunits, FP(-Inf), FP(Inf); rule.kwargs...)[1]
+    return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
 
 function integral(
     f::F,
     plane::Meshes.Plane,
-    settings::HAdaptiveCubature,
+    rule::HAdaptiveCubature,
     FP::Type{T} = Float64
 ) where {F<:Function, T<:AbstractFloat}
     # Normalize the Plane's orthogonal vectors
@@ -65,7 +65,7 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[-1,-1], FP[1,1]; settings.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, FP[-1,-1], FP[1,1]; rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
