@@ -59,9 +59,8 @@
 
         # For each enabled solver type, run the test suite
         @testset "$(item.name)" begin
-            for ((method, methodsupport), (alg, algsupport)) in itemsupport
-                integraltest(
-                    method, item.geometry, alg, methodsupport && algsupport, item.type)
+            for ((method, msupport), (alg, asupport)) in itemsupport
+                integraltest(method, item.geometry, alg, msupport && asupport, item.type)
             end
         end
     end
@@ -84,8 +83,7 @@ end
     # Test Geometries
     ball2d(T) = Ball(origin2d(T), T(2.0))
     ball3d(T) = Ball(origin3d(T), T(2.0))
-    bezier(T) = BezierCurve([Point(cos(t), sin(t), 0)
-                             for t in range(T(0), T(2π), length = 361)])
+    bezier(T) = BezierCurve([Point(cos(t), sin(t), 0) for t in T(0):T(0.1):T(2π)])
     box1d(T) = Box(Point(T(-1)), Point(T(1)))
     box2d(T) = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T) = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
