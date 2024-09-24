@@ -43,14 +43,10 @@ end
 
 @testitem "Integral Aliases" setup=[Setup] begin
     f = p -> one(Float32)
-    box1d = Box(
-        Point(fill(zero(Float32) * u"m", 1)...), Point(fill(one(Float32) * u"m", 1)...))
-    box2d = Box(
-        Point(fill(zero(Float32) * u"m", 2)...), Point(fill(one(Float32) * u"m", 2)...))
-    box3d = Box(
-        Point(fill(zero(Float32) * u"m", 3)...), Point(fill(one(Float32) * u"m", 3)...))
-    box4d = Box(
-        Point(fill(zero(Float32) * u"m", 4)...), Point(fill(one(Float32) * u"m", 4)...))
+    box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
+    box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
+    box3d = Box(Point(fill(0.0f0u"m", 3)...), Point(fill(1.0f0u"m", 3)...))
+    box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
 
     # Check alias functions for accuracy
     @test lineintegral(f, box1d, GaussLegendre(100), Float32)≈1.0f0u"m" atol=0.01f0u"m"

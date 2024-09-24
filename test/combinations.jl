@@ -259,10 +259,9 @@ end
 
 @testitem "Meshes.Segment" setup=[Setup] begin
     # Connect a line segment from the origin to an arbitrary point on the unit sphere
-    phi, theta = (7pi / 6, pi / 3)  # Arbitrary spherical angles
+    φ, θ = (7pi / 6, pi / 3)  # Arbitrary spherical angles
     pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    pt_b = Point(
-        sin(theta) * cos(phi) * u"m", sin(theta) * sin(phi) * u"m", cos(theta) * u"m")
+    pt_b = Point(sin(θ) * cos(φ) * u"m", sin(θ) * sin(φ) * u"m", cos(θ) * u"m")
     segment = Segment(pt_a, pt_b)
 
     a, b = (7.1, 4.6)  # arbitrary constants > 0
