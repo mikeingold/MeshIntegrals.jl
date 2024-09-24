@@ -3,70 +3,78 @@
 ################################################################################
 
 function integral(
-  f::F,
-  plane::Meshes.Plane,
-  settings::GaussLegendre,
-  FP::Type{T}=Float64
-) where {F<:Function,T<:AbstractFloat}
-  # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
-  xs, ws = _gausslegendre(FP, settings.n)
-  wws = Iterators.product(ws, ws)
-  xxs = Iterators.product(xs, xs)
+        f::F,
+        plane::Meshes.Plane,
+        settings::GaussLegendre,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
+    # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
+    xs, ws = _gausslegendre(FP, settings.n)
+    wws = Iterators.product(ws, ws)
+    xxs = Iterators.product(xs, xs)
 
-  # Normalize the Plane's orthogonal vectors
-  plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+    # Normalize the Plane's orthogonal vectors
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
-  # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
-  t(x) = x / (1 - x^2)
-  t′(x) = (1 + x^2) / (1 - x^2)^2
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
 
-  # Integrate f over the Plane
-  domainunits = _units(plane(0, 0))
-  integrand(((wi, wj), (xi, xj))) = wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
-  return sum(integrand, zip(wws, xxs))
+    # Integrate f over the Plane
+    domainunits = _units(plane(0, 0))
+    function integrand(((wi, wj), (xi, xj)))
+        wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
+    end
+    return sum(integrand, zip(wws, xxs))
 end
 
 function integral(
-  f::F,
-  plane::Meshes.Plane,
-  settings::GaussKronrod,
-  FP::Type{T}=Float64
-) where {F<:Function,T<:AbstractFloat}
-  # Normalize the Plane's orthogonal vectors
-  plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+        f::F,
+        plane::Meshes.Plane,
+        settings::GaussKronrod,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
+    # Normalize the Plane's orthogonal vectors
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
-  # Integrate f over the Plane
-  domainunits = _units(plane(0, 0))
-  inner∫(v) = QuadGK.quadgk(u -> f(plane(u, v)) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
-  return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    # Integrate f over the Plane
+    domainunits = _units(plane(0, 0))
+    function inner∫(v)
+        QuadGK.quadgk(
+            u -> f(plane(u, v)) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
+    end
+    return QuadGK.quadgk(
+        v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); settings.kwargs...)[1]
 end
 
 function integral(
-  f::F,
-  plane::Meshes.Plane,
-  settings::HAdaptiveCubature,
-  FP::Type{T}=Float64
-) where {F<:Function,T<:AbstractFloat}
-  # Normalize the Plane's orthogonal vectors
-  plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+        f::F,
+        plane::Meshes.Plane,
+        settings::HAdaptiveCubature,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
+    # Normalize the Plane's orthogonal vectors
+    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
 
-  # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
-  t(x) = x / (1 - x^2)
-  t′(x) = (1 + x^2) / (1 - x^2)^2
+    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
+    t(x) = x / (1 - x^2)
+    t′(x) = (1 + x^2) / (1 - x^2)^2
 
-  # Integrate f over the Plane
-  domainunits = _units(plane(0, 0))
-  integrand(x::AbstractVector) = f(plane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
+    # Integrate f over the Plane
+    domainunits = _units(plane(0, 0))
+    function integrand(x::AbstractVector)
+        f(plane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
+    end
 
-  # HCubature doesn't support functions that output Unitful Quantity types
-  # Establish the units that are output by f
-  testpoint_parametriccoord = FP[0.5, 0.5]
-  integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
-  # Create a wrapper that returns only the value component in those units
-  uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
-  # Integrate only the unitless values
-  value = HCubature.hcubature(uintegrand, FP[-1, -1], FP[1, 1]; settings.kwargs...)[1]
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = FP[0.5, 0.5]
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    # Integrate only the unitless values
+    value = HCubature.hcubature(uintegrand, FP[-1, -1], FP[1, 1]; settings.kwargs...)[1]
 
-  # Reapply units
-  return value .* integrandunits
+    # Reapply units
+    return value .* integrandunits
 end
