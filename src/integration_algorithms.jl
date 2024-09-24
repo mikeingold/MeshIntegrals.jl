@@ -11,8 +11,8 @@ Numerically integrate using the h-adaptive Gauss-Kronrod quadrature rule impleme
 by QuadGK.jl. All standard `QuadGK.quadgk` keyword arguments are supported.
 """
 struct GaussKronrod <: IntegrationAlgorithm
-    kwargs
-    GaussKronrod(; kwargs...) = new(kwargs)
+  kwargs::Any
+  GaussKronrod(; kwargs...) = new(kwargs)
 end
 
 """
@@ -28,7 +28,7 @@ time. If the function is know to have some periodic content, then `n` should
 e.g. `length(geometry)/lambda`.
 """
 struct GaussLegendre <: IntegrationAlgorithm
-    n::Int64
+  n::Int64
 end
 
 """
@@ -39,6 +39,6 @@ implemented by HCubature.jl. All standard `HCubature.hcubature` keyword
 arguments are supported.
 """
 struct HAdaptiveCubature <: IntegrationAlgorithm
-    kwargs
-    HAdaptiveCubature(; kwargs...) = new(kwargs)
+  kwargs::Any
+  HAdaptiveCubature(; kwargs...) = new(kwargs)
 end
