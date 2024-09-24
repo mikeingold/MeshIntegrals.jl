@@ -25,7 +25,7 @@ function integral(
     f::F,
     ring::Meshes.Ring,
     rule::I
-) where {F<:Function, I<:IntegrationAlgorithm}
+) where {F<:Function, I<:IntegrationRule}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> integral(f, segment, rule), segments(ring))
 end
@@ -35,7 +35,7 @@ function integral(
     ring::Meshes.Ring,
     rule::I,
     FP::Type{T}
-) where {F<:Function, I<:IntegrationAlgorithm, T<:AbstractFloat}
+) where {F<:Function, I<:IntegrationRule, T<:AbstractFloat}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> integral(f, segment, rule, FP), segments(ring))
 end
