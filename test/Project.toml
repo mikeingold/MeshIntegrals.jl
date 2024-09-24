@@ -8,9 +8,9 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-Aqua = "0.8"
+Aqua = "0.7, 0.8"
 Meshes = "0.50, 0.51"
-QuadGK = "2"
+QuadGK = "2.1.1"
 TestItemRunner = "1"
 TestItems = "1"
-Unitful = "1"
+Unitful = "1.19"
