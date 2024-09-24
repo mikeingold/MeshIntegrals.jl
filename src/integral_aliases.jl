@@ -8,7 +8,7 @@
     lineintegral(f, geometry, rule, FP)
 
 Numerically integrate a given function `f(::Point)` along a line-like `geometry`
-using a particular numerical `integration rule` with floating point precision of
+using a particular numerical integration `rule` with floating point precision of
 type `FP`.
 
 Rule types available:
@@ -69,7 +69,7 @@ end
     surfaceintegral(f, geometry, rule, FP)
 
 Numerically integrate a given function `f(::Point)` along a surface `geometry`
-using a particular numerical `integration rule` with floating point precision of
+using a particular numerical integration `rule` with floating point precision of
 type `FP`.
 
 Algorithm types available:
@@ -130,7 +130,7 @@ end
     volumeintegral(f, geometry, rule, FP)
 
 Numerically integrate a given function `f(::Point)` throughout a volumetric
-`geometry` using a particular numerical `integration rule` with floating point
+`geometry` using a particular numerical integration `rule` with floating point
 precision of type `FP`.
 
 Algorithm types available:

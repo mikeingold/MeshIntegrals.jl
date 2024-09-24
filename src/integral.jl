@@ -8,7 +8,7 @@
     integral(f, geometry, rule, FP)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
-a `geometry` using a particular numerical `integration rule` with floating point
+a `geometry` using a particular numerical integration `rule` with floating point
 precision of type `FP`.
 
 # Arguments
