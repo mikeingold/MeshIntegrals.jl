@@ -17,9 +17,9 @@ Rule types available:
 - HAdaptiveCubature
 """
 function lineintegral(
-    f::F,
-    geometry::G,
-) where {F<:Function, G<:Meshes.Geometry}
+        f::F,
+        geometry::G
+) where {F <: Function, G <: Meshes.Geometry}
     N = Meshes.paramdim(geometry)
 
     if N == 1
@@ -30,10 +30,10 @@ function lineintegral(
 end
 
 function lineintegral(
-    f::F,
-    geometry::G,
-    rule::I
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
+        f::F,
+        geometry::G,
+        rule::I
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 1
@@ -44,11 +44,11 @@ function lineintegral(
 end
 
 function lineintegral(
-    f::F,
-    geometry::G,
-    rule::I,
-    FP::Type{T}
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        geometry::G,
+        rule::I,
+        FP::Type{T}
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     if N == 1
@@ -57,7 +57,6 @@ function lineintegral(
         error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
     end
 end
-
 
 ################################################################################
 #                              Surface Integral
@@ -78,9 +77,9 @@ Algorithm types available:
 - HAdaptiveCubature (default)
 """
 function surfaceintegral(
-    f::F,
-    geometry::G,
-) where {F<:Function, G<:Meshes.Geometry}
+        f::F,
+        geometry::G
+) where {F <: Function, G <: Meshes.Geometry}
     N = Meshes.paramdim(geometry)
 
     if N == 2
@@ -91,10 +90,10 @@ function surfaceintegral(
 end
 
 function surfaceintegral(
-    f::F,
-    geometry::G,
-    rule::I
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
+        f::F,
+        geometry::G,
+        rule::I
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 2
@@ -105,11 +104,11 @@ function surfaceintegral(
 end
 
 function surfaceintegral(
-    f::F,
-    geometry::G,
-    rule::I,
-    FP::Type{T}
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        geometry::G,
+        rule::I,
+        FP::Type{T}
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     if N == 2
@@ -118,7 +117,6 @@ function surfaceintegral(
         error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
 end
-
 
 ################################################################################
 #                              Volume Integral
@@ -139,9 +137,9 @@ Algorithm types available:
 - HAdaptiveCubature (default)
 """
 function volumeintegral(
-    f::F,
-    geometry::G,
-) where {F<:Function, G<:Meshes.Geometry}
+        f::F,
+        geometry::G
+) where {F <: Function, G <: Meshes.Geometry}
     N = Meshes.paramdim(geometry)
 
     if N == 3
@@ -152,10 +150,10 @@ function volumeintegral(
 end
 
 function volumeintegral(
-    f::F,
-    geometry::G,
-    rule::I
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule}
+        f::F,
+        geometry::G,
+        rule::I
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 3
@@ -166,11 +164,11 @@ function volumeintegral(
 end
 
 function volumeintegral(
-    f::F,
-    geometry::G,
-    rule::I,
-    FP::Type{T}
-) where {F<:Function, G<:Meshes.Geometry, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        geometry::G,
+        rule::I,
+        FP::Type{T}
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     if N == 3

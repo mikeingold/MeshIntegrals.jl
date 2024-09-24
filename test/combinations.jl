@@ -50,14 +50,14 @@ end
 
     # Scalar integrand
     sol = _area_cone_rightcircular(h, r)
-    @test integral(f, cone, GaussLegendre(100)) ≈ sol   rtol=1e-6
-    @test integral(f, cone, GaussKronrod()) ≈ sol       rtol=1e-6
+    @test integral(f, cone, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, cone, GaussKronrod())≈sol rtol=1e-6
     @test integral(f, cone, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cone, GaussLegendre(100)) ≈ vsol   rtol=1e-6
-    @test integral(fv, cone, GaussKronrod()) ≈ vsol       rtol=1e-6
+    @test integral(fv, cone, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, cone, GaussKronrod())≈vsol rtol=1e-6
     @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
@@ -94,14 +94,14 @@ end
         area_walls = area_walls_projected - area_walls_missing
         area_walls + _area_base(r_top) + _area_base(r_bot)
     end
-    @test integral(f, frustum, GaussLegendre(100)) ≈ sol    rtol=1e-6
-    @test integral(f, frustum, GaussKronrod()) ≈ sol        rtol=1e-6
+    @test integral(f, frustum, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, frustum, GaussKronrod())≈sol rtol=1e-6
     @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, frustum, GaussLegendre(100)) ≈ vsol    rtol=1e-6
-    @test integral(fv, frustum, GaussKronrod()) ≈ vsol        rtol=1e-6
+    @test integral(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
     @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
 end
 
@@ -110,7 +110,7 @@ end
     b = Point(1.0u"m", 1.0u"m", 1.0u"m")
     line = Line(a, b)
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         ur = hypot(p.coords.x, p.coords.y, p.coords.z)
         r = ustrip(u"m", ur)
         exp(-r^2)
@@ -140,7 +140,7 @@ end
     v = Vec(0.0u"m", 0.0u"m", 1.0u"m")
     plane = Plane(p, v)
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         ur = hypot(p.coords.x, p.coords.y, p.coords.z)
         r = ustrip(u"m", ur)
         exp(-r^2)
@@ -170,7 +170,7 @@ end
     v = Vec(1.0u"m", 1.0u"m", 1.0u"m")
     ray = Ray(a, v)
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         ur = hypot(p.coords.x, p.coords.y, p.coords.z)
         r = ustrip(u"m", ur)
         exp(-r^2)
@@ -202,7 +202,7 @@ end
     pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
     rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b)
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         x, y, z = (p.coords.x, p.coords.y, p.coords.z)
         (x + 2y + 3z) * u"A/m^2"
     end
@@ -233,7 +233,7 @@ end
     pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
     rope = Rope(pt_a, pt_b, pt_c, pt_d)
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         x, y, z = (p.coords.x, p.coords.y, p.coords.z)
         (x + 2y + 3z) * u"A/m^2"
     end
@@ -261,12 +261,13 @@ end
     # Connect a line segment from the origin to an arbitrary point on the unit sphere
     phi, theta = (7pi / 6, pi / 3)  # Arbitrary spherical angles
     pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    pt_b = Point(sin(theta) * cos(phi) * u"m", sin(theta) * sin(phi) * u"m", cos(theta) * u"m")
+    pt_b = Point(
+        sin(theta) * cos(phi) * u"m", sin(theta) * sin(phi) * u"m", cos(theta) * u"m")
     segment = Segment(pt_a, pt_b)
 
     a, b = (7.1, 4.6)  # arbitrary constants > 0
 
-    function f(p::P) where {P<:Meshes.Point}
+    function f(p::P) where {P <: Meshes.Point}
         ur = hypot(p.coords.x, p.coords.y, p.coords.z)
         r = ustrip(u"m", ur)
         exp(r * log(a) + (1 - r) * log(b))

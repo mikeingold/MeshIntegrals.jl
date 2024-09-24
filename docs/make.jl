@@ -2,7 +2,7 @@ using Documenter
 using MeshIntegrals
 
 makedocs(
-    sitename="MeshIntegrals.jl",
+    sitename = "MeshIntegrals.jl",
     pages = [
         "Home" => [
             "About" => "index.md",
@@ -17,5 +17,5 @@ makedocs(
 )
 
 deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git",
-           devbranch = "main",
-           push_preview = true)
+    devbranch = "main",
+    push_preview = true)
