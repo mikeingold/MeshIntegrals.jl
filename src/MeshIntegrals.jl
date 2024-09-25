@@ -1,8 +1,8 @@
 module MeshIntegrals
-using CoordRefSystems
-using LinearAlgebra
-using Meshes
-using Unitful
+using CoordRefSystems: CoordRefSystems, CRS
+using LinearAlgebra: LinearAlgebra, I, norm
+using Meshes: Meshes, Line, Plane, Ray, area, degree, plane, segments, volume
+using Unitful: Unitful
 
 import FastGaussQuadrature
 import HCubature
