@@ -1,5 +1,11 @@
 ################################################################################
 #                      Specialized Methods for Rope
+#
+# Why Specialized?
+#   The Rope geometry defines a polytope whose length spans segments between
+#   consecutive points. Meshes.jl does not define a parametric function for
+#   Rope's, but they can be decomposed into their constituent Segment's,
+#   integrated separately, and then summed.
 ################################################################################
 
 function integral(
