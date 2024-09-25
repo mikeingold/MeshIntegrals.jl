@@ -1,5 +1,10 @@
 ################################################################################
 #                   Specialized Methods for Line
+#
+# Why Specialized?
+#   The Line geometry is a special case, representing a line of infinite length
+#   that passes through two points. This requires another domain transformation
+#   mapping from the typical parametric region [0,1] to an infinite one (-∞,∞).
 ################################################################################
 
 function integral(

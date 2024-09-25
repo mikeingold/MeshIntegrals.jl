@@ -1,5 +1,12 @@
 ################################################################################
 #                   Specialized Methods for BezierCurve
+#
+# Why Specialized?
+#   The parametric function in Meshes.jl for BezierCurve accepts an argument
+#   of type Meshes.BezierEvalMethod, in which the method for generating
+#   parametric points along the curve is specified. These specialized methods
+#   are essentially identical to the generic ones, except that they provide a
+#   keyword argument and pass through the specified algorithm choice.
 ################################################################################
 
 function lineintegral(
