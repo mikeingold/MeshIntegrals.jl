@@ -9,9 +9,9 @@ Calculate the Jacobian of a geometry at some parametric point `ts` using a simpl
 central-finite-difference approximation with step size `ε`.
 """
 function jacobian(
-    geometry,
-    ts;
-    ε=1e-6
+        geometry,
+        ts;
+        ε = 1e-6
 )
     T = eltype(ts)
 
@@ -54,7 +54,7 @@ function jacobian(
     # Allocate a re-usable ε vector
     εv = zeros(T, length(ts))
 
-    ∂ₙr(n) = ∂ₙr!(εv,ts,n)
+    ∂ₙr(n) = ∂ₙr!(εv, ts, n)
     return map(∂ₙr, 1:length(ts))
 end
 
@@ -65,8 +65,8 @@ Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
 function differential(
-    geometry,
-    ts
+        geometry,
+        ts
 )
     J = jacobian(geometry, ts)
 
@@ -89,8 +89,8 @@ Determine the vector derivative of a Bezier curve `b` for the point on the
 curve parameterized by value `t`.
 """
 function derivative(
-    bz::Meshes.BezierCurve,
-    t
+        bz::Meshes.BezierCurve,
+        t
 )
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
@@ -107,12 +107,12 @@ function derivative(
     N <= 1028 || error("This algorithm overflows for curves with ⪆1000 control points.")
 
     # Generator for Bernstein polynomial functions
-    B(i,n) = t -> binomial(Int128(n),i) * t^i * (1-t)^(n-i)
+    B(i, n) = t -> binomial(Int128(n), i) * t^i * (1 - t)^(n - i)
 
     # Derivative = N Σ_{i=0}^{N-1} sigma(i)
     #   P indices adjusted for Julia 1-based array indexing
-    sigma(i) = B(i,N-1)(t) .* (P[(i+1)+1] - P[(i)+1])
-    return N .* sum(sigma, 0:N-1)
+    sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
+    return N .* sum(sigma, 0:(N - 1))
 end
 
 """
@@ -122,8 +122,8 @@ Determine a unit vector pointing in the forward (t+) direction of a Bezier
 curve `b` for a point on the curve parameterized by value `t`.
 """
 function unitdirection(
-    bz::Meshes.BezierCurve, 
-    t
+        bz::Meshes.BezierCurve,
+        t
 )
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
@@ -131,7 +131,7 @@ function unitdirection(
     end
 
     # Normalize the derivative of the curve
-    u = derivative(bz,t)
+    u = derivative(bz, t)
     LinearAlgebra.normalize!(u)
     return u
 end
@@ -147,4 +147,4 @@ function _gausslegendre(T, n)
 end
 
 # Extract the length units used by the CRS of a Point
-_units(pt::Meshes.Point{M,CRS}) where {M,CRS} = first(CoordRefSystems.units(CRS))
+_units(pt::Meshes.Point{M, CRS}) where {M, CRS} = first(CoordRefSystems.units(CRS))

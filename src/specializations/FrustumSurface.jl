@@ -3,11 +3,11 @@
 ################################################################################
 
 function integral(
-    f::F,
-    frust::Meshes.FrustumSurface,
-    rule::I,
-    FP::Type{T} = Float64
-) where  {F<:Function, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        frust::Meshes.FrustumSurface,
+        rule::I,
+        FP::Type{T} = Float64
+) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
     # The generic method only parameterizes the sides
     sides = _integral(f, frust, rule, FP)
 

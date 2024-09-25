@@ -1,35 +1,35 @@
 module MeshIntegrals
-    using CoordRefSystems
-    using LinearAlgebra
-    using Meshes
-    using Unitful
+using CoordRefSystems
+using LinearAlgebra
+using Meshes
+using Unitful
 
-    import FastGaussQuadrature
-    import HCubature
-    import QuadGK
+import FastGaussQuadrature
+import HCubature
+import QuadGK
 
-    include("utils.jl")
-    export jacobian, derivative, unitdirection
+include("utils.jl")
+export jacobian, derivative, unitdirection
 
-    include("integration_rules.jl")
-    export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature
+include("integration_rules.jl")
+export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature
 
-    include("integral.jl")
-    export integral
+include("integral.jl")
+export integral
 
-    include("integral_aliases.jl")
-    export lineintegral, surfaceintegral, volumeintegral
+include("integral_aliases.jl")
+export lineintegral, surfaceintegral, volumeintegral
 
-    # Integration methods specialized for particular geometries
-    include("specializations/BezierCurve.jl")
-    include("specializations/ConeSurface.jl")
-    include("specializations/CylinderSurface.jl")
-    include("specializations/FrustumSurface.jl")
-    include("specializations/Line.jl")
-    include("specializations/Plane.jl")
-    include("specializations/Ray.jl")
-    include("specializations/Ring.jl")
-    include("specializations/Rope.jl")
-    include("specializations/Tetrahedron.jl")
-    include("specializations/Triangle.jl")
+# Integration methods specialized for particular geometries
+include("specializations/BezierCurve.jl")
+include("specializations/ConeSurface.jl")
+include("specializations/CylinderSurface.jl")
+include("specializations/FrustumSurface.jl")
+include("specializations/Line.jl")
+include("specializations/Plane.jl")
+include("specializations/Ray.jl")
+include("specializations/Ring.jl")
+include("specializations/Rope.jl")
+include("specializations/Tetrahedron.jl")
+include("specializations/Triangle.jl")
 end

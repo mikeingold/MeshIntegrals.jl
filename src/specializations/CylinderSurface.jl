@@ -3,11 +3,11 @@
 ################################################################################
 
 function integral(
-    f::F,
-    cyl::Meshes.CylinderSurface,
-    rule::I,
-    FP::Type{T} = Float64
-) where {F<:Function, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        cyl::Meshes.CylinderSurface,
+        rule::I,
+        FP::Type{T} = Float64
+) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
     # The generic method only parameterizes the sides
     sides = _integral(f, cyl, rule, FP)
 

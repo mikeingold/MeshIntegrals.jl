@@ -3,11 +3,11 @@
 ################################################################################
 
 function integral(
-    f::F,
-    line::Meshes.Line,
-    rule::GaussLegendre,
-    FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
+        f::F,
+        line::Meshes.Line,
+        rule::GaussLegendre,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -21,15 +21,15 @@ function integral(
     # Integrate f along the Line
     domainunits = _units(line(0))
     integrand(x) = f(line(t(x))) * t′(x) * domainunits
-    return sum(w .* integrand(x) for (w,x) in zip(ws, xs))
+    return sum(w .* integrand(x) for (w, x) in zip(ws, xs))
 end
 
 function integral(
-    f::F,
-    line::Meshes.Line,
-    rule::GaussKronrod,
-    FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
+        f::F,
+        line::Meshes.Line,
+        rule::GaussKronrod,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
@@ -40,11 +40,11 @@ function integral(
 end
 
 function integral(
-    f::F,
-    line::Meshes.Line,
-    rule::HAdaptiveCubature,
-    FP::Type{T} = Float64
-) where {F<:Function, T<:AbstractFloat}
+        f::F,
+        line::Meshes.Line,
+        rule::HAdaptiveCubature,
+        FP::Type{T} = Float64
+) where {F <: Function, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 

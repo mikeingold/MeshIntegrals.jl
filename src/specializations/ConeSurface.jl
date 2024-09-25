@@ -3,11 +3,11 @@
 ################################################################################
 
 function integral(
-    f::F,
-    cone::Meshes.ConeSurface,
-    rule::I,
-    FP::Type{T} = Float64
-) where {F<:Function, I<:IntegrationRule, T<:AbstractFloat}
+        f::F,
+        cone::Meshes.ConeSurface,
+        rule::I,
+        FP::Type{T} = Float64
+) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
     # The generic method only parameterizes the sides
     sides = _integral(f, cone, rule, FP)
 

@@ -3,7 +3,7 @@
 ################################################################################
 
 @testsnippet AutoTests begin
-    struct SupportItem{T,Dim,CRS,G<:Meshes.Geometry{Meshes.𝔼{Dim},CRS}}
+    struct SupportItem{T, Dim, CRS, G <: Meshes.Geometry{Meshes.𝔼{Dim}, CRS}}
         name::String
         type::Type{T}
         geometry::G
@@ -17,7 +17,8 @@
     end
 
     # Constructor to explicitly convert Ints (0,1) to Bool values
-    SupportItem(name, type, geometry, checkboxes::Vararg{I,7}) where {I<:Integer} = SupportItem(name, type, geometry, Bool.(checkboxes)...)
+    SupportItem(name, type, geometry, checkboxes::Vararg{I, 7}) where {I <: Integer} = SupportItem(
+        name, type, geometry, Bool.(checkboxes)...)
 
     # If method is supported, test it on scalar- and vector-valued functions.
     # Otherwise, test that its use throws a MethodError
@@ -58,15 +59,14 @@
 
         # For each enabled solver type, run the test suite
         @testset "$(item.name)" begin
-            for ((method, methodsupport), (alg, algsupport)) in itemsupport
-                integraltest(method, item.geometry, alg, methodsupport && algsupport, item.type)
+            for ((method, msupport), (alg, asupport)) in itemsupport
+                integraltest(method, item.geometry, alg, msupport && asupport, item.type)
             end
         end
     end
 end
 
-
-@testitem "Integrals" setup = [Setup, AutoTests] begin
+@testitem "Integrals" setup=[Setup, AutoTests] begin
     # Spatial descriptors
     origin3d(T) = Point(T(0), T(0), T(0))
     origin2d(T) = Point(T(0), T(0))
@@ -83,7 +83,7 @@ end
     # Test Geometries
     ball2d(T) = Ball(origin2d(T), T(2.0))
     ball3d(T) = Ball(origin3d(T), T(2.0))
-    bezier(T) = BezierCurve([Point(cos(t), sin(t), 0) for t in range(T(0), T(2π), length=361)])
+    bezier(T) = BezierCurve([Point(cos(t), sin(t), 0) for t in T(0):T(0.1):T(2π)])
     box1d(T) = Box(Point(T(-1)), Point(T(1)))
     box2d(T) = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
     box3d(T) = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
@@ -117,7 +117,7 @@ end
         SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Tetrahedron", T, tetra(T), 1, 0, 0, 1, 0, 1, 0),
         SupportItem("Triangle{$T}", T, triangle(T), 1, 0, 1, 0, 1, 1, 1),
-        SupportItem("Torus{$T}", T, torus(T), 1, 0, 1, 0, 1, 1, 1),
+        SupportItem("Torus{$T}", T, torus(T), 1, 0, 1, 0, 1, 1, 1)
     ]
 
     @testset "Float64 Geometries" begin
