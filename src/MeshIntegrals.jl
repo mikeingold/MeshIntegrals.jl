@@ -9,7 +9,6 @@ import HCubature
 import QuadGK
 
 include("utils.jl")
-export jacobian, derivative, unitdirection
 
 include("integration_rules.jl")
 export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature
