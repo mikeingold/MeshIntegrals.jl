@@ -13,7 +13,7 @@ dimensional geometries; some two- and three-dimensional geometries are additiona
 supported using nested integral solvers with the specified `kwarg` settings.
 """
 struct GaussKronrod <: IntegrationRule
-    kwargs::Any
+    kwargs::Base.Pairs
     GaussKronrod(; kwargs...) = new(kwargs)
 end
 
@@ -40,6 +40,6 @@ The h-adaptive cubature rule implemented by HCubature.jl. All standard
 `HCubature.hcubature` keyword arguments are supported.
 """
 struct HAdaptiveCubature <: IntegrationRule
-    kwargs::Any
+    kwargs::Base.Pairs
     HAdaptiveCubature(; kwargs...) = new(kwargs)
 end
