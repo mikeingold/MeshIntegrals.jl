@@ -1,5 +1,11 @@
 ################################################################################
 #                      Specialized Methods for Plane
+#
+# Why Specialized?
+#   The Plane geometry is a special case, representing a planar surface with
+#   infinite extent along two basis vectors. This requires a pair of domain
+#   transformations mapping from the typical parametric region [0,1]² to an
+#   infinite one (-∞,∞)².
 ################################################################################
 
 function integral(

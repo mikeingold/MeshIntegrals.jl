@@ -1,5 +1,11 @@
 ################################################################################
 #                      Specialized Methods for ConeSurface
+#
+# Why Specialized?
+#   The parametric function that Meshes.jl currently implements for ConeSurface
+#   only parameterizes the rounded walls of the cone, but this Geometry surface is
+#   defined as including the circular base surface as well. These methods simply
+#   integrate both the base and walls and return the sum of the two integrals.
 ################################################################################
 
 function integral(
