@@ -1,5 +1,12 @@
 ################################################################################
 #                    Specialized Methods for Triangle
+#
+# Why Specialized?
+#   The Triangle geometry is a surface simplex whose parametric function in
+#   Meshes.jl uses barycentric coordinates on a domain {u,v} with coordinates
+#   that are non-negative and bound by the surface $u + v ≤ 1$. This requires a
+#   multi-step domain transformation whose derivation is detailed in the package
+#   documentation.
 ################################################################################
 
 """

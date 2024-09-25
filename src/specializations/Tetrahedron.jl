@@ -1,5 +1,12 @@
 ################################################################################
 #                  Specialized Methods for Tetrahedron
+#
+# Why Specialized?
+#   The Tetrahedron geometry is a volumetric simplex whose parametric function
+#   in Meshes.jl uses barycentric coordinates on a domain {u,v,w} with coordinates
+#   that are non-negative and bound by the surface $u + v + w ≤ 1$. This requires
+#   a multi-step domain transformation whose derivation is detailed in the package
+#   documentation.
 ################################################################################
 
 function integral(

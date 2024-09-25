@@ -1,5 +1,11 @@
 ################################################################################
 #                  Specialized Methods for CylinderSurface
+#
+# Why Specialized?
+#   The parametric function that Meshes.jl currently implements for CylinderSurface
+#   only parameterizes the rounded walls, but this Geometry surface is defined as
+#   including the top and bottom circular base surfaces as well. These methods
+#   simply integrate the base and walls and return the sum of the three integrals.
 ################################################################################
 
 function integral(
