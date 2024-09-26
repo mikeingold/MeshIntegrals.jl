@@ -1,12 +1,12 @@
 module MeshIntegrals
 using CoordRefSystems: CoordRefSystems, CRS
 using LinearAlgebra: LinearAlgebra, norm, ×, ⋅
-using Meshes: Meshes
-using Unitful: Unitful
 
 import FastGaussQuadrature
 import HCubature
+import Meshes
 import QuadGK
+import Unitful
 
 include("utils.jl")
 export jacobian
