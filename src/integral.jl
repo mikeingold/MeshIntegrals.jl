@@ -28,8 +28,6 @@ function integral(
         rule::I = Meshes.paramdim(geometry) ? GaussKronrod() : HAdaptiveCubature();
         kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
-    N = 
-    rule = (N == 1) 
     _integral(f, geometry, rule; kwargs...)
 end
 
