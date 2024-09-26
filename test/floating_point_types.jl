@@ -50,13 +50,13 @@ end
 
     # Check alias functions for accuracy
     glrule = GaussLegendre(100)
-    @test lineintegral(f, box1d, glrule, FP=Float32)≈1.0f0u"m" atol=0.01f0u"m"
-    @test surfaceintegral(f, box2d, glrule, FP=Float32)≈1.0f0u"m^2" atol=0.02f0u"m^2"
-    @test volumeintegral(f, box3d, glrule, FP=Float32)≈1.0f0u"m^3" atol=0.03f0u"m^3"
+    @test lineintegral(f, box1d, glrule, FP = Float32)≈1.0f0u"m" atol=0.01f0u"m"
+    @test surfaceintegral(f, box2d, glrule, FP = Float32)≈1.0f0u"m^2" atol=0.02f0u"m^2"
+    @test volumeintegral(f, box3d, glrule, FP = Float32)≈1.0f0u"m^3" atol=0.03f0u"m^3"
 
     # Check for unsupported use of alias functions
     harule = HAdaptiveCubature()
-    @test_throws "not supported" lineintegral(f, box4d, harule, FP=Float32)
-    @test_throws "not supported" surfaceintegral(f, box4d, harule, FP=Float32)
-    @test_throws "not supported" volumeintegral(f, box4d, harule, FP=Float32)
+    @test_throws "not supported" lineintegral(f, box4d, harule, FP = Float32)
+    @test_throws "not supported" surfaceintegral(f, box4d, harule, FP = Float32)
+    @test_throws "not supported" volumeintegral(f, box4d, harule, FP = Float32)
 end

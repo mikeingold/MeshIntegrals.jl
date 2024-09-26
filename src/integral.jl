@@ -31,7 +31,6 @@ function integral(
     _integral(f, geometry, rule; kwargs...)
 end
 
-
 ################################################################################
 #                    Generalized (n-Dimensional) Worker Methods
 ################################################################################

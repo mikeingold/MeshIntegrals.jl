@@ -29,7 +29,6 @@ function lineintegral(
     end
 end
 
-
 ################################################################################
 #                              Surface Integral
 ################################################################################
@@ -60,7 +59,6 @@ function surfaceintegral(
         error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
 end
-
 
 ################################################################################
 #                              Volume Integral
