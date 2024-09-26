@@ -3,10 +3,15 @@
 ################################################################################
 
 """
-    jacobian(geometry, ts, ε=1e-6)
+    jacobian(geometry, ts; ε=1e-6)
 
 Calculate the Jacobian of a geometry at some parametric point `ts` using a simple
-central-finite-difference approximation with step size `ε`.
+finite-difference approximation with step size `ε`.
+
+# Arguments
+- `geometry`: some `Meshes.Geometry` of N parametric dimensions
+- `ts`: a parametric point specified as a vector or tuple of length N
+- `ε`: step size to use for the finite-difference approximation
 """
 function jacobian(
         geometry,
