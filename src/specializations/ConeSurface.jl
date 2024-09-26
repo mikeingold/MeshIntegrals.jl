@@ -11,7 +11,7 @@
 function integral(
         f::F,
         cone::Meshes.ConeSurface,
-        rule::I,
+        rule::I;
         kwargs...
 ) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
     # The generic method only parameterizes the sides
