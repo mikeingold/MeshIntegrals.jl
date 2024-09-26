@@ -17,7 +17,7 @@ Rule types available:
 function lineintegral(
         f::F,
         geometry::G,
-        rule::I;
+        rule::I = GaussKronrod();
         kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
@@ -48,7 +48,7 @@ Algorithm types available:
 function surfaceintegral(
         f::F,
         geometry::G,
-        rule::I;
+        rule::I = HAdaptiveCubature();
         kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
@@ -79,7 +79,7 @@ Algorithm types available:
 function volumeintegral(
         f::F,
         geometry::G,
-        rule::I;
+        rule::I = HAdaptiveCubature();
         kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
