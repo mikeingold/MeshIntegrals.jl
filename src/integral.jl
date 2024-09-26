@@ -35,21 +35,21 @@ end
 #                    Generalized (n-Dimensional) Worker Methods
 ################################################################################
 
-# GaussKronrod -- passes through to workers in next section
+# GaussKronrod
 function _integral(
         f,
         geometry,
         rule::GaussKronrod;
         kwargs...
 )
-    # Run the appropriate integral type
+    # Pass through to dim-specific workers in next section of this file
     N = Meshes.paramdim(geometry)
     if N == 1
-        return _integral_1d(f, geometry, rule; kwargs...)
+        return _integral_gk_1d(f, geometry, rule; kwargs...)
     elseif N == 2
-        return _integral_2d(f, geometry, rule; kwargs...)
+        return _integral_gk_2d(f, geometry, rule; kwargs...)
     elseif N == 3
-        return _integral_3d(f, geometry, rule; kwargs...)
+        return _integral_gk_3d(f, geometry, rule; kwargs...)
     end
 end
 
@@ -106,7 +106,7 @@ end
 #                    Specialized GaussKronrod Methods
 ################################################################################
 
-function _integral_1d(
+function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
@@ -116,7 +116,7 @@ function _integral_1d(
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
-function _integral_2d(
+function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
@@ -128,7 +128,7 @@ function _integral_2d(
 end
 
 # Integrating volumes with GaussKronrod not supported by default
-function _integral_3d(
+function _integral_gk_3d(
         f,
         geometry,
         rule::GaussKronrod;
