@@ -31,7 +31,7 @@ function integral(
     ∫ = QuadGK.quadgk(∫w, nil, one(FP); rule.kwargs...)[1]
 
     # Apply barycentric domain correction (volume: 1/6 → actual)
-    return 6 * volume(tetrahedron) * ∫
+    return 6 * Meshes.volume(tetrahedron) * ∫
 end
 
 function integral(

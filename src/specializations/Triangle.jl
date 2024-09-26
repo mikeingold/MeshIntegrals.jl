@@ -50,7 +50,7 @@ function integral(
 
     # Calculate 2D Gauss-Legendre integral over modified-polar-Barycentric coordinates
     # Apply a linear domain-correction factor
-    return FP(π / 4) * area(triangle) .* sum(integrand, zip(wws, xxs))
+    return FP(π / 4) * Meshes.area(triangle) .* sum(integrand, zip(wws, xxs))
 end
 
 """
@@ -71,7 +71,7 @@ function integral(
     ∫ = QuadGK.quadgk(∫u, zero(FP), one(FP); rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2 * area(triangle) .* ∫
+    return 2 * Meshes.area(triangle) .* ∫
 end
 
 """
@@ -102,5 +102,5 @@ function integral(
     ∫ = HCubature.hcubature(integrand, zeros(FP, 2), FP[1, π / 2], rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2 * area(triangle) .* ∫
+    return 2 * Meshes.area(triangle) .* ∫
 end
