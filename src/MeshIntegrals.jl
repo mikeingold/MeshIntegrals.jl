@@ -9,6 +9,8 @@ import QuadGK
 import Unitful
 
 include("utils.jl")
+
+include("differentiation.jl")
 export jacobian
 
 include("integration_rules.jl")
