@@ -68,12 +68,12 @@ function integral(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = zero(FP)
+    testpoint_parametriccoord = zeros(FP, 1)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zero(FP), one(FP); rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, zeros(FP, 1), ones(FP, 1); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
