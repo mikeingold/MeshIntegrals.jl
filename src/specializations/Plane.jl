@@ -48,11 +48,10 @@ function integral(
     plane = Meshes.Plane(plane.p, uu, uv)
 
     # Integrate f over the Plane
-    domainunits = _units(plane(0, 0))
-    function inner∫(v)
-        QuadGK.quadgk(u -> f(plane(u, v)) * domainunits, FP(-Inf), FP(Inf); rule.kwargs...)[1]
-    end
-    return QuadGK.quadgk(v -> inner∫(v) * domainunits, FP(-Inf), FP(Inf); rule.kwargs...)[1]
+    domainunits = _units(plane(0, 0))^2
+    integrand(u, v) = f(plane(u, v)) * domainunits
+    inner∫(v) = QuadGK.quadgk(u -> integrand(u, v), FP(-Inf), FP(Inf); rule.kwargs...)[1]
+    return QuadGK.quadgk(inner∫, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
 
 function integral(
@@ -78,12 +77,12 @@ function integral(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = FP[0.5, 0.5]
+    testpoint_parametriccoord = zeros(FP, 2)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[-1, -1], FP[1, 1]; rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, -ones(FP, 2), ones(FP, 2); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
