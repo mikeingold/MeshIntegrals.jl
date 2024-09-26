@@ -49,12 +49,14 @@ end
     box4d = Box(Point(fill(0.0f0u"m", 4)...), Point(fill(1.0f0u"m", 4)...))
 
     # Check alias functions for accuracy
-    @test lineintegral(f, box1d, GaussLegendre(100), FP=Float32)≈1.0f0u"m" atol=0.01f0u"m"
-    @test surfaceintegral(f, box2d, GaussLegendre(100), FP=Float32)≈1.0f0u"m^2" atol=0.02f0u"m^2"
-    @test volumeintegral(f, box3d, GaussLegendre(100), FP=Float32)≈1.0f0u"m^3" atol=0.03f0u"m^3"
+    glrule = GaussLegendre(100)
+    @test lineintegral(f, box1d, glrule, FP=Float32)≈1.0f0u"m" atol=0.01f0u"m"
+    @test surfaceintegral(f, box2d, glrule, FP=Float32)≈1.0f0u"m^2" atol=0.02f0u"m^2"
+    @test volumeintegral(f, box3d, glrule, FP=Float32)≈1.0f0u"m^3" atol=0.03f0u"m^3"
 
     # Check for unsupported use of alias functions
-    @test_throws "not supported" lineintegral(f, box4d, HAdaptiveCubature(), FP=Float32)
-    @test_throws "not supported" surfaceintegral(f, box4d, HAdaptiveCubature(), FP=Float32)
-    @test_throws "not supported" volumeintegral(f, box4d, HAdaptiveCubature(), FP=Float32)
+    harule = HAdaptiveCubature()
+    @test_throws "not supported" lineintegral(f, box4d, harule, FP=Float32)
+    @test_throws "not supported" surfaceintegral(f, box4d, harule, FP=Float32)
+    @test_throws "not supported" volumeintegral(f, box4d, harule, FP=Float32)
 end
