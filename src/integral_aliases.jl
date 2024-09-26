@@ -81,7 +81,8 @@ Algorithm types available:
 function volumeintegral(
         f::F,
         geometry::G,
-        rule::I
+        rule::I;
+        kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
