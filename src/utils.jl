@@ -1,5 +1,5 @@
 ################################################################################
-#                     Derivatives, Tangents, Jacobians
+#                     Jacobian and Differential Elements
 ################################################################################
 
 """
@@ -82,6 +82,10 @@ function differential(
     end
 end
 
+################################################################################
+#                             Partial Derivatives
+################################################################################
+
 """
     derivative(b::BezierCurve, t)
 
@@ -113,27 +117,6 @@ function derivative(
     #   P indices adjusted for Julia 1-based array indexing
     sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
     return N .* sum(sigma, 0:(N - 1))
-end
-
-"""
-    unitdirection(b::BezierCurve, t)
-
-Determine a unit vector pointing in the forward (t+) direction of a Bezier
-curve `b` for a point on the curve parameterized by value `t`.
-"""
-function unitdirection(
-        bz::Meshes.BezierCurve,
-        t
-)
-    # Parameter t restricted to domain [0,1] by definition
-    if t < 0 || t > 1
-        throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
-    end
-
-    # Normalize the derivative of the curve
-    u = derivative(bz, t)
-    LinearAlgebra.normalize!(u)
-    return u
 end
 
 ################################################################################
