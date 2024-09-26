@@ -20,22 +20,22 @@ end
         box3d = Box(Point(fill(zero(FP) * u"m", 3)...), Point(fill(one(FP) * u"m", 3)...))
 
         # Check HCubature integrals (same method invoked for all dimensions)
-        int_HC = integral(f, box1d, HAdaptiveCubature(); FP=FP)
+        int_HC = integral(f, box1d, HAdaptiveCubature(); FP = FP)
         @test int_HC≈one(FP) * u"m" atol=baseatol[FP] * u"m"
         @test typeof(int_HC.val)==FP broken=(FP == Float32)
 
         # Check Gauss-Legendre integral in 1D
-        int_GL_1D = integral(f, box1d, GaussLegendre(100); FP=FP)
+        int_GL_1D = integral(f, box1d, GaussLegendre(100); FP = FP)
         @test int_GL_1D≈one(FP) * u"m" atol=baseatol[FP] * u"m"
         @test typeof(int_GL_1D.val)==FP broken=(FP == Float32)
 
         # Check Gauss-Legendre integral in 2D
-        int_GL_2D = integral(f, box2d, GaussLegendre(100); FP=FP)
+        int_GL_2D = integral(f, box2d, GaussLegendre(100); FP = FP)
         @test int_GL_2D≈one(FP) * u"m^2" atol=2baseatol[FP] * u"m^2"
         @test typeof(int_GL_2D.val)==FP broken=(FP == Float32)
 
         # Check Gauss-Legendre integral in 3D
-        int_GL_3D = integral(f, box3d, GaussLegendre(100); FP=FP)
+        int_GL_3D = integral(f, box3d, GaussLegendre(100); FP = FP)
         @test int_GL_3D≈one(FP) * u"m^3" atol=3baseatol[FP] * u"m^3"
         @test typeof(int_GL_3D.val)==FP broken=(FP == Float32)
     end
