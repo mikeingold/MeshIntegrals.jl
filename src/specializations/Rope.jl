@@ -15,5 +15,5 @@ function integral(
         kwargs...
 ) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
     # Convert the Rope into Segments, sum the integrals of those 
-    return sum(segment -> integral(f, segment, rule; kwargs...), segments(rope))
+    return sum(segment -> integral(f, segment, rule; kwargs...), Meshes.segments(rope))
 end
