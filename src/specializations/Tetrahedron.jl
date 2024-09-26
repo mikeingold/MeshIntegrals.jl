@@ -12,7 +12,7 @@
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::GaussLegendre,
+        rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     error("Integrating a Tetrahedron with GaussLegendre not supported.")
@@ -21,7 +21,7 @@ end
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     nil = zero(FP)
@@ -37,7 +37,7 @@ end
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::HAdaptiveCubature,
+        rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     error("Integrating a Tetrahedron with HAdaptiveCubature not supported.")

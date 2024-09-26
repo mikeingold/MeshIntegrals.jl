@@ -11,7 +11,7 @@
 function integral(
         f::F,
         ray::Meshes.Ray,
-        rule::GaussLegendre,
+        rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
@@ -37,7 +37,7 @@ end
 function integral(
         f::F,
         ray::Meshes.Ray,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -52,7 +52,7 @@ end
 function integral(
         f::F,
         ray::Meshes.Ray,
-        rule::HAdaptiveCubature,
+        rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point

@@ -11,7 +11,7 @@
 function integral(
         f::F,
         plane::Meshes.Plane,
-        rule::GaussLegendre,
+        rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
@@ -39,7 +39,7 @@ end
 function integral(
         f::F,
         plane::Meshes.Plane,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
@@ -57,7 +57,7 @@ end
 function integral(
         f::F,
         plane::Meshes.Plane,
-        rule::HAdaptiveCubature,
+        rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
