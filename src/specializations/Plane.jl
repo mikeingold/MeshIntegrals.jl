@@ -20,7 +20,9 @@ function integral(
     xxs = Iterators.product(xs, xs)
 
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+    uu = Meshes.unormalize(plane.u)
+    uv = Meshes.unormalize(plane.v)
+    plane = Meshes.Plane(plane.p, uu, uv)
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
@@ -41,7 +43,9 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+    uu = Meshes.unormalize(plane.u)
+    uv = Meshes.unormalize(plane.v)
+    plane = Meshes.Plane(plane.p, uu, uv)
 
     # Integrate f over the Plane
     domainunits = _units(plane(0, 0))
@@ -58,7 +62,9 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
-    plane = Plane(plane.p, Meshes.unormalize(plane.u), Meshes.unormalize(plane.v))
+    uu = Meshes.unormalize(plane.u)
+    uv = Meshes.unormalize(plane.v)
+    plane = Meshes.Plane(plane.p, uu, uv)
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)

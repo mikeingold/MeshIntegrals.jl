@@ -18,7 +18,7 @@ function integral(
     xs, ws = _gausslegendre(FP, rule.n)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, Meshes.unormalize(ray.v))
+    ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
     t₁(x) = FP(1 / 2) * x + FP(1 / 2)
@@ -41,7 +41,7 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, Meshes.unormalize(ray.v))
+    ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Integrate f along the Ray
     domainunits = _units(ray(0))
@@ -55,7 +55,7 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Ray s.t. ray(t) is distance t from origin point
-    ray = Ray(ray.p, Meshes.unormalize(ray.v))
+    ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [0,1] ↦ t ∈ [0,∞)
     t(x) = x / (1 - x^2)

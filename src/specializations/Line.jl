@@ -17,7 +17,7 @@ function integral(
     xs, ws = _gausslegendre(FP, rule.n)
 
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
+    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
@@ -36,7 +36,7 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
+    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Integrate f along the Line
     domainunits = _units(line(0))
@@ -51,7 +51,7 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
+    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)

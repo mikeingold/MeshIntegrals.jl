@@ -1,7 +1,7 @@
 module MeshIntegrals
 using CoordRefSystems: CoordRefSystems, CRS
 using LinearAlgebra: LinearAlgebra, I, norm, ×, ⋅
-using Meshes: Meshes, Line, Plane, Ray, area, degree, plane, segments, volume
+using Meshes: Meshes, area, degree, plane, segments, volume
 using Unitful: Unitful
 
 import FastGaussQuadrature
