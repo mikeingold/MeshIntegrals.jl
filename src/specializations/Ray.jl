@@ -45,7 +45,8 @@ function integral(
 
     # Integrate f along the Ray
     domainunits = _units(ray(0))
-    return QuadGK.quadgk(t -> f(ray(t)) * domainunits, zero(FP), FP(Inf); rule.kwargs...)[1]
+    integrand(t) = f(ray(t)) * domainunits
+    return QuadGK.quadgk(integrand, zero(FP), FP(Inf); rule.kwargs...)[1]
 end
 
 function integral(
@@ -67,12 +68,12 @@ function integral(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = FP[0.5]
+    testpoint_parametriccoord = zero(FP)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[0], FP[1]; rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, zero(FP), one(FP); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
