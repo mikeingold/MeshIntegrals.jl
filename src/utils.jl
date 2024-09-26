@@ -99,7 +99,7 @@ function derivative(
 
     # Aliases
     P = bz.controls
-    N = degree(bz)
+    N = Meshes.degree(bz)
 
     # Ensure that this implementation is tractible: limited by ability to calculate
     #   binomial(N, N/2) without overflow. It's possible to extend this range by

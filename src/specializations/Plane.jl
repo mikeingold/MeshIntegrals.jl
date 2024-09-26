@@ -22,16 +22,16 @@ function integral(
     # Normalize the Plane's orthogonal vectors
     uu = Meshes.unormalize(plane.u)
     uv = Meshes.unormalize(plane.v)
-    plane = Meshes.Plane(plane.p, uu, uv)
+    uplane = Meshes.Plane(plane.p, uu, uv)
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f over the Plane
-    domainunits = _units(plane(0, 0))
+    domainunits = _units(uplane(0, 0))
     function integrand(((wi, wj), (xi, xj)))
-        wi * wj * f(plane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
+        wi * wj * f(uplane(t(xi), t(xj))) * t′(xi) * t′(xj) * domainunits^2
     end
     return sum(integrand, zip(wws, xxs))
 end
@@ -45,11 +45,11 @@ function integral(
     # Normalize the Plane's orthogonal vectors
     uu = Meshes.unormalize(plane.u)
     uv = Meshes.unormalize(plane.v)
-    plane = Meshes.Plane(plane.p, uu, uv)
+    uplane = Meshes.Plane(plane.p, uu, uv)
 
     # Integrate f over the Plane
-    domainunits = _units(plane(0, 0))^2
-    integrand(u, v) = f(plane(u, v)) * domainunits
+    domainunits = _units(uplane(0, 0))^2
+    integrand(u, v) = f(uplane(u, v)) * domainunits
     inner∫(v) = QuadGK.quadgk(u -> integrand(u, v), FP(-Inf), FP(Inf); rule.kwargs...)[1]
     return QuadGK.quadgk(inner∫, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
@@ -63,16 +63,16 @@ function integral(
     # Normalize the Plane's orthogonal vectors
     uu = Meshes.unormalize(plane.u)
     uv = Meshes.unormalize(plane.v)
-    plane = Meshes.Plane(plane.p, uu, uv)
+    uplane = Meshes.Plane(plane.p, uu, uv)
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
     t(x) = x / (1 - x^2)
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f over the Plane
-    domainunits = _units(plane(0, 0))
+    domainunits = _units(uplane(0, 0))
     function integrand(x::AbstractVector)
-        f(plane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
+        f(uplane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
     end
 
     # HCubature doesn't support functions that output Unitful Quantity types
