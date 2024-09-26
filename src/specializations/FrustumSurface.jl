@@ -13,7 +13,7 @@ function integral(
         frust::Meshes.FrustumSurface,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
+) where {F <: Function, I <: IntegrationRule}
     # The generic method only parameterizes the sides
     sides = _integral(f, frust, rule; kwargs...)
 
