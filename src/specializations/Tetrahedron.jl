@@ -28,7 +28,7 @@ function integral(
     ∫uvw(u, v, w) = f(tetrahedron(u, v, w))
     ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), nil, FP(1 - v - w); rule.kwargs...)[1]
     ∫w(w) = QuadGK.quadgk(v -> ∫vw(v, w), nil, FP(1 - w); rule.kwargs...)[1]
-    outer∫ = QuadGK.quadgk(inner∫₁, nil, one(FP); rule.kwargs...)[1]
+    ∫ = QuadGK.quadgk(∫, nil, one(FP); rule.kwargs...)[1]
 
     # Apply barycentric domain correction (volume: 1/6 → actual)
     return 6 * volume(tetrahedron) * outer∫
