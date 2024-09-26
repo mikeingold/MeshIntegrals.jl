@@ -3,9 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry)
-    integral(f, geometry, rule)
-    integral(f, geometry, rule, FP)
+    integral(f, geometry[, rule]; FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -26,42 +24,35 @@ function integral end
 # If only f and geometry are specified, select default rule
 function integral(
         f::F,
-        geometry::G
-) where {F <: Function, G <: Meshes.Geometry}
-    N = Meshes.paramdim(geometry)
-    rule = (N == 1) ? GaussKronrod() : HAdaptiveCubature()
-    _integral(f, geometry, rule)
+        geometry::G,
+        rule::I = Meshes.paramdim(geometry) ? GaussKronrod() : HAdaptiveCubature();
+        kwargs...
+) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
+    N = 
+    rule = (N == 1) 
+    _integral(f, geometry, rule; kwargs...)
 end
 
-# with rule and T specified
-function integral(
-        f::F,
-        geometry::G,
-        rule::I,
-        FP::Type{T} = Float64
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
-    _integral(f, geometry, rule, FP)
-end
 
 ################################################################################
 #                    Generalized (n-Dimensional) Worker Methods
 ################################################################################
 
-# GaussKronrod
+# GaussKronrod -- passes through to workers in next section
 function _integral(
         f,
         geometry,
-        rule::GaussKronrod,
-        FP::Type{T} = Float64
+        rule::GaussKronrod;
+        kwargs...
 ) where {T <: AbstractFloat}
     # Run the appropriate integral type
     N = Meshes.paramdim(geometry)
     if N == 1
-        return _integral_1d(f, geometry, rule, FP)
+        return _integral_1d(f, geometry, rule; kwargs...)
     elseif N == 2
-        return _integral_2d(f, geometry, rule, FP)
+        return _integral_2d(f, geometry, rule; kwargs...)
     elseif N == 3
-        return _integral_3d(f, geometry, rule, FP)
+        return _integral_3d(f, geometry, rule; kwargs...)
     end
 end
 
@@ -69,7 +60,7 @@ end
 function _integral(
         f,
         geometry,
-        rule::GaussLegendre,
+        rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -94,7 +85,7 @@ end
 function _integral(
         f,
         geometry,
-        rule::HAdaptiveCubature,
+        rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -103,7 +94,7 @@ function _integral(
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = fill(FP(0.5), N)
+    testpoint_parametriccoord = zeros(FP, N)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
@@ -121,7 +112,7 @@ end
 function _integral_1d(
         f,
         geometry,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, (t))
@@ -131,7 +122,7 @@ end
 function _integral_2d(
         f,
         geometry2d,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v))
@@ -143,7 +134,7 @@ end
 function _integral_3d(
         f,
         geometry,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     error("Integrating this volume type with GaussKronrod not supported.")
