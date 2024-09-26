@@ -25,7 +25,7 @@ function integral end
 function integral(
         f::F,
         geometry::G,
-        rule::I = Meshes.paramdim(geometry) ? GaussKronrod() : HAdaptiveCubature();
+        rule::I = Meshes.paramdim(geometry) == 1 ? GaussKronrod() : HAdaptiveCubature();
         kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     _integral(f, geometry, rule; kwargs...)
