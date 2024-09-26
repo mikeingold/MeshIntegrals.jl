@@ -42,7 +42,7 @@ function _integral(
         geometry,
         rule::GaussKronrod;
         kwargs...
-) where {T <: AbstractFloat}
+)
     # Run the appropriate integral type
     N = Meshes.paramdim(geometry)
     if N == 1
