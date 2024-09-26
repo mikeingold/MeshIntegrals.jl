@@ -1,6 +1,6 @@
 module MeshIntegrals
 using CoordRefSystems: CoordRefSystems, CRS
-using LinearAlgebra: LinearAlgebra, I, norm, ×, ⋅
+using LinearAlgebra: LinearAlgebra, norm, ×, ⋅
 using Meshes: Meshes
 using Unitful: Unitful
 
