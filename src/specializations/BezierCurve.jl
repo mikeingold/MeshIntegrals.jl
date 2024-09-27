@@ -81,7 +81,7 @@ function integral(
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, T <: AbstractFloat}
     point(t) = curve(t, alg)
-    integrand(t) = f(point(only(t))) *  norm(derivative(curve, only(t)))
+    integrand(t) = f(point(only(t))) * norm(derivative(curve, only(t)))
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
