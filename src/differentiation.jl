@@ -64,8 +64,8 @@ function jacobian(
 end
 
 function jacobian(
-    bz::Meshes.BezierCurve,
-    ts::V
+        bz::Meshes.BezierCurve,
+        ts::V
 ) where {V <: Union{AbstractVector, Tuple}}
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
@@ -119,8 +119,3 @@ function differential(
         error("Not implemented yet. Please report this as an Issue on GitHub.")
     end
 end
-
-
-
-
-
