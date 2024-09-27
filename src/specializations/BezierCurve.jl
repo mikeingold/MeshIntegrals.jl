@@ -33,7 +33,7 @@ function integral(
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = FP(1 // 2) * x + FP(1 // 2)
     point(x) = curve(t(x), alg)
-    integrand(x) = f(point(x)) * norm(derivative(curve, t(x)))
+    integrand(x) = f(point(x)) * differential(curve, (t(x),))
 
     # Integrate f along curve and apply domain-correction for [-1,1] ↦ [0, length]
     return FP(1 // 2) * sum(w .* integrand(x) for (w, x) in zip(ws, xs))
@@ -58,7 +58,7 @@ function integral(
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, T <: AbstractFloat}
     point(t) = curve(t, alg)
-    integrand(t) = f(point(t)) * norm(derivative(curve, t))
+    integrand(t) = f(point(t)) * differential(curve, (t,))
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
@@ -81,14 +81,14 @@ function integral(
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, T <: AbstractFloat}
     point(t) = curve(t, alg)
-    integrand(t) = f(point(only(t))) * norm(derivative(curve, only(t)))
+    integrand(ts) = f(point(only(ts))) * differential(curve, ts)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
     testpoint_parametriccoord = zeros(FP, 1)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    uintegrand(ts) = Unitful.ustrip.(integrandunits, integrand(ts))
     # Integrate only the unitless values
     value = HCubature.hcubature(uintegrand, zeros(FP, 1), ones(FP, 1); rule.kwargs...)[1]
 
