@@ -67,6 +67,7 @@ function jacobian(
         bz::Meshes.BezierCurve,
         ts::V
 ) where {V <: Union{AbstractVector, Tuple}}
+    t = only(ts)
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
         throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
