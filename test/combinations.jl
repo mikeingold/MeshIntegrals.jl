@@ -3,7 +3,7 @@
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
-    mypath = BezierCurve(
+    curve = BezierCurve(
         [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
     )
 
