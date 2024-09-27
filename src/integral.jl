@@ -87,14 +87,14 @@ function _integral(
 ) where {T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
-    integrand(t) = f(geometry(t...)) * differential(geometry, t)
+    integrand(ts) = f(geometry(ts...)) * differential(geometry, ts)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
     testpoint_parametriccoord = zeros(FP, N)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
+    uintegrand(ts) = Unitful.ustrip.(integrandunits, integrand(ts))
     # Integrate only the unitless values
     value = HCubature.hcubature(uintegrand, zeros(FP, N), ones(FP, N); rule.kwargs...)[1]
 
