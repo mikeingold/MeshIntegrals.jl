@@ -13,18 +13,18 @@
 
     # Scalar integrand
     sol = 2π * u"Ω"
-    @test integral(f, curve, GaussLegendre(100))≈sol rtol=1e-3
-    @test integral(f, curve, GaussKronrod())≈sol rtol=1e-3
-    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=1e-3
+    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.05e-2
+    @test integral(f, curve, GaussKronrod())≈sol rtol=0.05e-2
+    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.05e-2
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=1e-3
-    @test integral(fv, curve, GaussKronrod())≈vsol rtol=1e-3
-    @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=1e-3
+    @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.05e-2
+    @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.05e-2
+    @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.05e-2
 
     # Integral aliases
-    @test lineintegral(f, curve)≈sol rtol=1e-3
+    @test lineintegral(f, curve)≈sol rtol=0.05e-2
     @test_throws "not supported" surfaceintegral(f, curve)
     @test_throws "not supported" volumeintegral(f, curve)
 end
