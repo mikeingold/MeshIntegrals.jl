@@ -3,9 +3,7 @@
 ################################################################################
 
 """
-    lineintegral(f, geometry)
-    lineintegral(f, geometry, rule)
-    lineintegral(f, geometry, rule, FP)
+    lineintegral(f, geometry[, rule]; FP=Float64)
 
 Numerically integrate a given function `f(::Point)` along a line-like `geometry`
 using a particular numerical integration `rule` with floating point precision of
@@ -18,41 +16,14 @@ Rule types available:
 """
 function lineintegral(
         f::F,
-        geometry::G
-) where {F <: Function, G <: Meshes.Geometry}
-    N = Meshes.paramdim(geometry)
-
-    if N == 1
-        return integral(f, geometry, GaussKronrod())
-    else
-        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function lineintegral(
-        f::F,
         geometry::G,
-        rule::I
+        rule::I = GaussKronrod();
+        kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 1
-        return integral(f, geometry, rule)
-    else
-        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function lineintegral(
-        f::F,
-        geometry::G,
-        rule::I,
-        FP::Type{T}
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
-
-    if N == 1
-        return integral(f, geometry, rule, FP)
+        return integral(f, geometry, rule; kwargs...)
     else
         error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
     end
@@ -63,9 +34,7 @@ end
 ################################################################################
 
 """
-    surfaceintegral(f, geometry)
-    surfaceintegral(f, geometry, rule)
-    surfaceintegral(f, geometry, rule, FP)
+    surfaceintegral(f, geometry[, rule]; FP=Float64)
 
 Numerically integrate a given function `f(::Point)` along a surface `geometry`
 using a particular numerical integration `rule` with floating point precision of
@@ -78,41 +47,14 @@ Algorithm types available:
 """
 function surfaceintegral(
         f::F,
-        geometry::G
-) where {F <: Function, G <: Meshes.Geometry}
-    N = Meshes.paramdim(geometry)
-
-    if N == 2
-        return integral(f, geometry, HAdaptiveCubature())
-    else
-        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function surfaceintegral(
-        f::F,
         geometry::G,
-        rule::I
+        rule::I = HAdaptiveCubature();
+        kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 2
-        return integral(f, geometry, rule)
-    else
-        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function surfaceintegral(
-        f::F,
-        geometry::G,
-        rule::I,
-        FP::Type{T}
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
-
-    if N == 2
-        return integral(f, geometry, rule, FP)
+        return integral(f, geometry, rule; kwargs...)
     else
         error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
     end
@@ -123,9 +65,7 @@ end
 ################################################################################
 
 """
-    volumeintegral(f, geometry)
-    volumeintegral(f, geometry, rule)
-    volumeintegral(f, geometry, rule, FP)
+    volumeintegral(f, geometry[, rule]; FP=Float64)
 
 Numerically integrate a given function `f(::Point)` throughout a volumetric
 `geometry` using a particular numerical integration `rule` with floating point
@@ -138,41 +78,14 @@ Algorithm types available:
 """
 function volumeintegral(
         f::F,
-        geometry::G
-) where {F <: Function, G <: Meshes.Geometry}
-    N = Meshes.paramdim(geometry)
-
-    if N == 3
-        return integral(f, geometry, HAdaptiveCubature())
-    else
-        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function volumeintegral(
-        f::F,
         geometry::G,
-        rule::I
+        rule::I = HAdaptiveCubature();
+        kwargs...
 ) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
     N = Meshes.paramdim(geometry)
 
     if N == 3
-        return integral(f, geometry, rule)
-    else
-        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
-    end
-end
-
-function volumeintegral(
-        f::F,
-        geometry::G,
-        rule::I,
-        FP::Type{T}
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
-
-    if N == 3
-        return integral(f, geometry, rule, FP)
+        return integral(f, geometry, rule; kwargs...)
     else
         error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
     end

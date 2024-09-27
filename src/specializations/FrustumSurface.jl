@@ -11,15 +11,15 @@
 function integral(
         f::F,
         frust::Meshes.FrustumSurface,
-        rule::I,
-        FP::Type{T} = Float64
-) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
+        rule::I;
+        kwargs...
+) where {F <: Function, I <: IntegrationRule}
     # The generic method only parameterizes the sides
-    sides = _integral(f, frust, rule, FP)
+    sides = _integral(f, frust, rule; kwargs...)
 
     # Integrate the Disks at the top and bottom
-    top = _integral(f, frust.top, rule, FP)
-    bottom = _integral(f, frust.bot, rule, FP)
+    top = _integral(f, frust.top, rule; kwargs...)
+    bottom = _integral(f, frust.bot, rule; kwargs...)
 
     return sides + top + bottom
 end

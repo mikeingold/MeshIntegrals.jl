@@ -1,14 +1,16 @@
 module MeshIntegrals
 using CoordRefSystems: CoordRefSystems, CRS
-using LinearAlgebra: LinearAlgebra, I, norm, ×, ⋅
-using Meshes: Meshes, Line, Plane, Ray, area, degree, plane, segments, volume
-using Unitful: Unitful
+using LinearAlgebra: LinearAlgebra, norm, ×, ⋅
 
 import FastGaussQuadrature
 import HCubature
+import Meshes
 import QuadGK
+import Unitful
 
 include("utils.jl")
+
+include("differentiation.jl")
 export jacobian
 
 include("integration_rules.jl")

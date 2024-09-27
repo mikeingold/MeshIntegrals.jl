@@ -12,7 +12,7 @@
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::GaussLegendre,
+        rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     error("Integrating a Tetrahedron with GaussLegendre not supported.")
@@ -21,23 +21,23 @@ end
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::GaussKronrod,
+        rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
-    function inner∫₂(v, w)
-        QuadGK.quadgk(u -> f(tetrahedron(u, v, w)), FP(0), FP(1 - v - w); rule.kwargs...)[1]
-    end
-    inner∫₁(w) = QuadGK.quadgk(v -> inner∫₂(v, w), FP(0), FP(1 - w); rule.kwargs...)[1]
-    outer∫ = QuadGK.quadgk(w -> inner∫₁(w), FP(0), FP(1); rule.kwargs...)[1]
+    nil = zero(FP)
+    ∫uvw(u, v, w) = f(tetrahedron(u, v, w))
+    ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), nil, FP(1 - v - w); rule.kwargs...)[1]
+    ∫w(w) = QuadGK.quadgk(v -> ∫vw(v, w), nil, FP(1 - w); rule.kwargs...)[1]
+    ∫ = QuadGK.quadgk(∫w, nil, one(FP); rule.kwargs...)[1]
 
     # Apply barycentric domain correction (volume: 1/6 → actual)
-    return 6 * volume(tetrahedron) * outer∫
+    return 6 * Meshes.volume(tetrahedron) * ∫
 end
 
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::HAdaptiveCubature,
+        rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
     error("Integrating a Tetrahedron with HAdaptiveCubature not supported.")

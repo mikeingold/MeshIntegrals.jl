@@ -11,14 +11,14 @@
 function integral(
         f::F,
         cone::Meshes.ConeSurface,
-        rule::I,
-        FP::Type{T} = Float64
-) where {F <: Function, I <: IntegrationRule, T <: AbstractFloat}
+        rule::I;
+        kwargs...
+) where {F <: Function, I <: IntegrationRule}
     # The generic method only parameterizes the sides
-    sides = _integral(f, cone, rule, FP)
+    sides = _integral(f, cone, rule; kwargs...)
 
     # Integrate the Disk at the base
-    base = _integral(f, cone.base, rule, FP)
+    base = _integral(f, cone.base, rule; kwargs...)
 
     return sides + base
 end
