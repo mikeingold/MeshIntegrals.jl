@@ -112,7 +112,7 @@ function _integral_gk_1d(
         rule::GaussKronrod;
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, (t))
+    integrand(t) = f(geometry(t)) * differential(geometry, (t,))
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
