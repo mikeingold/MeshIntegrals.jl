@@ -3,7 +3,7 @@
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
-    mypath = BezierCurve(
+    curve = BezierCurve(
         [Point(t*u"m", sin(t)*u"m", 0.0u"m") for t in range(-pi, pi, length=361)]
     )
 
@@ -13,20 +13,20 @@
 
     # Scalar integrand
     sol = 2π * u"Ω"
-    @test integral(f, line, GaussLegendre(100)) ≈ sol
-    @test integral(f, line, GaussKronrod()) ≈ sol
-    @test integral(f, line, HAdaptiveCubature()) ≈ sol
+    @test integral(f, curve, GaussLegendre(100)) ≈ sol
+    @test integral(f, curve, GaussKronrod()) ≈ sol
+    @test integral(f, curve, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, line, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, line, GaussKronrod()) ≈ vsol
-    @test integral(fv, line, HAdaptiveCubature()) ≈ vsol
+    @test integral(fv, curve, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, curve, GaussKronrod()) ≈ vsol
+    @test integral(fv, curve, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, line) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, line)
-    @test_throws "not supported" volumeintegral(f, line)
+    @test lineintegral(f, curve) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, curve)
+    @test_throws "not supported" volumeintegral(f, curve)
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
