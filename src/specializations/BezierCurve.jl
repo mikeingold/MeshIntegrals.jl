@@ -33,9 +33,10 @@ function integral(
     # Change of variables: x [-1,1] ↦ t [0,1]
     t(x) = FP(1 // 2) * x + FP(1 // 2)
     point(x) = curve(t(x), alg)
+    integrand(x) = f(point(x)) * norm(derivative(curve, t(x)))
 
     # Integrate f along curve and apply domain-correction for [-1,1] ↦ [0, length]
-    return FP(1 // 2) * length(curve) * sum(w .* f(point(x)) for (w, x) in zip(ws, xs))
+    return FP(1 // 2) * sum(w .* integrand(x) for (w, x) in zip(ws, xs))
 end
 
 """
@@ -56,9 +57,8 @@ function integral(
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, T <: AbstractFloat}
-    len = length(curve)
     point(t) = curve(t, alg)
-    integrand(t) = len * f(point(t))
+    integrand(t) = f(point(t)) * norm(derivative(curve, t))
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
@@ -80,9 +80,8 @@ function integral(
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, T <: AbstractFloat}
-    len = length(curve)
     point(t) = curve(t, alg)
-    integrand(t) = len * f(point(t[1]))
+    integrand(t) = f(point(only(t))) * norm(derivative(curve, only(t)))
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
