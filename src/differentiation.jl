@@ -104,9 +104,9 @@ Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
 function differential(
-        geometry,
-        ts
-)
+        geometry::G,
+        ts::V
+) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
     J = jacobian(geometry, ts)
 
     # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
