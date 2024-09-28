@@ -29,7 +29,7 @@
     @test_throws "not supported" volumeintegral(f, curve)
 
     # Check Bezier-specific jacobian bounds
-    @test_throws jacobian(curve, [1.1])
+    @test_throws DomainError jacobian(curve, [1.1])
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
