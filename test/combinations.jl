@@ -27,6 +27,9 @@
     @test lineintegral(f, curve)≈sol rtol=0.5e-2
     @test_throws "not supported" surfaceintegral(f, curve)
     @test_throws "not supported" volumeintegral(f, curve)
+
+    # Check Bezier-specific jacobian bounds
+    @test_throws jacobian(curve, [1.1])
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
