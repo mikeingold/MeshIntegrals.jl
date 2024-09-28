@@ -36,6 +36,12 @@
     @test_throws DomainError jacobian(curve, [1.1])
 end
 
+@testitem "Meshes.Box" setup=[Setup] begin
+    # Test for currently-unsupported >3D differentials
+    box4d = Box(Point(zeros(4)...), Point(ones(4))...)
+    @test_throws "not supported" differential(box4d, fill(0.5, 4))
+end
+
 @testitem "Meshes.Cone" setup=[Setup] begin
     r = 2.5u"m"
     h = 2.5u"m"
