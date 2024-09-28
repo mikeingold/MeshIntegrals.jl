@@ -14,10 +14,10 @@ finite-difference approximation with step size `ε`.
 - `ε`: step size to use for the finite-difference approximation
 """
 function jacobian(
-        geometry,
-        ts;
+        geometry::G,
+        ts::V;
         ε = 1e-6
-)
+) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
     T = eltype(ts)
 
     # Get the partial derivative along the n'th axis via finite difference approximation
@@ -63,44 +63,11 @@ function jacobian(
     return map(∂ₙr, 1:length(ts))
 end
 
-"""
-    differential(geometry, ts)
-
-Calculate the differential element (length, area, volume, etc) of the parametric
-function for `geometry` at arguments `ts`.
-"""
-function differential(
-        geometry,
-        ts
-)
-    J = jacobian(geometry, ts)
-
-    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
-    if length(J) == 1
-        return norm(J[1])
-    elseif length(J) == 2
-        return norm(J[1] × J[2])
-    elseif length(J) == 3
-        return abs((J[1] × J[2]) ⋅ J[3])
-    else
-        error("Not implemented yet. Please report this as an Issue on GitHub.")
-    end
-end
-
-################################################################################
-#                             Partial Derivatives
-################################################################################
-
-"""
-    derivative(b::BezierCurve, t)
-
-Determine the vector derivative of a Bezier curve `b` for the point on the
-curve parameterized by value `t`.
-"""
-function derivative(
+function jacobian(
         bz::Meshes.BezierCurve,
-        t
-)
+        ts::V
+) where {V <: Union{AbstractVector, Tuple}}
+    t = only(ts)
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
         throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
@@ -121,5 +88,35 @@ function derivative(
     # Derivative = N Σ_{i=0}^{N-1} sigma(i)
     #   P indices adjusted for Julia 1-based array indexing
     sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
-    return N .* sum(sigma, 0:(N - 1))
+    derivative = N .* sum(sigma, 0:(N - 1))
+
+    return [derivative]
+end
+
+################################################################################
+#                          Differential Elements
+################################################################################
+
+"""
+    differential(geometry, ts)
+
+Calculate the differential element (length, area, volume, etc) of the parametric
+function for `geometry` at arguments `ts`.
+"""
+function differential(
+        geometry::G,
+        ts::V
+) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+    J = jacobian(geometry, ts)
+
+    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
+    if length(J) == 1
+        return norm(J[1])
+    elseif length(J) == 2
+        return norm(J[1] × J[2])
+    elseif length(J) == 3
+        return abs((J[1] × J[2]) ⋅ J[3])
+    else
+        error("Not implemented yet. Please report this as an Issue on GitHub.")
+    end
 end

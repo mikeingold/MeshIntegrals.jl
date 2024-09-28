@@ -2,6 +2,33 @@
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
+@testitem "Meshes.BezierCurve" setup=[Setup] begin
+    curve = BezierCurve(
+        [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
+    )
+
+    f(x, y, z) = (1 / sqrt(1 + cos(x)^2)) * u"Ω/m"
+    f(p::Meshes.Point) = f(ustrip(to(p))...)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 2π * u"Ω"
+    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
+    @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
+    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
+    @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
+    @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
+
+    # Integral aliases
+    @test lineintegral(f, curve)≈sol rtol=0.5e-2
+    @test_throws "not supported" surfaceintegral(f, curve)
+    @test_throws "not supported" volumeintegral(f, curve)
+end
+
 @testitem "Meshes.Cone" setup=[Setup] begin
     r = 2.5u"m"
     h = 2.5u"m"

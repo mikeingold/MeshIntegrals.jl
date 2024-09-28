@@ -21,3 +21,9 @@ MeshIntegrals.GaussKronrod
 MeshIntegrals.GaussLegendre
 MeshIntegrals.HAdaptiveCubature
 ```
+
+## Derivatives
+
+```@docs
+MeshIntegrals.jacobian
+```
