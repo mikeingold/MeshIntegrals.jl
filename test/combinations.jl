@@ -36,7 +36,7 @@ end
 
 @testitem "Meshes.Box" setup=[Setup] begin
     # Test for currently-unsupported >3D differentials
-    box4d = Box(Point(zeros(4)...), Point(ones(4))...)
+    box4d = Box(Point(zeros(4)...), Point(ones(4)...))
     @test_throws "not supported" differential(box4d, fill(0.5, 4))
 end
 
