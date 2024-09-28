@@ -37,7 +37,7 @@ end
 @testitem "Meshes.Box" setup=[Setup] begin
     # Test for currently-unsupported >3D differentials
     box4d = Box(Point(zeros(4)...), Point(ones(4)...))
-    @test_throws "Issue on GitHub" jacobian(box4d, fill(0.5, 4))
+    @test_throws "Issue on GitHub" Meshes.differential(box4d, fill(0.5, 4))
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
