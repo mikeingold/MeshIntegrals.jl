@@ -7,7 +7,11 @@
         [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
     )
 
-    f(x, y, z) = (1 / sqrt(1 + cos(x)^2)) * u"Ω/m"
+    function f(p::P) where {P <: Meshes.Point}
+        ux = ustrip(p.coords.x)
+        (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
+    end
+    
     f(p::Meshes.Point) = f(ustrip(to(p))...)
     fv(p) = fill(f(p), 3)
 
