@@ -203,6 +203,35 @@ end
     @test_throws "not supported" volumeintegral(f, plane)
 end
 
+@testitem "Meshes.Quadrangle" setup=[Setup] begin
+    using SpecialFunctions: erf
+    quadrangle = Quadrangle((-1.0, 0.0), (-1.0, 1.0), (1.0, 1.0), (1.0, 0.0))
+
+    function f(p::P) where {P <: Meshes.Point}
+        ur = hypot(p.coords.x, p.coords.y)
+        r = ustrip(u"m", ur)
+        exp(-r^2)
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 0.5 * π * erf(1)^2 * u"m^2"
+    @test integral(f, quadrangle, GaussLegendre(100)) ≈ sol
+    @test integral(f, quadrangle, GaussKronrod()) ≈ sol
+    @test integral(f, quadrangle, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, quadrangle, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, quadrangle, GaussKronrod()) ≈ vsol
+    @test integral(fv, quadrangle, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, quadrangle)
+    @test surfaceintegral(f, quadrangle) ≈ sol
+    @test_throws "not supported" volumeintegral(f, quadrangle)
+end
+
 @testitem "Meshes.Ray" setup=[Setup] begin
     a = Point(0.0u"m", 0.0u"m", 0.0u"m")
     v = Vec(1.0u"m", 1.0u"m", 1.0u"m")
