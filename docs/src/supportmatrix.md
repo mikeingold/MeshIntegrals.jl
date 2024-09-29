@@ -39,6 +39,7 @@ Cubature integration rules are recommended (and the default).
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
+| `Quadrangle` | ✅ | ✅ | ✅ |
 | `Ray` | ✅ | ✅ | ✅ |
 | `Ring` | ✅ | ✅ | ✅ |
 | `Rope` | ✅ | ✅ | ✅ |
