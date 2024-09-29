@@ -7,8 +7,10 @@
         [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
     )
 
-    f(x, y, z) = (1 / sqrt(1 + cos(x)^2)) * u"Ω/m"
-    f(p::Meshes.Point) = f(ustrip(to(p))...)
+    function f(p::P) where {P <: Meshes.Point}
+        ux = ustrip(p.coords.x)
+        (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -27,6 +29,15 @@
     @test lineintegral(f, curve)≈sol rtol=0.5e-2
     @test_throws "not supported" surfaceintegral(f, curve)
     @test_throws "not supported" volumeintegral(f, curve)
+
+    # Check Bezier-specific jacobian bounds
+    @test_throws DomainError jacobian(curve, [1.1])
+end
+
+@testitem "Meshes.Box" setup=[Setup] begin
+    # Test for currently-unsupported >3D differentials
+    box4d = Box(Point(zeros(4)...), Point(ones(4)...))
+    @test integral(f -> one(Float64), box4d)≈1.0u"m^4" broken=true
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
