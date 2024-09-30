@@ -34,10 +34,41 @@
     @test_throws DomainError jacobian(curve, [1.1])
 end
 
-@testitem "Meshes.Box" setup=[Setup] begin
+@testitem "Meshes.Box 1D" setup=[Setup] begin
+    a = π
+    box = Box(Point(0), Point(a))
+
+    function f(p::P) where {P <: Meshes.Point}
+        t = ustrip(p.coords.x)
+        sqrt(a^2 - t^2)
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = π * a^2 / 4
+    @test integral(f, box, GaussLegendre(100)) ≈ sol
+    @test integral(f, box, GaussKronrod()) ≈ sol
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, box, GaussKronrod()) ≈ vsol
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test lineintegral(f, box) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test_throws "not supported" volumeintegral(f, box)
+end
+
+@testitem "Meshes.Box 4D" setup=[Setup] begin
+    box = Box(Point(zeros(4)...), Point(ones(4)...))
+
+    f = p -> one(FP)
+
     # Test for currently-unsupported >3D differentials
-    box4d = Box(Point(zeros(4)...), Point(ones(4)...))
-    @test integral(f -> one(Float64), box4d)≈1.0u"m^4" broken=true
+    @test integral(f, box)≈1.0u"m^4" broken=true
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
