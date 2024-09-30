@@ -40,12 +40,12 @@ end
 
     function f(p::P) where {P <: Meshes.Point}
         t = ustrip(p.coords.x)
-        sqrt(a^2 - t^2)
+        sqrt(a^2 - t^2) * u"Ω/m"
     end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = π * a^2 / 4
+    sol = π * a^2 / 4 * u"Ω"
     @test integral(f, box, GaussLegendre(100)) ≈ sol
     @test integral(f, box, GaussKronrod()) ≈ sol
     @test integral(f, box, HAdaptiveCubature()) ≈ sol
