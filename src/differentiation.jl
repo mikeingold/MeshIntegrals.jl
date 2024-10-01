@@ -20,35 +20,32 @@ function jacobian(
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
     T = eltype(ts)
 
-    # Get the partial derivative along the n'th axis via finite difference approximation
-    #   where ts is the current parametric position (εv is a reusable buffer)
-    function ∂ₙr!(εv, ts, n)
+    # Get the partial derivative along the n'th axis via finite difference
+    #   approximation, where ts is the current parametric position
+    function ∂ₙr(ts, n)
+        εv = zeros(T, length(ts))
+        εv[n] = ε
+
+        # Select orientation of finite-diff
         if ts[n] < T(0.01)
             # Right
-            εv[n] = ε
             a = ts
             b = ts .+ εv
             return (geometry(b...) - geometry(a...)) / ε
         elseif T(0.99) < ts[n]
             # Left
-            εv[n] = ε
             a = ts .- εv
             b = ts
             return (geometry(b...) - geometry(a...)) / ε
         else
             # Central
-            εv[n] = ε
             a = ts .- εv
             b = ts .+ εv
             return (geometry(b...) - geometry(a...)) / 2ε
         end
     end
 
-    # Allocate a re-usable ε vector
-    εv = zeros(T, length(ts))
-
-    ∂ₙr(n) = ∂ₙr!(εv, ts, n)
-    return map(∂ₙr, 1:length(ts))
+    return map(n -> ∂ₙr(ts, n), 1:length(ts))
 end
 
 function jacobian(
