@@ -73,7 +73,7 @@ end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = π * a^3 / 2 * u"Ω"
+    sol = 2a * (π * a^2 / 4) * u"Ω"
     @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
     @test integral(f, box, GaussKronrod()) ≈ sol
     @test integral(f, box, HAdaptiveCubature()) ≈ sol
@@ -88,6 +88,34 @@ end
     @test_throws "not supported" lineintegral(f, box)
     @test surfaceintegral(f, box) ≈ sol
     @test_throws "not supported" volumeintegral(f, box)
+end
+
+@testitem "Meshes.Box 3D" setup=[Setup] begin
+    a = π
+    box = Box(Point(0, 0, 0), Point(a, a, a))
+
+    function f(p::P) where {P <: Meshes.Point}
+        x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
+        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 3a^2 * (π * a^2 / 4) * u"Ω"
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, box, GaussKronrod()) ≈ sol
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, box, GaussKronrod()) ≈ vsol
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, box)
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test volumeintegral(f, box) ≈ sol
 end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
