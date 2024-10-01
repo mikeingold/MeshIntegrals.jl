@@ -67,7 +67,7 @@ end
     box = Box(Point(0,0), Point(a,a))
 
     function f(p::P) where {P <: Meshes.Point}
-        x, y = ustrip.(p.coords.x, p.coords.y)
+        x, y = ustrip.((p.coords.x, p.coords.y))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω/m^2"
     end
     fv(p) = fill(f(p), 3)
