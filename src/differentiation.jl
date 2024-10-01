@@ -23,8 +23,8 @@ function jacobian(
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n)
-        εv = zeros(T, length(ts))
-        εv[n] = ε
+        # Construct a tuple with ε in the n'th element and zeros otherwise
+        εv = ntuple(i -> i == n ? T(ε) : zero(T), length(ts))
 
         # Select orientation of finite-diff
         if ts[n] < T(0.01)
