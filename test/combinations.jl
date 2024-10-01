@@ -64,7 +64,7 @@ end
 
 @testitem "Meshes.Box 2D" setup=[Setup] begin
     a = π
-    box = Box(Point(0,0), Point(a,a))
+    box = Box(Point(0, 0), Point(a, a))
 
     function f(p::P) where {P <: Meshes.Point}
         x, y = ustrip.(p.coords.x, p.coords.y)
