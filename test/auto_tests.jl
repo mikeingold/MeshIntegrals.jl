@@ -118,7 +118,7 @@ end
         SupportItem("Torus{$T}", T, torus(T), 1, 0, 1, 0, 1, 1, 1)
     ]
 
-    @testset "Float64 Geometries" begin
+    @testset "Float64 Geometries" verbose=true begin
         map(autotest, SUPPORT_MATRIX(Float64))
     end
 end
