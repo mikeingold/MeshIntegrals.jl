@@ -24,36 +24,24 @@ function jacobian(
     #   where ts is the current parametric position (εv is a reusable buffer)
     function ∂ₙr!(εv, ts, n)
         if ts[n] < T(0.01)
-            return ∂ₙr_right!(εv, ts, n)
+            # Right
+            εv[n] = ε
+            a = ts
+            b = ts .+ εv
+            return (geometry(b...) - geometry(a...)) / ε
         elseif T(0.99) < ts[n]
-            return ∂ₙr_left!(εv, ts, n)
+            # Left
+            εv[n] = ε
+            a = ts .- εv
+            b = ts
+            return (geometry(b...) - geometry(a...)) / ε
         else
-            return ∂ₙr_central!(εv, ts, n)
+            # Central
+            εv[n] = ε
+            a = ts .- εv
+            b = ts .+ εv
+            return (geometry(b...) - geometry(a...)) / 2ε
         end
-    end
-
-    # Central finite difference
-    function ∂ₙr_central!(εv, ts, n)
-        εv[n] = ε
-        a = ts .- εv
-        b = ts .+ εv
-        return (geometry(b...) - geometry(a...)) / 2ε
-    end
-
-    # Left finite difference
-    function ∂ₙr_left!(εv, ts, n)
-        εv[n] = ε
-        a = ts .- εv
-        b = ts
-        return (geometry(b...) - geometry(a...)) / ε
-    end
-
-    # Right finite difference
-    function ∂ₙr_right!(εv, ts, n)
-        εv[n] = ε
-        a = ts
-        b = ts .+ εv
-        return (geometry(b...) - geometry(a...)) / ε
     end
 
     # Allocate a re-usable ε vector
