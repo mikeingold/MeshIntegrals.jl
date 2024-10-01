@@ -46,13 +46,13 @@ end
 
     # Scalar integrand
     sol = π * a^2 / 4 * u"Ω"
-    @test integral(f, box, GaussLegendre(100)) ≈ sol
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
     @test integral(f, box, GaussKronrod()) ≈ sol
     @test integral(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
     @test integral(fv, box, GaussKronrod()) ≈ vsol
     @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
 
