@@ -125,6 +125,9 @@ end
 
     # Test for currently-unsupported >3D differentials
     @test integral(f, box)≈1.0u"m^4" broken=true
+
+    # Test jacobian with wrong number of parametric coordinates
+    @test_throws ArgumentError jacobian(box, zeros(2))
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
