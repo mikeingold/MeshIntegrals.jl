@@ -18,13 +18,13 @@ function jacobian(
         ts::V;
         ε = 1e-6
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
-		Dim = paramdim(geometry)
-		if Dim != length(ts)
-		    throw(ArgumentError("ts must have same number of dimensions as geometry."))
-		end
+    Dim = paramdim(geometry)
+    if Dim != length(ts)
+        throw(ArgumentError("ts must have same number of dimensions as geometry."))
+    end
 
     T = eltype(ts)
-		ε = T(ε)
+    ε = T(ε)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
