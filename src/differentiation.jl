@@ -18,7 +18,7 @@ function jacobian(
         ts::V;
         ε = 1e-6
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
-    Dim = paramdim(geometry)
+    Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
     end
