@@ -18,8 +18,13 @@ function jacobian(
         ts::V;
         ε = 1e-6
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+    Dim = Meshes.paramdim(geometry)
+    if Dim != length(ts)
+        throw(ArgumentError("ts must have same number of dimensions as geometry."))
+    end
+
     T = eltype(ts)
-    len = length(ts)
+    ε = T(ε)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
@@ -27,21 +32,21 @@ function jacobian(
         # Select orientation of finite-diff
         if ts[n] < T(0.01)
             # Right
-            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:len)
+            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:Dim)
             return (geometry(b...) - geometry(ts...)) / ε
         elseif T(0.99) < ts[n]
             # Left
-            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:len)
+            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:Dim)
             return (geometry(ts...) - geometry(a...)) / ε
         else
             # Central
-            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:len)
-            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:len)
+            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:Dim)
+            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:Dim)
             return (geometry(b...) - geometry(a...)) / 2ε
         end
     end
 
-    return map(n -> ∂ₙr(ts, n), 1:len)
+    return map(n -> ∂ₙr(ts, n), 1:Dim)
 end
 
 function jacobian(
