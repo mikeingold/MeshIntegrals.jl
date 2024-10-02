@@ -15,9 +15,11 @@ end
 
         # Rectangular volume with unit integrand
         f = p -> one(FP)
-        box1d = Box(Point(fill(zero(FP) * u"m", 1)...), Point(fill(one(FP) * u"m", 1)...))
-        box2d = Box(Point(fill(zero(FP) * u"m", 2)...), Point(fill(one(FP) * u"m", 2)...))
-        box3d = Box(Point(fill(zero(FP) * u"m", 3)...), Point(fill(one(FP) * u"m", 3)...))
+        a = zero(FP) * u"m"
+        b = one(FP) * u"m"
+        box1d = Box(Point(a), Point(b))
+        box2d = Box(Point(a, a), Point(b, b))
+        box3d = Box(Point(a, a, a), Point(b, b, b))
 
         # Check HCubature integrals (same method invoked for all dimensions)
         int_HC = integral(f, box1d, HAdaptiveCubature(); FP = FP)
