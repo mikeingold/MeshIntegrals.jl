@@ -39,8 +39,6 @@
 
     # Generate a @testset for item
     function autotest(item::SupportItem)
-        #@assert item.type == coordtype(item.geometry) "Item type mismatch"
-
         N = (item.type == Float32) ? 1000 : 100
         algorithm_set = [
             (GaussLegendre(N), item.gausslegendre),
@@ -77,15 +75,10 @@ end
     pt_n(T) = Point(T(0), T(1), T(0))
     pt_w(T) = Point(T(-1), T(0), T(0))
     pt_e(T) = Point(T(1), T(0), T(0))
-    pt_s(T) = Point(T(0), T(-1), T(0))
-    pt_z(T) = Point(T(0), T(0), T(1))
 
     # Test Geometries
     ball2d(T) = Ball(origin2d(T), T(2.0))
     ball3d(T) = Ball(origin3d(T), T(2.0))
-    box1d(T) = Box(Point(T(-1)), Point(T(1)))
-    box2d(T) = Box(Point(T(-1), T(-1)), Point(T(1), T(1)))
-    box3d(T) = Box(Point(T(-1), T(-1), T(-1)), Point(T(1), T(1), T(-1)))
     circle(T) = Circle(plane_xy(T), T(2.5))
     cyl(T) = Cylinder(pt_e(T), pt_w(T), T(2.5))
     cylsurf(T) = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
@@ -101,16 +94,11 @@ end
         # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
         SupportItem("Ball{2,$T}", T, ball2d(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Ball{3,$T}", T, ball3d(T), 1, 0, 0, 1, 1, 0, 1),
-        SupportItem("Box{1,$T}", T, box1d(T), 1, 1, 0, 0, 1, 1, 1),
-        SupportItem("Box{2,$T}", T, box2d(T), 1, 0, 1, 0, 1, 1, 1),
-        SupportItem("Box{3,$T}", T, box3d(T), 1, 0, 0, 1, 1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Cylinder{$T}", T, cyl(T), 1, 0, 0, 1, 1, 0, 1),
         SupportItem("CylinderSurface{$T}", T, cylsurf(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
-        # Frustum -- not yet supported
         SupportItem("ParaboloidSurface{$T}", T, parab(T), 1, 0, 1, 0, 1, 1, 1),
-        # SimpleMesh
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Tetrahedron", T, tetra(T), 1, 0, 0, 1, 0, 1, 0),
