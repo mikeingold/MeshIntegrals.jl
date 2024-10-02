@@ -19,33 +19,29 @@ function jacobian(
         ε = 1e-6
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
     T = eltype(ts)
+    len = length(ts)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n)
-        # Construct a tuple with ε in the n'th element and zeros otherwise
-        εv = ntuple(i -> i == n ? T(ε) : zero(T), length(ts))
-
         # Select orientation of finite-diff
         if ts[n] < T(0.01)
             # Right
-            a = ts
-            b = ts .+ εv
-            return (geometry(b...) - geometry(a...)) / ε
+            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:len)
+            return (geometry(b...) - geometry(ts...)) / ε
         elseif T(0.99) < ts[n]
             # Left
-            a = ts .- εv
-            b = ts
-            return (geometry(b...) - geometry(a...)) / ε
+            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:len)
+            return (geometry(ts...) - geometry(a...)) / ε
         else
             # Central
-            a = ts .- εv
-            b = ts .+ εv
+            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:len)
+            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:len)
             return (geometry(b...) - geometry(a...)) / 2ε
         end
     end
 
-    return map(n -> ∂ₙr(ts, n), 1:length(ts))
+    return map(n -> ∂ₙr(ts, n), 1:len)
 end
 
 function jacobian(
