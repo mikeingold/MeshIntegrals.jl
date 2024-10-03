@@ -29,20 +29,20 @@ function jacobian(
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n)
+        # Build left/right parametric coordinates with non-allocating iterators 
+        left =  Iterators.map(it -> it[1] == n ? it[2] - ε : it[2], enumerate(ts))
+        right = Iterators.map(it -> it[1] == n ? it[2] + ε : it[2], enumerate(ts))
+        
         # Select orientation of finite-diff
         if ts[n] < T(0.01)
             # Right
-            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:Dim)
-            return (geometry(b...) - geometry(ts...)) / ε
+            return (geometry(right...) - geometry(ts...)) / ε
         elseif T(0.99) < ts[n]
             # Left
-            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:Dim)
-            return (geometry(ts...) - geometry(a...)) / ε
+            return (geometry(ts...) - geometry(left...)) / ε
         else
             # Central
-            a = Iterators.map(i -> i == n ? ts[i] - ε : ts[i], 1:Dim)
-            b = Iterators.map(i -> i == n ? ts[i] + ε : ts[i], 1:Dim)
-            return (geometry(b...) - geometry(a...)) / 2ε
+            return (geometry(right...) - geometry(left...)) / 2ε
         end
     end
 
