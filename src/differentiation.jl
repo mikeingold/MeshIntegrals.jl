@@ -18,49 +18,34 @@ function jacobian(
         ts::V;
         ε = 1e-6
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
-    T = eltype(ts)
+    Dim = Meshes.paramdim(geometry)
+    if Dim != length(ts)
+        throw(ArgumentError("ts must have same number of dimensions as geometry."))
+    end
 
-    # Get the partial derivative along the n'th axis via finite difference approximation
-    #   where ts is the current parametric position (εv is a reusable buffer)
-    function ∂ₙr!(εv, ts, n)
+    T = eltype(ts)
+    ε = T(ε)
+
+    # Get the partial derivative along the n'th axis via finite difference
+    #   approximation, where ts is the current parametric position
+    function ∂ₙr(ts, n)
+        # Build left/right parametric coordinates with non-allocating iterators 
+        left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
+        right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
+        # Select orientation of finite-diff
         if ts[n] < T(0.01)
-            return ∂ₙr_right!(εv, ts, n)
+            # Right
+            return (geometry(right...) - geometry(ts...)) / ε
         elseif T(0.99) < ts[n]
-            return ∂ₙr_left!(εv, ts, n)
+            # Left
+            return (geometry(ts...) - geometry(left...)) / ε
         else
-            return ∂ₙr_central!(εv, ts, n)
+            # Central
+            return (geometry(right...) - geometry(left...)) / 2ε
         end
     end
 
-    # Central finite difference
-    function ∂ₙr_central!(εv, ts, n)
-        εv[n] = ε
-        a = ts .- εv
-        b = ts .+ εv
-        return (geometry(b...) - geometry(a...)) / 2ε
-    end
-
-    # Left finite difference
-    function ∂ₙr_left!(εv, ts, n)
-        εv[n] = ε
-        a = ts .- εv
-        b = ts
-        return (geometry(b...) - geometry(a...)) / ε
-    end
-
-    # Right finite difference
-    function ∂ₙr_right!(εv, ts, n)
-        εv[n] = ε
-        a = ts
-        b = ts .+ εv
-        return (geometry(b...) - geometry(a...)) / ε
-    end
-
-    # Allocate a re-usable ε vector
-    εv = zeros(T, length(ts))
-
-    ∂ₙr(n) = ∂ₙr!(εv, ts, n)
-    return map(∂ₙr, 1:length(ts))
+    return map(n -> ∂ₙr(ts, n), 1:Dim)
 end
 
 function jacobian(

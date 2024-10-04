@@ -34,10 +34,102 @@
     @test_throws DomainError jacobian(curve, [1.1])
 end
 
-@testitem "Meshes.Box" setup=[Setup] begin
+@testitem "Meshes.Box 1D" setup=[Setup] begin
+    a = π
+    box = Box(Point(0), Point(a))
+
+    function f(p::P) where {P <: Meshes.Point}
+        t = ustrip(p.coords.x)
+        sqrt(a^2 - t^2) * u"Ω/m"
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = π * a^2 / 4 * u"Ω"
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, box, GaussKronrod()) ≈ sol
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, box, GaussKronrod()) ≈ vsol
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test lineintegral(f, box) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test_throws "not supported" volumeintegral(f, box)
+end
+
+@testitem "Meshes.Box 2D" setup=[Setup] begin
+    a = π
+    box = Box(Point(0, 0), Point(a, a))
+
+    function f(p::P) where {P <: Meshes.Point}
+        x, y = ustrip.((p.coords.x, p.coords.y))
+        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω/m^2"
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 2a * (π * a^2 / 4) * u"Ω"
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, box, GaussKronrod()) ≈ sol
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, box, GaussKronrod()) ≈ vsol
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, box)
+    @test surfaceintegral(f, box) ≈ sol
+    @test_throws "not supported" volumeintegral(f, box)
+end
+
+@testitem "Meshes.Box 3D" setup=[Setup] begin
+    a = π
+    box = Box(Point(0, 0, 0), Point(a, a, a))
+
+    function f(p::P) where {P <: Meshes.Point}
+        x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
+        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 3a^2 * (π * a^2 / 4) * u"Ω"
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test_throws "not supported" integral(f, box, GaussKronrod())
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test_throws "not supported" integral(fv, box, GaussKronrod())
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, box)
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test volumeintegral(f, box) ≈ sol
+end
+
+@testitem "Meshes.Box 4D" setup=[Setup] begin
+    a = zero(Float64)
+    b = zero(Float64)
+    box = Box(Point(a, a, a, a), Point(b, b, b, b))
+
+    f = p -> one(Float64)
+
     # Test for currently-unsupported >3D differentials
-    box4d = Box(Point(zeros(4)...), Point(ones(4)...))
-    @test integral(f -> one(Float64), box4d)≈1.0u"m^4" broken=true
+    @test integral(f, box)≈1.0u"m^4" broken=true
+
+    # Test jacobian with wrong number of parametric coordinates
+    @test_throws ArgumentError jacobian(box, zeros(2))
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
