@@ -119,9 +119,11 @@ end
 end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
-    box = Box(Point(zeros(4)...), Point(ones(4)...))
+    a = zero(Float64)
+    b = zero(Float64)
+    box = Box(Point(a, a, a, a), Point(b, b, b, b))
 
-    f = p -> one(FP)
+    f = p -> one(Float64)
 
     # Test for currently-unsupported >3D differentials
     @test integral(f, box)≈1.0u"m^4" broken=true
