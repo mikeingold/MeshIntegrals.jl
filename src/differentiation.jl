@@ -30,8 +30,8 @@ function jacobian(
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n)
         # Build left/right parametric coordinates with non-allocating iterators 
-        left = Iterators.map(it -> it[1] == n ? it[2] - ε : it[2], enumerate(ts))
-        right = Iterators.map(it -> it[1] == n ? it[2] + ε : it[2], enumerate(ts))
+        left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
+        right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
         # Select orientation of finite-diff
         if ts[n] < T(0.01)
             # Right
