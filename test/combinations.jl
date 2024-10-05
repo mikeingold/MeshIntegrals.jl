@@ -458,7 +458,7 @@ end
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
     f = p -> one(Float64)
-		fv(p) = fill(f(p), 3)
+    fv(p) = fill(f(p), 3)
 
     # Scalar integrand
     sol = Meshes.measure(tetrahedron)
@@ -468,9 +468,9 @@ end
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test_throws "not supported" integral(fv, tetrahedron, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, tetrahedron, GaussLegendre(100))≈vsol
     @test integral(fv, tetrahedron, GaussKronrod()) ≈ vsol
-    @test_throws "not supported" integral(fv, tetrahedron, HAdaptiveCubature()) ≈ vsol
+    @test_throws "not supported" integral(fv, tetrahedron, HAdaptiveCubature())≈vsol
 
     # Integral aliases
     @test_throws "not supported" lineintegral(f, tetrahedron)
