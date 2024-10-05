@@ -27,7 +27,27 @@
     @test_throws "not supported" volumeintegral(f, ball)
 end
 
-@testitem "Meshes.Ball 3D" setup=[Setup] begin
+
+
+@testitem "Meshes.BezierCurve" setup=[Setup] begin
+    curve = BezierCurve(
+        [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
+    )
+
+    function f(p::P) where {P <: Meshes.Point}
+        ux = ustrip(p.coords.x)
+        (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
+    end
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = 2π * u"Ω"
+    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
+    @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
+    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
+
+    # Vector integrand
+    vsol = fill(sol, 3)@testitem "Meshes.Ball 3D" setup=[Setup] begin
     origin = Point(0, 0, 0)
     ball = Ball(origin, 2.8)
 
@@ -51,26 +71,6 @@ end
     @test_throws "not supported" surfaceintegral(f, ball)
     @test volumeintegral(f, ball) ≈ sol
 end
-
-@testitem "Meshes.BezierCurve" setup=[Setup] begin
-    curve = BezierCurve(
-        [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
-    )
-
-    function f(p::P) where {P <: Meshes.Point}
-        ux = ustrip(p.coords.x)
-        (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
-    end
-    fv(p) = fill(f(p), 3)
-
-    # Scalar integrand
-    sol = 2π * u"Ω"
-    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
-    @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
-    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
-
-    # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
     @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
     @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
@@ -575,6 +575,31 @@ end
     @test lineintegral(f, segment) ≈ sol
     @test_throws "not supported" surfaceintegral(f, segment)
     @test_throws "not supported" volumeintegral(f, segment)
+end
+
+@testitem "Meshes.Sphere 3D" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    sphere = Sphere(origin, 4.4)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(sphere)
+    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
+    @test integral(f, sphere, GaussKronrod()) ≈ sol
+    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
+    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, sphere)
+    @test surfaceintegral(f, sphere) ≈ sol
+    @test_throws "not supported" volumeintegral(f, sphere)
 end
 
 @testitem "Meshes.Tetrahedron" setup=[Setup] begin

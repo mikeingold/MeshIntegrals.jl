@@ -75,14 +75,12 @@ end
     circle(T) = Circle(plane_xy(T), T(2.5))
     disk(T) = Disk(plane_xy(T), T(2.5))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
-    sphere3d(T) = Sphere(origin3d(T), T(2.5))
 
     SUPPORT_MATRIX(T) = [
         # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
         SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
-        SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1)
     ]
 
     @testset "Float64 Geometries" verbose=true begin
