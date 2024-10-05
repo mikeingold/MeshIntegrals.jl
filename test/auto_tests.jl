@@ -88,7 +88,7 @@ end
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("ParaboloidSurface{$T}", T, parab(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
-        SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1),
+        SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1)
     ]
 
     @testset "Float64 Geometries" verbose=true begin
