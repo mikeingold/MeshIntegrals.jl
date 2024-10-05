@@ -196,6 +196,58 @@ end
     @test_throws "not supported" volumeintegral(f, cone)
 end
 
+@testitem "Meshes.Cylinder" setup=[Setup] begin
+    pt_w = Point(-1, 0, 0)
+    pt_e = Point(1, 0, 0)
+    cyl = Cylinder(pt_e, pt_w, 2.5)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(cyl)
+    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral(f, cyl, GaussKronrod())
+    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, cyl, GaussKronrod())
+    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, cyl)
+    @test_throws "not supported" surfaceintegral(f, cyl)
+    @test volumeintegral(f, cyl) ≈ sol
+end
+
+@testitem "Meshes.CylinderSurface" setup=[Setup] begin
+    pt_w = Point(-1, 0, 0)
+    pt_e = Point(1, 0, 0)
+    cyl = CylinderSurface(pt_e, pt_w, 2.5)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(cyl)
+    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
+    @test integral(f, cyl, GaussKronrod()) ≈ sol
+    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, cyl, GaussKronrod()) ≈ vsol
+    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, cyl)
+    @test surfaceintegral(f, cyl) ≈ sol
+    @test_throws "not supported" volumeintegral(f, cyl)
+end
+
 @testitem "Meshes.FrustumSurface" setup=[Setup] begin
     # Create a frustum whose radius halves at the top,
     # i.e. the bottom half of a cone by height

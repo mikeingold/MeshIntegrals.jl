@@ -70,15 +70,11 @@ end
     origin2d(T) = Point(T(0), T(0))
     ẑ(T) = Vec(T(0), T(0), T(1))
     plane_xy(T) = Plane(origin3d(T), ẑ(T))
-    pt_w(T) = Point(T(-1), T(0), T(0))
-    pt_e(T) = Point(T(1), T(0), T(0))
 
     # Test Geometries
     ball2d(T) = Ball(origin2d(T), T(2.0))
     ball3d(T) = Ball(origin3d(T), T(2.0))
     circle(T) = Circle(plane_xy(T), T(2.5))
-    cyl(T) = Cylinder(pt_e(T), pt_w(T), T(2.5))
-    cylsurf(T) = CylinderSurface(pt_e(T), pt_w(T), T(2.5))
     disk(T) = Disk(plane_xy(T), T(2.5))
     parab(T) = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
@@ -90,8 +86,6 @@ end
         SupportItem("Ball{2,$T}", T, ball2d(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Ball{3,$T}", T, ball3d(T), 1, 0, 0, 1, 1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
-        SupportItem("Cylinder{$T}", T, cyl(T), 1, 0, 0, 1, 1, 0, 1),
-        SupportItem("CylinderSurface{$T}", T, cylsurf(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("ParaboloidSurface{$T}", T, parab(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
