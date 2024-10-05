@@ -37,13 +37,13 @@ end
     # Scalar integrand
     sol = Meshes.measure(ball)
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, ball, GaussKronrod()) ≈ sol
+    @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
     @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, ball, GaussKronrod()) ≈ vsol
+    @test_throws "not supported" integral(fv, ball, GaussKronrod())≈vsol
     @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
