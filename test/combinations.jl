@@ -457,6 +457,8 @@ end
     ẑ = Vec(0, 0, 1)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
+    f = p -> one(Float64)
+
     # Scalar integrand
     sol = Meshes.measure(tetrahedron)
     @test_throws "not supported" integral(f, tetrahedron, GaussLegendre(100))
