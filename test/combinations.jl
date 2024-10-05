@@ -182,6 +182,33 @@ end
     @test_throws ArgumentError jacobian(box, zeros(2))
 end
 
+@testitem "Meshes.Circle" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    ẑ = Vec(0, 0, 1)
+    xy_plane = Plane(origin, ẑ)
+    circle = Circle(xy_plane, 2.5)
+
+    f(p) = 1.0
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(circle)
+    @test integral(f, circle, GaussLegendre(100)) ≈ sol
+    @test integral(f, circle, GaussKronrod()) ≈ sol
+    @test integral(f, circle, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, circle, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, circle, GaussKronrod()) ≈ vsol
+    @test integral(fv, circle, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test lineintegral(f, circle) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, circle)
+    @test_throws "not supported" volumeintegral(f, circle)
+end
+
 @testitem "Meshes.Cone" setup=[Setup] begin
     r = 2.5u"m"
     h = 2.5u"m"

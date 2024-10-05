@@ -67,12 +67,10 @@ end
 @testitem "Integrals" setup=[Setup, AutoTests] begin
     # Spatial descriptors
     origin3d(T) = Point(T(0), T(0), T(0))
-    origin2d(T) = Point(T(0), T(0))
     ẑ(T) = Vec(T(0), T(0), T(1))
     plane_xy(T) = Plane(origin3d(T), ẑ(T))
 
     # Test Geometries
-    circle(T) = Circle(plane_xy(T), T(2.5))
     disk(T) = Disk(plane_xy(T), T(2.5))
 
     SUPPORT_MATRIX(T) = [
