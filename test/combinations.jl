@@ -325,6 +325,33 @@ end
     @test_throws "not supported" volumeintegral(f, cyl)
 end
 
+@testitem "Meshes.Disk" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    ẑ = Vec(0, 0, 1)
+    xy_plane = Plane(origin, ẑ)
+    disk = Disk(xy_plane, 2.5)
+
+    f(p) = 1.0
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(disk)
+    @test integral(f, disk, GaussLegendre(100)) ≈ sol
+    @test integral(f, disk, GaussKronrod()) ≈ sol
+    @test integral(f, disk, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, disk, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, disk, GaussKronrod()) ≈ vsol
+    @test integral(fv, disk, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, disk)
+    @test surfaceintegral(f, disk) ≈ sol
+    @test_throws "not supported" volumeintegral(f, disk)
+end
+
 @testitem "Meshes.FrustumSurface" setup=[Setup] begin
     # Create a frustum whose radius halves at the top,
     # i.e. the bottom half of a cone by height

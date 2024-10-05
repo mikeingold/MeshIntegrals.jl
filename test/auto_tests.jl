@@ -63,23 +63,3 @@
         end
     end
 end
-
-@testitem "Integrals" setup=[Setup, AutoTests] begin
-    # Spatial descriptors
-    origin3d(T) = Point(T(0), T(0), T(0))
-    ẑ(T) = Vec(T(0), T(0), T(1))
-    plane_xy(T) = Plane(origin3d(T), ẑ(T))
-
-    # Test Geometries
-    disk(T) = Disk(plane_xy(T), T(2.5))
-
-    SUPPORT_MATRIX(T) = [
-        # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
-        SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
-    ]
-
-    @testset "Float64 Geometries" verbose=true begin
-        map(autotest, SUPPORT_MATRIX(Float64))
-    end
-end
