@@ -577,6 +577,31 @@ end
     @test_throws "not supported" volumeintegral(f, segment)
 end
 
+@testitem "Meshes.Sphere 2D" setup=[Setup] begin
+    origin = Point(0, 0)
+    sphere = Sphere(origin, 4.4)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(sphere)
+    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
+    @test integral(f, sphere, GaussKronrod()) ≈ sol
+    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
+    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test lineintegral(f, sphere) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, sphere)
+    @test_throws "not supported" volumeintegral(f, sphere)
+end
+
 @testitem "Meshes.Sphere 3D" setup=[Setup] begin
     origin = Point(0, 0, 0)
     sphere = Sphere(origin, 4.4)
