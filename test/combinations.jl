@@ -530,6 +530,32 @@ end
     @test volumeintegral(f, tetrahedron, GaussKronrod()) ≈ sol
 end
 
+@testitem "Meshes.Torus" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    ẑ = Vec(0, 0, 1)
+    torus = Torus(origin, ẑ, 3.5, 1.25)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(torus)
+    @test integral(f, torus, GaussLegendre(100)) ≈ sol
+    @test integral(f, torus, GaussKronrod()) ≈ sol
+    @test integral(f, torus, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, torus, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, torus, GaussKronrod()) ≈ vsol
+    @test integral(fv, torus, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, torus)
+    @test surfaceintegral(f, torus) ≈ sol
+    @test_throws "not supported" volumeintegral(f, torus)
+end
+
 @testitem "Meshes.Triangle" setup=[Setup] begin
     pt_n = Point(0, 1, 0)
     pt_w = Point(-1, 0, 0)
