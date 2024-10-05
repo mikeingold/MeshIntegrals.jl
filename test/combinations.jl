@@ -2,6 +2,31 @@
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
+@testitem "Meshes.Ball 2D" setup=[Setup] begin
+    origin = Point(0, 0)
+    ball = Ball(origin, 2.8)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(ball)
+    @test integral(f, ball, GaussLegendre(100)) ≈ sol
+    @test integral(f, ball, GaussKronrod()) ≈ sol
+    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, ball, GaussKronrod()) ≈ vsol
+    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, ball)
+    @test surfaceintegral(f, ball) ≈ sol
+    @test_throws "not supported" volumeintegral(f, ball)
+end
+
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
     curve = BezierCurve(
         [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]

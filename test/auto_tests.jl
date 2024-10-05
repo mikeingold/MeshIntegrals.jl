@@ -72,7 +72,6 @@ end
     plane_xy(T) = Plane(origin3d(T), ẑ(T))
 
     # Test Geometries
-    ball2d(T) = Ball(origin2d(T), T(2.0))
     ball3d(T) = Ball(origin3d(T), T(2.0))
     circle(T) = Circle(plane_xy(T), T(2.5))
     disk(T) = Disk(plane_xy(T), T(2.5))
@@ -81,7 +80,6 @@ end
 
     SUPPORT_MATRIX(T) = [
         # Name, T type, example,    integral,line,surface,volume,    GaussLegendre,GaussKronrod,HAdaptiveCubature
-        SupportItem("Ball{2,$T}", T, ball2d(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Ball{3,$T}", T, ball3d(T), 1, 0, 0, 1, 1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
