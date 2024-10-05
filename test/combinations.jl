@@ -6,7 +6,7 @@
     origin = Point(0, 0)
     ball = Ball(origin, 2.8)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -31,7 +31,7 @@ end
     origin = Point(0, 0, 0)
     ball = Ball(origin, 2.8)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -278,7 +278,7 @@ end
     pt_e = Point(1, 0, 0)
     cyl = Cylinder(pt_e, pt_w, 2.5)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -304,7 +304,7 @@ end
     pt_e = Point(1, 0, 0)
     cyl = CylinderSurface(pt_e, pt_w, 2.5)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -425,7 +425,7 @@ end
     origin = Point(0, 0, 0)
     parab = ParaboloidSurface(origin, 2.5, 4.15)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -635,7 +635,7 @@ end
     origin = Point(0, 0)
     sphere = Sphere(origin, 4.4)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -660,7 +660,7 @@ end
     origin = Point(0, 0, 0)
     sphere = Sphere(origin, 4.4)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -688,7 +688,7 @@ end
     ẑ = Vec(0, 0, 1)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -714,7 +714,7 @@ end
     ẑ = Vec(0, 0, 1)
     torus = Torus(origin, ẑ, 3.5, 1.25)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
@@ -739,9 +739,9 @@ end
     pt_n = Point(0, 1, 0)
     pt_w = Point(-1, 0, 0)
     pt_e = Point(1, 0, 0)
-    triangle = Ngon(pt_e, pt_n, pt_w)
+    triangle = Triangle(pt_e, pt_n, pt_w)
 
-    f = p -> one(Float64)
+    f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
