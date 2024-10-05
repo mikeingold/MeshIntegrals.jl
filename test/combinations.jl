@@ -27,6 +27,31 @@
     @test_throws "not supported" volumeintegral(f, ball)
 end
 
+@testitem "Meshes.Ball 3D" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    ball = Ball(origin, 2.8)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(ball)
+    @test integral(f, ball, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral(f, ball, GaussKronrod()) ≈ sol
+    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, ball, GaussKronrod()) ≈ vsol
+    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, ball)
+    @test_throws "not supported" surfaceintegral(f, ball)
+    @test volumeintegral(f, ball) ≈ sol
+end
+
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
     curve = BezierCurve(
         [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
