@@ -70,9 +70,6 @@ end
     origin2d(T) = Point(T(0), T(0))
     ẑ(T) = Vec(T(0), T(0), T(1))
     plane_xy(T) = Plane(origin3d(T), ẑ(T))
-
-    # Points on xy-plane at unit distance on axes
-    pt_n(T) = Point(T(0), T(1), T(0))
     pt_w(T) = Point(T(-1), T(0), T(0))
     pt_e(T) = Point(T(1), T(0), T(0))
 
@@ -86,7 +83,6 @@ end
     parab(T) = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
-    triangle(T) = Ngon(pt_e(T), pt_n(T), pt_w(T))
     torus(T) = Torus(origin3d(T), ẑ(T), T(3.5), T(1.25))
 
     SUPPORT_MATRIX(T) = [
@@ -100,7 +96,6 @@ end
         SupportItem("ParaboloidSurface{$T}", T, parab(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1),
-        SupportItem("Triangle{$T}", T, triangle(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Torus{$T}", T, torus(T), 1, 0, 1, 0, 1, 1, 1)
     ]
 

@@ -477,3 +477,30 @@ end
     @test_throws "not supported" surfaceintegral(f, tetrahedron)
     @test volumeintegral(f, tetrahedron, GaussKronrod()) ≈ sol
 end
+
+@testitem "Meshes.Triangle" setup=[Setup] begin
+    pt_n = Point(0, 1, 0)
+    pt_w = Point(-1, 0, 0)
+    pt_e = Point(1, 0, 0)
+    triangle = Ngon(pt_e, pt_n, pt_w)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(triangle)
+    @test integral(f, triangle, GaussLegendre(100)) ≈ sol
+    @test integral(f, triangle, GaussKronrod()) ≈ sol
+    @test integral(f, triangle, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, triangle, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, triangle, GaussKronrod()) ≈ vsol
+    @test integral(fv, triangle, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, triangle)
+    @test surfaceintegral(f, triangle) ≈ sol
+    @test_throws "not supported" volumeintegral(f, triangle)
+end
