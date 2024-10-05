@@ -76,7 +76,6 @@ end
     ball3d(T) = Ball(origin3d(T), T(2.0))
     circle(T) = Circle(plane_xy(T), T(2.5))
     disk(T) = Disk(plane_xy(T), T(2.5))
-    parab(T) = ParaboloidSurface(origin3d(T), T(2.5), T(4.15))
     sphere2d(T) = Sphere(origin2d(T), T(2.5))
     sphere3d(T) = Sphere(origin3d(T), T(2.5))
 
@@ -86,7 +85,6 @@ end
         SupportItem("Ball{3,$T}", T, ball3d(T), 1, 0, 0, 1, 1, 0, 1),
         SupportItem("Circle{$T}", T, circle(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Disk{$T}", T, disk(T), 1, 0, 1, 0, 1, 1, 1),
-        SupportItem("ParaboloidSurface{$T}", T, parab(T), 1, 0, 1, 0, 1, 1, 1),
         SupportItem("Sphere{2,$T}", T, sphere2d(T), 1, 1, 0, 0, 1, 1, 1),
         SupportItem("Sphere{3,$T}", T, sphere3d(T), 1, 0, 1, 0, 1, 1, 1),
     ]

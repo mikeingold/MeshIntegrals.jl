@@ -317,6 +317,31 @@ end
     @test_throws "not supported" volumeintegral(f, line)
 end
 
+@testitem "Meshes.ParaboloidSurface" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    parab = ParaboloidSurface(origin, 2.5, 4.15)
+
+    f = p -> one(Float64)
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(parab)
+    @test integral(f, parab, GaussLegendre(100)) ≈ sol
+    @test integral(f, parab, GaussKronrod()) ≈ sol
+    @test integral(f, parab, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, parab, GaussLegendre(100)) ≈ vsol
+    @test integral(fv, parab, GaussKronrod()) ≈ vsol
+    @test integral(fv, parab, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, parab)
+    @test surfaceintegral(f, parab) ≈ sol
+    @test_throws "not supported" volumeintegral(f, parab)
+end
+
 @testitem "Meshes.Plane" setup=[Setup] begin
     p = Point(0.0u"m", 0.0u"m", 0.0u"m")
     v = Vec(0.0u"m", 0.0u"m", 1.0u"m")
