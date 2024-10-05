@@ -458,6 +458,7 @@ end
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
     f = p -> one(Float64)
+		fv(p) = fill(f(p), 3)
 
     # Scalar integrand
     sol = Meshes.measure(tetrahedron)
@@ -474,5 +475,5 @@ end
     # Integral aliases
     @test_throws "not supported" lineintegral(f, tetrahedron)
     @test_throws "not supported" surfaceintegral(f, tetrahedron)
-    @test volumeintegral(f, tetrahedron) ≈ sol
+    @test volumeintegral(f, tetrahedron, GaussKronrod()) ≈ sol
 end
