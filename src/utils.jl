@@ -18,3 +18,9 @@ function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     kvec = CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
     return (units, kvec)
 end
+
+#  (units, ::CliffordNumber.KVector) -> Meshes.Vec
+function _Vec(units, kvector::CliffordNumbers.KVector{1, VGA(Dim)}) where {Dim}
+    ucoords = Iterators.map(x -> units * x, kvector.data)
+    Meshes.Vec(ucoords...)
+end
