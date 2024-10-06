@@ -169,15 +169,18 @@ end
 end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
-    a = zero(Float64)
-    b = one(Float64)
-    box = Box(Point(a, a, a, a), Point(b, b, b, b))
+    a = π
+    box = Box(Point(0, 0, 0, 0), Point(b, b, b, b))
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        x1, x2, x3, x4 = ustrip.(p.coords...)
+        σ(x) = sqrt(a^2 - x^2)
+        (σ(x1) + σ(x2) + σ(x3) + σ(x4)) * u"Ω/m^4"
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(box)
+    sol = 4a^3 * (π * a^2 / 4) * u"Ω"
     @test integral(f, box, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, box, GaussKronrod())
     @test integral(f, box, HAdaptiveCubature()) ≈ sol
