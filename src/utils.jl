@@ -15,12 +15,14 @@ _units(pt::Meshes.Point{M, CRS}) where {M, CRS} = first(CoordRefSystems.units(CR
 function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     units = Unitful.unit(T)
     ucoords = Iterators.map(x -> Unitful.ustrip(units, x), v.coords)
-    kvec = CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
+    kvec = CliffordNumbers.KVector{1, CliffordNumbers.VGA(Dim)}(ucoords...)
     return (units, kvec)
 end
 
+#=
 #  (units, ::CliffordNumber.KVector) -> Meshes.Vec
 function _Vec(units, kvector::CliffordNumbers.KVector{1, VGA(Dim)}) where {Dim}
     ucoords = Iterators.map(x -> units * x, kvector.data)
     Meshes.Vec(ucoords...)
 end
+=#
