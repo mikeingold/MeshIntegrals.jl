@@ -11,9 +11,10 @@ end
 # Extract the length units used by the CRS of a Point
 _units(pt::Meshes.Point{M, CRS}) where {M, CRS} = first(CoordRefSystems.units(CRS))
 
-# Meshes.Vec -> CliffordNumber.KVector
-function _clifford(v::Meshes.Vec{Dim, T}) where {Dim, T}
+# Meshes.Vec -> (units, ::CliffordNumber.KVector)
+function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     units = Unitful.unit(T)
-    cliffordnumber = KVector{1, VGA(Dim)}(Unitful.ustrip.(units, v.coords)...)
-    return (units, cliffordnumber)
+    ucoords = Iterators.map(x -> Unitful.ustrip(units, x), v.coords)
+    kvec = KVector{1, VGA(Dim)}(ucoords...)
+    return (units, kvec)
 end
