@@ -50,6 +50,8 @@ function _integral(
         return _integral_gk_2d(f, geometry, rule; kwargs...)
     elseif N == 3
         return _integral_gk_3d(f, geometry, rule; kwargs...)
+    else
+        error("Integrating this geometry type with GaussKronrod not supported.")
     end
 end
 
