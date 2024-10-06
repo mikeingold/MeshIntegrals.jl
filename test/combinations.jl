@@ -170,7 +170,7 @@ end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
     a = π
-    box = Box(Point(0, 0, 0, 0), Point(b, b, b, b))
+    box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
 
     function f(p::P) where {P <: Meshes.Point}
         x1, x2, x3, x4 = ustrip.(p.coords...)
