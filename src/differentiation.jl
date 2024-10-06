@@ -97,7 +97,7 @@ function differential(
     J_kvecs = Iterators.map(_kvector, J)
 
     # Product of units, exterior-product of KVector's
-    uwedge((u1, kv1), (u2, kv2)) -> (u1 * u2, kv1 ∧ kv2)
+    uwedge((u1, kv1), (u2, kv2)) = (u1 * u2, kv1 ∧ kv2)
     (units, element) = foldl(uwedge, J_kvecs)
 
     return LinearAlgebra.norm(element) * units
