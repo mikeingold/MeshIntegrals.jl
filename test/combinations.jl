@@ -173,7 +173,7 @@ end
     box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
 
     function f(p::P) where {P <: Meshes.Point}
-        x1, x2, x3, x4 = ustrip.(p.coords...)
+        x1, x2, x3, x4 = ustrip.(to(p).coords)
         σ(x) = sqrt(a^2 - x^2)
         (σ(x1) + σ(x2) + σ(x3) + σ(x4)) * u"Ω/m^4"
     end
