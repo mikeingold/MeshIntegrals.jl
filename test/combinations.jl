@@ -183,13 +183,13 @@ end
     sol = 4a^3 * (π * a^2 / 4) * u"Ω"
     @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
     @test_throws "not supported" integral(f, box, GaussKronrod())
-    @test integral(f, box, HAdaptiveCubature(rtol=1e-6))≈sol rtol=1e-6
+    @test integral(f, box, HAdaptiveCubature(rtol = 1e-6))≈sol rtol=1e-6
 
     # Vector integrand
     vsol = fill(sol, 3)
     @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
     @test_throws "not supported" integral(fv, box, GaussKronrod())
-    @test integral(fv, box, HAdaptiveCubature(rtol=1e-6))≈vsol rtol=1e-6
+    @test integral(fv, box, HAdaptiveCubature(rtol = 1e-6))≈vsol rtol=1e-6
 
     # Integral aliases
     @test_throws "not supported" lineintegral(f, box)
