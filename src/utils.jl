@@ -18,3 +18,13 @@ function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     kvec = CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
     return (units, kvec)
 end
+
+@inline function _error_unsupported_gk()
+    msg = "Integrating this geometry type with GaussKronrod not supported."
+    throw(ArgumentError(msg))
+end
+
+@inline function _error_unsupported_combination(geometry, rule)
+    msg = "Integrating a $geometry with $rule not supported."
+    throw(ArgumentError(msg))
+end

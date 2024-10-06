@@ -15,7 +15,7 @@ function integral(
         rule::GaussLegendre;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
-    error("Integrating a Tetrahedron with GaussLegendre not supported.")
+    _error_unsupported_combination("Tetrahedron", "GaussLegendre")
 end
 
 function integral(
@@ -40,5 +40,5 @@ function integral(
         rule::HAdaptiveCubature;
         FP::Type{T} = Float64
 ) where {F <: Function, T <: AbstractFloat}
-    error("Integrating a Tetrahedron with HAdaptiveCubature not supported.")
+    _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
 end
