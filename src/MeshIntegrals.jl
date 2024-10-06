@@ -2,6 +2,7 @@ module MeshIntegrals
 using CoordRefSystems: CoordRefSystems, CRS
 using LinearAlgebra: LinearAlgebra, norm, ×, ⋅
 
+import CliffordNumbers
 import FastGaussQuadrature
 import HCubature
 import Meshes
