@@ -170,13 +170,28 @@ end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
     a = zero(Float64)
-    b = zero(Float64)
+    b = one(Float64)
     box = Box(Point(a, a, a, a), Point(b, b, b, b))
 
-    f = p -> one(Float64)
+    f(p) = 1.0
+    fv(p) = fill(f(p), 3)
 
-    # Test for currently-unsupported >3D differentials
-    @test integral(f, box)≈1.0u"m^4" broken=true
+    # Scalar integrand
+    sol = Meshes.measure(box)
+    @test integral(f, box, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral(f, box, GaussKronrod())
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, box, GaussKronrod())
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, box)
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test_throws "not supported" volumeintegral(f, box)
 
     # Test jacobian with wrong number of parametric coordinates
     @test_throws ArgumentError jacobian(box, zeros(2))
