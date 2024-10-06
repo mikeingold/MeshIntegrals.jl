@@ -92,16 +92,13 @@ function differential(
         geometry::G,
         ts::V
 ) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+    # Calculate the Jacobian, convert each Vec -> (units, KVector)
     J = jacobian(geometry, ts)
+    J_kvecs = Iterators.map(_kvector, J)
 
-    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
-    if length(J) == 1
-        return norm(J[1])
-    elseif length(J) == 2
-        return norm(J[1] × J[2])
-    elseif length(J) == 3
-        return abs((J[1] × J[2]) ⋅ J[3])
-    else
-        error("Not implemented yet. Please report this as an Issue on GitHub.")
-    end
+    # Product of units, exterior-product of KVector's
+    uwedge((u1, kv1), (u2, kv2)) -> (u1 * u2, kv1 ∧ kv2)
+    (units, element) = foldl(uwedge, J_kvecs)
+
+    return LinearAlgebra.norm(element) * units
 end
