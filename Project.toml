@@ -3,6 +3,7 @@ uuid = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 version = "0.14.1"
 
 [deps]
+CliffordNumbers = "3998ac73-6bd4-4031-8035-f167dd3ed523"
 CoordRefSystems = "b46f11dc-f210-4604-bfba-323c1ec968cb"
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
 HCubature = "19dc6840-f33b-545b-b366-655c7e3ffd49"
@@ -12,6 +13,7 @@ QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
+CliffordNumbers = "0.1"
 CoordRefSystems = "0.12, 0.13, 0.14, 0.15"
 FastGaussQuadrature = "1"
 HCubature = "1.5"
