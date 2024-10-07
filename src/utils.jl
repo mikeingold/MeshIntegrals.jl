@@ -8,8 +8,14 @@ function _gausslegendre(T, n)
     return T.(xs), T.(ws)
 end
 
-# Extract the length units used by the CRS of a Point
-_units(pt::Meshes.Point{M, CRS}) where {M, CRS} = first(CoordRefSystems.units(CRS))
+# Extract the length units used by the CRS of a Geometry
+function _units(g::Meshes.Geometry{M, CRS}) where {M, CRS}
+    return Unitful.unit(CoordRefSystems.lentype(CRS))
+end
+
+################################################################################
+#                        CliffordNumbers Interface
+################################################################################
 
 # Meshes.Vec -> ::CliffordNumber.KVector
 function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
@@ -24,6 +30,10 @@ function _ukvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     kvec = CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
     return (units, kvec)
 end
+
+################################################################################
+#                           Error Conditions
+################################################################################
 
 @inline function _error_unsupported_gk()
     msg = "Integrating this geometry type with GaussKronrod not supported."

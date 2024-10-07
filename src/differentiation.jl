@@ -96,10 +96,9 @@ function differential(
     J = jacobian(geometry, ts)
     J_kvecs = Iterators.map(_kvector, J)
 
-    # Get units from Geometry type
+    # Extract units from Geometry type
     Dim = Meshes.paramdim(geometry)
-    length_unit = Unitful.unit(CoordRefSystems.lentype(CRS))
-    units = length_unit^Dim
+    units = _units(geometry)^Dim
 
     # Return norm of the exterior products
     element = foldl(∧, J_kvecs)
