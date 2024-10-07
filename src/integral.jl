@@ -48,10 +48,9 @@ function _integral(
         return _integral_gk_1d(f, geometry, rule; kwargs...)
     elseif N == 2
         return _integral_gk_2d(f, geometry, rule; kwargs...)
-    elseif N == 3
-        return _integral_gk_3d(f, geometry, rule; kwargs...)
     else
-        _error_unsupported_gk()
+        _error_unsupported_combination("geometry with more than two parametric dimensions",
+                                       "GaussKronrod")
     end
 end
 
@@ -127,14 +126,4 @@ function _integral_gk_2d(
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v))
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
     return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
-end
-
-# Integrating volumes with GaussKronrod not supported by default
-function _integral_gk_3d(
-        f,
-        geometry,
-        rule::GaussKronrod;
-        FP::Type{T} = Float64
-) where {T <: AbstractFloat}
-    _error_unsupported_gk()
 end

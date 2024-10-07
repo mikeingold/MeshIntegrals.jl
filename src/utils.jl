@@ -35,12 +35,7 @@ end
 #                           Error Conditions
 ################################################################################
 
-@inline function _error_unsupported_gk()
-    msg = "Integrating this geometry type with GaussKronrod not supported."
-    throw(ArgumentError(msg))
-end
-
 @inline function _error_unsupported_combination(geometry, rule)
-    msg = "Integrating a $geometry with $rule not supported."
+    msg = "Integrating a $geometry using a $rule rule not supported."
     throw(ArgumentError(msg))
 end
