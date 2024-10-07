@@ -91,14 +91,17 @@ function for `geometry` at arguments `ts`.
 function differential(
         geometry::G,
         ts::V
-) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+) where {M, CRS, G <: Meshes.Geometry{M, CRS}, V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert each Vec -> (units, KVector)
     J = jacobian(geometry, ts)
     J_kvecs = Iterators.map(_kvector, J)
 
-    # Product of units, exterior-product of KVector's
-    uwedge((u1, kv1), (u2, kv2)) = (u1 * u2, kv1 ∧ kv2)
-    (units, element) = foldl(uwedge, J_kvecs)
+    # Get units from Geometry type
+    Dim = Meshes.paramdim(geometry)
+    length_unit = Unitful.unit(CoordRefSystems.lentype(CRS))
+    units = length_unit^Dim
 
+    # Return norm of the exterior products
+    element = foldl(∧, J_kvecs)
     return LinearAlgebra.norm(element) * units
 end
