@@ -45,7 +45,7 @@ function jacobian(
         end
     end
 
-    return map(n -> ∂ₙr(ts, n), 1:Dim)
+    return ntuple(n -> ∂ₙr(ts, n), Dim)
 end
 
 function jacobian(
@@ -75,7 +75,7 @@ function jacobian(
     sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
     derivative = N .* sum(sigma, 0:(N - 1))
 
-    return [derivative]
+    return (derivative, )
 end
 
 ################################################################################
