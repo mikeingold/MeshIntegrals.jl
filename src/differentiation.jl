@@ -92,7 +92,7 @@ function differential(
         geometry::G,
         ts::V
 ) where {M, CRS, G <: Meshes.Geometry{M, CRS}, V <: Union{AbstractVector, Tuple}}
-    # Calculate the Jacobian, convert each Vec -> (units, KVector)
+    # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts)
     J_kvecs = Iterators.map(_kvector, J)
 
