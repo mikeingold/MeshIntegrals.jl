@@ -50,7 +50,7 @@ function _integral(
         return _integral_gk_2d(f, geometry, rule; kwargs...)
     else
         _error_unsupported_combination("geometry with more than two parametric dimensions",
-                                       "GaussKronrod")
+            "GaussKronrod")
     end
 end
 
