@@ -360,6 +360,7 @@ end
     f(p) = 1.0
     fv(p) = fill(f(p), 3)
 
+    # Tolerances are higher due to `measure` being only an approximation
     # Scalar integrand
     sol = Meshes.measure(ellipsoid)
     @test integral(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
