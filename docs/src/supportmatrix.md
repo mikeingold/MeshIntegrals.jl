@@ -34,11 +34,15 @@ Cubature integration rules are recommended (and the default).
 | `Cylinder` | ✅ | 🛑 | ✅ |
 | `CylinderSurface` | ✅ | ✅ | ✅ |
 | `Disk` | ✅ | ✅ | ✅ |
+| `Ellipsoid` | ✅ | ✅ | ✅ |
 | `Frustum` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
 | `FrustumSurface` | ✅ | ✅ | ✅ |
+| `Hexahedron` | ✅ | ✅ | ✅ |
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
+| `Polyarea` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
+| `Pyramid` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
 | `Quadrangle` | ✅ | ✅ | ✅ |
 | `Ray` | ✅ | ✅ | ✅ |
 | `Ring` | ✅ | ✅ | ✅ |
@@ -50,3 +54,4 @@ Cubature integration rules are recommended (and the default).
 | `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) |
 | `Triangle` | ✅ | ✅ | ✅ |
 | `Torus` | ✅ | ✅ | ✅ |
+| `Wedge` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
