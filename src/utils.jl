@@ -23,13 +23,6 @@ function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     return CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
 end
 
-# Meshes.Vec -> (units, ::CliffordNumber.KVector)
-function _ukvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
-    units = Unitful.unit(T)
-    ucoords = Iterators.map(x -> Unitful.ustrip(units, x), v.coords)
-    kvec = CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
-    return (units, kvec)
-end
 
 ################################################################################
 #                           Error Conditions
