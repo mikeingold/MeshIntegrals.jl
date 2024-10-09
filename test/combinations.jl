@@ -427,13 +427,13 @@ end
     # Scalar integrand
     sol = Meshes.measure(hexahedron)
     @test integral(f, hexahedron, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, hexahedron, GaussKronrod()) ≈ sol
+    @test_throws "not supported" integral(f, hexahedron, GaussKronrod())≈sol
     @test integral(f, hexahedron, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
     @test integral(fv, hexahedron, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, hexahedron, GaussKronrod()) ≈ vsol
+    @test_throws "not supported" integral(fv, hexahedron, GaussKronrod())≈vsol
     @test integral(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
