@@ -517,43 +517,47 @@ end
 end
 
 @testitem "ParametrizedCurve" setup=[Setup] begin
-    radius = 4.4
-    curve_cart = ParametrizedCurve(t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
-    curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
+    # ParametrizedCurve has been added in Meshes v0.5.20
+    # If the version is specificied as minimal compat bound in the Project.toml, the downgrade test fails
+    if pkgversion(Meshes) >= v"0.5.20"
+        radius = 4.4
+        curve_cart = ParametrizedCurve(t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
+        curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
-    function f(p::P) where {P <: Meshes.Point}
-        v = to(p)
-        ur = hypot(v[1], v[2])
-        r = ustrip(u"m", ur)
-        exp(-r^2)
+        function f(p::P) where {P <: Meshes.Point}
+            v = to(p)
+            ur = hypot(v[1], v[2])
+            r = ustrip(u"m", ur)
+            exp(-r^2)
+        end
+        fv(p) = fill(f(p), 3)
+
+        # Scalar integrand
+        sol = 2π * radius * exp(-radius^2) * u"m"
+        @test integral(f, curve_cart, GaussLegendre(100)) ≈ sol
+        @test integral(f, curve_cart, GaussKronrod()) ≈ sol
+        @test integral(f, curve_cart, HAdaptiveCubature()) ≈ sol
+        @test integral(f, curve_polar, GaussLegendre(100)) ≈ sol
+        @test integral(f, curve_polar, GaussKronrod()) ≈ sol
+        @test integral(f, curve_polar, HAdaptiveCubature()) ≈ sol
+
+        # Vector integrand
+        vsol = fill(sol, 3)
+        @test integral(fv, curve_cart, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, curve_cart, GaussKronrod()) ≈ vsol
+        @test integral(fv, curve_cart, HAdaptiveCubature()) ≈ vsol
+        @test integral(fv, curve_polar, GaussLegendre(100)) ≈ vsol
+        @test integral(fv, curve_polar, GaussKronrod()) ≈ vsol
+        @test integral(fv, curve_polar, HAdaptiveCubature()) ≈ vsol
+
+        # Integral aliases
+        @test lineintegral(f, curve_cart) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, curve_cart)
+        @test_throws "not supported" volumeintegral(f, curve_cart)
+        @test lineintegral(f, curve_polar) ≈ sol
+        @test_throws "not supported" surfaceintegral(f, curve_polar)
+        @test_throws "not supported" volumeintegral(f, curve_polar)
     end
-    fv(p) = fill(f(p), 3)
-
-    # Scalar integrand
-    sol = 2π * radius * exp(-radius^2) * u"m"
-    @test integral(f, curve_cart, GaussLegendre(100)) ≈ sol
-    @test integral(f, curve_cart, GaussKronrod()) ≈ sol
-    @test integral(f, curve_cart, HAdaptiveCubature()) ≈ sol
-    @test integral(f, curve_polar, GaussLegendre(100)) ≈ sol
-    @test integral(f, curve_polar, GaussKronrod()) ≈ sol
-    @test integral(f, curve_polar, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, curve_cart, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, curve_cart, GaussKronrod()) ≈ vsol
-    @test integral(fv, curve_cart, HAdaptiveCubature()) ≈ vsol
-    @test integral(fv, curve_polar, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, curve_polar, GaussKronrod()) ≈ vsol
-    @test integral(fv, curve_polar, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, curve_cart) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, curve_cart)
-    @test_throws "not supported" volumeintegral(f, curve_cart)
-    @test lineintegral(f, curve_polar) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, curve_polar)
-    @test_throws "not supported" volumeintegral(f, curve_polar)
 end
 
 @testitem "Meshes.Plane" setup=[Setup] begin
