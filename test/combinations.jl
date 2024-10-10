@@ -520,14 +520,16 @@ end
     # ParametrizedCurve has been added in Meshes v0.51.20
     # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.51.20"
+        using CoordRefSystems: Polar
+        using LinearAlgebra: norm
+
         radius = 4.4
         curve_cart = ParametrizedCurve(
             t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
         curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
         function f(p::P) where {P <: Meshes.Point}
-            v = to(p)
-            ur = hypot(v[1], v[2])
+            ur = norm(to(p))
             r = ustrip(u"m", ur)
             exp(-r^2)
         end

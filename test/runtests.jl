@@ -6,5 +6,4 @@ using TestItems
 @testsnippet Setup begin
     using Meshes
     using Unitful
-    using CoordRefSystems: Polar
 end
