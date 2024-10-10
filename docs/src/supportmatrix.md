@@ -35,14 +35,14 @@ Cubature integration rules are recommended (and the default).
 | `CylinderSurface` | ✅ | ✅ | ✅ |
 | `Disk` | ✅ | ✅ | ✅ |
 | `Ellipsoid` | ✅ | ✅ | ✅ |
-| `Frustum` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
+| `Frustum` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
 | `FrustumSurface` | ✅ | ✅ | ✅ |
 | `Hexahedron` | ✅ | ✅ | ✅ |
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
-| `Polyarea` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
-| `Pyramid` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
+| `Polyarea` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
+| `Pyramid` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
 | `Quadrangle` | ✅ | ✅ | ✅ |
 | `Ray` | ✅ | ✅ | ✅ |
 | `Ring` | ✅ | ✅ | ✅ |
@@ -54,4 +54,4 @@ Cubature integration rules are recommended (and the default).
 | `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) |
 | `Triangle` | ✅ | ✅ | ✅ |
 | `Torus` | ✅ | ✅ | ✅ |
-| `Wedge` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/57) |
+| `Wedge` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
