@@ -518,7 +518,7 @@ end
 
 @testitem "ParametrizedCurve" setup=[Setup] begin
     # ParametrizedCurve has been added in Meshes v0.5.20
-    # If the version is specificied as minimal compat bound in the Project.toml, the downgrade test fails
+    # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.5.20"
         radius = 4.4
         curve_cart = ParametrizedCurve(t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
