@@ -45,7 +45,7 @@ function jacobian(
         end
     end
 
-    return map(n -> ∂ₙr(ts, n), 1:Dim)
+    return ntuple(n -> ∂ₙr(ts, n), Dim)
 end
 
 function jacobian(
@@ -75,7 +75,7 @@ function jacobian(
     sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
     derivative = N .* sum(sigma, 0:(N - 1))
 
-    return [derivative]
+    return (derivative,)
 end
 
 ################################################################################
@@ -91,17 +91,16 @@ function for `geometry` at arguments `ts`.
 function differential(
         geometry::G,
         ts::V
-) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+) where {M, CRS, G <: Meshes.Geometry{M, CRS}, V <: Union{AbstractVector, Tuple}}
+    # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts)
+    J_kvecs = Iterators.map(_kvector, J)
 
-    # TODO generalize this with geometric algebra, e.g.: norm(foldl(∧, J))
-    if length(J) == 1
-        return norm(J[1])
-    elseif length(J) == 2
-        return norm(J[1] × J[2])
-    elseif length(J) == 3
-        return abs((J[1] × J[2]) ⋅ J[3])
-    else
-        error("Not implemented yet. Please report this as an Issue on GitHub.")
-    end
+    # Extract units from Geometry type
+    Dim = Meshes.paramdim(geometry)
+    units = _units(geometry)^Dim
+
+    # Return norm of the exterior products
+    element = foldl(∧, J_kvecs)
+    return LinearAlgebra.norm(element) * units
 end
