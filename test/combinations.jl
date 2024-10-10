@@ -370,6 +370,33 @@ end
     @test_throws "not supported" volumeintegral(f, disk)
 end
 
+@testitem "Meshes.Ellipsoid" setup=[Setup] begin
+    origin = Point(0, 0, 0)
+    radii = (1.0, 2.0, 0.5)
+    ellipsoid = Ellipsoid(radii, origin)
+
+    f(p) = 1.0
+    fv(p) = fill(f(p), 3)
+
+    # Tolerances are higher due to `measure` being only an approximation
+    # Scalar integrand
+    sol = Meshes.measure(ellipsoid)
+    @test integral(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
+    @test integral(f, ellipsoid, GaussKronrod())≈sol rtol=1e-2
+    @test integral(f, ellipsoid, HAdaptiveCubature())≈sol rtol=1e-2
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, ellipsoid, GaussLegendre(100))≈vsol rtol=1e-2
+    @test integral(fv, ellipsoid, GaussKronrod())≈vsol rtol=1e-2
+    @test integral(fv, ellipsoid, HAdaptiveCubature())≈vsol rtol=1e-2
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, ellipsoid)
+    @test surfaceintegral(f, ellipsoid)≈sol rtol=1e-2
+    @test_throws "not supported" volumeintegral(f, ellipsoid)
+end
+
 @testitem "Meshes.FrustumSurface" setup=[Setup] begin
     # Create a frustum whose radius halves at the top,
     # i.e. the bottom half of a cone by height
@@ -407,6 +434,31 @@ end
     @test integral(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
     @test integral(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
     @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
+end
+
+@testitem "Meshes.Hexahedron" setup=[Setup] begin
+    hexahedron = Hexahedron(Point(0, 0, 0), Point(2, 0, 0), Point(2, 2, 0),
+        Point(0, 2, 0), Point(0, 0, 2), Point(1, 0, 2), Point(1, 1, 2), Point(0, 1, 2))
+
+    f(p) = 1.0
+    fv(p) = fill(f(p), 3)
+
+    # Scalar integrand
+    sol = Meshes.measure(hexahedron)
+    @test integral(f, hexahedron, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral(f, hexahedron, GaussKronrod())≈sol
+    @test integral(f, hexahedron, HAdaptiveCubature()) ≈ sol
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, hexahedron, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, hexahedron, GaussKronrod())≈vsol
+    @test integral(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, hexahedron)
+    @test_throws "not supported" surfaceintegral(f, hexahedron)
+    @test volumeintegral(f, hexahedron) ≈ sol
 end
 
 @testitem "Meshes.Line" setup=[Setup] begin
