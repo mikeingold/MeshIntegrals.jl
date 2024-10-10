@@ -27,7 +27,7 @@ Cubature integration rules are recommended (and the default).
 | `BezierCurve` | ✅ | ✅ | ✅ |
 | `Box` in `𝔼{1}` | ✅ | ✅ | ✅ |
 | `Box` in `𝔼{2}` | ✅ | ✅ | ✅ |
-| `Box` in `𝔼{3}` | ✅ | 🛑 | ✅ |
+| `Box` in `𝔼{≥3}` | ✅ | 🛑 | ✅ |
 | `Circle` | ✅ | ✅ | ✅ |
 | `Cone` | ✅ | ✅ | ✅ |
 | `ConeSurface` | ✅ | ✅ | ✅ |
