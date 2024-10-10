@@ -14,7 +14,7 @@ function _units(g::Meshes.Geometry{M, CRS}) where {M, CRS}
 end
 
 # Common error message structure
-@inline function _error_unsupported_combination(geometry, rule)
+function _error_unsupported_combination(geometry, rule)
     msg = "Integrating a $geometry using a $rule rule not supported."
     throw(ArgumentError(msg))
 end
