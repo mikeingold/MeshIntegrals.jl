@@ -1,5 +1,6 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+CoordRefSystems = "b46f11dc-f210-4604-bfba-323c1ec968cb"
 ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
@@ -12,9 +13,10 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 Aqua = "0.7, 0.8"
+CoordRefSystems = "0.12, 0.13, 0.14, 0.15"
 ExplicitImports = "1.6.0"
 LinearAlgebra = "1"
-Meshes = "0.50, 0.51"
+Meshes = "0.51.20"
 QuadGK = "2.1.1"
 SpecialFunctions = "2"
 TestItemRunner = "1"

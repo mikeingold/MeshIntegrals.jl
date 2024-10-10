@@ -40,6 +40,7 @@ Cubature integration rules are recommended (and the default).
 | `Hexahedron` | ✅ | ✅ | ✅ |
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
+| `ParametrizedCurve` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
 | `Polyarea` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
 | `Pyramid` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
