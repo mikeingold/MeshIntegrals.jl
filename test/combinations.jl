@@ -521,7 +521,8 @@ end
     # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.5.20"
         radius = 4.4
-        curve_cart = ParametrizedCurve(t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
+        curve_cart = ParametrizedCurve(
+            t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
         curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
         function f(p::P) where {P <: Meshes.Point}
