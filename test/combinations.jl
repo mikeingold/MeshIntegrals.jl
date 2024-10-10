@@ -169,14 +169,32 @@ end
 end
 
 @testitem "Meshes.Box 4D" setup=[Setup] begin
-    a = zero(Float64)
-    b = zero(Float64)
-    box = Box(Point(a, a, a, a), Point(b, b, b, b))
+    a = π
+    box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
 
-    f = p -> one(Float64)
+    function f(p::P) where {P <: Meshes.Point}
+        x1, x2, x3, x4 = ustrip.(to(p).coords)
+        σ(x) = sqrt(a^2 - x^2)
+        (σ(x1) + σ(x2) + σ(x3) + σ(x4)) * u"Ω/m^4"
+    end
+    fv(p) = fill(f(p), 3)
 
-    # Test for currently-unsupported >3D differentials
-    @test integral(f, box)≈1.0u"m^4" broken=true
+    # Scalar integrand
+    sol = 4a^3 * (π * a^2 / 4) * u"Ω"
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test_throws "not supported" integral(f, box, GaussKronrod())
+    @test integral(f, box, HAdaptiveCubature(rtol = 1e-6))≈sol rtol=1e-6
+
+    # Vector integrand
+    vsol = fill(sol, 3)
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test_throws "not supported" integral(fv, box, GaussKronrod())
+    @test integral(fv, box, HAdaptiveCubature(rtol = 1e-6))≈vsol rtol=1e-6
+
+    # Integral aliases
+    @test_throws "not supported" lineintegral(f, box)
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test_throws "not supported" volumeintegral(f, box)
 
     # Test jacobian with wrong number of parametric coordinates
     @test_throws ArgumentError jacobian(box, zeros(2))

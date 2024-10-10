@@ -25,7 +25,8 @@ function lineintegral(
     if N == 1
         return integral(f, geometry, rule; kwargs...)
     else
-        error("Performing a line integral on a geometry with $N parametric dimensions not supported.")
+        throw(ArgumentError("Performing a line integral on a geometry \
+                            with $N parametric dimensions not supported."))
     end
 end
 
@@ -56,7 +57,8 @@ function surfaceintegral(
     if N == 2
         return integral(f, geometry, rule; kwargs...)
     else
-        error("Performing a surface integral on a geometry with $N parametric dimensions not supported.")
+        throw(ArgumentError("Performing a surface integral on a geometry \
+                            with $N parametric dimensions not supported."))
     end
 end
 
@@ -87,6 +89,7 @@ function volumeintegral(
     if N == 3
         return integral(f, geometry, rule; kwargs...)
     else
-        error("Performing a volume integral on a geometry with $N parametric dimensions not supported.")
+        throw(ArgumentError("Performing a volume integral on a geometry \
+                            with $N parametric dimensions not supported."))
     end
 end
