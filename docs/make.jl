@@ -18,4 +18,6 @@ makedocs(
 
 deploydocs(repo = "github.com/mikeingold/MeshIntegrals.jl.git",
     devbranch = "main",
-    push_preview = true)
+    versions = ["stable" => "v^", "v#.#", "dev" => "dev"],
+    push_preview = true
+)
