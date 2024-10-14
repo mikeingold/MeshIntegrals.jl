@@ -1,7 +1,8 @@
 using TestItemRunner
 using TestItems
 
-@run_package_tests verbose = true
+# For CI, run all tests not marked with the :extended tag
+@run_package_tests filter=ti->!(:extended in ti.tags) verbose=true
 
 @testsnippet Setup begin
     using Meshes

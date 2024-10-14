@@ -168,7 +168,7 @@ end
     @test volumeintegral(f, box) ≈ sol
 end
 
-@testitem "Meshes.Box 4D" setup=[Setup] begin
+@testitem "Meshes.Box 4D" tags=[:extended] setup=[Setup] begin
     a = π
     box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
 
@@ -804,7 +804,7 @@ end
     @test_throws "not supported" volumeintegral(f, sphere)
 end
 
-@testitem "Meshes.Tetrahedron" setup=[Setup] begin
+@testitem "Meshes.Tetrahedron" tags=[:extended] setup=[Setup] begin
     pt_n = Point(0, 1, 0)
     pt_w = Point(-1, 0, 0)
     pt_e = Point(1, 0, 0)
