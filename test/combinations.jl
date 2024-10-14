@@ -138,6 +138,9 @@ end
     @test_throws "not supported" lineintegral(f, box)
     @test surfaceintegral(f, box) ≈ sol
     @test_throws "not supported" volumeintegral(f, box)
+
+    # Test jacobian with wrong number of parametric coordinates
+    @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
 @testitem "Meshes.Box 3D" setup=[Setup] begin
@@ -195,9 +198,6 @@ end
     @test_throws "not supported" lineintegral(f, box)
     @test_throws "not supported" surfaceintegral(f, box)
     @test_throws "not supported" volumeintegral(f, box)
-
-    # Test jacobian with wrong number of parametric coordinates
-    @test_throws ArgumentError jacobian(box, zeros(2))
 end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
