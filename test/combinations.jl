@@ -201,16 +201,22 @@ end
 end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    ẑ = Vec(0, 0, 1)
-    xy_plane = Plane(origin, ẑ)
-    circle = Circle(xy_plane, 2.5)
+    center = Point(0, 3, 0)
+    n̂ = Vec(1/2, 1/2, sqrt(2)/2)
+    plane = Plane(center, n̂)
+    radius = 4.4
+    circle = Circle(plane, radius)
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        offset = p - center
+        ur = hypot(offset.coords...)
+        r = ustrip(u"m", ur)
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(circle)
+    sol = 2π * radius * exp(-radius^2) * u"m"
     @test integral(f, circle, GaussLegendre(100)) ≈ sol
     @test integral(f, circle, GaussKronrod()) ≈ sol
     @test integral(f, circle, HAdaptiveCubature()) ≈ sol
