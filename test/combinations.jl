@@ -33,26 +33,27 @@
 end
 
 @testitem "Meshes.Ball 3D" setup=[Setup] begin
-    # using SpecialFunctions: erf
+    using SpecialFunctions: erf
+    using LinearAlgebra: norm
 
-    center = Point(1, 2, 3)
+    center = Point(0, 0, 0)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
+        ur = norm(to(p))
         r = ustrip(u"m", ur)
-        # exp(-r^2)
+        exp(-r^2)
         # 1 / r
-        1.0
+        # 1.0
     end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    # r = ustrip(u"m", radius)
-    # sol = (π^(3/2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"   # for f(p) = exp(-r^2)
+    r = ustrip(u"m", radius)
+    sol = (π^(3/2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"   # for f(p) = exp(-r^2)
     # sol = 2π * radius^2 * u"m"     # for f(p) = 1/r
-    sol = (4 / 3) * π * radius^3   # for f(p) = 1
+    # sol = (4 / 3) * π * radius^3   # for f(p) = 1
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
