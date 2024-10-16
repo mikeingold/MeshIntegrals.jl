@@ -36,12 +36,13 @@ end
     using SpecialFunctions: erf
     using LinearAlgebra: norm
 
-    const center = Point(1, 2, 3)
+    center = Point(1, 2, 3)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = norm(to(p) - to(center))
+        offset = p - center
+        ur = norm(offset)
         r = ustrip(u"m", ur)
         exp(-r^2)
     end
