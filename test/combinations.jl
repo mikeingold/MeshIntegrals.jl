@@ -50,7 +50,7 @@ end
 
     # Scalar integrand
     r = ustrip(u"m", radius)
-    sol = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"   # for f(p) = exp(-r^2)
+    sol = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
