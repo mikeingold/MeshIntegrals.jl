@@ -36,24 +36,20 @@ end
     using SpecialFunctions: erf
     using LinearAlgebra: norm
 
-    center = Point(0, 0, 0)
+    center = Point(1, 2, 3)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = norm(to(p))
+        ur = norm(to(p) - to(center))
         r = ustrip(u"m", ur)
         exp(-r^2)
-        # 1 / r
-        # 1.0
     end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
     r = ustrip(u"m", radius)
     sol = (π^(3/2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"   # for f(p) = exp(-r^2)
-    # sol = 2π * radius^2 * u"m"     # for f(p) = 1/r
-    # sol = (4 / 3) * π * radius^3   # for f(p) = 1
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
