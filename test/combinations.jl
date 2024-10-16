@@ -33,7 +33,6 @@ end
 
 @testitem "Meshes.Ball 3D" setup=[Setup] begin
     using SpecialFunctions: erf
-    using LinearAlgebra: norm
 
     center = Point(1, 2, 3)
     radius = 2.8u"m"
@@ -544,7 +543,6 @@ end
     # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.51.20"
         using CoordRefSystems: Polar
-        using LinearAlgebra: norm
 
         # Parameterize a circle centered on origin with specified radius
         radius = 4.4
