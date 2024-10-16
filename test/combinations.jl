@@ -36,7 +36,7 @@ end
     using SpecialFunctions: erf
     using LinearAlgebra: norm
 
-    center = Point(1, 2, 3)
+    const center = Point(1, 2, 3)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
