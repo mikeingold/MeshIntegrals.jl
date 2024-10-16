@@ -219,7 +219,7 @@ end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
     center = Point(0, 3, 0)
-    n̂ = Vec(1/2, 1/2, sqrt(2)/2)
+    n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
     plane = Plane(center, n̂)
     radius = 4.4
     circle = Circle(plane, radius)
@@ -368,7 +368,7 @@ end
 
 @testitem "Meshes.Disk" setup=[Setup] begin
     center = Point(1, 2, 3)
-    n̂ = Vec(1/2, 1/2, sqrt(2)/2)
+    n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
     plane = Plane(center, n̂)
     radius = 2.5
     disk = Disk(plane, radius)
