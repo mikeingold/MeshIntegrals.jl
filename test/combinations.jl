@@ -8,8 +8,7 @@
     ball = Ball(origin, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -216,7 +215,7 @@ end
 end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
-    center = Point(0, 3, 0)
+    center = Point(1, 2, 3)
     n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
     plane = Plane(center, n̂)
     radius = 4.4
@@ -224,8 +223,7 @@ end
 
     function f(p::P) where {P <: Meshes.Point}
         offset = p - center
-        ur = hypot(offset.coords...)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(offset))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -373,8 +371,7 @@ end
 
     function f(p::P) where {P <: Meshes.Point}
         offset = p - center
-        ur = hypot(offset.coords...)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(offset))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -494,8 +491,7 @@ end
     line = Line(a, b)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -597,8 +593,7 @@ end
     plane = Plane(p, v)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -626,8 +621,7 @@ end
     quadrangle = Quadrangle((-1.0, 0.0), (-1.0, 1.0), (1.0, 1.0), (1.0, 0.0))
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -656,8 +650,7 @@ end
     ray = Ray(a, v)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -752,8 +745,7 @@ end
     a, b = (7.1, 4.6)  # arbitrary constants > 0
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(r * log(a) + (1 - r) * log(b))
     end
     fv(p) = fill(f(p), 3)
@@ -782,8 +774,7 @@ end
     sphere = Sphere(origin, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
