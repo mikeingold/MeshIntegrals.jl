@@ -4,13 +4,18 @@
 
 @testitem "Meshes.Ball 2D" setup=[Setup] begin
     origin = Point(0, 0)
-    ball = Ball(origin, 2.8)
+    radius = 2.8
+    ball = Ball(origin, radius)
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        ur = hypot(p.coords.x, p.coords.y)
+        r = ustrip(u"m", ur)
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(ball)
+    sol = (π - π * exp(-radius^2)) * u"m^2"
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test integral(f, ball, GaussKronrod()) ≈ sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
