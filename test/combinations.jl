@@ -4,13 +4,17 @@
 
 @testitem "Meshes.Ball 2D" setup=[Setup] begin
     origin = Point(0, 0)
-    ball = Ball(origin, 2.8)
+    radius = 2.8
+    ball = Ball(origin, radius)
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        r = ustrip(u"m", norm(to(p)))
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(ball)
+    sol = (π - π * exp(-radius^2)) * u"m^2"
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test integral(f, ball, GaussKronrod()) ≈ sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
@@ -28,14 +32,23 @@
 end
 
 @testitem "Meshes.Ball 3D" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    ball = Ball(origin, 2.8)
+    using SpecialFunctions: erf
 
-    f(p) = 1.0
+    center = Point(1, 2, 3)
+    radius = 2.8u"m"
+    ball = Ball(center, radius)
+
+    function f(p::P) where {P <: Meshes.Point}
+        offset = p - center
+        ur = norm(offset)
+        r = ustrip(u"m", ur)
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(ball)
+    r = ustrip(u"m", radius)
+    sol = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
     @test integral(f, ball, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
     @test integral(f, ball, HAdaptiveCubature()) ≈ sol
@@ -201,16 +214,21 @@ end
 end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    ẑ = Vec(0, 0, 1)
-    xy_plane = Plane(origin, ẑ)
-    circle = Circle(xy_plane, 2.5)
+    center = Point(1, 2, 3)
+    n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
+    plane = Plane(center, n̂)
+    radius = 4.4
+    circle = Circle(plane, radius)
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        offset = p - center
+        r = ustrip(u"m", norm(offset))
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(circle)
+    sol = 2π * radius * exp(-radius^2) * u"m"
     @test integral(f, circle, GaussLegendre(100)) ≈ sol
     @test integral(f, circle, GaussKronrod()) ≈ sol
     @test integral(f, circle, HAdaptiveCubature()) ≈ sol
@@ -344,16 +362,21 @@ end
 end
 
 @testitem "Meshes.Disk" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    ẑ = Vec(0, 0, 1)
-    xy_plane = Plane(origin, ẑ)
-    disk = Disk(xy_plane, 2.5)
+    center = Point(1, 2, 3)
+    n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
+    plane = Plane(center, n̂)
+    radius = 2.5
+    disk = Disk(plane, radius)
 
-    f(p) = 1.0
+    function f(p::P) where {P <: Meshes.Point}
+        offset = p - center
+        r = ustrip(u"m", norm(offset))
+        exp(-r^2)
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(disk)
+    sol = (π - π * exp(-radius^2)) * u"m^2"
     @test integral(f, disk, GaussLegendre(100)) ≈ sol
     @test integral(f, disk, GaussKronrod()) ≈ sol
     @test integral(f, disk, HAdaptiveCubature()) ≈ sol
@@ -467,8 +490,7 @@ end
     line = Line(a, b)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -521,7 +543,6 @@ end
     # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.51.20"
         using CoordRefSystems: Polar
-        using LinearAlgebra: norm
 
         # Parameterize a circle centered on origin with specified radius
         radius = 4.4
@@ -570,8 +591,7 @@ end
     plane = Plane(p, v)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -599,8 +619,7 @@ end
     quadrangle = Quadrangle((-1.0, 0.0), (-1.0, 1.0), (1.0, 1.0), (1.0, 0.0))
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -629,8 +648,7 @@ end
     ray = Ray(a, v)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -725,8 +743,7 @@ end
     a, b = (7.1, 4.6)  # arbitrary constants > 0
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y, p.coords.z)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(r * log(a) + (1 - r) * log(b))
     end
     fv(p) = fill(f(p), 3)
@@ -755,8 +772,7 @@ end
     sphere = Sphere(origin, radius)
 
     function f(p::P) where {P <: Meshes.Point}
-        ur = hypot(p.coords.x, p.coords.y)
-        r = ustrip(u"m", ur)
+        r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
     fv(p) = fill(f(p), 3)
@@ -780,14 +796,23 @@ end
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    sphere = Sphere(origin, 4.4)
+    using CoordRefSystems: Cartesian, Spherical
 
-    f(p) = 1.0
+    center = Point(1, 2, 3)
+    radius = 4.4u"m"
+    sphere = Sphere(center, radius)
+
+    function f(p::P) where {P <: Meshes.Point}
+        rθφ = convert(Spherical, Cartesian((p - center)...))
+        r = ustrip(rθφ.r)
+        θ = ustrip(rθφ.θ)
+        φ = ustrip(rθφ.ϕ)
+        sin(φ)^2 + cos(θ)^2
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(sphere)
+    sol = (2π * radius^2) + (4π / 3 * radius^2)
     @test integral(f, sphere, GaussLegendre(100)) ≈ sol
     @test integral(f, sphere, GaussKronrod()) ≈ sol
     @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
