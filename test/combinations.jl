@@ -796,14 +796,23 @@ end
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Setup] begin
-    origin = Point(0, 0, 0)
-    sphere = Sphere(origin, 4.4)
+    using CoordRefSystems: Cartesian, Spherical
 
-    f(p) = 1.0
+    center = Point(1, 2, 3)
+    radius = 4.4u"m"
+    sphere = Sphere(center, radius)
+
+    function f(p::P) where {P <: Meshes.Point}
+        rθφ = convert(Spherical, Cartesian((p - center)...))
+        r = ustrip(rθφ.r)
+        θ = ustrip(rθφ.θ)
+        φ = ustrip(rθφ.ϕ)
+        sin(φ)^2 + cos(θ)^2
+    end
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(sphere)
+    sol = (2π * radius^2) + (4π / 3 * radius^2)
     @test integral(f, sphere, GaussLegendre(100)) ≈ sol
     @test integral(f, sphere, GaussKronrod()) ≈ sol
     @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
