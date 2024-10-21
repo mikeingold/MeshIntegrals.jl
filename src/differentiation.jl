@@ -89,7 +89,7 @@ Return the magnitude of the differential element (length, area, volume, etc) of
 the parametric function for `geometry` at arguments `ts`.
 """
 function differential(
-        geometry::Meshes.Geometry{M, CRS},
+        geometry::Meshes.Geometry,
         ts::V
 ) where {V <: Union{AbstractVector, Tuple}}
     J = Iterators.map(_KVector, jacobian(geometry, ts))
