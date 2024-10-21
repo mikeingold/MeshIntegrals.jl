@@ -85,22 +85,13 @@ end
 """
     differential(geometry, ts)
 
-Calculate the differential element (length, area, volume, etc) of the parametric
-function for `geometry` at arguments `ts`.
+Return the magnitude of the differential element (length, area, volume, etc) of
+the parametric function for `geometry` at arguments `ts`.
 """
 function differential(
         geometry::G,
         ts::V
 ) where {M, CRS, G <: Meshes.Geometry{M, CRS}, V <: Union{AbstractVector, Tuple}}
-    # Calculate the Jacobian, convert Vec -> KVector
-    J = jacobian(geometry, ts)
-    J_kvecs = Iterators.map(_kvector, J)
-
-    # Extract units from Geometry type
-    Dim = Meshes.paramdim(geometry)
-    units = _units(geometry)^Dim
-
-    # Return norm of the exterior products
-    element = foldl(∧, J_kvecs)
-    return LinearAlgebra.norm(element) * units
+    J = Iterators.map(_KVector, jacobian(geometry, ts))
+    return LinearAlgebra.norm(foldl(∧, J))
 end
