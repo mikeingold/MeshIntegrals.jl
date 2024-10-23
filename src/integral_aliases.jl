@@ -15,11 +15,11 @@ Rule types available:
 - HAdaptiveCubature
 """
 function lineintegral(
-        f::F,
-        geometry::G,
-        rule::I = GaussKronrod();
+        f::Function,
+        geometry::Geometry,
+        rule::IntegrationRule = GaussKronrod();
         kwargs...
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
+)
     N = Meshes.paramdim(geometry)
 
     if N == 1
@@ -47,11 +47,11 @@ Algorithm types available:
 - HAdaptiveCubature (default)
 """
 function surfaceintegral(
-        f::F,
-        geometry::G,
-        rule::I = HAdaptiveCubature();
+        f::Function,
+        geometry::Geometry,
+        rule::IntegrationRule = HAdaptiveCubature();
         kwargs...
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
+)
     N = Meshes.paramdim(geometry)
 
     if N == 2
@@ -79,11 +79,11 @@ Algorithm types available:
 - HAdaptiveCubature (default)
 """
 function volumeintegral(
-        f::F,
-        geometry::G,
-        rule::I = HAdaptiveCubature();
+        f::Function,
+        geometry::Geometry,
+        rule::IntegrationRule = HAdaptiveCubature();
         kwargs...
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
+)
     N = Meshes.paramdim(geometry)
 
     if N == 3
