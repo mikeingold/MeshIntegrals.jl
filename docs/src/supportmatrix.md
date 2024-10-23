@@ -35,24 +35,24 @@ Cubature integration rules are recommended (and the default).
 | `CylinderSurface` | ✅ | ✅ | ✅ |
 | `Disk` | ✅ | ✅ | ✅ |
 | `Ellipsoid` | ✅ | ✅ | ✅ |
-| `Frustum` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
+| `Frustum` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) |
 | `FrustumSurface` | ✅ | ✅ | ✅ |
 | `Hexahedron` | ✅ | ✅ | ✅ |
 | `Line` | ✅ | ✅ | ✅ |
 | `ParaboloidSurface` | ✅ | ✅ | ✅ |
 | `ParametrizedCurve` | ✅ | ✅ | ✅ |
 | `Plane` | ✅ | ✅ | ✅ |
-| `Polyarea` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
-| `Pyramid` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
+| `Polyarea` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) |
+| `Pyramid` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) |
 | `Quadrangle` | ✅ | ✅ | ✅ |
 | `Ray` | ✅ | ✅ | ✅ |
 | `Ring` | ✅ | ✅ | ✅ |
 | `Rope` | ✅ | ✅ | ✅ |
 | `Segment` | ✅ | ✅ | ✅ |
-| `SimpleMesh` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/27) |
+| `SimpleMesh` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) |
 | `Sphere` in `𝔼{2}` | ✅ | ✅ | ✅ |
 | `Sphere` in `𝔼{3}` | ✅ | ✅ | ✅ |
-| `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/40) |
+| `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/40) |
 | `Triangle` | ✅ | ✅ | ✅ |
 | `Torus` | ✅ | ✅ | ✅ |
-| `Wedge` | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/mikeingold/MeshIntegrals.jl/issues/28) |
+| `Wedge` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) |
