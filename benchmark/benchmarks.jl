@@ -8,7 +8,7 @@ const SUITE = BenchmarkGroup()
 SUITE["Integrals"] = BenchmarkGroup()
 
 segment = Segment(Point(0, 0, 0), Point(1, 1, 1))
-f(p) = LinearAlgebra.norm(to(p))
+f(p) = norm(to(p))
 fv(p) = fill(f(p), 3)
 
 integrands = (
@@ -28,3 +28,6 @@ SUITE["Integrals"]["Meshes.Segment"] = let s = BenchmarkGroup()
     end
     s
 end
+
+#tune!(SUITE)
+#run(SUITE, verbose=true)
