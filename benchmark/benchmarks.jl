@@ -1,5 +1,5 @@
 using BenchmarkTools
-using LinearAlgebra: norm
+using LinearAlgebra
 using Meshes
 using MeshIntegrals
 using Unitful
@@ -11,12 +11,20 @@ segment = Segment(Point(0, 0, 0), Point(1, 1, 1))
 f(p) = LinearAlgebra.norm(to(p))
 fv(p) = fill(f(p), 3)
 
+rules = (
+    (name="GaussLegendre", rule=GaussLegendre(100)),
+    (name="GaussKronrod", rule=GaussKronrod()),
+    (name="HAdaptiveCubature", rule=HAdaptiveCubature())
+)
+integrands = (
+    (name="Scalar", f=f),
+    (name="Vector", f=fv)
+)
+
 SUITE["Integrals"]["Meshes.Segment"] = let s = BenchmarkGroup()
-    s["Scalar GaussLegendre"] = @benchmarkable integral($f, $segment, GaussLegendre(100)) evals=1000
-    s["Scalar GaussKronrod"] = @benchmarkable integral($f, $segment, GaussKronrod()) evals=1000
-    s["Scalar HAdaptiveCubature"] = @benchmarkable integral($f, $segment, HAdaptiveCubature()) evals=1000
-    s["Vector GaussLegendre"] = @benchmarkable integral($fv, $segment, GaussLegendre(100)) evals=1000
-    s["Vector GaussKronrod"] = @benchmarkable integral($fv, $segment, GaussKronrod()) evals=1000
-    s["Vector HAdaptiveCubature"] = @benchmarkable integral($fv, $segment, HAdaptiveCubature()) evals=1000
+    for (int, rule) in Iterators.product(integrands, rules)
+        name = "$(int.name) $(rule.name)"
+        s[name] = @benchmarkable integral($int.f, $segment, $rule.rule) evals=1000
+    end
     s
 end
