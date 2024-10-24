@@ -11,14 +11,14 @@ segment = Segment(Point(0, 0, 0), Point(1, 1, 1))
 f(p) = LinearAlgebra.norm(to(p))
 fv(p) = fill(f(p), 3)
 
-rules = (
-    (name="GaussLegendre", rule=GaussLegendre(100)),
-    (name="GaussKronrod", rule=GaussKronrod()),
-    (name="HAdaptiveCubature", rule=HAdaptiveCubature())
-)
 integrands = (
-    (name="Scalar", f=f),
-    (name="Vector", f=fv)
+    (name = "Scalar", f = f),
+    (name = "Vector", f = fv)
+)
+rules = (
+    (name = "GaussLegendre", rule = GaussLegendre(100)),
+    (name = "GaussKronrod", rule = GaussKronrod()),
+    (name = "HAdaptiveCubature", rule = HAdaptiveCubature())
 )
 
 SUITE["Integrals"]["Meshes.Segment"] = let s = BenchmarkGroup()
