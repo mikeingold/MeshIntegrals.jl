@@ -14,10 +14,10 @@ finite-difference approximation with step size `ε`.
 - `ε`: step size to use for the finite-difference approximation
 """
 function jacobian(
-        geometry::G,
+        geometry::Geometry,
         ts::V;
         ε = 1e-6
-) where {G <: Meshes.Geometry, V <: Union{AbstractVector, Tuple}}
+) where {V <: Union{AbstractVector, Tuple}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
@@ -89,9 +89,9 @@ Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
 function differential(
-        geometry::G,
+        geometry::Geometry,
         ts::V
-) where {M, CRS, G <: Meshes.Geometry{M, CRS}, V <: Union{AbstractVector, Tuple}}
+) where {V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts)
     J_kvecs = Iterators.map(_kvector, J)
