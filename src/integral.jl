@@ -23,11 +23,11 @@ function integral end
 
 # If only f and geometry are specified, select default rule
 function integral(
-        f::F,
-        geometry::G,
+        f::Function,
+        geometry::Geometry,
         rule::I = Meshes.paramdim(geometry) == 1 ? GaussKronrod() : HAdaptiveCubature();
         kwargs...
-) where {F <: Function, G <: Meshes.Geometry, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     _integral(f, geometry, rule; kwargs...)
 end
 
