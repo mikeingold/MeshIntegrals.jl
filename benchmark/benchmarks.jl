@@ -2,7 +2,6 @@ using BenchmarkTools
 using LinearAlgebra
 using Meshes
 using MeshIntegrals
-using Unitful
 
 const SUITE = BenchmarkGroup()
 
