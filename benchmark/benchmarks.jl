@@ -6,6 +6,10 @@ using Unitful
 
 const SUITE = BenchmarkGroup()
 
+############################################################################################
+#                                      Integrals
+############################################################################################
+
 integrands = (
     (name = "Scalar", f = p -> norm(to(p))),
     (name = "Vector", f = p -> fill(norm(to(p)), 3))
@@ -26,6 +30,19 @@ SUITE["Integrals"] = let s = BenchmarkGroup()
         N = rule.N
         s[n1, n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule) evals=N
     end
+    s
+end
+
+############################################################################################
+#                                      Differentials
+############################################################################################
+
+sphere = geometries[2].item
+differential = MeshIntegrals.differential
+
+SUITE["Differentials"] = let s = BenchmarkGroup()
+    s["Jacobian"] = @benchmarkable jacobian($sphere, $(0.5, 0.5)) evals=1000
+    s["Differential"] = @benchmarkable differential($sphere, $(0.5, 0.5)) evals=1000
     s
 end
 
