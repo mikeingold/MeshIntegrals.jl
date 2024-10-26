@@ -5,7 +5,7 @@
 abstract type DifferentiationMethod end
 
 """
-    FiniteDifference(ε)
+    FiniteDifference(ε=1e-6)
 
 Use a finite-difference approximation method to calculate derivatives with a
 step size of `ε`.
