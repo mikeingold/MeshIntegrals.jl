@@ -15,7 +15,7 @@ struct FiniteDifference{T<:AbstractFloat} <: DifferentiationMethod
 end
 
 # If ε not specified, default to 1e-6
-FiniteDifference() = new(1e-6)
+FiniteDifference() = FiniteDifference(1e-6)
 
 # struct EnzymeAD <: DifferentiationMethod
 # end
