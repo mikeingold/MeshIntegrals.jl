@@ -28,7 +28,7 @@ FiniteDifference() = FiniteDifference(1e-6)
 ################################################################################
 
 """
-    jacobian(geometry, ts, method)
+    jacobian(geometry, ts, method=FiniteDifference())
 
 Calculate the Jacobian of a geometry's parametric function at some point `ts`
 using a particular differentiation method.
