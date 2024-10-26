@@ -88,7 +88,7 @@ function _integral(
         rule::HAdaptiveCubature;
         dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, dt)
@@ -116,7 +116,7 @@ function _integral_gk_1d(
         rule::GaussKronrod;
         dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, (t,), dt)
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
@@ -127,7 +127,7 @@ function _integral_gk_2d(
         rule::GaussKronrod;
         dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), dt)
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
     return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
