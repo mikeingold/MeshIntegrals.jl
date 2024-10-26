@@ -11,8 +11,9 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussLegendre;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -25,7 +26,7 @@ function integral(
 
     # Integrate f along the Line
     domainunits = _units(line(0))
-    integrand(x) = f(line(t(x))) * t′(x) * domainunits
+    integrand(x) = f(line(t(x))) * t′(x) * domainunits    # TODO differential
     return sum(w .* integrand(x) for (w, x) in zip(ws, xs))
 end
 
@@ -33,14 +34,15 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussKronrod;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
     # Integrate f along the Line
     domainunits = _units(line(0))
-    integrand(t) = f(line(t)) * domainunits
+    integrand(t) = f(line(t)) * domainunits       # TODO differential
     return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
 
@@ -48,8 +50,9 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::HAdaptiveCubature;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
@@ -59,7 +62,7 @@ function integral(
 
     # Integrate f along the Line
     domainunits = _units(line(0))
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1]) * domainunits
+    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1]) * domainunits     # TODO differential
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
