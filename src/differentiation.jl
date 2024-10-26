@@ -25,19 +25,22 @@ end
 ################################################################################
 
 """
-    jacobian(geometry, ts; ε=1e-6)
+    jacobian(geometry, ts, method)
 
-Calculate the Jacobian of a geometry at some parametric point `ts` using a simple
-finite-difference approximation with step size `ε`.
+Calculate the Jacobian of a geometry's parametric function at some point `ts`
+using a particular differentiation method.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `ε`: step size to use for the finite-difference approximation
+- `method`: the desired `DifferentiationMethod`
 """
+function jacobian end
+
 function jacobian(
         geometry::Geometry,
-        ts::V;
+        ts::V,
+        fd::FiniteDifference;
         ε = 1e-6
 ) where {V <: Union{AbstractVector, Tuple}}
     Dim = Meshes.paramdim(geometry)
@@ -46,7 +49,7 @@ function jacobian(
     end
 
     T = eltype(ts)
-    ε = T(ε)
+    ε = T(fd.ε)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
