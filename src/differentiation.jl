@@ -80,17 +80,18 @@ end
 ################################################################################
 
 """
-    differential(geometry, ts)
+    differential(geometry, ts, method=FiniteDifference())
 
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
 """
 function differential(
         geometry::Geometry,
-        ts::V
+        ts::V,
+        method::DifferentiationMethod = FiniteDifference()
 ) where {V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
-    J = jacobian(geometry, ts)
+    J = jacobian(geometry, ts, method)
     J_kvecs = Iterators.map(_kvector, J)
 
     # Extract units from Geometry type
