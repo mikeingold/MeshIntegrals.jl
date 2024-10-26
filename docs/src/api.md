@@ -11,6 +11,13 @@ Modules = [MeshIntegrals]
 Pages = ["integral.jl"]
 ```
 
+### Specializations
+
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = Main.SPECIALIZATIONS_FILES
+```
+
 ### Aliases
 
 ```@autodocs
