@@ -28,15 +28,15 @@ FiniteDifference() = FiniteDifference(1e-6)
 ################################################################################
 
 """
-    jacobian(geometry, ts, method=FiniteDifference())
+    jacobian(geometry, ts, dt=FiniteDifference())
 
 Calculate the Jacobian of a geometry's parametric function at some point `ts`
-using a particular differentiation method.
+using a particular differentiation method `dt`.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `method`: the desired `DifferentiationMethod`
+- `dt`: the desired `DifferentiationMethod`
 """
 function jacobian end
 
@@ -50,7 +50,7 @@ end
 function jacobian(
         geometry::Geometry,
         ts::V,
-        fd::FiniteDifference
+        dt::FiniteDifference
 ) where {V <: Union{AbstractVector, Tuple}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
@@ -58,7 +58,7 @@ function jacobian(
     end
 
     T = eltype(ts)
-    ε = T(fd.ε)
+    ε = T(dt.ε)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
@@ -87,7 +87,7 @@ end
 ################################################################################
 
 """
-    differential(geometry, ts, method=FiniteDifference())
+    differential(geometry, ts, dt=FiniteDifference())
 
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
@@ -95,10 +95,10 @@ function for `geometry` at arguments `ts`.
 function differential(
         geometry::Geometry,
         ts::V,
-        method::DifferentiationMethod = FiniteDifference()
+        dt::DifferentiationMethod = FiniteDifference()
 ) where {V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
-    J = jacobian(geometry, ts, method)
+    J = jacobian(geometry, ts, dt)
     J_kvecs = Iterators.map(_kvector, J)
 
     # Extract units from Geometry type
