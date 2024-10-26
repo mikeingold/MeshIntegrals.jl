@@ -40,8 +40,7 @@ function jacobian end
 function jacobian(
         geometry::Geometry,
         ts::V,
-        fd::FiniteDifference;
-        ε = 1e-6
+        fd::FiniteDifference
 ) where {V <: Union{AbstractVector, Tuple}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
