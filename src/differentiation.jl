@@ -26,15 +26,15 @@ FiniteDifference() = FiniteDifference(1e-6)
 ################################################################################
 
 """
-    jacobian(geometry, ts, dt=FiniteDifference())
+    jacobian(geometry, ts, diff_method=FiniteDifference())
 
 Calculate the Jacobian of a geometry's parametric function at some point `ts`
-using a particular differentiation method `dt`.
+using a particular differentiation method `diff_method`.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `dt`: the desired `DifferentiationMethod`
+- `diff_method`: the desired `DifferentiationMethod`
 """
 function jacobian end
 
@@ -48,7 +48,7 @@ end
 function jacobian(
         geometry::Geometry,
         ts::V,
-        dt::FiniteDifference
+        diff_method::FiniteDifference
 ) where {V <: Union{AbstractVector, Tuple}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
@@ -56,7 +56,7 @@ function jacobian(
     end
 
     T = eltype(ts)
-    ε = T(dt.ε)
+    ε = T(diff_method.ε)
 
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
@@ -85,7 +85,7 @@ end
 ################################################################################
 
 """
-    differential(geometry, ts, dt=FiniteDifference())
+    differential(geometry, ts, diff_method=FiniteDifference())
 
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`.
@@ -93,10 +93,10 @@ function for `geometry` at arguments `ts`.
 function differential(
         geometry::Geometry,
         ts::V,
-        dt::DifferentiationMethod = FiniteDifference()
+        diff_method::DifferentiationMethod = FiniteDifference()
 ) where {V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
-    J = jacobian(geometry, ts, dt)
+    J = jacobian(geometry, ts, diff_method)
     J_kvecs = Iterators.map(_kvector, J)
 
     # Extract units from Geometry type
