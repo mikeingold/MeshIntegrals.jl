@@ -59,8 +59,9 @@ function _integral(
         f,
         geometry,
         rule::GaussLegendre;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
@@ -73,7 +74,7 @@ function _integral(
 
     function integrand((weights, nodes))
         ts = t.(nodes)
-        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
+        prod(weights) * f(geometry(ts...)) * differential(geometry, ts, dt)
     end
 
     return FP(1 // (2^N)) .* sum(integrand, zip(weights, nodes))
@@ -84,11 +85,12 @@ function _integral(
         f,
         geometry,
         rule::HAdaptiveCubature;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
-    integrand(ts) = f(geometry(ts...)) * differential(geometry, ts)
+    integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, dt)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
@@ -111,9 +113,10 @@ function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, (t,))
+    integrand(t) = f(geometry(t)) * differential(geometry, (t,), dt)
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
@@ -121,9 +124,10 @@ function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
+        dt::DM = FiniteDifference(),
         FP::Type{T} = Float64
 ) where {T <: AbstractFloat}
-    integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v))
+    integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), dt)
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
     return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
 end
