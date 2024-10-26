@@ -21,8 +21,9 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::GaussLegendre;
+        diff_method::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
@@ -63,8 +64,9 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::GaussKronrod;
+        diff_method::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
     ∫u(u) = QuadGK.quadgk(v -> f(triangle(u, v)), zero(FP), FP(1 - u); rule.kwargs...)[1]
@@ -85,8 +87,9 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::HAdaptiveCubature;
+        diff_method::DM = FiniteDifference(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )
