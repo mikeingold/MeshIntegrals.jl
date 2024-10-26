@@ -25,7 +25,6 @@ MeshIntegrals.HAdaptiveCubature
 ## Derivatives
 
 ```@docs
-MeshIntegrals.DifferentiationMethod
 MeshIntegrals.FiniteDifference
 ```
 
