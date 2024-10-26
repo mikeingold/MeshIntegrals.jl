@@ -2,16 +2,22 @@
 #                               JacobianMethods
 ################################################################################
 
-abstract type JacobianMethod end
+abstract type DifferentiationMethod end
 
-struct FiniteDifference{T<:AbstractFloat} <: JacobianMethod
+"""
+    FiniteDifference(ε)
+
+Use a finite-difference approximation method to calculate derivatives with a
+step size of `ε`.
+"""
+struct FiniteDifference{T<:AbstractFloat} <: DifferentiationMethod
     ε::T
 end
 
-# struct EnzymeAD <: JacobianMethod
+# struct EnzymeAD <: DifferentiationMethod
 # end
 
-# struct ZygoteAD <: JacobianMethod
+# struct ZygoteAD <: DifferentiationMethod
 # end
 
 ################################################################################
