@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; FP=Float64)
+    integral(f, geometry[, rule]; dt=FiniteDifference(), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -14,6 +14,7 @@ precision of type `FP`.
 - `geometry`: some `Meshes.Geometry` that defines the integration domain
 - `rule`: optionally, the `IntegrationRule` used for integration (by default `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
 - `FP`: optionally, the floating point precision desired (`Float64` by default)
+- `dt`: optionally, use a particular `DifferentiationMethod` for calculating differential elements
 
 Note that reducing `FP` below `Float64` will incur some loss of precision. By
 contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
