@@ -1,7 +1,7 @@
 # Support Matrix
 
-While this library aims to support all possible integration rules and **Meshes.jl**
-geometry types, some combinations are ill-suited and some others are simplu not yet
+While this library aims to support all possible integration rules and [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl)
+geometry types, some combinations are ill-suited and some others are simply not yet
 implemented. The following Support Matrix aims to capture the current development state of
 all geometry/rule combinations. Entries with a green check mark are fully supported
 and have passing unit tests that provide some confidence they produce accurate results.
