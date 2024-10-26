@@ -1,5 +1,21 @@
 ################################################################################
-#                     Jacobian and Differential Elements
+#                               JacobianMethods
+################################################################################
+
+abstract type JacobianMethod end
+
+struct FiniteDifference{T<:AbstractFloat} <: JacobianMethod
+    ε::T
+end
+
+# struct EnzymeAD <: JacobianMethod
+# end
+
+# struct ZygoteAD <: JacobianMethod
+# end
+
+################################################################################
+#                                  Jacobian
 ################################################################################
 
 """
