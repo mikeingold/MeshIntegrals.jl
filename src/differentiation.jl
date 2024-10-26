@@ -10,7 +10,7 @@ abstract type DifferentiationMethod end
 Use a finite-difference approximation method to calculate derivatives with a
 step size of `ε`.
 """
-struct FiniteDifference{T<:AbstractFloat} <: DifferentiationMethod
+struct FiniteDifference{T <: AbstractFloat} <: DifferentiationMethod
     ε::T
 end
 
