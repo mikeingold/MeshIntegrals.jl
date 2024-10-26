@@ -42,6 +42,13 @@ function jacobian end
 
 function jacobian(
         geometry::Geometry,
+        ts::V
+) where {V <: Union{AbstractVector, Tuple}}
+    return jacobian(geometry, ts, FiniteDifference())
+end
+
+function jacobian(
+        geometry::Geometry,
         ts::V,
         fd::FiniteDifference
 ) where {V <: Union{AbstractVector, Tuple}}
