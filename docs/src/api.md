@@ -1,33 +1,40 @@
 # Public API
 
+```@meta
+CurrentModule = MeshIntegrals
+```
+
 ## Integrals
 
-```@docs
-MeshIntegrals.integral
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = ["integral.jl"]
+```
+
+### Specializations
+
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = Main.SPECIALIZATIONS_FILES
 ```
 
 ### Aliases
 
-```@docs
-MeshIntegrals.lineintegral
-MeshIntegrals.surfaceintegral
-MeshIntegrals.volumeintegral
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = ["integral_aliases.jl"]
 ```
 
 ## Integration Rules
 
-```@docs
-MeshIntegrals.GaussKronrod
-MeshIntegrals.GaussLegendre
-MeshIntegrals.HAdaptiveCubature
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = ["integration_rules.jl"]
 ```
 
 ## Derivatives
 
-```@docs
-MeshIntegrals.FiniteDifference
-```
-
-```@docs
-MeshIntegrals.jacobian
+```@autodocs
+Modules = [MeshIntegrals]
+Pages = ["differentiation.jl"]
 ```

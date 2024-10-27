@@ -10,7 +10,7 @@
 ################################################################################
 
 """
-    integral(f, curve::BezierCurve, ::GaussLegendre;
+    integral(f, curve::BezierCurve, rule = GaussKronrod();
              diff_method=FiniteDifference(), FP=Float64, alg=Meshes.Horner())
 
 Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
@@ -40,17 +40,6 @@ function integral(
     return FP(1 // 2) * sum(w .* integrand(x) for (w, x) in zip(ws, xs))
 end
 
-"""
-    integral(f, curve::BezierCurve, ::GaussKronrod;
-             diff_method=DifferentiationMethod(), FP=Float64, alg=Meshes.Horner())
-
-Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
-default this uses Horner's method to improve performance when parameterizing
-the `curve` at the expense of a small loss of precision. Additional accuracy
-can be obtained by specifying the use of DeCasteljau's algorithm instead with
-`alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
-especially for curves with a large number of control points.
-"""
 function integral(
         f::F,
         curve::Meshes.BezierCurve,
@@ -64,17 +53,6 @@ function integral(
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
-"""
-    integral(f, curve::BezierCurve, ::HAdaptiveCubature;
-             diff_method=FiniteDifference(), FP=Float64, alg=Meshes.Horner())
-
-Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
-default this uses Horner's method to improve performance when parameterizing
-the `curve` at the expense of a small loss of precision. Additional accuracy
-can be obtained by specifying the use of DeCasteljau's algorithm instead with
-`alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
-especially for curves with a large number of control points.
-"""
 function integral(
         f::F,
         curve::Meshes.BezierCurve,

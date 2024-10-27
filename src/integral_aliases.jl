@@ -10,9 +10,9 @@ using a particular numerical integration `rule` with floating point precision of
 type `FP`.
 
 Rule types available:
-- GaussKronrod (default)
-- GaussLegendre
-- HAdaptiveCubature
+- [`GaussKronrod`](@ref) (default)
+- [`GaussLegendre`](@ref)
+- [`HAdaptiveCubature`](@ref)
 """
 function lineintegral(
         f::Function,
@@ -42,9 +42,9 @@ using a particular numerical integration `rule` with floating point precision of
 type `FP`.
 
 Algorithm types available:
-- GaussKronrod
-- GaussLegendre
-- HAdaptiveCubature (default)
+- [`GaussKronrod`](@ref)
+- [`GaussLegendre`](@ref)
+- [`HAdaptiveCubature`](@ref) (default)
 """
 function surfaceintegral(
         f::Function,
@@ -74,9 +74,9 @@ Numerically integrate a given function `f(::Point)` throughout a volumetric
 precision of type `FP`.
 
 Algorithm types available:
-- GaussKronrod
-- GaussLegendre
-- HAdaptiveCubature (default)
+- [`GaussKronrod`](@ref)
+- [`GaussLegendre`](@ref)
+- [`HAdaptiveCubature`](@ref) (default)
 """
 function volumeintegral(
         f::Function,
