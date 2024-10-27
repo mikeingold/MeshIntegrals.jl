@@ -9,6 +9,9 @@
 #   keyword argument and pass through the specified algorithm choice.
 ################################################################################
 
+################################################################################
+#                              integral
+################################################################################
 """
     integral(f, curve::BezierCurve, rule = GaussKronrod();
              diff_method=FiniteDifference(), FP=Float64, alg=Meshes.Horner())
@@ -76,3 +79,40 @@ function integral(
     # Reapply units
     return value .* integrandunits
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+#=
+function jacobian(
+    bz::Meshes.BezierCurve,
+    ts::V,
+    diff_method::DifferentiationMethod = FiniteDifference()
+) where {V <: Union{AbstractVector, Tuple}}
+    t = only(ts)
+    # Parameter t restricted to domain [0,1] by definition
+    if t < 0 || t > 1
+        throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
+    end
+
+    # Aliases
+    P = bz.controls
+    N = Meshes.degree(bz)
+
+    # Ensure that this implementation is tractible: limited by ability to calculate
+    #   binomial(N, N/2) without overflow. It's possible to extend this range by
+    #   converting N to a BigInt, but this results in always returning BigFloat's.
+    N <= 1028 || error("This algorithm overflows for curves with ⪆1000 control points.")
+
+    # Generator for Bernstein polynomial functions
+    B(i, n) = t -> binomial(Int128(n), i) * t^i * (1 - t)^(n - i)
+
+    # Derivative = N Σ_{i=0}^{N-1} sigma(i)
+    #   P indices adjusted for Julia 1-based array indexing
+    sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
+    derivative = N .* sum(sigma, 0:(N - 1))
+
+    return (derivative,)
+end
+=#
