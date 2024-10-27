@@ -19,6 +19,8 @@ rules = (
     (name = "HAdaptiveCubature", rule = HAdaptiveCubature(), N = 500)
 )
 geometries = (
+    (name = "Meshes.BezierCurve",
+        item = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])),
     (name = "Meshes.Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
     (name = "Meshes.Sphere", item = Sphere(Point(0, 0, 0), 1.0))
 )
@@ -35,7 +37,7 @@ end
 #                                      Differentials
 ############################################################################################
 
-sphere = geometries[2].item
+sphere = Sphere(Point(0, 0, 0), 1.0)
 differential = MeshIntegrals.differential
 
 SUITE["Differentials"] = let s = BenchmarkGroup()
