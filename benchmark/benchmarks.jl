@@ -37,7 +37,7 @@ end
 #                                      Differentials
 ############################################################################################
 
-sphere = geometries[2].item
+sphere = Sphere(Point(0, 0, 0), 1.0)
 differential = MeshIntegrals.differential
 
 SUITE["Differentials"] = let s = BenchmarkGroup()
