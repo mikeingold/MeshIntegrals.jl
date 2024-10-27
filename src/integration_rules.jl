@@ -7,7 +7,8 @@ abstract type IntegrationRule end
 """
     GaussKronrod(kwargs...)
 
-The h-adaptive Gauss-Kronrod quadrature rule implemented by QuadGK.jl. All standard
+The h-adaptive Gauss-Kronrod quadrature rule implemented by
+[QuadGK.jl](https://github.com/JuliaMath/QuadGK.jl). All standard
 `QuadGK.quadgk` keyword arguments are supported. This rule works natively for one
 dimensional geometries; some two- and three-dimensional geometries are additionally
 supported using nested integral solvers with the specified `kwarg` settings.
@@ -21,7 +22,8 @@ end
     GaussLegendre(n)
 
 An `n`'th-order Gauss-Legendre quadrature rule. Nodes and weights are
-efficiently calculated using FastGaussQuadrature.jl.
+efficiently calculated using
+[FastGaussQuadrature.jl](https://github.com/JuliaApproximation/FastGaussQuadrature.jl).
 
 So long as the integrand function can be well-approximated by a polynomial of
 order `2n-1`, this method should yield results with 16-digit accuracy in `O(n)`
@@ -36,7 +38,8 @@ end
 """
     HAdaptiveCubature(kwargs...)
 
-The h-adaptive cubature rule implemented by HCubature.jl. All standard
+The h-adaptive cubature rule implemented by
+[HCubature.jl](https://github.com/JuliaMath/HCubature.jl). All standard
 `HCubature.hcubature` keyword arguments are supported.
 """
 struct HAdaptiveCubature <: IntegrationRule
