@@ -19,7 +19,8 @@ rules = (
     (name = "HAdaptiveCubature", rule = HAdaptiveCubature(), N = 500)
 )
 geometries = (
-    (name = "Meshes.BezierCurve", item = BezierCurve([Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in -pi:1e-2:pi]))
+    (name = "Meshes.BezierCurve", item =
+        BezierCurve([Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in -pi:1e-2:pi])),
     (name = "Meshes.Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
     (name = "Meshes.Sphere", item = Sphere(Point(0, 0, 0), 1.0))
 )
