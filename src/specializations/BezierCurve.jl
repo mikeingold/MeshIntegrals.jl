@@ -84,7 +84,6 @@ end
 #                               jacobian
 ################################################################################
 
-#=
 function jacobian(
     bz::Meshes.BezierCurve,
     ts::V,
@@ -115,4 +114,3 @@ function jacobian(
 
     return (derivative,)
 end
-=#
