@@ -19,7 +19,7 @@ FiniteDifference() = FiniteDifference(1e-6)
 
 struct Analytical <: DifferentiationMethod end
 
-has_analytic(Type{G}) where {G <: Geometry} = false
+has_analytic(::Type{G}) where {G <: Geometry} = false
 
 # struct AutoEnzyme <: DifferentiationMethod end
 
