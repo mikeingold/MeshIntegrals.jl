@@ -17,6 +17,8 @@ end
 # If ε not specified, default to 1e-6
 FiniteDifference() = FiniteDifference(1e-6)
 
+struct Analytic <: DifferentiationMethod end
+
 # struct AutoEnzyme <: DifferentiationMethod end
 
 # struct AutoZygote <: DifferentiationMethod end
