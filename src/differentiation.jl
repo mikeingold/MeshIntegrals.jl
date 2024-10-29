@@ -105,7 +105,7 @@ possible and finite difference approximations otherwise.
 - `diff_method`: the desired `DifferentiationMethod` to use
 """
 function differential(
-        geometry::Geometry,
+        geometry::G,
         ts::V,
         diff_method::DifferentiationMethod = default_method(G)
 ) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
