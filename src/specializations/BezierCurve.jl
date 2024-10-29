@@ -115,4 +115,4 @@ function jacobian(
     return (derivative,)
 end
 
-has_analytical(::BezierCurve) = true
+has_analytical(::Type{Meshes.BezierCurve}) = true
