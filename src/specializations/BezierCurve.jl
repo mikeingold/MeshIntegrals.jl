@@ -87,7 +87,7 @@ end
 function jacobian(
     bz::Meshes.BezierCurve,
     ts::V,
-    diff_method::Analytic
+    diff_method::Analytical
 ) where {V <: Union{AbstractVector, Tuple}}
     t = only(ts)
     # Parameter t restricted to domain [0,1] by definition
