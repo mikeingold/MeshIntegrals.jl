@@ -19,7 +19,8 @@ FiniteDifference() = FiniteDifference(1e-6)
 
 struct Analytical <: DifferentiationMethod end
 
-has_analytic(::Type{G}) where {G <: Geometry} = false
+has_analytical(::Type{G}) where {G <: Geometry} = false
+default_method(::Type{G}) where {G <: Geometry} = has_analytical(G) ? Analytic() : FiniteDifference()
 
 # struct AutoEnzyme <: DifferentiationMethod end
 
@@ -48,8 +49,7 @@ function jacobian(
         geometry::G,
         ts::V
 ) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
-    diff_method = has_analytic(G) ? Analytic() : FiniteDifference()
-    return jacobian(geometry, ts, diff_method)
+    return jacobian(geometry, ts, default_method(G))
 end
 
 function jacobian(
@@ -107,8 +107,8 @@ possible and finite difference approximations otherwise.
 function differential(
         geometry::Geometry,
         ts::V,
-        diff_method::DifferentiationMethod = FiniteDifference()
-) where {V <: Union{AbstractVector, Tuple}}
+        diff_method::DifferentiationMethod = default_method(G)
+) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts, diff_method)
     J_kvecs = Iterators.map(_kvector, J)
