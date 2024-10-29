@@ -114,3 +114,5 @@ function jacobian(
 
     return (derivative,)
 end
+
+has_analytical(::BezierCurve) = true
