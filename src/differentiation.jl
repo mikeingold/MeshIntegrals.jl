@@ -1,5 +1,5 @@
 ################################################################################
-#                               JacobianMethods
+#                          DifferentiationMethods
 ################################################################################
 
 abstract type DifferentiationMethod end
@@ -19,6 +19,8 @@ FiniteDifference() = FiniteDifference(1e-6)
 
 struct Analytical <: DifferentiationMethod end
 
+has_analytic(Type{G}) where {G <: Geometry} = false
+
 # struct AutoEnzyme <: DifferentiationMethod end
 
 # struct AutoZygote <: DifferentiationMethod end
@@ -28,23 +30,26 @@ struct Analytical <: DifferentiationMethod end
 ################################################################################
 
 """
-    jacobian(geometry, ts, diff_method=FiniteDifference())
+    jacobian(geometry, ts[, diff_method])
 
-Calculate the Jacobian of a geometry's parametric function at some point `ts`
-using a particular differentiation method `diff_method`.
+Calculate the Jacobian of a `geometry`'s parametric function at some point `ts`.
+Optionally, direct the use of a particular `differentiation method`; by default
+use analytic solutions where possible and finite difference approximations
+otherwise.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `diff_method`: the desired `DifferentiationMethod`
+- `diff_method`: the desired `DifferentiationMethod` to use
 """
 function jacobian end
 
 function jacobian(
-        geometry::Geometry,
+        geometry::G,
         ts::V
-) where {V <: Union{AbstractVector, Tuple}}
-    return jacobian(geometry, ts, FiniteDifference())
+) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
+    diff_method = has_analytic(G) ? Analytic() : FiniteDifference()
+    return jacobian(geometry, ts, diff_method)
 end
 
 function jacobian(
@@ -87,10 +92,17 @@ end
 ################################################################################
 
 """
-    differential(geometry, ts, diff_method=FiniteDifference())
+    differential(geometry, ts[, diff_method])
 
 Calculate the differential element (length, area, volume, etc) of the parametric
-function for `geometry` at arguments `ts`.
+function for `geometry` at arguments `ts`. Optionally, direct the use of a
+particular `differentiation method`; by default use analytic solutions where
+possible and finite difference approximations otherwise.
+
+# Arguments
+- `geometry`: some `Meshes.Geometry` of N parametric dimensions
+- `ts`: a parametric point specified as a vector or tuple of length N
+- `diff_method`: the desired `DifferentiationMethod` to use
 """
 function differential(
         geometry::Geometry,
