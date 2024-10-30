@@ -12,7 +12,7 @@ import Unitful
 include("utils.jl")
 
 include("differentiation.jl")
-export DifferentiationMethod, FiniteDifference, jacobian
+export DifferentiationMethod, Analytical, FiniteDifference, jacobian
 
 include("integration_rules.jl")
 export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature

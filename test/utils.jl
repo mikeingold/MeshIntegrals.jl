@@ -18,10 +18,10 @@
         @test MeshIntegrals.has_analytical(Meshes.Sphere) == false
         @test MeshIntegrals.has_analytical(sphere) == false
 
-        @test MeshIntegrals.default_method(Meshes.BezierCurve) isa Analytic()
-        @test MeshIntegrals.default_method(bezier) isa Analytic()
-        @test MeshIntegrals.default_method(Meshes.Sphere) isa FiniteDifference()
-        @test MeshIntegrals.default_method(sphere) isa FiniteDifference()
+        @test MeshIntegrals.default_method(Meshes.BezierCurve) isa Analytical
+        @test MeshIntegrals.default_method(bezier) isa Analytical
+        @test MeshIntegrals.default_method(Meshes.Sphere) isa FiniteDifference
+        @test MeshIntegrals.default_method(sphere) isa FiniteDifference
 
         @test FiniteDifference().ε ≈ 1e-6
     end
