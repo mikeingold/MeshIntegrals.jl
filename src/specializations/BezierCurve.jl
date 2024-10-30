@@ -14,20 +14,29 @@
 ################################################################################
 """
     integral(f, curve::BezierCurve, rule = GaussKronrod();
-             diff_method=FiniteDifference(), FP=Float64, alg=Meshes.Horner())
+             diff_method=Analytical(), FP=Float64, alg=Meshes.Horner())
 
-Like [`integral`](@ref) but integrates along the domain defined a `curve`. By
-default this uses Horner's method to improve performance when parameterizing
-the `curve` at the expense of a small loss of precision. Additional accuracy
-can be obtained by specifying the use of DeCasteljau's algorithm instead with
-`alg=Meshes.DeCasteljau()` but can come at a steep cost in memory allocations,
-especially for curves with a large number of control points.
+Like [`integral`](@ref) but integrates along the domain defined a `curve`.
+
+# Arguments
+- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `curve`: a `BezierCurve` that defines the integration domain
+- `rule`: optionally, the `IntegrationRule` used for integration (by default
+`GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
+
+# Keyword Arguments
+- `diff_method::DifferentiationMethod = Analytical()`: the method to use for
+calculating Jacobians that are used to calculate differential elements
+- `FP = Float64`: the floating point precision desired
+- `alg = Meshes.Horner()`:  the method to use for parameterizing `curve`. Alternatively,
+`alg=Meshes.DeCasteljau()` can be specified for increased accuracy, but comes with a
+steep performance cost, especially for curves with a large number of control points.
 """
 function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::GaussLegendre;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
@@ -47,7 +56,7 @@ function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
@@ -60,7 +69,7 @@ function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
