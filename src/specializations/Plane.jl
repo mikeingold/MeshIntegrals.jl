@@ -12,7 +12,7 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::GaussLegendre;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
@@ -41,7 +41,7 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
@@ -60,7 +60,7 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Normalize the Plane's orthogonal vectors
@@ -90,3 +90,5 @@ function integral(
     # Reapply units
     return value .* integrandunits
 end
+
+has_analytical(::Type{T}) where {T <: Meshes.Plane} = true
