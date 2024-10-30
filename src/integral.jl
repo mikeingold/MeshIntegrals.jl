@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; diff_method=default_method(geometry), FP=Float64)
+    integral(f, geometry[, rule]; diff_method, FP)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -14,13 +14,11 @@ precision of type `FP`.
 - `geometry`: some `Meshes.Geometry` that defines the integration domain
 - `rule`: optionally, the `IntegrationRule` used for integration (by default
 `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
-- `FP`: optionally, the floating point precision desired (`Float64` by default)
-- `diff_method`: optionally, use a particular `DifferentiationMethod` for
-calculating differential elements
 
-Note that reducing `FP` below `Float64` will incur some loss of precision. By
-contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
-(at the expense of longer runtimes).
+# Keyword Arguments
+- `diff_method::DifferentiationMethod = default_method(geometry)`: the method to
+use for calculating Jacobians that are used to calculate differential elements
+- `FP = Float64`: the floating point precision desired.
 """
 function integral end
 

@@ -21,8 +21,7 @@ Like [`integral`](@ref) but integrates along the domain defined a `curve`.
 # Arguments
 - `f`: an integrand function with a method `f(::Meshes.Point)`
 - `curve`: a `BezierCurve` that defines the integration domain
-- `rule`: optionally, the `IntegrationRule` used for integration (by default
-`GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
+- `rule = GaussKronrod()`: optionally, the `IntegrationRule` used for integration
 
 # Keyword Arguments
 - `diff_method::DifferentiationMethod = Analytical()`: the method to use for
