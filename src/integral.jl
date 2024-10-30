@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; diff_method=FiniteDifference(), FP=Float64)
+    integral(f, geometry[, rule]; diff_method=default_method(geometry), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -62,7 +62,7 @@ function _integral(
         f,
         geometry,
         rule::GaussLegendre;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -88,7 +88,7 @@ function _integral(
         f,
         geometry,
         rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -116,7 +116,7 @@ function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
@@ -127,7 +127,7 @@ function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::DM = default_method(geometry2d),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
