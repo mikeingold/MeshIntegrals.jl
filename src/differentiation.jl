@@ -27,7 +27,7 @@ has_analytical(g::G) where {G <: Geometry} = has_analytical(G)
 function default_method(
     g::Type{G}
 ) where {G <: Geometry}
-    return has_analytical(G) ? Analytic() : FiniteDifference()
+    return has_analytical(G) ? Analytical() : FiniteDifference()
 end
 
 default_method(g::G) where {G <: Geometry} = default_method(G)
