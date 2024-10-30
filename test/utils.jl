@@ -12,7 +12,6 @@
     @testset "DifferentiationMethod" begin
         bezier = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])
         sphere = Sphere(Point(0, 0, 0), 1.0)
-        
         @test MeshIntegrals.has_analytical(Meshes.BezierCurve) == true
         @test MeshIntegrals.has_analytical(bezier) == true
         @test MeshIntegrals.has_analytical(Meshes.Sphere) == false

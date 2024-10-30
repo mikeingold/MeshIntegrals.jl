@@ -25,7 +25,7 @@ has_analytical(g::G) where {G <: Geometry} = has_analytical(G)
 
 # Return the default DifferentiationMethod instance for a particular geometry
 function default_method(
-    g::Type{G}
+        g::Type{G}
 ) where {G <: Geometry}
     return has_analytical(G) ? Analytical() : FiniteDifference()
 end
