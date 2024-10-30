@@ -16,7 +16,7 @@
         @test MeshIntegrals.has_analytical(Meshes.BezierCurve) == true
         @test MeshIntegrals.has_analytical(bezier) == true
         @test MeshIntegrals.has_analytical(Meshes.Sphere) == false
-        @test MeshIntegrals.has_analytical(bezier) == false
+        @test MeshIntegrals.has_analytical(sphere) == false
 
         @test FiniteDifference().ε ≈ 1e-6
     end
