@@ -21,7 +21,7 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::GaussLegendre;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
@@ -64,7 +64,7 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
@@ -87,7 +87,7 @@ function integral(
         f::F,
         triangle::Meshes.Ngon{3},
         rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     # Integrate the Barycentric triangle by transforming it into polar coordinates
@@ -107,3 +107,5 @@ function integral(
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * Meshes.area(triangle) .* ∫
 end
+
+has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true

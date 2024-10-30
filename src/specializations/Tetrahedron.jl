@@ -13,7 +13,7 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussLegendre;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "GaussLegendre")
@@ -23,7 +23,7 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussKronrod;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     nil = zero(FP)
@@ -40,8 +40,10 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),
+        diff_method::Analytical,
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
 end
+
+has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
