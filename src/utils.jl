@@ -27,7 +27,7 @@ end
 
 # Return whether a geometry type has jacobian methods defined
 _has_analytical(::Type{G}) where {G <: Geometry} = false
-_has_analytical(g::G) where {G <: Geometry} = has_analytical(G)
+_has_analytical(g::G) where {G <: Geometry} = _has_analytical(G)
 
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_method(
