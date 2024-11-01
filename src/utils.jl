@@ -37,7 +37,7 @@ function _default_method(
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
-_default_method(g::G) where {G <: Geometry} = default_method(G)
+_default_method(g::G) where {G <: Geometry} = _default_method(G)
 
 ################################################################################
 #                        CliffordNumbers and Units
