@@ -19,11 +19,13 @@ triangle.
 """
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::GaussLegendre;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
@@ -62,11 +64,13 @@ Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
 """
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::GaussKronrod;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
     ∫u(u) = QuadGK.quadgk(v -> f(triangle(u, v)), zero(FP), FP(1 - u); rule.kwargs...)[1]
@@ -85,11 +89,13 @@ an h-adaptive cubature rule.
 """
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::HAdaptiveCubature;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )

@@ -123,4 +123,4 @@ function jacobian(
     return (derivative,)
 end
 
-has_analytical(::Type{BC}) where {BC <: Meshes.BezierCurve} = true
+has_analytical(::Type{T}) where {T <: Meshes.BezierCurve} = true
