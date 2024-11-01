@@ -11,9 +11,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussLegendre;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -34,9 +36,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussKronrod;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
@@ -50,9 +54,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::HAdaptiveCubature;
-        diff_method::Analytical,
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 

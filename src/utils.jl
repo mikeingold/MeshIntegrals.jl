@@ -14,6 +14,12 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+function _guarantee_analytical(G, diff_method)
+    if diff_method != Analytical()
+        ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()")
+    end
+end
+
 ################################################################################
 #                        CliffordNumbers and Units
 ################################################################################
