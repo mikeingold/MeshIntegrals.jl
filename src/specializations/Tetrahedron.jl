@@ -46,4 +46,8 @@ function integral(
     _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
 end
 
+################################################################################
+#                               jacobian
+################################################################################
+
 has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true

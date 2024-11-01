@@ -108,4 +108,8 @@ function integral(
     return 2 * Meshes.area(triangle) .* ∫
 end
 
+################################################################################
+#                               jacobian
+################################################################################
+
 has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true

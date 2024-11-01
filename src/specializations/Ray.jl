@@ -82,4 +82,8 @@ function integral(
     return value .* integrandunits
 end
 
+################################################################################
+#                               jacobian
+################################################################################
+
 has_analytical(::Type{T}) where {T <: Meshes.Ray} = true
