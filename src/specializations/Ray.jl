@@ -92,4 +92,4 @@ end
 #                               jacobian
 ################################################################################
 
-has_analytical(::Type{T}) where {T <: Meshes.Ray} = true
+_has_analytical(::Type{T}) where {T <: Meshes.Ray} = true

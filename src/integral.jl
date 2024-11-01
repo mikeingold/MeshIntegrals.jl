@@ -16,7 +16,7 @@ precision of type `FP`.
 `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
 
 # Keyword Arguments
-- `diff_method::DifferentiationMethod = default_method(geometry)`: the method to
+- `diff_method::DifferentiationMethod = _default_method(geometry)`: the method to
 use for calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired.
 """
@@ -60,7 +60,7 @@ function _integral(
         f,
         geometry,
         rule::GaussLegendre;
-        diff_method::DM = default_method(geometry),
+        diff_method::DM = _default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -86,7 +86,7 @@ function _integral(
         f,
         geometry,
         rule::HAdaptiveCubature;
-        diff_method::DM = default_method(geometry),
+        diff_method::DM = _default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
@@ -114,7 +114,7 @@ function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
-        diff_method::DM = default_method(geometry),
+        diff_method::DM = _default_method(geometry),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
@@ -125,7 +125,7 @@ function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
-        diff_method::DM = default_method(geometry2d),
+        diff_method::DM = _default_method(geometry2d),
         FP::Type{T} = Float64
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)

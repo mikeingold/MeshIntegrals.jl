@@ -14,11 +14,30 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+################################################################################
+#                           DifferentiationMethod
+################################################################################
+
+# Throw an ArgumentError if Analytical() jacobian not defined for this type
 function _guarantee_analytical(G, diff_method)
     if diff_method != Analytical()
         ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()")
     end
 end
+
+# Return whether a geometry type has jacobian methods defined
+_has_analytical(::Type{G}) where {G <: Geometry} = false
+_has_analytical(g::G) where {G <: Geometry} = has_analytical(G)
+
+# Return the default DifferentiationMethod instance for a particular geometry type
+function _default_method(
+        g::Type{G}
+) where {G <: Geometry}
+    return _has_analytical(G) ? Analytical() : FiniteDifference()
+end
+
+# Return the default DifferentiationMethod instance for a particular geometry instance
+_default_method(g::G) where {G <: Geometry} = default_method(G)
 
 ################################################################################
 #                        CliffordNumbers and Units

@@ -101,4 +101,4 @@ end
 #                               jacobian
 ################################################################################
 
-has_analytical(::Type{T}) where {T <: Meshes.Plane} = true
+_has_analytical(::Type{T}) where {T <: Meshes.Plane} = true

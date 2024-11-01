@@ -52,4 +52,4 @@ end
 #                               jacobian
 ################################################################################
 
-has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
+_has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true

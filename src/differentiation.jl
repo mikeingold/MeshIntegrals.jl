@@ -19,19 +19,6 @@ FiniteDifference() = FiniteDifference(1e-6)
 
 struct Analytical <: DifferentiationMethod end
 
-# Return whether a geometry type has Analytical() methods defined
-has_analytical(::Type{G}) where {G <: Geometry} = false
-has_analytical(g::G) where {G <: Geometry} = has_analytical(G)
-
-# Return the default DifferentiationMethod instance for a particular geometry
-function default_method(
-        g::Type{G}
-) where {G <: Geometry}
-    return has_analytical(G) ? Analytical() : FiniteDifference()
-end
-
-default_method(g::G) where {G <: Geometry} = default_method(G)
-
 # Future Support: (maybe define in package extensions?)
 #   struct AutoEnzyme <: DifferentiationMethod end
 #   struct AutoZygote <: DifferentiationMethod end

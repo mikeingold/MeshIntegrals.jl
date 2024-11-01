@@ -87,4 +87,4 @@ end
 #                               jacobian
 ################################################################################
 
-has_analytical(::Type{T}) where {T <: Meshes.Line} = true
+_has_analytical(::Type{T}) where {T <: Meshes.Line} = true

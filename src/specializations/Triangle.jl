@@ -118,4 +118,4 @@ end
 #                               jacobian
 ################################################################################
 
-has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
+_has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
