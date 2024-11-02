@@ -104,7 +104,7 @@ possible and finite difference approximations otherwise.
 function differential(
         geometry::G,
         ts::V,
-        diff_method::DifferentiationMethod = default_method(G)
+        diff_method::DifferentiationMethod = _default_method(G)
 ) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
     # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts, diff_method)
