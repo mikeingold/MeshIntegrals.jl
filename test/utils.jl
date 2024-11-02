@@ -8,8 +8,6 @@
     # _units
     p = Point(1.0u"cm", 2.0u"mm", 3.0u"m")
     @test MeshIntegrals._units(p) == u"m"
-
-
 end
 
 @testitem "DifferentiationMethod" setup=[Setup] begin
