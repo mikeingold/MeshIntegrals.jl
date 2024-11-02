@@ -19,7 +19,7 @@ FiniteDifference() = FiniteDifference(1e-6)
 
 struct Analytical <: DifferentiationMethod end
 
-# Future Support: (maybe define in package extensions?)
+# Future Support:
 #   struct AutoEnzyme <: DifferentiationMethod end
 #   struct AutoZygote <: DifferentiationMethod end
 
