@@ -9,14 +9,6 @@
 #   documentation.
 ################################################################################
 
-"""
-    integral(f, triangle::Triangle, ::GaussLegendre; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle`
-by transforming the triangle into a polar-barycentric coordinate system and
-using a Gauss-Legendre quadrature rule along each barycentric dimension of the
-triangle.
-"""
 function integral(
         f::F,
         triangle::Meshes.Triangle,
@@ -56,12 +48,6 @@ function integral(
     return FP(π / 4) * Meshes.area(triangle) .* sum(integrand, zip(wws, xxs))
 end
 
-"""
-    integral(f, triangle::Triangle, ::GaussKronrod; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle` using nested
-Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
-"""
 function integral(
         f::F,
         triangle::Meshes.Triangle,
@@ -80,13 +66,6 @@ function integral(
     return 2 * Meshes.area(triangle) .* ∫
 end
 
-"""
-    integral(f, triangle::Triangle, ::GaussKronrod; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle` by
-transforming the triangle into a polar-barycentric coordinate system and using
-an h-adaptive cubature rule.
-"""
 function integral(
         f::F,
         triangle::Meshes.Triangle,
