@@ -16,7 +16,7 @@
     integral(f, curve::BezierCurve, rule = GaussKronrod();
              diff_method=Analytical(), FP=Float64, alg=Meshes.Horner())
 
-Like [`integral`](@ref) but integrates along the domain defined a `curve`.
+Like [`integral`](@ref) but integrates along the domain defined by `curve`.
 
 # Arguments
 - `f`: an integrand function with a method `f(::Meshes.Point)`
