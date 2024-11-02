@@ -2,13 +2,20 @@
 #                          DifferentiationMethods
 ################################################################################
 
+"""
+    DifferentiationMethod
+
+A category of types used to specify the desired method for calculating derivatives.
+Derivatives are used to form Jacobian matrices when calculating the differential
+element size throughout the integration region.
+"""
 abstract type DifferentiationMethod end
 
 """
     FiniteDifference(ε=1e-6)
 
-Use a finite-difference approximation method to calculate derivatives with a
-step size of `ε`.
+Use to specify use of a finite-difference approximation method with a step size
+of `ε` for calculating derivatives.
 """
 struct FiniteDifference{T <: AbstractFloat} <: DifferentiationMethod
     ε::T
@@ -17,6 +24,20 @@ end
 # If ε not specified, default to 1e-6
 FiniteDifference() = FiniteDifference(1e-6)
 
+"""
+    Analytical()
+
+Use to specify use of analytically-derived solutions for calculating derivatives.
+These solutions are currently defined only for a subset of geometry types.
+
+# Supported Geometries:
+- `BezierCurve`
+- `Line`
+- `Plane`
+- `Ray`
+- `Tetrahedron`
+- `Triangle`
+"""
 struct Analytical <: DifferentiationMethod end
 
 # Future Support:
