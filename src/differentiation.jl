@@ -46,7 +46,7 @@ function jacobian(
         geometry::G,
         ts::V
 ) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
-    return jacobian(geometry, ts, default_method(G))
+    return jacobian(geometry, ts, _default_method(G))
 end
 
 function jacobian(
