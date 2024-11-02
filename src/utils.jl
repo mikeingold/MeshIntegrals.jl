@@ -19,11 +19,11 @@ end
 ################################################################################
 
 # Throw an ArgumentError if Analytical() jacobian not defined for this type
-function _guarantee_analytical(G, diff_method)
-    if diff_method != Analytical()
-        ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()")
-    end
+function _guarantee_analytical(G, diff_method::DifferentiationMethod)
+    throw(ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()"))
 end
+
+_guarantee_analytical(G, ::Analytical) = nothing
 
 # Return whether a geometry type has jacobian methods defined
 _has_analytical(::Type{G}) where {G <: Geometry} = false
