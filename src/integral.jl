@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; diff_method, FP)
+    integral(f, geometry[, rule]; diff_method=_default_method(geometry), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point

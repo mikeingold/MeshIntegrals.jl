@@ -8,6 +8,8 @@
 A category of types used to specify the desired method for calculating derivatives.
 Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
+
+See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
 """
 abstract type DifferentiationMethod end
 
@@ -52,17 +54,15 @@ struct Analytical <: DifferentiationMethod end
     jacobian(geometry, ts[, diff_method])
 
 Calculate the Jacobian of a `geometry`'s parametric function at some point `ts`.
-Optionally, direct the use of a particular `differentiation method`; by default
+Optionally, direct the use of a particular differentiation method `diff_method`; by default
 use analytic solutions where possible and finite difference approximations
 otherwise.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `diff_method`: the desired `DifferentiationMethod` to use
+- `diff_method`: the desired [`DifferentiationMethod`](@ref) to use
 """
-function jacobian end
-
 function jacobian(
         geometry::G,
         ts::V
@@ -114,13 +114,13 @@ end
 
 Calculate the differential element (length, area, volume, etc) of the parametric
 function for `geometry` at arguments `ts`. Optionally, direct the use of a
-particular `differentiation method`; by default use analytic solutions where
+particular differentiation method `diff_method`; by default use analytic solutions where
 possible and finite difference approximations otherwise.
 
 # Arguments
 - `geometry`: some `Meshes.Geometry` of N parametric dimensions
 - `ts`: a parametric point specified as a vector or tuple of length N
-- `diff_method`: the desired `DifferentiationMethod` to use
+- `diff_method`: the desired [`DifferentiationMethod`](@ref) to use
 """
 function differential(
         geometry::G,
