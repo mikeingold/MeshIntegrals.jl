@@ -20,17 +20,19 @@ These solvers have support for integrand functions that produce scalars, vectors
 
 ## Usage
 
+### Common API
+
 ```julia
 integral(f, geometry)
 ```
 Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
 
 ```julia
-integral(f, geometry, rule, FP=Float64)
+integral(f, geometry, rule)
 ```
 Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`.
 
-Optionally, a fourth argument can be provided to specify the floating point precision level desired. This setting can be manipulated if your integrand function produces outputs with alternate floating point precision (e.g. `Float16`, `BigFloat`, etc) AND you'd prefer to avoid implicit type promotions.
+### Aliases
 
 ```julia
 lineintegral(f, geometry)
@@ -41,6 +43,14 @@ Alias functions are provided for convenience. These are simply wrappers for `int
 - `lineintegral` for curve-like geometries or polytopes (e.g. `Segment`, `Ray`, `BezierCurve`, `Rope`, etc)
 - `surfaceintegral` for surfaces (e.g. `Disk`, `Sphere`, `CylinderSurface`, etc)
 - `volumeintegral` for (3D) volumes (e.g. `Ball`, `Cone`, `Torus`, etc)
+
+### Optional Keyword Arguments
+
+The `diff_method` keyword argument ...
+
+The `FP` keyword argument can be provided to specify the floating point precision level desired. This setting can be manipulated if your integrand function produces outputs with alternate floating point precision (e.g. `Float16`, `BigFloat`, etc) AND you'd prefer to avoid implicit type promotions.
+
+
 
 # Demo
 
