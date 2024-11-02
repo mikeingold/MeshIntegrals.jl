@@ -9,10 +9,10 @@ import LinearAlgebra
 import QuadGK
 import Unitful
 
-include("utils.jl")
-
 include("differentiation.jl")
 export DifferentiationMethod, Analytical, FiniteDifference, jacobian
+
+include("utils.jl")
 
 include("integration_rules.jl")
 export IntegrationRule, GaussKronrod, GaussLegendre, HAdaptiveCubature
