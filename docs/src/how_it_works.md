@@ -1,6 +1,17 @@
-# Differential Forms (Work in Progress)
+# How it Works (Work in Progress)
 
-**MeshIntegrals.jl** uses differential forms to perform numerical integration. Every supported `Meshes.Geometry` type is defined as having a parametric function that maps from a local coordinate system to every point on the geometry. For example,
+This page will explain how this package works by example...
+
+Let $f$ be a function to be integrated throughout the volume bounded by a unit sphere. This integral is often expressed as simply
+```math
+\iiint f(x, y, z) ~ \text{d}V
+```
+
+## Parametric Functions
+
+**!TODO! update segment to Ball**
+
+Every supported `Meshes.Geometry` type is defined as having a parametric function that maps from a local coordinate system to every point on the geometry. For example,
 ```julia
 a = Meshes.Point(0, 0)
 b = Meshes.Point(2, 4)
@@ -13,18 +24,20 @@ segment(0.5) == Point(1, 2)
 segment(1) == b
 ```
 
-The general solution for integrating such a geometry in 3D space can look something like the following, where $t$ is a parametric coordinate used to generate points in the domain.
+... where $t$ is a parametric coordinate used to generate points in the domain.
 
-**TODO: update all of the above for a 2D geometry (Sphere?) to make it more interesting/relevant. Something simple enough to follow but non-trivial.**
 
-Using differential forms, the general solution for integrating a geometry with two parametric dimensions, $t_1$ and $t_2$, is
+
+## Differential Forms
+
+Using differential forms, the general solution for integrating a geometry with three parametric dimensions ($t_1$, $t_2$, and $t_3$) is
 ```math
-\iint f(x, y, z) ~ \text{d}t_1 \wedge \text{d}t_2
+\iiint f(x, y, z) ~ \left\| \text{d}t_1 \wedge \text{d}t_2 \wedge \text{d}t_3 \right\|
 ```
 
 Since `Meshes.Geometry`s parametric functions have arguments that are defined on the domain $[0,1]$, this is equivalent to
 ```math
-\int_0^1 \int_0^1 f(x, y, z) ~ \text{d}t_1 \wedge \text{d}t_2
+\int_0^1 \int_0^1 \int_0^1 f(x, y, z) ~ \left\| \text{d}t_1 \wedge \text{d}t_2 \wedge \text{d}t_3 \right\|
 ```
 
 For every point in the integration domain where the integrand function is evaluated, the differential element $\text{d}t_1 \wedge \text{d}t_2$ is calculated using [the Jacobian](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant) of the parametric function. For a two-dimensional surface this Jacobian consists of two vectors, each pointing in the direction that the parametric function's output point will move by changing each input argument. The differential element, then, is simply the magnitude of the exterior product of these vectors.
