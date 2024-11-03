@@ -32,8 +32,7 @@ integral(f, geometry, rule)
 ```
 Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`.
 
-Additionally, several optional keyword arguments are defined in [the API](https://juliageometry.github.io/MeshIntegrals.jl/stable/api/)
-to provide additional control over the integration mechanics.
+Additionally, several optional keyword arguments are defined in [the API](https://juliageometry.github.io/MeshIntegrals.jl/stable/api/) to provide additional control over the integration mechanics.
 
 ### Aliases
 
