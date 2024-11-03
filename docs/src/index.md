@@ -10,5 +10,38 @@
 [![Coveralls](https://coveralls.io/repos/github/JuliaGeometry/MeshIntegrals.jl/badge.svg?branch=main)](https://coveralls.io/github/JuliaGeometry/MeshIntegrals.jl?branch=main)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-**MeshIntegrals.jl** is a Julia library that leverages differential forms to implement fast
-and easy numerical integration of field equations over geometric domains.
+
+**MeshIntegrals.jl** uses differential forms to enable fast and easy numerical integration of arbitrary integrand functions over domains defined via [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl) geometries. This is achieved using:
+- Gauss-Legendre quadrature rules from [**FastGaussQuadrature.jl**](https://github.com/JuliaApproximation/FastGaussQuadrature.jl): `GaussLegendre(n)`
+- H-adaptive Gauss-Kronrod quadrature rules from [**QuadGK.jl**](https://github.com/JuliaMath/QuadGK.jl): `GaussKronrod(kwargs...)`
+- H-adaptive cubature rules from [**HCubature.jl**](https://github.com/JuliaMath/HCubature.jl): `HAdaptiveCubature(kwargs...)`
+
+These solvers have support for integrand functions that produce scalars, vectors, and [**Unitful.jl**](https://github.com/PainterQubits/Unitful.jl) `Quantity` types. While HCubature.jl does not natively support `Quantity` type integrands, this package provides a compatibility layer to enable this feature.
+
+## Usage
+
+### Basic
+
+```julia
+integral(f, geometry)
+```
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
+
+```julia
+integral(f, geometry, rule)
+```
+Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`.
+
+Additionally, several optional keyword arguments are defined in [the API](https://juliageometry.github.io/MeshIntegrals.jl/stable/api/) to provide additional control over the integration mechanics.
+
+### Aliases
+
+```julia
+lineintegral(f, geometry)
+surfaceintegral(f, geometry)
+volumeintegral(f, geometry)
+```
+Alias functions are provided for convenience. These are simply wrappers for `integral` that also validate that the provided `geometry` has the expected number of parametric dimensions. Like with `integral`, a `rule` can also optionally be specified as a third argument.
+- `lineintegral` is used for curve-like geometries or polytopes (e.g. `Segment`, `Ray`, `BezierCurve`, `Rope`, etc)
+- `surfaceintegral` is used for surfaces (e.g. `Disk`, `Sphere`, `CylinderSurface`, etc)
+- `volumeintegral` is used for (3D) volumes (e.g. `Ball`, `Cone`, `Torus`, etc)
