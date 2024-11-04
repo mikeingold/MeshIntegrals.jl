@@ -1,7 +1,7 @@
 module MeshIntegrals
 using CliffordNumbers: CliffordNumbers, VGA, ∧
 using CoordRefSystems: CoordRefSystems, CRS
-using Meshes: Meshes, Geometry
+using Meshes: Meshes, Geometry, to
 
 import FastGaussQuadrature
 import HCubature
@@ -10,7 +10,7 @@ import QuadGK
 import Unitful
 
 include("differentiation.jl")
-export DifferentiationMethod, Analytical, FiniteDifference, jacobian
+export DifferentiationMethod, Analytical, FiniteDifference, AutoEnzyme, jacobian
 
 include("utils.jl")
 
