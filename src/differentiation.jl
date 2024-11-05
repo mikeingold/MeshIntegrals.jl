@@ -64,16 +64,16 @@ otherwise.
 - `diff_method`: the desired [`DifferentiationMethod`](@ref) to use
 """
 function jacobian(
-        geometry::Geometry,
+        geometry::G,
         ts::V
-) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
+) where {G <: Geometry, N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
     return jacobian(geometry, ts, _default_method(G))
 end
 
 function jacobian(
         geometry::Geometry,
         ts::V,
-        diff_method::FiniteDifference
+        diff_method::FiniteDifference{T}
 ) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
