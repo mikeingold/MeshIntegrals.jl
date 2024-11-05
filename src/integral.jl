@@ -126,7 +126,7 @@ function _integral_gk_2d(
         geometry2d,
         rule::GaussKronrod;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry2d, T)
+        diff_method::DM = _default_method(geometry2d)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
