@@ -21,8 +21,8 @@ end
 # Throw an ArgumentError if Analytical() jacobian not defined for this type
 function _guarantee_analytical(
     G::Type{T},
-    diff_method::DM
-) where {T <: Geometry, DM <: DifferentiationMethod}
+    diff_method::DifferentiationMethod
+) where {T <: Geometry}
     throw(ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()"))
 end
 
