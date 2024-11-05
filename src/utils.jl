@@ -34,10 +34,9 @@ _has_analytical(g::G) where {G <: Geometry} = _has_analytical(G)
 
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_method(
-        g::Type{G},
-        FP::Type{T}
+        g::Type{G}
 ) where {G <: Geometry, T <: AbstractFloat}
-    return _has_analytical(G) ? Analytical() : FiniteDifference{T}()
+    return _has_analytical(G) ? Analytical() : FiniteDifference()
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
