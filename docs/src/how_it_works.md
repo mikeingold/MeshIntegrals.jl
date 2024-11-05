@@ -19,12 +19,12 @@ ball = Meshes.Ball(center, radius)
 
 This integral is often expressed abstractly as simply the following, where the triple integral signs and $\text{d}V$ indicate that the integration domain is some three-dimensional volume.
 ```math
-\iiint f(r̄) ~ \text{d}V
+\iiint f(\bar{r}) ~ \text{d}V
 ```
 
 Integrals like this are often solved manually by selecting an appropriate coordinate system and limits that neatly represent the integration domain, e.g.
 ```math
-\int_0^{\pi} \int_0^{2\pi} \int_0^{5} f(r̄) ~ \text{d}\rho~\text{d}\theta~\text{d}\phi
+\int_0^{\pi} \int_0^{2\pi} \int_0^{5} f(\bar{r}) ~ \text{d}\rho~\text{d}\theta~\text{d}\phi
 ```
 
 This works great for simple geometries, but requires integration code that is geometry-specific. This package, by contrast, leverages parametric functions defined in Meshes.jl and differential forms to define integral methods that are general solutions for all geometries.
@@ -52,7 +52,7 @@ In effect, we can now use the geometry itself as a function that maps from three
 
 Using differential forms, the general solution for integrating a geometry with three parametric dimensions ($t_1$, $t_2$, and $t_3$) is
 ```math
-\iiint f(r̄) ~ \text{d}V = \iiint f(r̄) ~ \bar{\text{d}t_1} \wedge \bar{\text{d}t_2} \wedge \bar{\text{d}t_3}
+\iiint f(r̄) ~ \text{d}V = \iiint f(\bar{r}) ~ \bar{\text{d}t_1} \wedge \bar{\text{d}t_2} \wedge \bar{\text{d}t_3}
 ```
 
 This resultant differential (volume) element is formed at each point in the integration domain by taking [the Jacobian](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant) of the parametric function.
