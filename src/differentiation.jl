@@ -23,8 +23,9 @@ struct FiniteDifference{T <: AbstractFloat} <: DifferentiationMethod
     ε::T
 end
 
-# If ε not specified, default to 1e-6
-FiniteDifference() = FiniteDifference(1e-6)
+# Default constructors
+FiniteDifference{T}() where {T <: AbstractFloat} = FiniteDifference{T}(T(1e-6))
+FiniteDifference() = FiniteDifference{Float64}()
 
 """
     Analytical()
