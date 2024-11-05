@@ -6,17 +6,17 @@ using MeshIntegrals
 SPECIALIZATIONS_FILES = joinpath.(Ref("specializations"),
     readdir(joinpath(dirname(@__DIR__), "src",
         "specializations")))
-
+r̄
 makedocs(
     sitename = "MeshIntegrals.jl",
     pages = [
         "Home" => [
             "About" => "index.md",
-            "How it Works" => "how_it_works.md",
             "Support Matrix" => "supportmatrix.md",
             "Example Usage" => "usage.md"
         ],
-        "Derivations" => [
+        "Developer Notes" => [
+            "How it Works" => "how_it_works.md",
             "Integrating a Triangle" => "triangle.md"
         ],
         "Public API" => "api.md"
