@@ -66,7 +66,7 @@ otherwise.
 function jacobian(
         geometry::G,
         ts::V
-) where {G <: Geometry, N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
+) where {G <: Geometry, N, T <: AbstractFloat, V <: Union{AbstractVector{T}, NTuple{N, T}}}
     return jacobian(geometry, ts, _default_method(G))
 end
 
@@ -74,7 +74,7 @@ function jacobian(
         geometry::Geometry,
         ts::V,
         diff_method::FiniteDifference{T}
-) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
+) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, NTuple{N, T}}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
