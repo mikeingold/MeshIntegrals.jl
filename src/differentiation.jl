@@ -64,9 +64,9 @@ otherwise.
 - `diff_method`: the desired [`DifferentiationMethod`](@ref) to use
 """
 function jacobian(
-        geometry::G,
+        geometry::Geometry,
         ts::V
-) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
+) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
     return jacobian(geometry, ts, _default_method(G))
 end
 
@@ -74,13 +74,12 @@ function jacobian(
         geometry::Geometry,
         ts::V,
         diff_method::FiniteDifference
-) where {V <: Union{AbstractVector, Tuple}}
+) where {N, T <: AbstractFloat, V <: Union{AbstractVector{T}, Tuple{N, T}}}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
     end
 
-    T = eltype(ts)
     ε = T(diff_method.ε)
 
     # Get the partial derivative along the n'th axis via finite difference
