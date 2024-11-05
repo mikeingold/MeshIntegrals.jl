@@ -60,8 +60,8 @@ function _integral(
         f,
         geometry,
         rule::GaussLegendre;
-        diff_method::DM = _default_method(geometry, FP),
-        FP::Type{T} = Float64
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry, T)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
@@ -86,8 +86,8 @@ function _integral(
         f,
         geometry,
         rule::HAdaptiveCubature;
-        diff_method::DM = _default_method(geometry, FP),
-        FP::Type{T} = Float64
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry, T)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
@@ -114,8 +114,8 @@ function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
-        diff_method::DM = _default_method(geometry, FP),
-        FP::Type{T} = Float64
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry, T)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
@@ -125,8 +125,8 @@ function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
-        diff_method::DM = _default_method(geometry2d, FP),
-        FP::Type{T} = Float64
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry2d, T)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
