@@ -1,30 +1,37 @@
-# How it Works (Work in Progress)
+# How it Works (By Example) (Work in Progress)
 
-This page will explain how this package works by example...
+Let $f$ be a function of position ($\bar{r}$)
+```julia
+function f(r̄::Meshes.Point)
+    x, y, z = to(r̄)
+    ...
+end
+```
 
-Let $f$ be a function to be integrated throughout the volume bounded by a unit sphere. This integral is often expressed as simply
+Let the integration domain be the space (a ball) enclosed by a sphere centered on the origin with a radius of 5 meters.
+```julia
+center = Meshes.Point(0u"m", 0u"m", 0u"m")
+radius = 5.0
+ball = Meshes.Ball(center, radius)
+```
+
+This integral is often expressed abstractly as simply the following, where the triple integral signs and $\text{d}V$ indicate that the integration domain is some three-dimensional volume.
 ```math
-\iiint f(x, y, z) ~ \text{d}V
+\iiint f(r̄) ~ \text{d}V
 ```
 
 ## Parametric Functions
 
-**!TODO! update segment to Ball**
+Every supported `Meshes.Geometry` type is defined as having a parametric function that maps from a local parametric coordinate system to every point on the geometry. Curve-like geometries will have a single parametric dimension, surfaces will have two dimensions, and volumes will have three dimensions; this can be checked for a particular geometry via `Meshes.paramdim(geometry)`.
 
-Every supported `Meshes.Geometry` type is defined as having a parametric function that maps from a local coordinate system to every point on the geometry. For example,
+For consistency across geometry types, these parametric functions are defined to always take coordinates inside a normalized range $[0,1]$. In the example case of `ball`, Meshes.jl defines a parametric function mapped in normalized spherical coordinates $(t_\rho, ~t_\theta, ~t_\phi)$. We find, then:
 ```julia
-a = Meshes.Point(0, 0)
-b = Meshes.Point(2, 4)
-segment = Meshes.Segment(a, b)
-```
-defines a line segment beginning at point `a` and ending at point `b`. As a geometry with one parametric dimension (i.e. `paramdim(segment) == 1`), it can be treated as a function with one argument that returns a corresponding point on the segment.
-```julia
-segment(0) == a
-segment(0.5) == Point(1, 2)
-segment(1) == b
-```
+Meshes.paramdim(ball) == 3    # a volume
 
-... where $t$ is a parametric coordinate used to generate points in the domain.
+ball(tρ, tθ, tφ)    # for args in range [0, 1], maps to a corresponding Meshes.Point
+
+ball(0, tθ, tφ) == center
+```
 
 
 
