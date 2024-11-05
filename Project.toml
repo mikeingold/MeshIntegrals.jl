@@ -16,7 +16,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 
 [extensions]
-EnzymeExt = "Enzyme"
+MeshIntegralsEnzymeExt = "Enzyme"
 
 [compat]
 CliffordNumbers = "0.1.4"

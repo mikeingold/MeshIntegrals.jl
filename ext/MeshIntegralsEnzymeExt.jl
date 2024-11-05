@@ -1,8 +1,8 @@
-module EnzymeExt
+module MeshIntegralsEnzymeExt
 
-using MeshIntegrals
-using Meshes: Geometry
-using Enzyme
+using MeshIntegrals: MeshIntegrals, AutoEnzyme
+using Meshes: Geometry, to
+using Enzyme: Enzyme
 
 function MeshIntegrals.jacobian(
         geometry::Geometry, ts::V, ::AutoEnzyme) where {V <: Union{AbstractVector, Tuple}}
