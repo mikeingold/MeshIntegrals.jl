@@ -35,7 +35,7 @@ function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::GaussLegendre;
-        diff_method::DM = _default_method(curve),
+        diff_method::DM = _default_method(curve, FP),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
@@ -55,7 +55,7 @@ function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::GaussKronrod;
-        diff_method::DM = _default_method(curve),
+        diff_method::DM = _default_method(curve, FP),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
@@ -68,7 +68,7 @@ function integral(
         f::F,
         curve::Meshes.BezierCurve,
         rule::HAdaptiveCubature;
-        diff_method::DM = _default_method(curve),
+        diff_method::DM = _default_method(curve, FP),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}

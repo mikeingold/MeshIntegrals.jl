@@ -19,7 +19,10 @@ end
 ################################################################################
 
 # Throw an ArgumentError if Analytical() jacobian not defined for this type
-function _guarantee_analytical(G, diff_method::DifferentiationMethod)
+function _guarantee_analytical(
+    G::Type{T},
+    diff_method::DM
+) where {T <: Geometry, DM <: DifferentiationMethod}
     throw(ArgumentError("Geometry type $G requires kwarg diff_method = Analytical()"))
 end
 
@@ -31,9 +34,10 @@ _has_analytical(g::G) where {G <: Geometry} = _has_analytical(G)
 
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_method(
-        g::Type{G}
-) where {G <: Geometry}
-    return _has_analytical(G) ? Analytical() : FiniteDifference()
+        g::Type{G},
+        FP::Type{T}
+) where {G <: Geometry, T <: AbstractFloat}
+    return _has_analytical(G) ? Analytical() : FiniteDifference{T}()
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
