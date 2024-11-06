@@ -66,16 +66,16 @@ otherwise.
 """
 function jacobian(
         geometry::G,
-        ts::Union{AbstractVector{T}, NTuple{N, T}}
-) where {G <: Geometry, N, T <: AbstractFloat}
+        ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}}
+) where {G <: Geometry, T <: AbstractFloat}
     return jacobian(geometry, ts, _default_method(G))
 end
 
 function jacobian(
         geometry::Geometry,
-        ts::Union{AbstractVector{T}, NTuple{N, T}},
+        ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
         diff_method::FiniteDifference
-) where {N, T <: AbstractFloat}
+) where {T <: AbstractFloat}
     Dim = Meshes.paramdim(geometry)
     if Dim != length(ts)
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
@@ -122,9 +122,9 @@ possible and finite difference approximations otherwise.
 """
 function differential(
         geometry::G,
-        ts::V,
+        ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
         diff_method::DifferentiationMethod = _default_method(G)
-) where {G <: Geometry, V <: Union{AbstractVector, Tuple}}
+) where {G <: Geometry, T <: AbstractFloat}
     # Calculate the Jacobian, convert Vec -> KVector
     J = jacobian(geometry, ts, diff_method)
     J_kvecs = Iterators.map(_kvector, J)
