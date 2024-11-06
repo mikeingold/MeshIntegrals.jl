@@ -10,8 +10,6 @@ Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
 
 See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
-
-See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
 """
 abstract type DifferentiationMethod end
 

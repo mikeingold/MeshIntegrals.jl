@@ -44,7 +44,7 @@ ball(0, tθ, tφ) == center
 
 In effect, we can now use the geometry itself as a function that maps from three normalized ($0 \le t \le 1$) arguments to every point on the geometry. For the sake of generalization, let this parametric function be called $g$.
 ```math
-\text{g}(t_1,~t_2,~t_3) ~\mapsto~ \text{Point}\big[ x, ~y, ~z \big]  
+\text{g}: (t_1,~t_2,~t_3) ~\mapsto~ \text{Point}\big[ x, ~y, ~z \big]  
 ```
 
 
