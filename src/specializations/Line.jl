@@ -46,7 +46,7 @@ function integral(
 
     # Integrate f along the Line
     domainunits = _units(line(0))
-    integrand(t) = f(line(t)) * domainunits       # TODO differential
+    integrand(t) = f(line(t)) * domainunits
     return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); rule.kwargs...)[1]
 end
 
