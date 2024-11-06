@@ -81,26 +81,26 @@ function jacobian(
         throw(ArgumentError("ts must have same number of dimensions as geometry."))
     end
 
-    return ntuple(n -> ∂ₙr(geometry, ts, n, T(diff_method.ε)), Dim)
-end
-
-# Get the partial derivative along the n'th axis via finite difference
-#   approximation, where ts is the current parametric position
-function _∂ₙr(geometry, ts, n, ε)
-    # Build left/right parametric coordinates with non-allocating iterators 
-    left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
-    right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
-    # Select orientation of finite-diff
-    if ts[n] < T(0.01)
-        # Right
-        return (geometry(right...) - geometry(ts...)) / ε
-    elseif T(0.99) < ts[n]
-        # Left
-        return (geometry(ts...) - geometry(left...)) / ε
-    else
-        # Central
-        return (geometry(right...) - geometry(left...)) / 2ε
+    # Get the partial derivative along the n'th axis via finite difference
+    #   approximation, where ts is the current parametric position
+    function ∂ₙr(ts, n, ε)
+        # Build left/right parametric coordinates with non-allocating iterators 
+        left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
+        right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
+        # Select orientation of finite-diff
+        if ts[n] < 0.01
+            # Right
+            return (geometry(right...) - geometry(ts...)) / ε
+        elseif 0.99 < ts[n]
+            # Left
+            return (geometry(ts...) - geometry(left...)) / ε
+        else
+            # Central
+            return (geometry(right...) - geometry(left...)) / 2ε
+        end
     end
+
+    return ntuple(n -> ∂ₙr(ts, n, T(diff_method.ε)), Dim)
 end
 
 ################################################################################
