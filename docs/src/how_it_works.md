@@ -27,7 +27,7 @@ Integrals like this are often solved manually by selecting an appropriate coordi
 \int_0^{\pi} \int_0^{2\pi} \int_0^{5} f(\bar{r}) ~ \text{d}\rho~\text{d}\theta~\text{d}\phi
 ```
 
-This works great for simple geometries, but requires integration code that is geometry-specific. This package, by contrast, leverages parametric functions defined in Meshes.jl and differential forms to define integral methods that are general solutions for all geometries.
+This works great for simple geometries, but requires integration code that is geometry-specific. This package leverages parametric functions defined in Meshes.jl and differential forms to define integral methods that are general solutions for all geometries.
 
 ## [Parametric Functions](@id how-parametric)
 
