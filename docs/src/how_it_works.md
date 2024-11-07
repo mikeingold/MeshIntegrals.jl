@@ -2,7 +2,7 @@
 
 ## Example Problem
 
-Let $f$ be a function of position ($\bar{r}$)
+Let $f$ be a function of position $\bar{r}$ in some space.
 ```julia
 function f(r̄::Meshes.Point)
     x, y, z = to(r̄)
@@ -13,7 +13,7 @@ end
 Let the integration domain be the space (a ball) enclosed by a sphere centered on the origin with a radius of 5 meters.
 ```julia
 center = Meshes.Point(0u"m", 0u"m", 0u"m")
-radius = 5.0
+radius = 5.0u"m"
 ball = Meshes.Ball(center, radius)
 ```
 
@@ -29,11 +29,11 @@ Integrals like this are often solved manually by selecting an appropriate coordi
 
 This works great for simple geometries, but requires integration code that is geometry-specific. This package, by contrast, leverages parametric functions defined in Meshes.jl and differential forms to define integral methods that are general solutions for all geometries.
 
-## Parametric Functions
+## [Parametric Functions](@id how-parametric)
 
 Every supported `Meshes.Geometry` type is defined as having a parametric function that maps from a local parametric coordinate system to every point on the geometry. Curve-like geometries will have a single parametric dimension, surfaces will have two dimensions, and volumes will have three dimensions; this can be checked for a particular geometry via `Meshes.paramdim(geometry)`.
 
-For consistency across geometry types, these parametric functions are defined to always take coordinates inside a normalized range $[0,1]$. In the example case of `ball`, Meshes.jl defines a parametric function mapped in normalized spherical coordinates $(t_\rho, ~t_\theta, ~t_\phi)$. We find, then:
+For consistency across geometry types, with [some notable exceptions](@ref specializations), these parametric functions are defined to take coordinates inside a normalized range $[0,1]$. In the example case of `ball`, Meshes.jl defines a parametric function mapped in normalized spherical coordinates $(t_\rho, ~t_\theta, ~t_\phi)$. We find, then:
 ```julia
 Meshes.paramdim(ball) == 3    # a volume
 
@@ -46,7 +46,6 @@ In effect, we can now use the geometry itself as a function that maps from three
 ```math
 \text{g}: (t_1,~t_2,~t_3) ~\mapsto~ \text{Point}\big[ x, ~y, ~z \big]  
 ```
-
 
 ## Differential Forms
 

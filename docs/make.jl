@@ -16,7 +16,7 @@ makedocs(
         ],
         "Developer Notes" => [
             "How it Works" => "how_it_works.md",
-            "Integrating a Triangle" => "triangle.md"
+            "Specializations" => "specializations.md"
         ],
         "Public API" => "api.md"
     ]
