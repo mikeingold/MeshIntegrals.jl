@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; diff_method=_default_method(geometry,FP), FP=Float64)
+    integral(f, geometry[, rule]; diff_method=_default_method(geometry), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -16,7 +16,7 @@ precision of type `FP`.
 `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
 
 # Keyword Arguments
-- `diff_method::DifferentiationMethod = _default_method(geometry,FP)`: the method to
+- `diff_method::DifferentiationMethod = _default_method(geometry)`: the method to
 use for calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired.
 """

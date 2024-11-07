@@ -20,7 +20,7 @@ Like [`integral`](@ref) but integrates along the domain defined by `curve`.
 
 # Arguments
 - `f`: an integrand function with a method `f(::Meshes.Point)`
-- `curve`: a `BezierCurve` that defines the integration domain
+- `curve`: a `Meshes.BezierCurve` that defines the integration domain
 - `rule = GaussKronrod()`: optionally, the `IntegrationRule` used for integration
 
 # Keyword Arguments
