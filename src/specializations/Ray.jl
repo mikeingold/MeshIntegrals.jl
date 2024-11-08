@@ -12,8 +12,11 @@ function integral(
         f::F,
         ray::Meshes.Ray,
         rule::GaussLegendre;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Ray, diff_method)
+
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -38,8 +41,11 @@ function integral(
         f::F,
         ray::Meshes.Ray,
         rule::GaussKronrod;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Ray, diff_method)
+
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
@@ -53,8 +59,11 @@ function integral(
         f::F,
         ray::Meshes.Ray,
         rule::HAdaptiveCubature;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Ray, diff_method)
+
     # Normalize the Ray s.t. ray(t) is distance t from origin point
     ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
@@ -78,3 +87,9 @@ function integral(
     # Reapply units
     return value .* integrandunits
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+_has_analytical(::Type{T}) where {T <: Meshes.Ray} = true

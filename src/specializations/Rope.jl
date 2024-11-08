@@ -8,6 +8,24 @@
 #   integrated separately, and then summed.
 ################################################################################
 
+"""
+    integral(f, rope::Rope, rule = GaussKronrod();
+             diff_method=FiniteDifference(), FP=Float64)
+
+Like [`integral`](@ref) but integrates along the domain defined by `rope`. The
+specified integration `rule` is applied independently to each segment formed by
+consecutive points in the Rope.
+
+# Arguments
+- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `rope`: a `Rope` that defines the integration domain
+- `rule = GaussKronrod()`: optionally, the `IntegrationRule` used for integration
+
+# Keyword Arguments
+- `diff_method::DifferentiationMethod = FiniteDifference()`: the method to use for
+calculating Jacobians that are used to calculate differential elements
+- `FP = Float64`: the floating point precision desired
+"""
 function integral(
         f::F,
         rope::Meshes.Rope,

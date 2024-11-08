@@ -12,8 +12,11 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::GaussLegendre;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Plane, diff_method)
+
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
     xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
@@ -40,8 +43,11 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::GaussKronrod;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Plane, diff_method)
+
     # Normalize the Plane's orthogonal vectors
     uu = Meshes.unormalize(plane.u)
     uv = Meshes.unormalize(plane.v)
@@ -58,8 +64,11 @@ function integral(
         f::F,
         plane::Meshes.Plane,
         rule::HAdaptiveCubature;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Plane, diff_method)
+
     # Normalize the Plane's orthogonal vectors
     uu = Meshes.unormalize(plane.u)
     uv = Meshes.unormalize(plane.v)
@@ -87,3 +96,9 @@ function integral(
     # Reapply units
     return value .* integrandunits
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+_has_analytical(::Type{T}) where {T <: Meshes.Plane} = true

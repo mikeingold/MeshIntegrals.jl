@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; FP=Float64)
+    integral(f, geometry[, rule]; diff_method=_default_method(geometry), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -12,12 +12,13 @@ precision of type `FP`.
 # Arguments
 - `f`: an integrand function with a method `f(::Meshes.Point)`
 - `geometry`: some `Meshes.Geometry` that defines the integration domain
-- `rule`: optionally, the `IntegrationRule` used for integration (by default `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
-- `FP`: optionally, the floating point precision desired (`Float64` by default)
+- `rule`: optionally, the `IntegrationRule` used for integration (by default
+`GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
 
-Note that reducing `FP` below `Float64` will incur some loss of precision. By
-contrast, increasing `FP` to e.g. `BigFloat` will typically increase precision
-(at the expense of longer runtimes).
+# Keyword Arguments
+- `diff_method::DifferentiationMethod = _default_method(geometry)`: the method to
+use for calculating Jacobians that are used to calculate differential elements
+- `FP = Float64`: the floating point precision desired.
 """
 function integral end
 
@@ -59,8 +60,9 @@ function _integral(
         f,
         geometry,
         rule::GaussLegendre;
-        FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry)
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
@@ -73,7 +75,7 @@ function _integral(
 
     function integrand((weights, nodes))
         ts = t.(nodes)
-        prod(weights) * f(geometry(ts...)) * differential(geometry, ts)
+        prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
 
     return FP(1 // (2^N)) .* sum(integrand, zip(weights, nodes))
@@ -84,11 +86,12 @@ function _integral(
         f,
         geometry,
         rule::HAdaptiveCubature;
-        FP::Type{T} = Float64
-) where {T <: AbstractFloat}
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry)
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
-    integrand(ts) = f(geometry(ts...)) * differential(geometry, ts)
+    integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, diff_method)
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
@@ -111,9 +114,10 @@ function _integral_gk_1d(
         f,
         geometry,
         rule::GaussKronrod;
-        FP::Type{T} = Float64
-) where {T <: AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, (t,))
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry)
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
+    integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
@@ -121,9 +125,10 @@ function _integral_gk_2d(
         f,
         geometry2d,
         rule::GaussKronrod;
-        FP::Type{T} = Float64
-) where {T <: AbstractFloat}
-    integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v))
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry2d)
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
+    integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
     ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
     return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
 end

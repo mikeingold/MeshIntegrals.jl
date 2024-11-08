@@ -13,8 +13,9 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussLegendre;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "GaussLegendre")
 end
 
@@ -22,8 +23,11 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussKronrod;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Tetrahedron, diff_method)
+
     nil = zero(FP)
     ∫uvw(u, v, w) = f(tetrahedron(u, v, w))
     ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), nil, FP(1 - v - w); rule.kwargs...)[1]
@@ -38,7 +42,14 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::HAdaptiveCubature;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+_has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true

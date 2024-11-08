@@ -11,8 +11,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussLegendre;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -24,8 +27,8 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    domainunits = _units(line(0))
-    integrand(x) = f(line(t(x))) * t′(x) * domainunits
+    differential(line, x) = t′(x) * _units(line(0))
+    integrand(x) = f(line(t(x))) * differential(line, x)
     return sum(w .* integrand(x) for (w, x) in zip(ws, xs))
 end
 
@@ -33,8 +36,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussKronrod;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
@@ -48,8 +54,11 @@ function integral(
         f::F,
         line::Meshes.Line,
         rule::HAdaptiveCubature;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Line, diff_method)
+
     # Normalize the Line s.t. line(t) is distance t from origin point
     line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
 
@@ -58,8 +67,8 @@ function integral(
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Line
-    domainunits = _units(line(0))
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * t′(x[1]) * domainunits
+    differential(line, x) = t′(x) * _units(line(0))
+    integrand(x::AbstractVector) = f(line(t(x[1]))) * differential(line, x[1])
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
@@ -68,8 +77,14 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, FP[-1], FP[1]; rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, (-one(FP),), (one(FP),); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+_has_analytical(::Type{T}) where {T <: Meshes.Line} = true

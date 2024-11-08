@@ -9,20 +9,15 @@
 #   documentation.
 ################################################################################
 
-"""
-    integral(f, triangle::Triangle, ::GaussLegendre; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle`
-by transforming the triangle into a polar-barycentric coordinate system and
-using a Gauss-Legendre quadrature rule along each barycentric dimension of the
-triangle.
-"""
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::GaussLegendre;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]^2
     xs, ws = _gausslegendre(FP, rule.n)
     wws = Iterators.product(ws, ws)
@@ -53,18 +48,15 @@ function integral(
     return FP(π / 4) * Meshes.area(triangle) .* sum(integrand, zip(wws, xxs))
 end
 
-"""
-    integral(f, triangle::Triangle, ::GaussKronrod; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle` using nested
-Gauss-Kronrod quadrature rules along each barycentric dimension of the triangle.
-"""
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::GaussKronrod;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Integrate the Barycentric triangle in (u,v)-space: (0,0), (0,1), (1,0)
     #   i.e. \int_{0}^{1} \int_{0}^{1-u} f(u,v) dv du
     ∫u(u) = QuadGK.quadgk(v -> f(triangle(u, v)), zero(FP), FP(1 - u); rule.kwargs...)[1]
@@ -74,19 +66,15 @@ function integral(
     return 2 * Meshes.area(triangle) .* ∫
 end
 
-"""
-    integral(f, triangle::Triangle, ::GaussKronrod; FP=Float64)
-
-Like [`integral`](@ref) but integrates over the surface of a `triangle` by
-transforming the triangle into a polar-barycentric coordinate system and using
-an h-adaptive cubature rule.
-"""
 function integral(
         f::F,
-        triangle::Meshes.Ngon{3},
+        triangle::Meshes.Triangle,
         rule::HAdaptiveCubature;
+        diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, T <: AbstractFloat}
+) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+    _guarantee_analytical(Meshes.Triangle, diff_method)
+
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
     #     R = r ( sinφ + cosφ )
@@ -104,3 +92,9 @@ function integral(
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * Meshes.area(triangle) .* ∫
 end
+
+################################################################################
+#                               jacobian
+################################################################################
+
+_has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true

@@ -28,7 +28,7 @@ geometries = (
 SUITE["Integrals"] = let s = BenchmarkGroup()
     for (int, rule, geometry) in Iterators.product(integrands, rules, geometries)
         n1, n2, N = geometry.name, "$(int.name) $(rule.name)", rule.N
-        s[n1][n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule) evals=N
+        s[n1][n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
     end
     s
 end
@@ -41,8 +41,8 @@ sphere = Sphere(Point(0, 0, 0), 1.0)
 differential = MeshIntegrals.differential
 
 SUITE["Differentials"] = let s = BenchmarkGroup()
-    s["Jacobian"] = @benchmarkable jacobian($sphere, $(0.5, 0.5)) evals=1000
-    s["Differential"] = @benchmarkable differential($sphere, $(0.5, 0.5)) evals=1000
+    s["Jacobian"] = @benchmarkable jacobian($sphere, $(0.5, 0.5)) evals=10
+    s["Differential"] = @benchmarkable differential($sphere, $(0.5, 0.5)) evals=10
     s
 end
 
