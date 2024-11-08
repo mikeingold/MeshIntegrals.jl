@@ -46,11 +46,12 @@ _default_method(g::G) where {G <: Geometry} = _default_method(G)
 #                        CliffordNumbers and Units
 ################################################################################
 
-# Meshes.Vec -> ::CliffordNumber.KVector
-function _kvector(v::Meshes.Vec{Dim, T}) where {Dim, T}
+# Meshes.Vec -> Unitful.Quantity{CliffordNumber.KVector}
+function _KVector(v::Meshes.Vec{Dim, T}) where {Dim, T}
     ucoords = Iterators.map(Unitful.ustrip, v.coords)
-    return CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...)
+    return CliffordNumbers.KVector{1, VGA(Dim)}(ucoords...) * _units(v)
 end
 
 # Extract the length units used by the CRS of a Geometry
 _units(::Geometry{M, CRS}) where {M, CRS} = Unitful.unit(CoordRefSystems.lentype(CRS))
+_units(::Meshes.Vec{Dim, T}) where {Dim, T} = Unitful.unit(T)

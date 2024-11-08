@@ -1,9 +1,9 @@
 @testitem "Utilities" setup=[Setup] begin
     using LinearAlgebra: norm
 
-    # _kvector
+    # _KVector
     v = Meshes.Vec(3, 4)
-    @test norm(MeshIntegrals._kvector(v)) ≈ 5.0
+    @test norm(MeshIntegrals._KVector(v)) ≈ 5.0u"m"
 
     # _units
     p = Point(1.0u"cm", 2.0u"mm", 3.0u"m")

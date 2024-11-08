@@ -125,15 +125,6 @@ function differential(
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
         diff_method::DifferentiationMethod = _default_method(G)
 ) where {G <: Geometry, T <: AbstractFloat}
-    # Calculate the Jacobian, convert Vec -> KVector
-    J = jacobian(geometry, ts, diff_method)
-    J_kvecs = Iterators.map(_kvector, J)
-
-    # Extract units from Geometry type
-    Dim = Meshes.paramdim(geometry)
-    units = _units(geometry)^Dim
-
-    # Return norm of the exterior products
-    element = foldl(∧, J_kvecs)
-    return LinearAlgebra.norm(element) * units
+    J = Iterators.map(_KVector, jacobian(geometry, ts, diff_method))
+    return LinearAlgebra.norm(foldl(∧, J))
 end
