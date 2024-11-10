@@ -45,7 +45,8 @@ function integral(
         diff_method::DM = FiniteDifference(),  # TODO _default_method(tetrahedron),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
-    tetra = _ParametricGeometry(_parametric_tetrahedron, 3)
+    paramfunction(t1, t2, t3) = _parametric_tetrahedron(tetrahedron, t1, t2, t3)
+    tetra = _ParametricGeometry(paramfunction, 3)
     return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
 
@@ -56,7 +57,7 @@ end
 _has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
 
 ################################################################################
-#                               jacobian
+#                               Parametric
 ################################################################################
 
 function _parametric_triangle(triangle, t1, t2)
