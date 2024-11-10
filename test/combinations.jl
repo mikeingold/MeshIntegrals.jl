@@ -830,9 +830,9 @@ end
 end
 
 @testitem "Meshes.Tetrahedron" tags=[:extended] setup=[Setup] begin
-    pt_n = Point(0, 1, 0)
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
+    pt_n = Point(0, 3, 0)
+    pt_w = Point(-7, 0, 0)
+    pt_e = Point(8, 0, 0)
     ẑ = Vec(0, 0, 1)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
@@ -841,14 +841,14 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(tetrahedron)
-    @test_throws "not supported" integral(f, tetrahedron, GaussLegendre(100))
-    @test integral(f, tetrahedron, GaussKronrod()) ≈ sol
+    @test integral(f, tetrahedron, GaussLegendre(100))
+    @test_throws "not supported" integral(f, tetrahedron, GaussKronrod())≈sol
     @test integral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test_throws "not supported" integral(fv, tetrahedron, GaussLegendre(100))≈vsol
-    @test integral(fv, tetrahedron, GaussKronrod()) ≈ vsol
+    @test integral(fv, tetrahedron, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral(fv, tetrahedron, GaussKronrod())≈vsol
     @test integral(fv, tetrahedron, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
