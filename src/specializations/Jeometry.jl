@@ -7,7 +7,7 @@ struct _Jeometry{M <: Meshes.Manifold, C <: CRS, F <: Function} <: Meshes.Primit
     function _Jeometry{M, C}(
         fun::F,
         dims::Int64
-    ) where {M <: Manifold, C <: CRS, F <: Function}
+    ) where {M <: Meshes.Manifold, C <: CRS, F <: Function}
         new{M, C, F}(fun, dims)
     end
 end
