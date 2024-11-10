@@ -60,17 +60,18 @@ _has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
 #                               Parametric
 ################################################################################
 
+_constrain(t) = (t > 0) ? prevfloat(t) : t
+
 function _parametric_triangle(triangle, t1, t2)
     # Form a horizontal line segment at t2
     a = triangle(0, t2)
     b = triangle(1 - t2, t2)
     segment = Meshes.Segment(a, b)
 
-    return segment(t1)
+    return segment(_constrain(t1))
 end
 
 function _parametric_tetrahedron(tetrahedron, t1, t2, t3)
-    #_constrain(t) = (t > 1e-6) ? prevfloat(t, 100) : t
     #t1, t2 = _constrain.((t1, t2))
 
     # Take a triangular cross-section at t3
