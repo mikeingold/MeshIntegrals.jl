@@ -53,7 +53,7 @@ function integral(
         Meshes.Triangle(a, b, c)(t1, t2)
     end
 
-    tetra = _Jeometry(parametric, 3)
+    tetra = _ParametricGeometry(parametric, 3)
     return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
 
