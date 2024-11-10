@@ -42,10 +42,19 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::HAdaptiveCubature;
-        diff_method::DM = Analytical(),
+        diff_method::DM = _default_method(tetrahedron),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
-    _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
+    function parametric(t1, t2, t3)
+        # Take a triangular cross-section at height t3, find point in that triangle
+        a = tetrahedron(0, 0, t3)
+        b = tetrahedron(0, 1 - t3, t3)
+        c = tetrahedron(1 - t3, 0, t3)
+        Meshes.Triangle(a, b, c)(t1, t2)
+    end
+
+    tetra = _Jeometry(parametric, 3)
+    return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
 
 ################################################################################
