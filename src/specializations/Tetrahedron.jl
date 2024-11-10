@@ -42,7 +42,7 @@ function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
         rule::HAdaptiveCubature;
-        diff_method::DM = _default_method(tetrahedron),
+        diff_method::DM = FiniteDifference(),  # TODO _default_method(tetrahedron),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     function parametric(t1, t2, t3)
