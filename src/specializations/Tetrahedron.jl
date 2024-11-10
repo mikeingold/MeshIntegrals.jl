@@ -45,20 +45,7 @@ function integral(
         diff_method::DM = FiniteDifference(),  # TODO _default_method(tetrahedron),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
-    function parametric(t1, t2, t3)
-        _constrain(t) = (t > 1e-6) ? prevfloat(t, 100) : t
-
-        t1, t2 = _constrain.((t1, t2))
-
-        # Take a triangular cross-section at height t3, find point in that triangle
-        rem = _constrain(1 - t3)
-        a = tetrahedron(0, 0, t3)
-        b = tetrahedron(0, rem, t3)
-        c = tetrahedron(rem, 0, t3)
-        Meshes.Triangle(a, b, c)(t1, t2)
-    end
-
-    tetra = _ParametricGeometry(parametric, 3)
+    tetra = _ParametricGeometry(parametric_tetrahedron, 3)
     return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
 
@@ -67,3 +54,32 @@ end
 ################################################################################
 
 _has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
+
+################################################################################
+#                               jacobian
+################################################################################
+
+function _parametric_triangle(triangle, t1, t2)
+    # Form a horizontal line segment at t2
+    a = triangle(0, t2)
+    b = triangle(1 - t2, t2)
+    segment = Meshes.Segment(a, b)
+
+    return segment(t1)
+end
+
+function _parametric_tetrahedron(tetrahedron, t1, t2, t3)
+    #_constrain(t) = (t > 1e-6) ? prevfloat(t, 100) : t
+    #t1, t2 = _constrain.((t1, t2))
+
+    # Take a triangular cross-section at t3
+    rem = 1 - t3
+    a = tetrahedron(0, 0, t3)
+    b = tetrahedron(0, rem, t3)
+    c = tetrahedron(rem, 0, t3)
+    cross_section = Meshes.Triangle(a, b, c)
+
+    return _parametric_triangle(cross_section, t1, t2)
+end
+
+
