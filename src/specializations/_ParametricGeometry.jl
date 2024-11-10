@@ -34,9 +34,9 @@ function _ParametricGeometry(
     _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
 end
 
-(j::_ParametricGeometry)(t::T) where {T <: AbstractFloat} = j.fun(t)
-(j::_ParametricGeometry)(t1::T, t2::T) where {T <: AbstractFloat} = j.fun(t1, t2)
-(j::_ParametricGeometry)(t1::T, t2::T, t3::T) where {T <: AbstractFloat} = j.fun(t1, t2, t3)
+(j::_ParametricGeometry)(t) = j.fun(t)
+(j::_ParametricGeometry)(t1, t2) = j.fun(t1, t2)
+(j::_ParametricGeometry)(t1, t2, t3) = j.fun(t1, t2, t3)
 
 Meshes.paramdim(j::_ParametricGeometry) = j.dims
 Meshes.paramdim(::Type{<:_ParametricGeometry}) = j.dims
