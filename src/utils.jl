@@ -14,6 +14,8 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+_constrain(t) = (t > 0) ? prevfloat(t) : t
+
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################

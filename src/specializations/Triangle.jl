@@ -98,3 +98,18 @@ end
 ################################################################################
 
 _has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
+
+################################################################################
+#                              Parametric
+################################################################################
+
+function _parametric(triangle::Meshes.Triangle, t1, t2)
+    @assert (0 <= t1 <= 1) && (0 <= t2 <= 1)
+
+    # Form a horizontal line segment at t2
+    a = triangle(0, t2)
+    b = triangle(_constrain(1 - t2), t2)
+    segment = Meshes.Segment(a, b)
+
+    return segment(t1)
+end
