@@ -841,7 +841,7 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(tetrahedron)
-    @test integral(f, tetrahedron, GaussLegendre(100))
+    @test integral(f, tetrahedron, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, tetrahedron, GaussKronrod())≈sol
     @test integral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
 
@@ -854,7 +854,7 @@ end
     # Integral aliases
     @test_throws "not supported" lineintegral(f, tetrahedron)
     @test_throws "not supported" surfaceintegral(f, tetrahedron)
-    @test volumeintegral(f, tetrahedron, GaussKronrod()) ≈ sol
+    @test volumeintegral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
 end
 
 @testitem "Meshes.Torus" setup=[Setup] begin
