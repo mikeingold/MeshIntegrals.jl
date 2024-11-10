@@ -46,17 +46,23 @@ function integral(
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     function parametric(t1, t2, t3)
+        t1, t2 = _constrain.((t1, t2))
+
         # Take a triangular cross-section at height t3, find point in that triangle
         rem = prevfloat(1 - t3)
         a = tetrahedron(0, 0, t3)
         b = tetrahedron(0, rem, t3)
         c = tetrahedron(rem, 0, t3)
-        Meshes.Triangle(a, b, c)(prevfloat(t1), prevfloat(t2))
+        Meshes.Triangle(a, b, c)(t1, t2)
     end
 
     tetra = _ParametricGeometry(parametric, 3)
     return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
+
+# TODO move if it works
+# Only apply prevfloat when greater than zero
+_constrain(t) = (t > 0) ? prevfloat(t) : t
 
 ################################################################################
 #                               jacobian
