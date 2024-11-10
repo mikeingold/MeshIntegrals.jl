@@ -51,7 +51,7 @@ function integral(
         a = tetrahedron(0, 0, t3)
         b = tetrahedron(0, rem, t3)
         c = tetrahedron(rem, 0, t3)
-        Meshes.Triangle(a, b, c)(t1, t2)
+        Meshes.Triangle(a, b, c)(prevfloat(t1), prevfloat(t2))
     end
 
     tetra = _ParametricGeometry(parametric, 3)
