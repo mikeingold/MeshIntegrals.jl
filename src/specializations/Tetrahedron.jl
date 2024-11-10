@@ -8,7 +8,7 @@
 #   a multi-step domain transformation whose derivation is detailed in the package
 #   documentation.
 ################################################################################
-
+#=
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
@@ -37,17 +37,17 @@ function integral(
     # Apply barycentric domain correction (volume: 1/6 → actual)
     return 6 * Meshes.volume(tetrahedron) * ∫
 end
+=#
 
 function integral(
         f::F,
         tetrahedron::Meshes.Tetrahedron,
-        rule::HAdaptiveCubature;
-        diff_method::DM = FiniteDifference(),  # TODO _default_method(tetrahedron),
-        FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+        rule::IntegrationRule;
+        kwargs...
+) where {F <: Function}
     paramfunction(t1, t2, t3) = _parametric_tetrahedron(tetrahedron, t1, t2, t3)
     tetra = _ParametricGeometry(paramfunction, 3)
-    return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
+    return _integral(f, tetra, rule; kwargs...)
 end
 
 ################################################################################
