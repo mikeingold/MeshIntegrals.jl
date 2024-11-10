@@ -52,7 +52,7 @@ Cubature integration rules are recommended (and the default).
 | `SimpleMesh` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/27) |
 | `Sphere` in `𝔼{2}` | ✅ | ✅ | ✅ |
 | `Sphere` in `𝔼{3}` | ✅ | ✅ | ✅ |
-| `Tetrahedron` in `𝔼{3}` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/40) | ✅ | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/40) |
+| `Tetrahedron` in `𝔼{3}` | ✅ | 🛑 | ✅ |
 | `Triangle` | ✅ | ✅ | ✅ |
 | `Torus` | ✅ | ✅ | ✅ |
 | `Wedge` | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) | [🎗️](https://github.com/JuliaGeometry/MeshIntegrals.jl/issues/28) |
