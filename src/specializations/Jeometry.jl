@@ -1,7 +1,7 @@
 # _Jeometry is a fake Meshes.Geometry whose only purpose is to provide a wrapper
 # for manually-defined parametric functions.
 struct _Jeometry{M <: Meshes.Manifold, C <: CRS, F <: Function} <: Meshes.Primitive{M, C}
-    fun::F,
+    fun::F
     dims::Int64
 
     function _Jeometry{M, C}(
