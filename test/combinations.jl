@@ -843,13 +843,13 @@ end
     sol = Meshes.measure(tetrahedron)
     @test_throws "not supported" integral(f, tetrahedron, GaussLegendre(100))
     @test integral(f, tetrahedron, GaussKronrod()) ≈ sol
-    @test_throws "not supported" integral(f, tetrahedron, HAdaptiveCubature())
+    @test integral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
     @test_throws "not supported" integral(fv, tetrahedron, GaussLegendre(100))≈vsol
     @test integral(fv, tetrahedron, GaussKronrod()) ≈ vsol
-    @test_throws "not supported" integral(fv, tetrahedron, HAdaptiveCubature())≈vsol
+    @test integral(fv, tetrahedron, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
     @test_throws "not supported" lineintegral(f, tetrahedron)
