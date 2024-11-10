@@ -47,9 +47,10 @@ function integral(
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
     function parametric(t1, t2, t3)
         # Take a triangular cross-section at height t3, find point in that triangle
+        rem = prevfloat(1 - t3)
         a = tetrahedron(0, 0, t3)
-        b = tetrahedron(0, 1 - t3, t3)
-        c = tetrahedron(1 - t3, 0, t3)
+        b = tetrahedron(0, rem, t3)
+        c = tetrahedron(rem, 0, t3)
         Meshes.Triangle(a, b, c)(t1, t2)
     end
 
