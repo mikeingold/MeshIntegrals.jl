@@ -45,7 +45,7 @@ function integral(
         rule::IntegrationRule;
         kwargs...
 ) where {F <: Function}
-    paramfunction(t1, t2, t3) = _parametric_tetrahedron(tetrahedron, t1, t2, t3)
+    paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
     tetra = _ParametricGeometry(paramfunction, 3)
     return _integral(f, tetra, rule; kwargs...)
 end
@@ -70,5 +70,5 @@ function _parametric(tetrahedron::Meshes.Tetrahedron, t1, t2, t3)
     c = tetrahedron(rem, 0, t3)
     cross_section = Meshes.Triangle(a, b, c)
 
-    return _parametric_triangle(cross_section, t1, t2)
+    return _parametric(cross_section, t1, t2)
 end
