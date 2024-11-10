@@ -45,7 +45,7 @@ function integral(
         diff_method::DM = FiniteDifference(),  # TODO _default_method(tetrahedron),
         FP::Type{T} = Float64
 ) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
-    tetra = _ParametricGeometry(parametric_tetrahedron, 3)
+    tetra = _ParametricGeometry(_parametric_tetrahedron, 3)
     return integral(f, tetra, rule; diff_method=diff_method, FP=FP)
 end
 
