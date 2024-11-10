@@ -40,3 +40,10 @@ end
 
 Meshes.paramdim(j::_ParametricGeometry) = j.dims
 Meshes.paramdim(::Type{<:_ParametricGeometry}) = j.dims
+
+"""
+    _parametric(geometry, ts...)
+
+Used for defining parametric functions for domain transformations.
+"""
+function _parametric end
