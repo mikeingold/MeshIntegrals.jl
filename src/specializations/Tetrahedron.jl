@@ -5,7 +5,7 @@
 #   The Tetrahedron geometry is a volumetric simplex whose parametric function in Meshes.jl
 #   uses barycentric coordinates on a domain {u,v,w} with coordinates that are non-negative
 #   and bounded by the surface $u + v + w ≤ 1$. A transformation is used to map this volume
-#   with to a rectangular domain [0,1]^3.
+#   to a rectangular domain [0,1]^3.
 ############################################################################################
 
 function integral(
