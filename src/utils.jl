@@ -14,22 +14,12 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+# TODO test new version of parametric that doesn't require this
 _constrain(t) = (t > 0) ? prevfloat(t) : t
 
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################
-#=
-# Throw an ArgumentError if Analytical() jacobian not defined for this type
-function _guarantee_analytical(
-        ::Type{G},
-        ::DifferentiationMethod
-) where {G <: Geometry}
-    throw(ArgumentError("$G geometries require kwarg diff_method = Analytical()"))
-end
-
-_guarantee_analytical(::Type{G}, ::Analytical) where {G <: Geometry} = nothing
-=#
 
 # Return whether a geometry type has jacobian methods defined
 _has_analytical(::Type{G}) where {G <: Geometry} = false

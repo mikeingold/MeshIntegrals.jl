@@ -21,10 +21,7 @@ end
 
     # _has_analytical of types
     @test _has_analytical(Meshes.BezierCurve) == true
-
-    # _guarantee_analytical
-    @test _guarantee_analytical(Meshes.BezierCurve, Analytical()) === nothing
-    @test_throws "Analytical" _guarantee_analytical(Meshes.BezierCurve, FiniteDifference())
+    @test _has_analytical(Meshes.Sphere) == false
 
     # _default_method
     @test _default_method(Meshes.BezierCurve) isa Analytical
