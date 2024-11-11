@@ -912,6 +912,6 @@ end
     # Type stability
     f32(p) = 1.0f0
     triangle32 = Triangle(a(Float32), b(Float32), c(Float32))
-    int_FP32 = integral(f32, triangle32, GaussLegendre(100); FP=Float32)
+    int_FP32 = integral(f32, triangle32, GaussLegendre(100); FP = Float32)
     @test typeof(int_FP32.val) == Float32
 end

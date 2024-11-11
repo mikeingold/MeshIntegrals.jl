@@ -14,7 +14,8 @@ no longer be required.
 - `fun::Function` - a parametric function: (ts...) -> Meshes.Point
 - `dims::Int64` - the geometry's number of parametric dimensions
 """
-struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function, Dim} <: Meshes.Primitive{M, C}
+struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function, Dim} <:
+       Meshes.Primitive{M, C}
     fun::F
 
     function _ParametricGeometry{M, C}(
