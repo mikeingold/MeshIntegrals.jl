@@ -1,12 +1,11 @@
-################################################################################
-#                      Specialized Methods for Plane
+############################################################################################
+#                               Specialized Methods for Plane
 #
 # Why Specialized?
-#   The Plane geometry is a special case, representing a planar surface with
-#   infinite extent along two basis vectors. This requires a pair of domain
-#   transformations mapping from the typical parametric region [0,1]² to an
-#   infinite one (-∞,∞)².
-################################################################################
+#   The Plane geometry is a special case, representing a planar surface with infinite extent
+#   along two basis vectors. This requires a pair of domain transformations mapping from the
+#   typical parametric region [0,1]² to an infinite one (-∞,∞)².
+############################################################################################
 
 function integral(
     f::Function,
@@ -14,14 +13,14 @@ function integral(
     rule::IntegrationRule;
     kwargs...
 )
-    paramfunction(t) = _parametric(plane, t)
+    paramfunction(t1, t2) = _parametric(plane, t1, t2)
     param_plane = _ParametricGeometry(paramfunction, 2)
     return _integral(f, param_plane, rule; kwargs...)
 end
 
-################################################################################
-#                              Parametric
-################################################################################
+############################################################################################
+#                                       Parametric
+############################################################################################
 
 function _parametric(plane::Meshes.Plane, t1, t2)
     f1(t) = t / (1 - t^2)
