@@ -28,7 +28,7 @@ function _parametric(triangle::Meshes.Triangle, t1, t2)
 
     # Form a horizontal line segment at t2
     a = triangle(0, t2)
-    b = triangle(_constrain(1 - t2), t2)
+    b = triangle(t2, 0)
     segment = Meshes.Segment(a, b)
 
     return segment(t1)
