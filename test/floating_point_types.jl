@@ -10,8 +10,6 @@
 end
 
 @testitem "Alternate floating types" setup=[Setup, BaseAtol] begin
-    using MeshIntegrals: _ParametricGeometry
-
     @testset "$FP" for FP in (Float32, BigFloat)
         # Rectangular volume with unit integrand
         f = p -> one(FP)
@@ -40,12 +38,6 @@ end
         int_GL_3D = integral(f, box3d, GaussLegendre(100); FP = FP)
         @test int_GL_3D≈one(FP) * u"m^3" atol=3baseatol[FP] * u"m^3"
         @test typeof(int_GL_3D.val) == FP
-
-        # Check for _ParametricGeometry
-        pbox = _ParametricGeometry(ts -> box2d(ts...), 2)
-        int_PG = integral(f, pbox, GaussLegendre(100); FP = FP)
-        @test int_PG≈one(FP) * u"m^2" atol=2baseatol[FP] * u"m^2"
-        @test typeof(int_PG.val) == FP
     end
 end
 
