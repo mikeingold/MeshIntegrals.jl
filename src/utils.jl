@@ -14,9 +14,6 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
-# TODO test new version of parametric that doesn't require this
-_constrain(t) = (t > 0) ? prevfloat(t) : t
-
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################

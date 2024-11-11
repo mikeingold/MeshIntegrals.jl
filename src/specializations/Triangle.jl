@@ -26,7 +26,7 @@ end
 function _parametric(triangle::Meshes.Triangle, t1, t2)
     @assert (0 <= t1 <= 1) && (0 <= t2 <= 1)
 
-    # Form a horizontal line segment at t2
+    # Form a line segment between sides
     a = triangle(0, t2)
     b = triangle(t2, 0)
     segment = Meshes.Segment(a, b)

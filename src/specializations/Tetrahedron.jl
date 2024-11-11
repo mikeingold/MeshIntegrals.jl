@@ -27,12 +27,6 @@ function _parametric(tetrahedron::Meshes.Tetrahedron, t1, t2, t3)
     @assert (0 <= t3 <= 1)
 
     # Take a triangular cross-section at t3
-    #=
-    rem = _constrain(1 - t3)
-    a = tetrahedron(0, 0, t3)
-    b = tetrahedron(0, rem, t3)
-    c = tetrahedron(rem, 0, t3)
-    =#
     a = tetrahedron(t3, 0, 0)
     b = tetrahedron(0, t3, 0)
     c = tetrahedron(0, 0, t3)
