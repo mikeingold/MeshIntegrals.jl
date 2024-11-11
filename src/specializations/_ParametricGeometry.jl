@@ -21,7 +21,7 @@ struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function, Dim} <
             fun::F,
             dims::Int64
     ) where {M <: Meshes.Manifold, C <: CRS, F <: Function}
-        new{M, C, F, dims}(fun)
+        return new{M, C, F, dims}(fun)
     end
 end
 
@@ -30,14 +30,14 @@ function _ParametricGeometry(
         dims::Int64
 ) where {F <: Function}
     p = fun(zeros(dims)...)
-    _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
+    return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
 end
 
 # geometry(ts...) == geometry.fun(ts...)
 function (geometry::_ParametricGeometry{M, C, F, Dim})(
     ts::Vararg{T, Dim}
 ) where {M, C, F, Dim, T}
-    geometry.fun(ts...)
+    return geometry.fun(ts...)
 end
 
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
