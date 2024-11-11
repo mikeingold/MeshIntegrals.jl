@@ -33,9 +33,14 @@ function _ParametricGeometry(
     _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
 end
 
-(j::_ParametricGeometry)(t) = j.fun(t)
-(j::_ParametricGeometry)(t1, t2) = j.fun(t1, t2)
-(j::_ParametricGeometry)(t1, t2, t3) = j.fun(t1, t2, t3)
+function (j::_ParametricGeometry{M, C, F, Dim})(
+    ts::Vararg{T, Dim}
+) where {M, C, F, Dim, T}
+    j.fun(ts...)
+end
+
+#(j::_ParametricGeometry)(t1, t2) = j.fun(t1, t2)
+#(j::_ParametricGeometry)(t1, t2, t3) = j.fun(t1, t2, t3)
 
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
 
