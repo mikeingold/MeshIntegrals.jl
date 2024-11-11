@@ -32,3 +32,12 @@ end
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
 end
+
+@testitem "_ParametricGeometry" setup=[Setup] begin
+    using MeshIntegrals: _ParametricGeometry
+
+    segment = Segment(Point(0, 0), Point(1, 1))
+    f(t) = segment(t)
+    geometry = _ParametricGeometry(f, 1)
+    @test paramdim(geometry) == 1
+end
