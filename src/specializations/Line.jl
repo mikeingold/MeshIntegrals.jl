@@ -8,10 +8,10 @@
 ################################################################################
 
 function integral(
-    f::Function,
-    line::Meshes.Line,
-    rule::IntegrationRule;
-    kwargs...
+        f::Function,
+        line::Meshes.Line,
+        rule::IntegrationRule;
+        kwargs...
 )
     paramfunction(t) = _parametric(line, t)
     param_line = _ParametricGeometry(paramfunction, 1)

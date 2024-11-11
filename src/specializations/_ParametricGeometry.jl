@@ -19,16 +19,16 @@ struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function} <: Mes
     dims::Int64
 
     function _ParametricGeometry{M, C}(
-        fun::F,
-        dims::Int64
+            fun::F,
+            dims::Int64
     ) where {M <: Meshes.Manifold, C <: CRS, F <: Function}
         new{M, C, F}(fun, dims)
     end
 end
 
 function _ParametricGeometry(
-    fun::F,
-    dims::Int64
+        fun::F,
+        dims::Int64
 ) where {F <: Function}
     p = fun(zeros(dims)...)
     _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)

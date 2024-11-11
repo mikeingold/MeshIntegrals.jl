@@ -9,10 +9,10 @@
 ############################################################################################
 
 function integral(
-    f::F,
-    triangle::Meshes.Triangle,
-    rule::IntegrationRule;
-    kwargs...
+        f::F,
+        triangle::Meshes.Triangle,
+        rule::IntegrationRule;
+        kwargs...
 ) where {F <: Function}
     paramfunction(t1, t2) = _parametric(triangle, t1, t2)
     tri = _ParametricGeometry(paramfunction, 2)

@@ -8,10 +8,10 @@
 ############################################################################################
 
 function integral(
-    f::Function,
-    plane::Meshes.Plane,
-    rule::IntegrationRule;
-    kwargs...
+        f::Function,
+        plane::Meshes.Plane,
+        rule::IntegrationRule;
+        kwargs...
 )
     paramfunction(t1, t2) = _parametric(plane, t1, t2)
     param_plane = _ParametricGeometry(paramfunction, 2)
