@@ -14,6 +14,9 @@ There are several notable exceptions to how Meshes.jl defines [parametric functi
 
 ## Triangle
 
+!!! note
+    This derivation is now obsolete.
+
 For a specified `Meshes.Triangle` surface with area $A$, let $u$ and $v$ be Barycentric coordinates that span the surface.
 ```math
 \int_\triangle f(\bar{r}) \, \text{d}A
