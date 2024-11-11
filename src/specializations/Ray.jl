@@ -9,6 +9,19 @@
 ################################################################################
 
 function integral(
+    f::Function,
+    ray::Meshes.Ray,
+    rule::IntegrationRule;
+    kwargs...
+)
+    paramfunction(t) = _parametric(ray, t)
+    param_ray = _ParametricGeometry(paramfunction, 1)
+    return _integral(f, param_ray, rule; kwargs...)
+end
+
+#=
+
+function integral(
         f::F,
         ray::Meshes.Ray,
         rule::GaussLegendre;
@@ -68,7 +81,7 @@ function integral(
     ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [0,1] ↦ t ∈ [0,∞)
-    t(x) = x / (1 - x^2)
+    
     t′(x) = (1 + x^2) / (1 - x^2)^2
 
     # Integrate f along the Ray
@@ -93,3 +106,14 @@ end
 ################################################################################
 
 _has_analytical(::Type{T}) where {T <: Meshes.Ray} = true
+
+=#
+
+################################################################################
+#                              Parametric
+################################################################################
+
+function _parametric(ray::Meshes.Ray, t)
+    f(t) = t / (1 - t^2)
+    return ray(f(t))
+end
