@@ -19,7 +19,7 @@ _constrain(t) = (t > 0) ? prevfloat(t) : t
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################
-
+#=
 # Throw an ArgumentError if Analytical() jacobian not defined for this type
 function _guarantee_analytical(
         ::Type{G},
@@ -29,6 +29,7 @@ function _guarantee_analytical(
 end
 
 _guarantee_analytical(::Type{G}, ::Analytical) where {G <: Geometry} = nothing
+=#
 
 # Return whether a geometry type has jacobian methods defined
 _has_analytical(::Type{G}) where {G <: Geometry} = false
