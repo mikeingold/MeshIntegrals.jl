@@ -884,10 +884,10 @@ end
 end
 
 @testitem "Meshes.Triangle" setup=[Setup] begin
-    pt_n = Point(0, 1, 0)
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
-    triangle = Triangle(pt_e, pt_n, pt_w)
+    a(T = Float64) = Point(0, T(1), 0)
+    b(T = Float64) = Point(T(-1), 0, 0)
+    c(T = Float64) = Point(T(1), 0, 0)
+    triangle = Triangle(a(), b(), c())
 
     f(p) = 1.0
     fv(p) = fill(f(p), 3)
@@ -908,4 +908,10 @@ end
     @test_throws "not supported" lineintegral(f, triangle)
     @test surfaceintegral(f, triangle) ≈ sol
     @test_throws "not supported" volumeintegral(f, triangle)
+
+    # Type stability
+    f32(p) = 1.0f0
+    triangle = Triangle(a(Float32), b(Float32), c(Float32))
+    int_FP32 = integral(f32, triangle, HAdaptiveCubature(); FP=Float32)
+    @test typeof(int_FP32.val) == Float32
 end
