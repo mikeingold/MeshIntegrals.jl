@@ -34,11 +34,9 @@ function _ParametricGeometry(
 end
 
 # geometry(ts...) == geometry.fun(ts...)
-function (geometry::_ParametricGeometry{M, C, F, Dim})(
-    ts::Vararg{T, Dim}
-) where {M, C, F, Dim, T}
-    return geometry.fun(ts...)
-end
+(g::_ParametricGeometry{M, C, F, 1})(t) where {M, C, F} = g.fun(t)
+(g::_ParametricGeometry{M, C, F, 2})(t1, t2) where {M, C, F} = g.fun(t1, t2)
+(g::_ParametricGeometry{M, C, F, 3})(t1, t2, t3) where {M, C, F} = g.fun(t1, t2, t3)
 
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
 
