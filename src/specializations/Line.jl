@@ -106,7 +106,7 @@ _has_analytical(::Type{T}) where {T <: Meshes.Line} = true
 #                               Parametric
 ################################################################################
 
-function _parametric(line::Line, t)
+function _parametric(line::Meshes.Line, t)
     f1(t) = t / (1 - t^2)
     f2(t) = 2x - 1
     return line((f1 ∘ f2)(t))
