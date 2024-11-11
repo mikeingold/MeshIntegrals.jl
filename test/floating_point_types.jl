@@ -10,7 +10,7 @@
 end
 
 @testitem "Alternate floating types" setup=[Setup, BaseAtol] begin
-    using Meshes: _ParametricGeometry
+    using MeshIntegrals: _ParametricGeometry
 
     @testset "$FP" for FP in (Float32, BigFloat)
         # Rectangular volume with unit integrand
