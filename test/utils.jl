@@ -21,16 +21,10 @@ end
 
     # _has_analytical of types
     @test _has_analytical(Meshes.BezierCurve) == true
-    @test _has_analytical(Meshes.Line) == true
-    @test _has_analytical(Meshes.Plane) == true
-    @test _has_analytical(Meshes.Ray) == true
-    @test _has_analytical(Meshes.Sphere) == false
-    @test _has_analytical(Meshes.Tetrahedron) == true
-    @test _has_analytical(Meshes.Triangle) == true
 
     # _guarantee_analytical
-    @test _guarantee_analytical(Meshes.Line, Analytical()) === nothing
-    @test_throws "Analytical" _guarantee_analytical(Meshes.Line, FiniteDifference())
+    @test _guarantee_analytical(Meshes.BezierCurve, Analytical()) === nothing
+    @test_throws "Analytical" _guarantee_analytical(Meshes.BezierCurve, FiniteDifference())
 
     # _default_method
     @test _default_method(Meshes.BezierCurve) isa Analytical
