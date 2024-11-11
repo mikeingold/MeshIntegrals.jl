@@ -14,15 +14,14 @@ no longer be required.
 - `fun::Function` - a parametric function: (ts...) -> Meshes.Point
 - `dims::Int64` - the geometry's number of parametric dimensions
 """
-struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function} <: Meshes.Primitive{M, C}
+struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F <: Function, Dim} <: Meshes.Primitive{M, C}
     fun::F
-    dims::Int64
 
     function _ParametricGeometry{M, C}(
             fun::F,
             dims::Int64
     ) where {M <: Meshes.Manifold, C <: CRS, F <: Function}
-        new{M, C, F}(fun, dims)
+        new{M, C, F, dims}(fun)
     end
 end
 
@@ -38,8 +37,7 @@ end
 (j::_ParametricGeometry)(t1, t2) = j.fun(t1, t2)
 (j::_ParametricGeometry)(t1, t2, t3) = j.fun(t1, t2, t3)
 
-Meshes.paramdim(j::_ParametricGeometry) = j.dims
-Meshes.paramdim(::Type{<:_ParametricGeometry}) = j.dims
+Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
 
 """
     _parametric(geometry, ts...)
