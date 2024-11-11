@@ -33,20 +33,19 @@ function _ParametricGeometry(
     _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
 end
 
-function (j::_ParametricGeometry{M, C, F, Dim})(
+# geometry(ts...) == geometry.fun(ts...)
+function (geometry::_ParametricGeometry{M, C, F, Dim})(
     ts::Vararg{T, Dim}
 ) where {M, C, F, Dim, T}
-    j.fun(ts...)
+    geometry.fun(ts...)
 end
-
-#(j::_ParametricGeometry)(t1, t2) = j.fun(t1, t2)
-#(j::_ParametricGeometry)(t1, t2, t3) = j.fun(t1, t2, t3)
 
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
 
 """
-    _parametric(geometry, ts...)
+    _parametric(geometry::G, ts...) where {G <: Meshes.Geometry}
 
-Used for defining parametric functions for domain transformations.
+Used in MeshIntegrals.jl for defining parametric functions that implement domain
+transformations. Usages are specialized on 
 """
 function _parametric end
