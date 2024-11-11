@@ -829,7 +829,7 @@ end
     @test_throws "not supported" volumeintegral(f, sphere)
 end
 
-@testitem "Meshes.Tetrahedron" tags=[:extended] setup=[Setup] begin
+@testitem "Meshes.Tetrahedron" setup=[Setup] begin
     pt_n = Point(0, 3, 0)
     pt_w = Point(-7, 0, 0)
     pt_e = Point(8, 0, 0)
