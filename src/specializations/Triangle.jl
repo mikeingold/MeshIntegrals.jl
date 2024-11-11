@@ -8,7 +8,7 @@
 #   multi-step domain transformation whose derivation is detailed in the package
 #   documentation.
 ################################################################################
-
+#=
 function integral(
         f::F,
         triangle::Meshes.Triangle,
@@ -92,12 +92,24 @@ function integral(
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * Meshes.area(triangle) .* ∫
 end
+=#
+
+function integral(
+    f::F,
+    triangle::Meshes.Triangle,
+    rule::IntegrationRule;
+    kwargs...
+) where {F <: Function}
+    paramfunction(t1, t2) = _parametric(triangle, t1, t2)
+    tri = _ParametricGeometry(paramfunction, 2)
+    return _integral(f, tri, rule; kwargs...)
+end
 
 ################################################################################
 #                               jacobian
 ################################################################################
 
-_has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
+# _has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
 
 ################################################################################
 #                              Parametric
