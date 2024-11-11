@@ -14,6 +14,9 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+# Return an NTuple{N, T} of zeros
+_zeros(T, N) = ntuple(_ -> zero(T), N)
+
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################
