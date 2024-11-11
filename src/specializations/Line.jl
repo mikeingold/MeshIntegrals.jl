@@ -8,6 +8,18 @@
 ################################################################################
 
 function integral(
+    f::Function,
+    line::Meshes.Line,
+    rule::IntegrationRule;
+    kwargs...
+)
+    paramfunction(t) = _parametric(line, t)
+    param_line = _ParametricGeometry(paramfunction, 2)
+    return _integral(f, param_line, rule; kwargs...)
+end
+
+#=
+function integral(
         f::F,
         line::Meshes.Line,
         rule::GaussLegendre;
@@ -88,3 +100,14 @@ end
 ################################################################################
 
 _has_analytical(::Type{T}) where {T <: Meshes.Line} = true
+=#
+
+################################################################################
+#                               Parametric
+################################################################################
+
+function _parametric(line::Line, t)
+    f1(t) = t / (1 - t^2)
+    f2(t) = 2x - 1
+    return line((f1 ∘ f2)(t))
+end
