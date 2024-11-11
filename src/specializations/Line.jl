@@ -108,6 +108,6 @@ _has_analytical(::Type{T}) where {T <: Meshes.Line} = true
 
 function _parametric(line::Meshes.Line, t)
     f1(t) = t / (1 - t^2)
-    f2(t) = 2x - 1
+    f2(t) = 2t - 1
     return line((f1 ∘ f2)(t))
 end
