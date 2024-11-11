@@ -25,7 +25,7 @@ end
 function _parametric(plane::Meshes.Plane, t1, t2)
     f1(t) = t / (1 - t^2)
     f2(t) = 2t - 1
-    f(t) = f1 ∘ f2
+    f = f1 ∘ f2
     return plane(f(t1), f(t2))
 end
 
