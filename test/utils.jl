@@ -11,7 +11,7 @@
 end
 
 @testitem "DifferentiationMethod" setup=[Setup] begin
-    using MeshIntegrals: _has_analytical, _default_method, _guarantee_analytical
+    using MeshIntegrals: _has_analytical, _default_method
 
     # _has_analytical of instances
     bezier = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])
