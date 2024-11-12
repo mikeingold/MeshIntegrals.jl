@@ -19,8 +19,8 @@ rules = (
     (name = "HAdaptiveCubature", rule = HAdaptiveCubature(), N = 500)
 )
 geometries = (
-    (name = "Meshes.Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
-    (name = "Meshes.Sphere", item = Sphere(Point(0, 0, 0), 1.0))
+    (name = "Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
+    (name = "Sphere", item = Sphere(Point(0, 0, 0), 1.0))
 )
 
 SUITE["Integrals"] = let s = BenchmarkGroup()
