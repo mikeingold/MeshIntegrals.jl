@@ -18,6 +18,10 @@ end
 _zeros(T::DataType, N::Int64) = ntuple(_ -> zero(T), N)
 _zeros(N::Int) = _zeros(Float64, N)
 
+# Return an NTuple{N, T} of ones; same interface as Base.ones() but faster
+_ones(T::DataType, N::Int64) = ntuple(_ -> one(T), N)
+_ones(N::Int) = _one(Float64, N)
+
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################
