@@ -44,7 +44,7 @@ spec = (
     g = (
         bezier = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)]),
         triangle = Triangle(Point(1, 0, 0), Point(0, 1, 0), Point(0, 0, 1)),
-        tetrahedron = let 
+        tetrahedron = let
             a = Point(0, 3, 0)
             b = Point(-7, 0, 0)
             c = Point(8, 0, 0)

@@ -25,7 +25,8 @@ end
 
 function _parametric(tetrahedron::Meshes.Tetrahedron, t1, t2, t3)
     if t3 < 0 || t3 > 1
-        throw(DomainError(t3, "tetrahedron(t1, t2, t3) is not defined for t3 outside [0, 1]."))
+        msg = "tetrahedron(t1, t2, t3) is not defined for t3 outside [0, 1]."
+        throw(DomainError(t3, msg))
     end
 
     # Take a triangular cross-section at t3
