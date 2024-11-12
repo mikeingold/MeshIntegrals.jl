@@ -35,9 +35,12 @@ end
 #                                    Specializations
 ############################################################################################
 
+# TODO after merge of PR #131
+#   spec.f = p -> norm(to(p))
+#   un-comment s["Tetrahedron"]
+
 spec = (
-    f = p -> 1.0,   # p -> norm(to(p)),
-            # TODO restore after v0.16 releas - Unitful intregrand not supported in v0.15
+    f = p -> 1.0,
     g = (
         bezier = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)]),
         triangle = Triangle(Point(1, 0, 0), Point(0, 1, 0), Point(0, 0, 1)),
@@ -55,7 +58,7 @@ spec = (
 SUITE["Specializations"] = let s = BenchmarkGroup()
     s["BezierCurve"] = @benchmarkable integral($spec.f, $spec.g.bezier, $spec.rule)
     s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule)
-    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
+    # s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
     s
 end
 
