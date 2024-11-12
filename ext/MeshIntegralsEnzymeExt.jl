@@ -4,9 +4,12 @@ using MeshIntegrals: MeshIntegrals, AutoEnzyme
 using Meshes: Geometry, to
 using Enzyme: Enzyme
 
-function MeshIntegrals.jacobian(
-        geometry::Geometry, ts::V, ::AutoEnzyme) where {V <: Union{AbstractVector, Tuple}}
-    to.(Enzyme.jacobian(Enzyme.Forward, geometry, ts...))
+function Meshes.jacobian(
+        geometry::Geometry,
+        ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
+        ::AutoEnzyme
+) where {T <: AbstractFloat}
+    return to.(Enzyme.jacobian(Enzyme.Forward, geometry, ts...))
 end
 
 end
