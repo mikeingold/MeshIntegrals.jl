@@ -19,8 +19,6 @@ rules = (
     (name = "HAdaptiveCubature", rule = HAdaptiveCubature(), N = 500)
 )
 geometries = (
-    (name = "Meshes.BezierCurve",
-        item = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])),
     (name = "Meshes.Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
     (name = "Meshes.Sphere", item = Sphere(Point(0, 0, 0), 1.0))
 )
@@ -30,6 +28,33 @@ SUITE["Integrals"] = let s = BenchmarkGroup()
         n1, n2, N = geometry.name, "$(int.name) $(rule.name)", rule.N
         s[n1][n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
     end
+    s
+end
+
+############################################################################################
+#                                    Specializations
+############################################################################################
+
+spec = (
+    f = p -> norm(to(p)),
+    g = (
+        bezier = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)]),
+        triangle = Triangle(Point(1,0,0), Point(0,1,0), Point(0,0,1)),
+        tetrahedron = let 
+            a = Point(0, 3, 0)
+            b = Point(-7, 0, 0)
+            c = Point(8, 0, 0)
+            ẑ = Vec(0, 0, 1)
+            Tetrahedron(a, b, c, a + ẑ)
+        end
+    ),
+    rule = HAdaptiveCubature()
+)
+
+SUITE["Specializations"] = let s = BenchmarkGroup()
+    s["BezierCurve"] = @benchmarkable integral($spec.f, $spec.g.bezier, $spec.rule)
+    s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule)
+    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
     s
 end
 
