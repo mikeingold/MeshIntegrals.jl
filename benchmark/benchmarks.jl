@@ -36,7 +36,8 @@ end
 ############################################################################################
 
 spec = (
-    f = p -> norm(to(p)),
+    f = p -> 1.0   # p -> norm(to(p)),
+            # TODO restore after v0.16 releas - Unitful intregrand not supported in v0.15
     g = (
         bezier = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)]),
         triangle = Triangle(Point(1,0,0), Point(0,1,0), Point(0,0,1)),
