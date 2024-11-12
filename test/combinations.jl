@@ -836,11 +836,11 @@ end
     ẑ = Vec(0, 0, 1)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
-    f(p) = 1.0
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(tetrahedron)
+    sol = Meshes.measure(tetrahedron) * u"A"
     @test integral(f, tetrahedron, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, tetrahedron, GaussKronrod())≈sol
     @test integral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
@@ -889,11 +889,11 @@ end
     c(T = Float64) = Point(T(1), 0, 0)
     triangle = Triangle(a(), b(), c())
 
-    f(p) = 1.0
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(triangle)
+    sol = Meshes.measure(triangle) * u"A"
     @test integral(f, triangle, GaussLegendre(100)) ≈ sol
     @test integral(f, triangle, GaussKronrod()) ≈ sol
     @test integral(f, triangle, HAdaptiveCubature()) ≈ sol
@@ -910,7 +910,7 @@ end
     @test_throws "not supported" volumeintegral(f, triangle)
 
     # Type stability
-    f32(p) = 1.0f0
+    f32(p) = 1.0f0u"A"
     triangle32 = Triangle(a(Float32), b(Float32), c(Float32))
     int_FP32 = integral(f32, triangle32, GaussLegendre(100); FP = Float32)
     @test typeof(int_FP32.val) == Float32
