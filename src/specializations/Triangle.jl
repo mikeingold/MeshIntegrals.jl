@@ -24,7 +24,9 @@ end
 ################################################################################
 
 function _parametric(triangle::Meshes.Triangle, t1, t2)
-    @assert (0 <= t1 <= 1) && (0 <= t2 <= 1)
+    if (t1 < 0 || t1 > 1) || (t2 < 0 || t2 > 1)
+        throw(DomainError(t3, "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]^2."))
+    end
 
     # Form a line segment between sides
     a = triangle(0, t2)

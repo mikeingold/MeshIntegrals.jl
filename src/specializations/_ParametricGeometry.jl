@@ -5,7 +5,7 @@ _ParametricGeometry is used internally in MeshIntegrals.jl to behave like a gene
 for geometries with custom parametric functions. This type is used for transforming other
 geometries to enable integration over the standard rectangular `[0,1]^n` domain.
 
-Meshes.jl adopted a ParametrizedCurve type that performs a similar role as of `v0.51.20`,
+Meshes.jl adopted a `ParametrizedCurve` type that performs a similar role as of `v0.51.20`,
 but only supports geometries with one parametric dimension. Support is additionally planned
 for more types that span surfaces and volumes, at which time this custom type will probably
 no longer be required.
