@@ -39,7 +39,7 @@ function integral(
         kwargs...
 )
     paramfunction(t) = _parametric(curve, t; alg = alg)
-    param_curve = _ParametricGeometry(paramfunction, 1)
+    param_curve = _ParametricGeometry(paramfunction, Meshes.BezierCurve, 1)
     return _integral(f, param_curve, rule; kwargs...)
 end
 
@@ -56,10 +56,10 @@ end
 ################################################################################
 
 function jacobian(
-        bz::Meshes.BezierCurve,
+        curve::_ParametricGeometry{M, C, Meshes.BezierCurve, F, Dim},
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
-        diff_method::Analytical
-) where {T <: AbstractFloat}
+        ::Analytical
+) where {M, C, F, Dim, T <: AbstractFloat}
     t = only(ts)
     # Parameter t restricted to domain [0,1] by definition
     if t < 0 || t > 1
@@ -67,8 +67,8 @@ function jacobian(
     end
 
     # Aliases
-    P = bz.controls
-    N = Meshes.degree(bz)
+    P = curve.controls
+    N = Meshes.degree(curve)
 
     # Ensure that this implementation is tractible: limited by ability to calculate
     #   binomial(N, N/2) without overflow. It's possible to extend this range by
@@ -86,4 +86,8 @@ function jacobian(
     return (derivative,)
 end
 
-_has_analytical(::Type{T}) where {T <: Meshes.BezierCurve} = true
+function _has_analytical(
+    ::Type{_ParametricGeometry{M, C, Meshes.BezierCurve, F, Dim}}
+) where {M, C, F, Dim}
+    return true
+end

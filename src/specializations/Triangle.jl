@@ -15,7 +15,7 @@ function integral(
         kwargs...
 ) where {F <: Function}
     paramfunction(t1, t2) = _parametric(triangle, t1, t2)
-    tri = _ParametricGeometry(paramfunction, 2)
+    tri = _ParametricGeometry(paramfunction, Meshes.Triangle, 2)
     return _integral(f, tri, rule; kwargs...)
 end
 
