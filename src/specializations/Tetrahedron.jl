@@ -15,7 +15,7 @@ function integral(
         kwargs...
 ) where {F <: Function}
     paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
-    tetra = _ParametricGeometry(paramfunction, tetrahedron, 3)
+    tetra = _ParametricGeometry(paramfunction, 3)
     return _integral(f, tetra, rule; kwargs...)
 end
 

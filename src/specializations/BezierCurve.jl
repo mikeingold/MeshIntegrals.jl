@@ -39,7 +39,7 @@ function integral(
         kwargs...
 )
     paramfunction(t) = _parametric(curve, t; alg = alg)
-    param_curve = _ParametricGeometry(paramfunction, curve, 1)
+    param_curve = _ParametricGeometry(paramfunction, 1)
     return _integral(f, param_curve, rule; kwargs...)
 end
 
@@ -49,45 +49,4 @@ end
 
 function _parametric(curve::Meshes.BezierCurve, t; alg::Meshes.BezierEvalMethod)
     return curve(t, alg)
-end
-
-################################################################################
-#                               jacobian
-################################################################################
-
-function jacobian(
-        curve::_ParametricGeometry{M, C, Meshes.BezierCurve, F, Dim},
-        ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
-        ::Analytical
-) where {M, C, F, Dim, T <: AbstractFloat}
-    t = only(ts)
-    # Parameter t restricted to domain [0,1] by definition
-    if t < 0 || t > 1
-        throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
-    end
-
-    # Aliases
-    P = curve.source.controls
-    N = Meshes.degree(curve.source)
-
-    # Ensure that this implementation is tractible: limited by ability to calculate
-    #   binomial(N, N/2) without overflow. It's possible to extend this range by
-    #   converting N to a BigInt, but this results in always returning BigFloat's.
-    N <= 1028 || error("This algorithm overflows for curves with ⪆1000 control points.")
-
-    # Generator for Bernstein polynomial functions
-    B(i, n) = t -> binomial(Int128(n), i) * t^i * (1 - t)^(n - i)
-
-    # Derivative = N Σ_{i=0}^{N-1} sigma(i)
-    #   P indices adjusted for Julia 1-based array indexing
-    sigma(i) = B(i, N - 1)(t) .* (P[(i + 1) + 1] - P[(i) + 1])
-    derivative = N .* sum(sigma, 0:(N - 1))
-
-    return (derivative,)
-end
-
-function _has_analytical(
-    ::Type{_ParametricGeometry{M, C, Meshes.BezierCurve, F, Dim}}
-) where {M, C, F, Dim}
-    return true
 end

@@ -14,7 +14,7 @@ function integral(
         kwargs...
 )
     paramfunction(t1, t2) = _parametric(plane, t1, t2)
-    param_plane = _ParametricGeometry(paramfunction, plane, 2)
+    param_plane = _ParametricGeometry(paramfunction, 2)
     return _integral(f, param_plane, rule; kwargs...)
 end
 

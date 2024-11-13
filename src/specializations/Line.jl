@@ -14,7 +14,7 @@ function integral(
         kwargs...
 )
     paramfunction(t) = _parametric(line, t)
-    param_line = _ParametricGeometry(paramfunction, line, 1)
+    param_line = _ParametricGeometry(paramfunction, 1)
     return _integral(f, param_line, rule; kwargs...)
 end
 

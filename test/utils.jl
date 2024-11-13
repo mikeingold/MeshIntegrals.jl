@@ -24,17 +24,17 @@ end
 
     # _has_analytical of instances
     bezier = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])
-    @test _has_analytical(bezier) == true
+    @test _has_analytical(bezier) == false
     sphere = Sphere(Point(0, 0, 0), 1.0)
     @test _has_analytical(sphere) == false
 
     # _has_analytical of types
-    @test _has_analytical(Meshes.BezierCurve) == true
+    @test _has_analytical(Meshes.BezierCurve) == false
     @test _has_analytical(Meshes.Sphere) == false
 
     # _default_method
-    @test _default_method(Meshes.BezierCurve) isa Analytical
-    @test _default_method(bezier) isa Analytical
+    @test _default_method(Meshes.BezierCurve) isa FiniteDifference
+    @test _default_method(bezier) isa FiniteDifference
     @test _default_method(Meshes.Sphere) isa FiniteDifference
     @test _default_method(sphere) isa FiniteDifference
 
