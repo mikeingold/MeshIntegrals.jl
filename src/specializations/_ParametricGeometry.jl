@@ -23,7 +23,7 @@ no longer be required.
 """
 struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, G <: Geometry, F, Dim} <:
        Meshes.Primitive{M, C}
-    fun::F,
+    fun::F
     source::G
 
     function _ParametricGeometry{M, C}(
