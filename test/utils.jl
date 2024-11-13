@@ -8,6 +8,14 @@
     # _units
     p = Point(1.0u"cm", 2.0u"mm", 3.0u"m")
     @test MeshIntegrals._units(p) == u"m"
+
+    # _zeros
+    @test _zeros(2) == (0.0, 0.0)
+    @test _zeros(Float32, 2) == (0.0f0, 0.0f0)
+
+    # _ones
+    @test _ones(2) == (1.0, 1.0)
+    @test _ones(Float32, 2) == (1.0f0, 1.0f0)
 end
 
 @testitem "DifferentiationMethod" setup=[Setup] begin
@@ -34,10 +42,23 @@ end
 end
 
 @testitem "_ParametricGeometry" setup=[Setup] begin
-    using MeshIntegrals: _ParametricGeometry
+    using MeshIntegrals: _ParametricGeometry, _parametric
 
+    # paramdim(::_ParametricGeometry)
     segment = Segment(Point(0, 0), Point(1, 1))
     f(t) = segment(t)
     geometry = _ParametricGeometry(f, 1)
     @test paramdim(geometry) == 1
+
+    # _parametric bounds checks
+    triangle = Triangle(Point(1, 0, 0), Point(0, 1, 0), Point(0, 0, 1))
+    @test_throws DomainError _parametric(triangle, 1.1, 0.0)
+    tetrahedron = let
+        a = Point(0, 3, 0)
+        b = Point(-7, 0, 0)
+        c = Point(8, 0, 0)
+        ẑ = Vec(0, 0, 1)
+        Tetrahedron(a, b, c, a + ẑ)
+    end
+    @test_throws DomainError _parametric(tetrahedron, 1.1, 0.0, 0.0)
 end
