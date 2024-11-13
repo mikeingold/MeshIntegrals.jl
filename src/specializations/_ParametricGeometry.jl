@@ -50,7 +50,7 @@ function _ParametricGeometry(
         dims::Int64
 ) where {F <: Function, G <: Geometry}
     p = fun(_zeros(dims)...)
-    return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
+    return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, G, dims)
 end
 
 # Allow a _ParametricGeometry to be called like a Geometry
