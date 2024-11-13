@@ -1,5 +1,6 @@
 @testitem "Utilities" setup=[Setup] begin
     using LinearAlgebra: norm
+    using MeshIntegrals: _units, _zeros, _ones
 
     # _KVector
     v = Meshes.Vec(3, 4)
@@ -7,7 +8,7 @@
 
     # _units
     p = Point(1.0u"cm", 2.0u"mm", 3.0u"m")
-    @test MeshIntegrals._units(p) == u"m"
+    @test _units(p) == u"m"
 
     # _zeros
     @test _zeros(2) == (0.0, 0.0)
