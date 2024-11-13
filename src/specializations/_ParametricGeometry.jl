@@ -12,6 +12,7 @@ no longer be required.
 
 # Fields
 - `fun::Function` - a parametric function: (ts...) -> Meshes.Point
+- `source::Meshes.Geometry` - the source geometry being transformed
 
 # Type Structure
 - `M <: Meshes.Manifold` - same usage as in `Meshes.Geometry{M, C}`
@@ -22,14 +23,15 @@ no longer be required.
 """
 struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, G <: Geometry, F, Dim} <:
        Meshes.Primitive{M, C}
-    fun::F
+    fun::F,
+    source::G
 
     function _ParametricGeometry{M, C}(
             fun::F,
-            ::Type{G},
+            source::G,
             Dim::Int64
     ) where {M <: Meshes.Manifold, C <: CRS, G <: Geometry, F}
-        return new{M, C, G, F, Dim}(fun)
+        return new{M, C, G, F, Dim}(fun, source)
     end
 end
 
@@ -46,11 +48,11 @@ with `dims` parametric dimensions.
 """
 function _ParametricGeometry(
         fun::F,
-        ::Type{G},
+        source::G,
         dims::Int64
 ) where {F <: Function, G <: Geometry}
     p = fun(_zeros(dims)...)
-    return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, G, dims)
+    return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, source, dims)
 end
 
 # Allow a _ParametricGeometry to be called like a Geometry

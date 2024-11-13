@@ -14,7 +14,7 @@ function integral(
         kwargs...
 )
     paramfunction(t) = _parametric(ray, t)
-    param_ray = _ParametricGeometry(paramfunction, Meshes.Ray, 1)
+    param_ray = _ParametricGeometry(paramfunction, ray, 1)
     return _integral(f, param_ray, rule; kwargs...)
 end
 

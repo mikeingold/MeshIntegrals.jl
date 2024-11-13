@@ -39,7 +39,7 @@ function integral(
         kwargs...
 )
     paramfunction(t) = _parametric(curve, t; alg = alg)
-    param_curve = _ParametricGeometry(paramfunction, Meshes.BezierCurve, 1)
+    param_curve = _ParametricGeometry(paramfunction, curve, 1)
     return _integral(f, param_curve, rule; kwargs...)
 end
 
@@ -67,8 +67,8 @@ function jacobian(
     end
 
     # Aliases
-    P = curve.controls
-    N = Meshes.degree(curve)
+    P = curve.source.controls
+    N = Meshes.degree(curve.source)
 
     # Ensure that this implementation is tractible: limited by ability to calculate
     #   binomial(N, N/2) without overflow. It's possible to extend this range by
