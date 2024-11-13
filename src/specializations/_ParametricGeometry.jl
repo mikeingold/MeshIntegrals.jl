@@ -45,7 +45,7 @@ function _ParametricGeometry(
         fun::F,
         Dim::Int64
 ) where {F <: Function}
-    p = fun(_zeros(dims)...)
+    p = fun(_zeros(Dim)...)
     return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, Dim)
 end
 
