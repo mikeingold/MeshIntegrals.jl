@@ -43,12 +43,7 @@ function _ParametricGeometry(
     return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, dims)
 end
 
-# geometry(ts...) == geometry.fun(ts...)
-#=
-(g::_ParametricGeometry{M, C, F, 1})(t) where {M, C, F} = g.fun(t)
-(g::_ParametricGeometry{M, C, F, 2})(t1, t2) where {M, C, F} = g.fun(t1, t2)
-(g::_ParametricGeometry{M, C, F, 3})(t1, t2, t3) where {M, C, F} = g.fun(t1, t2, t3)
-=#
+# Allow a _ParametricGeometry to be called like a Geometry
 (g::_ParametricGeometry)(ts...) = g.fun(ts...)
 
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
