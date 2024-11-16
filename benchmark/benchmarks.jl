@@ -35,14 +35,14 @@ end
 #                                    Specializations
 ############################################################################################
 
-# TODO after merge of PR #131
-#   spec.f = p -> norm(to(p))
-#   un-comment s["Tetrahedron"]
-
 spec = (
-    f = p -> 1.0,
+    f = p -> norm(to(p)),
+    f_exp = p::Point -> exp(-norm(to(p))^2 / u"m^2"),
     g = (
         bezier = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)]),
+        line = Line(Point(0, 0, 0), Point(1, 1, 1)),
+        plane = Plane(Point(0, 0, 0,), Vec(0, 0, 1)),
+        ray = Ray(Point(0, 0, 0), Vec(0, 0, 1)),
         triangle = Triangle(Point(1, 0, 0), Point(0, 1, 0), Point(0, 0, 1)),
         tetrahedron = let
             a = Point(0, 3, 0)
@@ -52,13 +52,16 @@ spec = (
             Tetrahedron(a, b, c, a + ẑ)
         end
     ),
-    rule = HAdaptiveCubature()
+    rule = GaussLegendre(100)
 )
 
-SUITE["Specializations"] = let s = BenchmarkGroup()
+SUITE["Specializations/Scalar GaussLegendre"] = let s = BenchmarkGroup()
     s["BezierCurve"] = @benchmarkable integral($spec.f, $spec.g.bezier, $spec.rule)
+    s["Line"] = @benchmarkable integral($spec.f_exp, $spec.g.line, $spec.rule)
+    s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule)
+    s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule)
     s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule)
-    # s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
+    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
     s
 end
 
