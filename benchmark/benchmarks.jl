@@ -53,16 +53,19 @@ spec = (
             Tetrahedron(a, b, c, a + ẑ)
         end
     ),
-    rule = GaussLegendre(100)
+    rule_gl = GaussLegendre(100),
+    rule_gk = GaussKronrod(),
+    rule_hc = HAdaptiveCubature()
 )
 
 SUITE["Specializations/Scalar GaussLegendre"] = let s = BenchmarkGroup()
-    s["BezierCurve"] = @benchmarkable integral($spec.f, $spec.g.bezier, $spec.rule)
-    s["Line"] = @benchmarkable integral($spec.f_exp, $spec.g.line, $spec.rule)
-    s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule)
-    s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule)
-    s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule)
-    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
+    s["BezierCurve"] = @benchmarkable integral($spec.f, $spec.g.bezier, $spec.rule_gl)
+    s["Line"] = @benchmarkable integral($spec.f_exp, $spec.g.line, $spec.rule_gl)
+    s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule_gl)
+    s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule_gl)
+    s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule_gl)
+    # s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
+    # TODO re-enable Tetrahedron-GaussLegendre test when supported by main branch
     s
 end
 
