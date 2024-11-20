@@ -40,4 +40,7 @@ end
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
+
+    # AutoEnzyme
+    @test AutoEnzyme() isa AutoEnzyme
 end

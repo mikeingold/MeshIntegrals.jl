@@ -15,20 +15,20 @@
 
     # Scalar integrand
     sol = (π - π * exp(-radius^2)) * u"m^2"
-    @test integral(f, ball, GaussLegendre(100)) ≈ sol
-    @test integral(f, ball, GaussKronrod()) ≈ sol
-    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, ball, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, ball, GaussKronrod()) ≈ sol
+    @test integral_test(f, ball, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, ball, GaussKronrod()) ≈ vsol
-    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, ball, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, ball, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, ball, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, ball)
-    @test surfaceintegral(f, ball) ≈ sol
-    @test_throws "not supported" volumeintegral(f, ball)
+    @test_throws "not supported" lineintegral_test(f, ball)
+    @test surfaceintegral_test(f, ball) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, ball)
 end
 
 @testitem "Meshes.Ball 3D" setup=[Setup] begin
@@ -49,20 +49,20 @@ end
     # Scalar integrand
     r = ustrip(u"m", radius)
     sol = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
-    @test integral(f, ball, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
-    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, ball, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral_test(f, ball, GaussKronrod())≈sol
+    @test integral_test(f, ball, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, ball, GaussKronrod())≈vsol
-    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, ball, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral_test(fv, ball, GaussKronrod())≈vsol
+    @test integral_test(fv, ball, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, ball)
-    @test_throws "not supported" surfaceintegral(f, ball)
-    @test volumeintegral(f, ball) ≈ sol
+    @test_throws "not supported" lineintegral_test(f, ball)
+    @test_throws "not supported" surfaceintegral_test(f, ball)
+    @test volumeintegral_test(f, ball) ≈ sol
 end
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
@@ -78,20 +78,20 @@ end
 
     # Scalar integrand
     sol = 2π * u"Ω"
-    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
-    @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
-    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
+    @test integral_test(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
+    @test integral_test(f, curve, GaussKronrod())≈sol rtol=0.5e-2
+    @test integral_test(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
-    @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
-    @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
+    @test integral_test(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
+    @test integral_test(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
+    @test integral_test(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
 
     # Integral aliases
-    @test lineintegral(f, curve)≈sol rtol=0.5e-2
-    @test_throws "not supported" surfaceintegral(f, curve)
-    @test_throws "not supported" volumeintegral(f, curve)
+    @test lineintegral_test(f, curve)≈sol rtol=0.5e-2
+    @test_throws "not supported" surfaceintegral_test(f, curve)
+    @test_throws "not supported" volumeintegral_test(f, curve)
 
     # Check Bezier-specific jacobian bounds
     @test_throws DomainError jacobian(curve, [1.1])
@@ -109,20 +109,20 @@ end
 
     # Scalar integrand
     sol = π * a^2 / 4 * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, box, GaussKronrod()) ≈ sol
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral_test(f, box, GaussKronrod()) ≈ sol
+    @test integral_test(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, box, GaussKronrod()) ≈ vsol
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral_test(fv, box, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, box, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, box) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test_throws "not supported" volumeintegral(f, box)
+    @test lineintegral_test(f, box) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, box)
+    @test_throws "not supported" volumeintegral_test(f, box)
 end
 
 @testitem "Meshes.Box 2D" setup=[Setup] begin
@@ -137,20 +137,20 @@ end
 
     # Scalar integrand
     sol = 2a * (π * a^2 / 4) * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, box, GaussKronrod()) ≈ sol
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral_test(f, box, GaussKronrod()) ≈ sol
+    @test integral_test(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, box, GaussKronrod()) ≈ vsol
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral_test(fv, box, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, box, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test surfaceintegral(f, box) ≈ sol
-    @test_throws "not supported" volumeintegral(f, box)
+    @test_throws "not supported" lineintegral_test(f, box)
+    @test surfaceintegral_test(f, box) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, box)
 
     # Test jacobian with wrong number of parametric coordinates
     @test_throws ArgumentError jacobian(box, zeros(3))
@@ -168,20 +168,20 @@ end
 
     # Scalar integrand
     sol = 3a^2 * (π * a^2 / 4) * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test_throws "not supported" integral(f, box, GaussKronrod())
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test_throws "not supported" integral_test(f, box, GaussKronrod())
+    @test integral_test(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test_throws "not supported" integral(fv, box, GaussKronrod())
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test_throws "not supported" integral_test(fv, box, GaussKronrod())
+    @test integral_test(fv, box, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test volumeintegral(f, box) ≈ sol
+    @test_throws "not supported" lineintegral_test(f, box)
+    @test_throws "not supported" surfaceintegral_test(f, box)
+    @test volumeintegral_test(f, box) ≈ sol
 end
 
 @testitem "Meshes.Box 4D" tags=[:extended] setup=[Setup] begin
@@ -197,20 +197,20 @@ end
 
     # Scalar integrand
     sol = 4a^3 * (π * a^2 / 4) * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test_throws "not supported" integral(f, box, GaussKronrod())
-    @test integral(f, box, HAdaptiveCubature(rtol = 1e-6))≈sol rtol=1e-6
+    @test integral_test(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test_throws "not supported" integral_test(f, box, GaussKronrod())
+    @test integral_test(f, box, HAdaptiveCubature(rtol = 1e-6))≈sol rtol=1e-6
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test_throws "not supported" integral(fv, box, GaussKronrod())
-    @test integral(fv, box, HAdaptiveCubature(rtol = 1e-6))≈vsol rtol=1e-6
+    @test integral_test(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test_throws "not supported" integral_test(fv, box, GaussKronrod())
+    @test integral_test(fv, box, HAdaptiveCubature(rtol = 1e-6))≈vsol rtol=1e-6
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test_throws "not supported" volumeintegral(f, box)
+    @test_throws "not supported" lineintegral_test(f, box)
+    @test_throws "not supported" surfaceintegral_test(f, box)
+    @test_throws "not supported" volumeintegral_test(f, box)
 end
 
 @testitem "Meshes.Circle" setup=[Setup] begin
@@ -229,20 +229,20 @@ end
 
     # Scalar integrand
     sol = 2π * radius * exp(-radius^2) * u"m"
-    @test integral(f, circle, GaussLegendre(100)) ≈ sol
-    @test integral(f, circle, GaussKronrod()) ≈ sol
-    @test integral(f, circle, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, circle, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, circle, GaussKronrod()) ≈ sol
+    @test integral_test(f, circle, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, circle, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, circle, GaussKronrod()) ≈ vsol
-    @test integral(fv, circle, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, circle, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, circle, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, circle, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, circle) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, circle)
-    @test_throws "not supported" volumeintegral(f, circle)
+    @test lineintegral_test(f, circle) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, circle)
+    @test_throws "not supported" volumeintegral_test(f, circle)
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
@@ -261,20 +261,20 @@ end
 
     # Scalar integrand
     sol = _volume_cone_rightcircular(r, h)
-    @test integral(f, cone, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, cone, GaussKronrod())
-    @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, cone, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral_test(f, cone, GaussKronrod())
+    @test integral_test(f, cone, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, cone, GaussKronrod())
-    @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, cone, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral_test(fv, cone, GaussKronrod())
+    @test integral_test(fv, cone, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, cone)
-    @test_throws "not supported" surfaceintegral(f, cone)
-    @test volumeintegral(f, cone) ≈ sol
+    @test_throws "not supported" lineintegral_test(f, cone)
+    @test_throws "not supported" surfaceintegral_test(f, cone)
+    @test volumeintegral_test(f, cone) ≈ sol
 end
 
 @testitem "Meshes.ConeSurface" setup=[Setup] begin
@@ -293,20 +293,20 @@ end
 
     # Scalar integrand
     sol = _area_cone_rightcircular(h, r)
-    @test integral(f, cone, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, cone, GaussKronrod())≈sol rtol=1e-6
-    @test integral(f, cone, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, cone, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral_test(f, cone, GaussKronrod())≈sol rtol=1e-6
+    @test integral_test(f, cone, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cone, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, cone, GaussKronrod())≈vsol rtol=1e-6
-    @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, cone, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral_test(fv, cone, GaussKronrod())≈vsol rtol=1e-6
+    @test integral_test(fv, cone, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, cone)
-    @test surfaceintegral(f, cone) ≈ sol
-    @test_throws "not supported" volumeintegral(f, cone)
+    @test_throws "not supported" lineintegral_test(f, cone)
+    @test surfaceintegral_test(f, cone) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, cone)
 end
 
 @testitem "Meshes.Cylinder" setup=[Setup] begin
@@ -319,20 +319,20 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(cyl)
-    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, cyl, GaussKronrod())
-    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, cyl, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral_test(f, cyl, GaussKronrod())
+    @test integral_test(f, cyl, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, cyl, GaussKronrod())
-    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, cyl, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral_test(fv, cyl, GaussKronrod())
+    @test integral_test(fv, cyl, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, cyl)
-    @test_throws "not supported" surfaceintegral(f, cyl)
-    @test volumeintegral(f, cyl) ≈ sol
+    @test_throws "not supported" lineintegral_test(f, cyl)
+    @test_throws "not supported" surfaceintegral_test(f, cyl)
+    @test volumeintegral_test(f, cyl) ≈ sol
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Setup] begin
@@ -345,20 +345,20 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(cyl)
-    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
-    @test integral(f, cyl, GaussKronrod()) ≈ sol
-    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, cyl, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, cyl, GaussKronrod()) ≈ sol
+    @test integral_test(f, cyl, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, cyl, GaussKronrod()) ≈ vsol
-    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, cyl, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, cyl, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, cyl, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, cyl)
-    @test surfaceintegral(f, cyl) ≈ sol
-    @test_throws "not supported" volumeintegral(f, cyl)
+    @test_throws "not supported" lineintegral_test(f, cyl)
+    @test surfaceintegral_test(f, cyl) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, cyl)
 end
 
 @testitem "Meshes.Disk" setup=[Setup] begin
@@ -377,20 +377,20 @@ end
 
     # Scalar integrand
     sol = (π - π * exp(-radius^2)) * u"m^2"
-    @test integral(f, disk, GaussLegendre(100)) ≈ sol
-    @test integral(f, disk, GaussKronrod()) ≈ sol
-    @test integral(f, disk, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, disk, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, disk, GaussKronrod()) ≈ sol
+    @test integral_test(f, disk, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, disk, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, disk, GaussKronrod()) ≈ vsol
-    @test integral(fv, disk, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, disk, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, disk, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, disk, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, disk)
-    @test surfaceintegral(f, disk) ≈ sol
-    @test_throws "not supported" volumeintegral(f, disk)
+    @test_throws "not supported" lineintegral_test(f, disk)
+    @test surfaceintegral_test(f, disk) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, disk)
 end
 
 @testitem "Meshes.Ellipsoid" setup=[Setup] begin
@@ -404,20 +404,20 @@ end
     # Tolerances are higher due to `measure` being only an approximation
     # Scalar integrand
     sol = Meshes.measure(ellipsoid)
-    @test integral(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
-    @test integral(f, ellipsoid, GaussKronrod())≈sol rtol=1e-2
-    @test integral(f, ellipsoid, HAdaptiveCubature())≈sol rtol=1e-2
+    @test integral_test(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
+    @test integral_test(f, ellipsoid, GaussKronrod())≈sol rtol=1e-2
+    @test integral_test(f, ellipsoid, HAdaptiveCubature())≈sol rtol=1e-2
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, ellipsoid, GaussLegendre(100))≈vsol rtol=1e-2
-    @test integral(fv, ellipsoid, GaussKronrod())≈vsol rtol=1e-2
-    @test integral(fv, ellipsoid, HAdaptiveCubature())≈vsol rtol=1e-2
+    @test integral_test(fv, ellipsoid, GaussLegendre(100))≈vsol rtol=1e-2
+    @test integral_test(fv, ellipsoid, GaussKronrod())≈vsol rtol=1e-2
+    @test integral_test(fv, ellipsoid, HAdaptiveCubature())≈vsol rtol=1e-2
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, ellipsoid)
-    @test surfaceintegral(f, ellipsoid)≈sol rtol=1e-2
-    @test_throws "not supported" volumeintegral(f, ellipsoid)
+    @test_throws "not supported" lineintegral_test(f, ellipsoid)
+    @test surfaceintegral_test(f, ellipsoid)≈sol rtol=1e-2
+    @test_throws "not supported" volumeintegral_test(f, ellipsoid)
 end
 
 @testitem "Meshes.FrustumSurface" setup=[Setup] begin
@@ -448,15 +448,15 @@ end
         area_walls = area_walls_projected - area_walls_missing
         area_walls + _area_base(r_top) + _area_base(r_bot)
     end
-    @test integral(f, frustum, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, frustum, GaussKronrod())≈sol rtol=1e-6
-    @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, frustum, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral_test(f, frustum, GaussKronrod())≈sol rtol=1e-6
+    @test integral_test(f, frustum, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
-    @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral_test(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
+    @test integral_test(fv, frustum, HAdaptiveCubature()) ≈ vsol
 end
 
 @testitem "Meshes.Hexahedron" setup=[Setup] begin
@@ -468,20 +468,20 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(hexahedron)
-    @test integral(f, hexahedron, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, hexahedron, GaussKronrod())≈sol
-    @test integral(f, hexahedron, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, hexahedron, GaussLegendre(100)) ≈ sol
+    @test_throws "not supported" integral_test(f, hexahedron, GaussKronrod())≈sol
+    @test integral_test(f, hexahedron, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, hexahedron, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, hexahedron, GaussKronrod())≈vsol
-    @test integral(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, hexahedron, GaussLegendre(100)) ≈ vsol
+    @test_throws "not supported" integral_test(fv, hexahedron, GaussKronrod())≈vsol
+    @test integral_test(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, hexahedron)
-    @test_throws "not supported" surfaceintegral(f, hexahedron)
-    @test volumeintegral(f, hexahedron) ≈ sol
+    @test_throws "not supported" lineintegral_test(f, hexahedron)
+    @test_throws "not supported" surfaceintegral_test(f, hexahedron)
+    @test volumeintegral_test(f, hexahedron) ≈ sol
 end
 
 @testitem "Meshes.Line" setup=[Setup] begin
@@ -522,20 +522,20 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(parab)
-    @test integral(f, parab, GaussLegendre(100)) ≈ sol
-    @test integral(f, parab, GaussKronrod()) ≈ sol
-    @test integral(f, parab, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, parab, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, parab, GaussKronrod()) ≈ sol
+    @test integral_test(f, parab, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, parab, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, parab, GaussKronrod()) ≈ vsol
-    @test integral(fv, parab, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, parab, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, parab, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, parab, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, parab)
-    @test surfaceintegral(f, parab) ≈ sol
-    @test_throws "not supported" volumeintegral(f, parab)
+    @test_throws "not supported" lineintegral_test(f, parab)
+    @test surfaceintegral_test(f, parab) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, parab)
 end
 
 @testitem "ParametrizedCurve" setup=[Setup] begin
@@ -559,29 +559,29 @@ end
 
         # Scalar integrand
         sol = 2π * radius * exp(-radius^2) * u"m"
-        @test integral(f, curve_cart, GaussLegendre(100)) ≈ sol
-        @test integral(f, curve_cart, GaussKronrod()) ≈ sol
-        @test integral(f, curve_cart, HAdaptiveCubature()) ≈ sol
-        @test integral(f, curve_polar, GaussLegendre(100)) ≈ sol
-        @test integral(f, curve_polar, GaussKronrod()) ≈ sol
-        @test integral(f, curve_polar, HAdaptiveCubature()) ≈ sol
+        @test integral_test(f, curve_cart, GaussLegendre(100)) ≈ sol
+        @test integral_test(f, curve_cart, GaussKronrod()) ≈ sol
+        @test integral_test(f, curve_cart, HAdaptiveCubature()) ≈ sol
+        @test integral_test(f, curve_polar, GaussLegendre(100)) ≈ sol
+        @test integral_test(f, curve_polar, GaussKronrod()) ≈ sol
+        @test integral_test(f, curve_polar, HAdaptiveCubature()) ≈ sol
 
         # Vector integrand
         vsol = fill(sol, 3)
-        @test integral(fv, curve_cart, GaussLegendre(100)) ≈ vsol
-        @test integral(fv, curve_cart, GaussKronrod()) ≈ vsol
-        @test integral(fv, curve_cart, HAdaptiveCubature()) ≈ vsol
-        @test integral(fv, curve_polar, GaussLegendre(100)) ≈ vsol
-        @test integral(fv, curve_polar, GaussKronrod()) ≈ vsol
-        @test integral(fv, curve_polar, HAdaptiveCubature()) ≈ vsol
+        @test integral_test(fv, curve_cart, GaussLegendre(100)) ≈ vsol
+        @test integral_test(fv, curve_cart, GaussKronrod()) ≈ vsol
+        @test integral_test(fv, curve_cart, HAdaptiveCubature()) ≈ vsol
+        @test integral_test(fv, curve_polar, GaussLegendre(100)) ≈ vsol
+        @test integral_test(fv, curve_polar, GaussKronrod()) ≈ vsol
+        @test integral_test(fv, curve_polar, HAdaptiveCubature()) ≈ vsol
 
         # Integral aliases
-        @test lineintegral(f, curve_cart) ≈ sol
-        @test_throws "not supported" surfaceintegral(f, curve_cart)
-        @test_throws "not supported" volumeintegral(f, curve_cart)
-        @test lineintegral(f, curve_polar) ≈ sol
-        @test_throws "not supported" surfaceintegral(f, curve_polar)
-        @test_throws "not supported" volumeintegral(f, curve_polar)
+        @test lineintegral_test(f, curve_cart) ≈ sol
+        @test_throws "not supported" surfaceintegral_test(f, curve_cart)
+        @test_throws "not supported" volumeintegral_test(f, curve_cart)
+        @test lineintegral_test(f, curve_polar) ≈ sol
+        @test_throws "not supported" surfaceintegral_test(f, curve_polar)
+        @test_throws "not supported" volumeintegral_test(f, curve_polar)
     end
 end
 
@@ -626,20 +626,20 @@ end
 
     # Scalar integrand
     sol = 0.5 * π * erf(1)^2 * u"m^2"
-    @test integral(f, quadrangle, GaussLegendre(100)) ≈ sol
-    @test integral(f, quadrangle, GaussKronrod()) ≈ sol
-    @test integral(f, quadrangle, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, quadrangle, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, quadrangle, GaussKronrod()) ≈ sol
+    @test integral_test(f, quadrangle, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, quadrangle, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, quadrangle, GaussKronrod()) ≈ vsol
-    @test integral(fv, quadrangle, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, quadrangle, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, quadrangle, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, quadrangle, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, quadrangle)
-    @test surfaceintegral(f, quadrangle) ≈ sol
-    @test_throws "not supported" volumeintegral(f, quadrangle)
+    @test_throws "not supported" lineintegral_test(f, quadrangle)
+    @test surfaceintegral_test(f, quadrangle) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, quadrangle)
 end
 
 @testitem "Meshes.Ray" setup=[Setup] begin
@@ -686,20 +686,20 @@ end
 
     # Scalar integrand
     sol = 14.0u"A"
-    @test integral(f, rope, GaussLegendre(100)) ≈ sol
-    @test integral(f, rope, GaussKronrod()) ≈ sol
-    @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, rope, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, rope, GaussKronrod()) ≈ sol
+    @test integral_test(f, rope, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, rope, GaussKronrod()) ≈ vsol
-    @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, rope, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, rope, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, rope, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, rope) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, rope)
-    @test_throws "not supported" volumeintegral(f, rope)
+    @test lineintegral_test(f, rope) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, rope)
+    @test_throws "not supported" volumeintegral_test(f, rope)
 end
 
 @testitem "Meshes.Rope" setup=[Setup] begin
@@ -717,20 +717,20 @@ end
 
     # Scalar integrand
     sol = 7.0u"A"
-    @test integral(f, rope, GaussLegendre(100)) ≈ sol
-    @test integral(f, rope, GaussKronrod()) ≈ sol
-    @test integral(f, rope, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, rope, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, rope, GaussKronrod()) ≈ sol
+    @test integral_test(f, rope, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, rope, GaussKronrod()) ≈ vsol
-    @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, rope, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, rope, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, rope, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, rope) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, rope)
-    @test_throws "not supported" volumeintegral(f, rope)
+    @test lineintegral_test(f, rope) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, rope)
+    @test_throws "not supported" volumeintegral_test(f, rope)
 end
 
 @testitem "Meshes.Segment" setup=[Setup] begin
@@ -750,20 +750,20 @@ end
 
     # Scalar integrand
     sol = (a - b) / (log(a) - log(b)) * u"m"
-    @test integral(f, segment, GaussLegendre(100)) ≈ sol
-    @test integral(f, segment, GaussKronrod()) ≈ sol
-    @test integral(f, segment, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, segment, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, segment, GaussKronrod()) ≈ sol
+    @test integral_test(f, segment, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, segment, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, segment, GaussKronrod()) ≈ vsol
-    @test integral(fv, segment, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, segment, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, segment, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, segment, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, segment) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, segment)
-    @test_throws "not supported" volumeintegral(f, segment)
+    @test lineintegral_test(f, segment) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, segment)
+    @test_throws "not supported" volumeintegral_test(f, segment)
 end
 
 @testitem "Meshes.Sphere 2D" setup=[Setup] begin
@@ -779,20 +779,20 @@ end
 
     # Scalar integrand
     sol = 2π * radius * exp(-radius^2) * u"m"
-    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
-    @test integral(f, sphere, GaussKronrod()) ≈ sol
-    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, sphere, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, sphere, GaussKronrod()) ≈ sol
+    @test integral_test(f, sphere, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
-    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, sphere, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, sphere, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, sphere, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, sphere) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, sphere)
-    @test_throws "not supported" volumeintegral(f, sphere)
+    @test lineintegral_test(f, sphere) ≈ sol
+    @test_throws "not supported" surfaceintegral_test(f, sphere)
+    @test_throws "not supported" volumeintegral_test(f, sphere)
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Setup] begin
@@ -813,20 +813,20 @@ end
 
     # Scalar integrand
     sol = (2π * radius^2) + (4π / 3 * radius^2)
-    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
-    @test integral(f, sphere, GaussKronrod()) ≈ sol
-    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, sphere, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, sphere, GaussKronrod()) ≈ sol
+    @test integral_test(f, sphere, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
-    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, sphere, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, sphere, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, sphere, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, sphere)
-    @test surfaceintegral(f, sphere) ≈ sol
-    @test_throws "not supported" volumeintegral(f, sphere)
+    @test_throws "not supported" lineintegral_test(f, sphere)
+    @test surfaceintegral_test(f, sphere) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, sphere)
 end
 
 @testitem "Meshes.Tetrahedron" tags=[:extended] setup=[Setup] begin
@@ -867,20 +867,20 @@ end
 
     # Scalar integrand
     sol = Meshes.measure(torus)
-    @test integral(f, torus, GaussLegendre(100)) ≈ sol
-    @test integral(f, torus, GaussKronrod()) ≈ sol
-    @test integral(f, torus, HAdaptiveCubature()) ≈ sol
+    @test integral_test(f, torus, GaussLegendre(100)) ≈ sol
+    @test integral_test(f, torus, GaussKronrod()) ≈ sol
+    @test integral_test(f, torus, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, torus, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, torus, GaussKronrod()) ≈ vsol
-    @test integral(fv, torus, HAdaptiveCubature()) ≈ vsol
+    @test integral_test(fv, torus, GaussLegendre(100)) ≈ vsol
+    @test integral_test(fv, torus, GaussKronrod()) ≈ vsol
+    @test integral_test(fv, torus, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test_throws "not supported" lineintegral(f, torus)
-    @test surfaceintegral(f, torus) ≈ sol
-    @test_throws "not supported" volumeintegral(f, torus)
+    @test_throws "not supported" lineintegral_test(f, torus)
+    @test surfaceintegral_test(f, torus) ≈ sol
+    @test_throws "not supported" volumeintegral_test(f, torus)
 end
 
 @testitem "Meshes.Triangle" setup=[Setup] begin

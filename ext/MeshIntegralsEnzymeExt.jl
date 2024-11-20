@@ -1,15 +1,15 @@
 module MeshIntegralsEnzymeExt
 
 using MeshIntegrals: MeshIntegrals, AutoEnzyme
-using Meshes: Geometry, to
+using Meshes: Meshes
 using Enzyme: Enzyme
 
-function Meshes.jacobian(
-        geometry::Geometry,
+function MeshIntegrals.jacobian(
+        geometry::Meshes.Geometry,
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
         ::AutoEnzyme
 ) where {T <: AbstractFloat}
-    return to.(Enzyme.jacobian(Enzyme.Forward, geometry, ts...))
+    return Meshes.to.(Enzyme.jacobian(Enzyme.Forward, geometry, ts...))
 end
 
 end
