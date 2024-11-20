@@ -33,12 +33,6 @@ using TestItems
             function $newname(f, geometry, rule; kwargs...)
                 MeshIntegrals.$g(f, geometry, rule; diff_method = AD, kwargs...)
             end
-        end
-    end
-
-    for g in (:lineintegral, :surfaceintegral, :volumeintegral)
-        newname = Symbol(g, "_test")
-        @eval begin
             function $newname(f, geometry; kwargs...)
                 MeshIntegrals.$g(f, geometry; diff_method = AD, kwargs...)
             end
