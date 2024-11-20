@@ -47,14 +47,7 @@ struct Analytical <: DifferentiationMethod end
 
 Use to specify use of the Enzyme.jl for calculating derivatives.
 """
-struct AutoEnzyme <: DifferentiationMethod
-    #function AutoEnzyme()
-    #    if :Enzyme ∉ names(Main, imported = true)
-    #        error("Please load Enzyme.jl to use AutoEnzyme().")
-    #    end
-    #    return new()
-    #end
-end
+struct AutoEnzyme <: DifferentiationMethod end
 
 # Future Support:
 #   struct AutoZygote <: DifferentiationMethod end
