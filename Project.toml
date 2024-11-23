@@ -14,7 +14,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 CliffordNumbers = "0.1.9"
-CoordRefSystems = "0.12, 0.13, 0.14, 0.15"
+CoordRefSystems = "0.12, 0.13, 0.14, 0.15, 0.16"
 FastGaussQuadrature = "1"
 HCubature = "1.5"
 LinearAlgebra = "1"
