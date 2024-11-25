@@ -68,7 +68,7 @@ function integral(
 
     # Integrate f along the Line
     differential(line, x) = t′(x) * _units(line(0))
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * differential(line, x[1])
+    integrand(xs) = f(line(t(xs[1]))) * differential(line, xs[1])
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
