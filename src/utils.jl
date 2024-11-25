@@ -14,6 +14,14 @@ function _error_unsupported_combination(geometry, rule)
     throw(ArgumentError(msg))
 end
 
+# Return an NTuple{N, T} of zeros; same interface as Base.zeros() but faster
+_zeros(T::DataType, N::Int64) = ntuple(_ -> zero(T), N)
+_zeros(N::Int) = _zeros(Float64, N)
+
+# Return an NTuple{N, T} of ones; same interface as Base.ones() but faster
+_ones(T::DataType, N::Int64) = ntuple(_ -> one(T), N)
+_ones(N::Int) = _ones(Float64, N)
+
 ################################################################################
 #                           DifferentiationMethod
 ################################################################################

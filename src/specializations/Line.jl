@@ -68,11 +68,11 @@ function integral(
 
     # Integrate f along the Line
     differential(line, x) = t′(x) * _units(line(0))
-    integrand(x::AbstractVector) = f(line(t(x[1]))) * differential(line, x[1])
+    integrand(xs) = f(line(t(xs[1]))) * differential(line, xs[1])
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = FP[0.5]
+    testpoint_parametriccoord = (FP(0.5),)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))

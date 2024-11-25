@@ -100,7 +100,7 @@ function _integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(ts) = Unitful.ustrip.(integrandunits, integrand(ts))
     # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, zeros(FP, N), ones(FP, N); rule.kwargs...)[1]
+    value = HCubature.hcubature(uintegrand, _zeros(FP, N), _ones(FP, N); rule.kwargs...)[1]
 
     # Reapply units
     return value .* integrandunits

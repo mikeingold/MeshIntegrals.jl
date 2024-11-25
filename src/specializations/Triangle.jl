@@ -87,7 +87,7 @@ function integral(
         v = R * (1 - b / (a + b))
         return f(triangle(u, v)) * R / (a + b)^2
     end
-    ∫ = HCubature.hcubature(integrand, zeros(FP, 2), FP[1, π / 2], rule.kwargs...)[1]
+    ∫ = HCubature.hcubature(integrand, _zeros(FP, 2), (FP(1), FP(π / 2)), rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * Meshes.area(triangle) .* ∫
