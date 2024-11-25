@@ -91,7 +91,7 @@ function integral(
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
     # Integrate only the unitless values
-    a = 0 .- _ones(FP, 2)
+    a = .- _ones(FP, 2)
     b = _ones(FP, 2)
     value = HCubature.hcubature(uintegrand, a, b; rule.kwargs...)[1]
 
