@@ -71,14 +71,14 @@ function _integral(
     nodes = Iterators.product(ntuple(Returns(xs), N)...)
 
     # Domain transformation: x [-1,1] ↦ t [0,1]
-    t(x) = FP(1 // 2) * x + FP(1 // 2)
+    t(x) = (1 // 2) * x + (1 // 2)
 
     function integrand((weights, nodes))
         ts = t.(nodes)
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
 
-    return FP(1 // (2^N)) .* sum(integrand, zip(weights, nodes))
+    return (1 // (2^N)) .* sum(integrand, zip(weights, nodes))
 end
 
 # HAdaptiveCubature
