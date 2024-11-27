@@ -46,9 +46,13 @@ function _integral(
     # Pass through to dim-specific workers in next section of this file
     N = Meshes.paramdim(geometry)
     if N == 1
-        return _integral_gk_1d(f, geometry, rule; kwargs...)
+        integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
+        return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
     elseif N == 2
-        return _integral_gk_2d(f, geometry, rule; kwargs...)
+        Base.depwarn("Use `HAdaptiveCubature` instead of nested `GaussKronrod` rules.", :integral)
+        integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
+        ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
+        return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
     else
         _error_unsupported_combination("geometry with more than two parametric dimensions",
             "GaussKronrod")
@@ -104,31 +108,4 @@ function _integral(
 
     # Reapply units
     return value .* integrandunits
-end
-
-################################################################################
-#                    Specialized GaussKronrod Methods
-################################################################################
-
-function _integral_gk_1d(
-        f,
-        geometry,
-        rule::GaussKronrod;
-        FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
-    return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
-end
-
-function _integral_gk_2d(
-        f,
-        geometry2d,
-        rule::GaussKronrod;
-        FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry2d)
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
-    ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
-    return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
 end
