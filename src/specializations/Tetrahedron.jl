@@ -10,41 +10,41 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussLegendre;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "GaussLegendre")
 end
 
 function integral(
-        f::F,
+        f,
         tetrahedron::Meshes.Tetrahedron,
         rule::GaussKronrod;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Tetrahedron, diff_method)
 
-    nil = zero(FP)
+    o = zero(FP)
     ∫uvw(u, v, w) = f(tetrahedron(u, v, w))
-    ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), nil, FP(1 - v - w); rule.kwargs...)[1]
-    ∫w(w) = QuadGK.quadgk(v -> ∫vw(v, w), nil, FP(1 - w); rule.kwargs...)[1]
-    ∫ = QuadGK.quadgk(∫w, nil, one(FP); rule.kwargs...)[1]
+    ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), o, FP(1 - v - w); rule.kwargs...)[1]
+    ∫w(w) = QuadGK.quadgk(v -> ∫vw(v, w), o, FP(1 - w); rule.kwargs...)[1]
+    ∫ = QuadGK.quadgk(∫w, o, one(FP); rule.kwargs...)[1]
 
     # Apply barycentric domain correction (volume: 1/6 → actual)
     return 6 * Meshes.volume(tetrahedron) * ∫
 end
 
 function integral(
-        f::F,
+        f,
         tetrahedron::Meshes.Tetrahedron,
         rule::HAdaptiveCubature;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
 end
 
