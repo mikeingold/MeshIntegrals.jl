@@ -27,11 +27,11 @@ calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired
 """
 function integral(
-        f::F,
+        f,
         ring::Meshes.Ring,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> _integral(f, segment, rule; kwargs...), Meshes.segments(ring))
 end
