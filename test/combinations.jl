@@ -124,8 +124,8 @@ end
 
     # Integral aliases
     @test lineintegral(fc, box) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test_throws "not supported" volumeintegral(f, box)
+    @test_throws "not supported" surfaceintegral(fc, box)
+    @test_throws "not supported" volumeintegral(fc, box)
 end
 
 @testitem "Meshes.Box 2D" setup=[Setup] begin
