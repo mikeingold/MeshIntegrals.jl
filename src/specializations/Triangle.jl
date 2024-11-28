@@ -27,7 +27,7 @@ function integral(
     #   xᵢ [-1,1] ↦ R [0,1]
     #   xⱼ [-1,1] ↦ φ [0,π/2]
     uR(xᵢ) = (1 // 2) * (xᵢ + 1)
-    uφ(xⱼ) = (π // 4) * (xⱼ + 1)
+    uφ(xⱼ) = (T(π) / 4) * (xⱼ + 1)
 
     # Integrate the Barycentric triangle by transforming it into polar coordinates
     #   with a modified radius
