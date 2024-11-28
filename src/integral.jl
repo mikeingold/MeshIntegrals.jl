@@ -24,7 +24,7 @@ function integral end
 
 # If only f and geometry are specified, select default rule
 function integral(
-        f::Function,
+        f,
         geometry::Geometry,
         rule::I = Meshes.paramdim(geometry) == 1 ? GaussKronrod() : HAdaptiveCubature();
         kwargs...
