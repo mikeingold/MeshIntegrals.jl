@@ -33,7 +33,7 @@ function integral(
 end
 
 ################################################################################
-#                    Generalized (n-Dimensional) Worker Methods
+#                            Integral Workers
 ################################################################################
 
 # GaussKronrod
@@ -44,15 +44,15 @@ function _integral(
         FP::Type{T} = Float64,
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
-
     # Implementation depends on number of parametric dimensions over which to integrate
+    const N = Meshes.paramdim(geometry)
     if N == 1
         integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
         return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
     elseif N == 2
         # Issue deprecation warning
-        #Base.depwarn("Use `HAdaptiveCubature` instead of nested `GaussKronrod` rules.", :integral)
+        Base.depwarn("Use `HAdaptiveCubature` instead of \
+                     `GaussKronrod` for surfaces.", :integral)
 
         # Nested integration
         integrand(u, v) = f(geometry(u, v)) * differential(geometry, (u, v), diff_method)
@@ -72,7 +72,7 @@ function _integral(
         FP::Type{T} = Float64,
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
+    const N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
     xs, ws = _gausslegendre(FP, rule.n)
@@ -98,7 +98,7 @@ function _integral(
         FP::Type{T} = Float64,
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    N = Meshes.paramdim(geometry)
+    const N = Meshes.paramdim(geometry)
 
     integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, diff_method)
 
