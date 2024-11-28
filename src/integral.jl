@@ -51,7 +51,7 @@ function _integral(
         return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
     elseif N == 2
         Base.depwarn("Use `HAdaptiveCubature` instead of nested `GaussKronrod` rules.", :integral)
-        integrand(u, v) = f(geometry2d(u, v)) * differential(geometry2d, (u, v), diff_method)
+        integrand(u, v) = f(geometry(u, v)) * differential(geometry, (u, v), diff_method)
         ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
         return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
     else
