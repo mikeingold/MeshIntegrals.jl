@@ -41,8 +41,9 @@ function _integral(
         f,
         geometry,
         rule::GaussKronrod;
-        kwargs...
-)
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_method(geometry)
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     # Pass through to dim-specific workers in next section of this file
     N = Meshes.paramdim(geometry)
     if N == 1
