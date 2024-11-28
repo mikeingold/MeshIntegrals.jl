@@ -10,7 +10,7 @@ a `geometry` using a particular numerical integration `rule` with floating point
 precision of type `FP`.
 
 # Arguments
-- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `f`: an integrand function, i.e. any callable with a method `f(::Meshes.Point)`
 - `geometry`: some `Meshes.Geometry` that defines the integration domain
 - `rule`: optionally, the `IntegrationRule` used for integration (by default
 `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
