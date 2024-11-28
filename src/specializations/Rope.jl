@@ -17,7 +17,7 @@ specified integration `rule` is applied independently to each segment formed by
 consecutive points in the Rope.
 
 # Arguments
-- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `f`: an integrand function, i.e. any callable with a method `f(::Meshes.Point)`
 - `rope`: a `Rope` that defines the integration domain
 - `rule = GaussKronrod()`: optionally, the `IntegrationRule` used for integration
 
