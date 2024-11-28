@@ -2,7 +2,7 @@
 
 This library aims to enable users to calculate the value of integrals over all [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl)
 geometry types using an array of numerical integration rules and techniques. However, some
-combinations of geomtry types and integration rules are ill-suited, and some others are simply
+combinations of geometry types and integration rules are ill-suited, and some others are simply
 not yet yet implemented. The following Support Matrix captures the current state of support for
 all geometry/rule combinations. Entries with a green check mark are fully supported and pass
 unit tests designed to check for accuracy.
