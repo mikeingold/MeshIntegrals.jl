@@ -9,11 +9,11 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         cyl::Meshes.CylinderSurface,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # The generic method only parameterizes the sides
     sides = _integral(f, cyl, rule; kwargs...)
 
