@@ -101,26 +101,29 @@ end
     a = π
     box = Box(Point(0), Point(a))
 
-    function f(p::P) where {P <: Meshes.Point}
+    struct Integrand end
+    fc = Integrand()
+
+    function (::Integrand)(p::Meshes.Point)
         t = ustrip(p.coords.x)
         sqrt(a^2 - t^2) * u"Ω/m"
     end
-    fv(p) = fill(f(p), 3)
+    fcv(p) = fill(fc(p), 3)
 
     # Scalar integrand
     sol = π * a^2 / 4 * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, box, GaussKronrod()) ≈ sol
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+    @test integral(fc, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(fc, box, GaussKronrod()) ≈ sol
+    @test integral(fc, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
     vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, box, GaussKronrod()) ≈ vsol
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
+    @test integral(fcv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fcv, box, GaussKronrod()) ≈ vsol
+    @test integral(fcv, box, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(f, box) ≈ sol
+    @test lineintegral(fc, box) ≈ sol
     @test_throws "not supported" surfaceintegral(f, box)
     @test_throws "not supported" volumeintegral(f, box)
 end
