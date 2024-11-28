@@ -32,13 +32,13 @@ calculating Jacobians that are used to calculate differential elements
 steep performance cost, especially for curves with a large number of control points.
 """
 function integral(
-        f::F,
+        f,
         curve::Meshes.BezierCurve,
         rule::GaussLegendre;
         diff_method::DM = _default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
     xs, ws = _gausslegendre(FP, rule.n)
 
@@ -52,26 +52,26 @@ function integral(
 end
 
 function integral(
-        f::F,
+        f,
         curve::Meshes.BezierCurve,
         rule::GaussKronrod;
         diff_method::DM = _default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     point(t) = curve(t, alg)
     integrand(t) = f(point(t)) * differential(curve, (t,), diff_method)
     return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
 end
 
 function integral(
-        f::F,
+        f,
         curve::Meshes.BezierCurve,
         rule::HAdaptiveCubature;
         diff_method::DM = _default_method(curve),
         FP::Type{T} = Float64,
         alg::Meshes.BezierEvalMethod = Meshes.Horner()
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     point(t) = curve(t, alg)
     integrand(ts) = f(point(only(ts))) * differential(curve, ts, diff_method)
 
