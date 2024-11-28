@@ -9,11 +9,11 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         cone::Meshes.ConeSurface,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # The generic method only parameterizes the sides
     sides = _integral(f, cone, rule; kwargs...)
 
