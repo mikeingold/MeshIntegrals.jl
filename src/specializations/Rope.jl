@@ -27,11 +27,11 @@ calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired
 """
 function integral(
-        f::F,
+        f,
         rope::Meshes.Rope,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # Convert the Rope into Segments, sum the integrals of those
     return sum(segment -> integral(f, segment, rule; kwargs...), Meshes.segments(rope))
 end
