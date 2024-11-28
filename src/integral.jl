@@ -56,8 +56,8 @@ function _integral(
 
         # Nested integration
         integrand(u, v) = f(geometry(u, v)) * differential(geometry, (u, v), diff_method)
-        ∫(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
-        return QuadGK.quadgk(∫, zero(FP), one(FP); rule.kwargs...)[1]
+        ∫₁(v) = QuadGK.quadgk(u -> integrand(u, v), zero(FP), one(FP); rule.kwargs...)[1]
+        return QuadGK.quadgk(v -> ∫₁(v), zero(FP), one(FP); rule.kwargs...)[1]
     else
         _error_unsupported_combination("geometry with more than two parametric dimensions",
             "GaussKronrod")
