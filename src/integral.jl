@@ -52,7 +52,7 @@ function _integral(
         return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
     elseif N == 2
         # Issue deprecation warning
-        Base.depwarn("Use `HAdaptiveCubature` instead of nested `GaussKronrod` rules.", :integral)
+        #Base.depwarn("Use `HAdaptiveCubature` instead of nested `GaussKronrod` rules.", :integral)
 
         # Nested integration
         integrand(u, v) = f(geometry(u, v)) * differential(geometry, (u, v), diff_method)
