@@ -3,12 +3,12 @@
 This library aims to enable users to calculate the value of integrals over all [**Meshes.jl**](https://github.com/JuliaGeometry/Meshes.jl)
 geometry types using an array of numerical integration rules and techniques. However, some
 combinations of geometry types and integration rules are ill-suited, and some others are simply
-not yet yet implemented. The following Support Matrix captures the current state of support for
+not yet implemented. The following Support Matrix captures the current state of support for
 all geometry/rule combinations. Entries with a green check mark are fully supported and pass
 unit tests designed to check for accuracy.
 
 In general, Gauss-Kronrod integration rules are recommended (and the default) for geometries
-with one parametric dimension, e.g.: `Segment`, `BezierCurve`, and `Rope`. or geometries with
+with one parametric dimension, e.g.: `Segment`, `BezierCurve`, and `Rope`. For geometries with
 more than one parametric dimension, e.g. surfaces and volumes, H-Adaptive Cubature rules are
 recommended (and the default).
 

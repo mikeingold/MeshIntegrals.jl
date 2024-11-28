@@ -45,7 +45,7 @@ function _integral(
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     # Implementation depends on number of parametric dimensions over which to integrate
-    const N = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
     if N == 1
         integrand(t) = f(geometry(t)) * differential(geometry, (t,), diff_method)
         return QuadGK.quadgk(integrand, zero(FP), one(FP); rule.kwargs...)[1]
@@ -72,7 +72,7 @@ function _integral(
         FP::Type{T} = Float64,
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    const N = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
     xs, ws = _gausslegendre(FP, rule.n)
@@ -98,7 +98,7 @@ function _integral(
         FP::Type{T} = Float64,
         diff_method::DM = _default_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    const N = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(geometry)
 
     integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, diff_method)
 
