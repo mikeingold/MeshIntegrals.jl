@@ -15,7 +15,7 @@ Rule types available:
 - [`HAdaptiveCubature`](@ref)
 """
 function lineintegral(
-        f::Function,
+        f,
         geometry::Geometry,
         rule::IntegrationRule = GaussKronrod();
         kwargs...
@@ -47,7 +47,7 @@ Algorithm types available:
 - [`HAdaptiveCubature`](@ref) (default)
 """
 function surfaceintegral(
-        f::Function,
+        f,
         geometry::Geometry,
         rule::IntegrationRule = HAdaptiveCubature();
         kwargs...
@@ -79,7 +79,7 @@ Algorithm types available:
 - [`HAdaptiveCubature`](@ref) (default)
 """
 function volumeintegral(
-        f::Function,
+        f,
         geometry::Geometry,
         rule::IntegrationRule = HAdaptiveCubature();
         kwargs...
