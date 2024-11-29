@@ -52,7 +52,7 @@ end
 end
 
 @testitem "_ParametricGeometry" setup=[Setup] begin
-    using Meshes: _parametric
+    using MeshIntegrals: _parametric
 
     pt_n = Point(0, 3, 0)
     pt_w = Point(-7, 0, 0)
