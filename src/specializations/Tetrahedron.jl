@@ -10,46 +10,34 @@
 ################################################################################
 
 function integral(
-        f,
-        tetrahedron::Meshes.Tetrahedron,
-        rule::GaussLegendre;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _error_unsupported_combination("Tetrahedron", "GaussLegendre")
-end
+    f::F,
+    tetrahedron::Meshes.Tetrahedron,
+    rule::IntegrationRule;
+    kwargs...
+) where {F <: Function}
+    # Generate a _ParametricGeometry whose parametric function domain spans [0,1]^3
+    paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
+    tetra = _ParametricGeometry(paramfunction, 3)
 
-function integral(
-        f,
-        tetrahedron::Meshes.Tetrahedron,
-        rule::GaussKronrod;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _guarantee_analytical(Meshes.Tetrahedron, diff_method)
-
-    o = zero(FP)
-    ∫uvw(u, v, w) = f(tetrahedron(u, v, w))
-    ∫vw(v, w) = QuadGK.quadgk(u -> ∫uvw(u, v, w), o, FP(1 - v - w); rule.kwargs...)[1]
-    ∫w(w) = QuadGK.quadgk(v -> ∫vw(v, w), o, FP(1 - w); rule.kwargs...)[1]
-    ∫ = QuadGK.quadgk(∫w, o, one(FP); rule.kwargs...)[1]
-
-    # Apply barycentric domain correction (volume: 1/6 → actual)
-    return 6 * Meshes.volume(tetrahedron) * ∫
-end
-
-function integral(
-        f,
-        tetrahedron::Meshes.Tetrahedron,
-        rule::HAdaptiveCubature;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _error_unsupported_combination("Tetrahedron", "HAdaptiveCubature")
+    # Integrate the _ParametricGeometry using the standard methods
+    return _integral(f, tetra, rule; kwargs...)
 end
 
 ################################################################################
-#                               jacobian
+#                               Parametric
 ################################################################################
 
-_has_analytical(::Type{T}) where {T <: Meshes.Tetrahedron} = true
+function _parametric(tetrahedron::Meshes.Tetrahedron, t1, t2, t3)
+    if (t3 < 0) || (t3 > 1)
+        msg = "tetrahedron(t1, t2, t3) is not defined for t3 outside [0, 1]."
+        throw(DomainError(t3, msg))
+    end
+
+    # Take a triangular cross-section at t3
+    a = tetrahedron(t3, 0, 0)
+    b = tetrahedron(0, t3, 0)
+    c = tetrahedron(0, 0, t3)
+    cross_section = Meshes.Triangle(a, b, c)
+
+    return _parametric(cross_section, t1, t2)
+end

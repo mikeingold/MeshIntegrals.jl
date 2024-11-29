@@ -24,6 +24,7 @@ include("integral_aliases.jl")
 export lineintegral, surfaceintegral, volumeintegral
 
 # Integration methods specialized for particular geometries
+include("specializations/_ParametricGeometry.jl")
 include("specializations/BezierCurve.jl")
 include("specializations/ConeSurface.jl")
 include("specializations/CylinderSurface.jl")
