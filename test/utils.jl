@@ -61,10 +61,15 @@ end
     triangle = Triangle(pt_n, pt_w, pt_e)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
+    # Ensure error is thrown for an out-of-bounds coordinate
     for ts in [(-0.5, 0.5), (0.5, -0.5), (1.5, 0.5), (0.5, 1.5)]
         @test_throws "not defined" _parametric(triangle, ts...)
+        
+        # Tetrahedron forwards t1 and t2 to _parametric(::Triangle, ts...)
+        @test_throws "not defined" _parametric(tetrahedron, ts..., 0)
     end
 
+    # Ensue error is thrown for an out-of-bounds third coordinate
     for t3 in [-0.5, 1.5]
         @test_throws "not defined" _parametric(tetrahedron, 0, 0, t3)
     end
