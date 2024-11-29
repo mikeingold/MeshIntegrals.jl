@@ -32,11 +32,11 @@ calculating Jacobians that are used to calculate differential elements
 steep performance cost, especially for curves with a large number of control points.
 """
 function integral(
-    f,
-    curve::Meshes.BezierCurve,
-    rule::IntegrationRule;
-    alg::Meshes.BezierEvalMethod = Meshes.Horner(),
-    kwargs...
+        f,
+        curve::Meshes.BezierCurve,
+        rule::IntegrationRule;
+        alg::Meshes.BezierEvalMethod = Meshes.Horner(),
+        kwargs...
 )
     # Generate a _ParametricGeometry whose parametric function auto-applies the alg kwarg
     paramfunction(t) = _parametric(curve, t, alg)
@@ -45,7 +45,6 @@ function integral(
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_curve, rule; kwargs...)
 end
-
 
 ################################################################################
 #                              Parametric

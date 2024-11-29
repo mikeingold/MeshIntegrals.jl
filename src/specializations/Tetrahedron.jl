@@ -10,10 +10,10 @@
 ################################################################################
 
 function integral(
-    f::F,
-    tetrahedron::Meshes.Tetrahedron,
-    rule::IntegrationRule;
-    kwargs...
+        f::F,
+        tetrahedron::Meshes.Tetrahedron,
+        rule::IntegrationRule;
+        kwargs...
 ) where {F <: Function}
     # Generate a _ParametricGeometry whose parametric function domain spans [0,1]^3
     paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
