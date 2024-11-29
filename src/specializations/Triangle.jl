@@ -98,7 +98,7 @@ function integral(
     ∫ = HCubature.hcubature(uintegrand, _zeros(FP, 2), (T(1), T(π / 2)), rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2 * Meshes.area(triangle) .* ∫
+    return 2 * Meshes.area(triangle) * integrandunits .* ∫
 end
 
 ################################################################################
