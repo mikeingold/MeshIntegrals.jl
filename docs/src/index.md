@@ -25,12 +25,12 @@ These solvers have support for integrand functions that produce scalars, vectors
 ```julia
 integral(f, geometry)
 ```
-Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
+Performs a numerical integration of some integrand function `f` over the domain specified by `geometry`. The integrand function can be anything callable with a method `f(::Meshes.Point)`. A default integration method will be automatically selected according to the geometry: `GaussKronrod()` for 1D, and `HAdaptiveCubature()` for all others.
 
 ```julia
 integral(f, geometry, rule)
 ```
-Performs a numerical integration of some integrand function `f(p::Meshes.Point)` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`.
+Performs a numerical integration of some integrand function `f` over the domain specified by `geometry` using the specified integration rule, e.g. `GaussKronrod()`. The integrand function can be anything callable with a method `f(::Meshes.Point)`.
 
 Additionally, several optional keyword arguments are defined in [the API](https://juliageometry.github.io/MeshIntegrals.jl/stable/api/) to provide additional control over the integration mechanics.
 

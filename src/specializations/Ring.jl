@@ -17,7 +17,7 @@ specified integration `rule` is applied independently to each segment formed by
 consecutive points in the Ring.
 
 # Arguments
-- `f`: an integrand function with a method `f(::Meshes.Point)`
+- `f`: an integrand function, i.e. any callable with a method `f(::Meshes.Point)`
 - `ring`: a `Ring` that defines the integration domain
 - `rule = GaussKronrod()`: optionally, the `IntegrationRule` used for integration
 
@@ -27,11 +27,11 @@ calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired
 """
 function integral(
-        f::F,
+        f,
         ring::Meshes.Ring,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # Convert the Ring into Segments, sum the integrals of those 
     return sum(segment -> _integral(f, segment, rule; kwargs...), Meshes.segments(ring))
 end

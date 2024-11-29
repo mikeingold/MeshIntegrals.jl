@@ -9,12 +9,12 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         plane::Meshes.Plane,
         rule::GaussLegendre;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Plane, diff_method)
 
     # Get Gauss-Legendre nodes and weights for a 2D region [-1,1]²
@@ -40,12 +40,12 @@ function integral(
 end
 
 function integral(
-        f::F,
+        f,
         plane::Meshes.Plane,
         rule::GaussKronrod;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Plane, diff_method)
 
     # Normalize the Plane's orthogonal vectors
@@ -61,12 +61,12 @@ function integral(
 end
 
 function integral(
-        f::F,
+        f,
         plane::Meshes.Plane,
         rule::HAdaptiveCubature;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Plane, diff_method)
 
     # Normalize the Plane's orthogonal vectors
@@ -80,8 +80,8 @@ function integral(
 
     # Integrate f over the Plane
     domainunits = _units(uplane(0, 0))
-    function integrand(x::AbstractVector)
-        f(uplane(t(x[1]), t(x[2]))) * t′(x[1]) * t′(x[2]) * domainunits^2
+    function integrand(xs)
+        f(uplane(t(xs[1]), t(xs[2]))) * t′(xs[1]) * t′(xs[2]) * domainunits^2
     end
 
     # HCubature doesn't support functions that output Unitful Quantity types

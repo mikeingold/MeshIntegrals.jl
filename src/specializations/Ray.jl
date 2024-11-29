@@ -9,12 +9,12 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         ray::Meshes.Ray,
         rule::GaussLegendre;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Ray, diff_method)
 
     # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
@@ -24,8 +24,8 @@ function integral(
     ray = Meshes.Ray(ray.p, Meshes.unormalize(ray.v))
 
     # Domain transformation: x ∈ [-1,1] ↦ t ∈ [0,∞)
-    t₁(x) = FP(1 / 2) * x + FP(1 / 2)
-    t₁′(x) = FP(1 / 2)
+    t₁(x) = (1 // 2) * x + (1 // 2)
+    t₁′(x) = (1 // 2)
     t₂(x) = x / (1 - x^2)
     t₂′(x) = (1 + x^2) / (1 - x^2)^2
     t = t₂ ∘ t₁
@@ -38,12 +38,12 @@ function integral(
 end
 
 function integral(
-        f::F,
+        f,
         ray::Meshes.Ray,
         rule::GaussKronrod;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Ray, diff_method)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -56,12 +56,12 @@ function integral(
 end
 
 function integral(
-        f::F,
+        f,
         ray::Meshes.Ray,
         rule::HAdaptiveCubature;
         diff_method::DM = Analytical(),
         FP::Type{T} = Float64
-) where {F <: Function, DM <: DifferentiationMethod, T <: AbstractFloat}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _guarantee_analytical(Meshes.Ray, diff_method)
 
     # Normalize the Ray s.t. ray(t) is distance t from origin point
@@ -73,11 +73,11 @@ function integral(
 
     # Integrate f along the Ray
     domainunits = _units(ray(0))
-    integrand(x::AbstractVector) = f(ray(t(x[1]))) * t′(x[1]) * domainunits
+    integrand(xs) = f(ray(t(xs[1]))) * t′(xs[1]) * domainunits
 
     # HCubature doesn't support functions that output Unitful Quantity types
     # Establish the units that are output by f
-    testpoint_parametriccoord = zeros(FP, 1)
+    testpoint_parametriccoord = _zeros(FP, 1)
     integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
     # Create a wrapper that returns only the value component in those units
     uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))

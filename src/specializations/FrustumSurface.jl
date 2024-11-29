@@ -9,11 +9,11 @@
 ################################################################################
 
 function integral(
-        f::F,
+        f,
         frust::Meshes.FrustumSurface,
         rule::I;
         kwargs...
-) where {F <: Function, I <: IntegrationRule}
+) where {I <: IntegrationRule}
     # The generic method only parameterizes the sides
     sides = _integral(f, frust, rule; kwargs...)
 
