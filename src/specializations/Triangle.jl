@@ -87,7 +87,15 @@ function integral(
         v = R * (1 - b / (a + b))
         return f(triangle(u, v)) * R / (a + b)^2
     end
-    ∫ = HCubature.hcubature(integrand, _zeros(FP, 2), (FP(1), FP(π / 2)), rule.kwargs...)[1]
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = _zeros(T, 2)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(ts) = Unitful.ustrip.(integrandunits, integrand(ts))
+    # Integrate only the unitless values
+    ∫ = HCubature.hcubature(uintegrand, _zeros(FP, 2), (T(1), T(π / 2)), rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
     return 2 * Meshes.area(triangle) .* ∫

@@ -892,11 +892,11 @@ end
     pt_e = Point(1, 0, 0)
     triangle = Triangle(pt_e, pt_n, pt_w)
 
-    f(p) = 1.0
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = Meshes.measure(triangle)
+    sol = Meshes.measure(triangle) * u"A"
     @test integral(f, triangle, GaussLegendre(100)) ≈ sol
     @test integral(f, triangle, GaussKronrod()) ≈ sol
     @test integral(f, triangle, HAdaptiveCubature()) ≈ sol
