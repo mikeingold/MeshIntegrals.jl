@@ -50,3 +50,22 @@ end
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
 end
+
+@testitem "_ParametricGeometry" setup=[Setup] begin
+    using Meshes: _parametric
+
+    pt_n = Point(0, 3, 0)
+    pt_w = Point(-7, 0, 0)
+    pt_e = Point(8, 0, 0)
+    ẑ = Vec(0, 0, 1)
+    triangle = Triangle(pt_n, pt_w, pt_e)
+    tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
+
+    for ts in [(-0.5, 0.5), (0.5, -0.5), (1.5, 0.5), (0.5, 1.5)]
+        @test_throws "not defined" _parametric(triangle, ts...)
+    end
+
+    for t3 in [-0.5, 1.5]
+        @test_throws "not defind" _parametric(tetrahedron, 0, 0, t3)
+    end
+end
