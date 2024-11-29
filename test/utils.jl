@@ -66,6 +66,6 @@ end
     end
 
     for t3 in [-0.5, 1.5]
-        @test_throws "not defind" _parametric(tetrahedron, 0, 0, t3)
+        @test_throws "not defined" _parametric(tetrahedron, 0, 0, t3)
     end
 end
