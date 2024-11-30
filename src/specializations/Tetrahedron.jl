@@ -17,7 +17,7 @@ function integral(
 )
     # Generate a _ParametricGeometry whose parametric function domain spans [0,1]^3
     paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
-    tetra = _ParametricGeometry(paramfunction, 3)
+    tetra = _ParametricGeometry(paramfunction, Meshes.paramdim(tetrahedron))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, tetra, rule; kwargs...)
