@@ -23,30 +23,53 @@ end
     using MeshIntegrals: _has_analytical, _default_method, _guarantee_analytical
 
     # _has_analytical of instances
-    bezier = BezierCurve([Point(t, sin(t), 0.0) for t in range(-π, π, length = 361)])
-    @test _has_analytical(bezier) == true
+    triangle = Triangle(Point(0, 0, 0), Point(0, 1, 0), Point(1, 0, 0))
+    @test _has_analytical(triangle) == true
     sphere = Sphere(Point(0, 0, 0), 1.0)
     @test _has_analytical(sphere) == false
 
+    # _default_method
+    @test _default_method(Meshes.Triangle) isa Analytical
+    @test _default_method(triangle) isa Analytical
+    @test _default_method(Meshes.Sphere) isa FiniteDifference
+    @test _default_method(sphere) isa FiniteDifference
+
     # _has_analytical of types
-    @test _has_analytical(Meshes.BezierCurve) == true
+    @test _has_analytical(Meshes.BezierCurve) == false
     @test _has_analytical(Meshes.Line) == true
     @test _has_analytical(Meshes.Plane) == true
     @test _has_analytical(Meshes.Ray) == true
     @test _has_analytical(Meshes.Sphere) == false
-    @test _has_analytical(Meshes.Tetrahedron) == true
+    @test _has_analytical(Meshes.Tetrahedron) == false
     @test _has_analytical(Meshes.Triangle) == true
 
     # _guarantee_analytical
     @test _guarantee_analytical(Meshes.Line, Analytical()) === nothing
     @test_throws "Analytical" _guarantee_analytical(Meshes.Line, FiniteDifference())
 
-    # _default_method
-    @test _default_method(Meshes.BezierCurve) isa Analytical
-    @test _default_method(bezier) isa Analytical
-    @test _default_method(Meshes.Sphere) isa FiniteDifference
-    @test _default_method(sphere) isa FiniteDifference
-
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
+end
+
+@testitem "_ParametricGeometry" setup=[Setup] begin
+    using MeshIntegrals: _parametric
+
+    pt_n = Point(0, 3, 0)
+    pt_w = Point(-7, 0, 0)
+    pt_e = Point(8, 0, 0)
+    ẑ = Vec(0, 0, 1)
+    triangle = Triangle(pt_n, pt_w, pt_e)
+    tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
+
+    # Ensure error is thrown for an out-of-bounds coordinate
+    for ts in [(-0.5, 0.5), (0.5, -0.5), (1.5, 0.5), (0.5, 1.5)]
+        @test_throws "not defined" _parametric(triangle, ts...)
+        # Tetrahedron forwards t1 and t2 to _parametric(::Triangle, ts...)
+        @test_throws "not defined" _parametric(tetrahedron, ts..., 0)
+    end
+
+    # Ensue error is thrown for an out-of-bounds third coordinate
+    for t3 in [-0.5, 1.5]
+        @test_throws "not defined" _parametric(tetrahedron, 0, 0, t3)
+    end
 end

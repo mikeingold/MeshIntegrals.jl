@@ -87,10 +87,18 @@ function integral(
         v = R * (1 - b / (a + b))
         return f(triangle(u, v)) * R / (a + b)^2
     end
-    ∫ = HCubature.hcubature(integrand, _zeros(FP, 2), (FP(1), FP(π / 2)), rule.kwargs...)[1]
+
+    # HCubature doesn't support functions that output Unitful Quantity types
+    # Establish the units that are output by f
+    testpoint_parametriccoord = _zeros(T, 2)
+    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
+    # Create a wrapper that returns only the value component in those units
+    uintegrand(ts) = Unitful.ustrip.(integrandunits, integrand(ts))
+    # Integrate only the unitless values
+    ∫ = HCubature.hcubature(uintegrand, _zeros(FP, 2), (T(1), T(π / 2)), rule.kwargs...)[1]
 
     # Apply a linear domain-correction factor 0.5 ↦ area(triangle)
-    return 2 * Meshes.area(triangle) .* ∫
+    return 2 * Meshes.area(triangle) * integrandunits .* ∫
 end
 
 ################################################################################
@@ -98,3 +106,21 @@ end
 ################################################################################
 
 _has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
+
+################################################################################
+#                              Parametric
+################################################################################
+
+function _parametric(triangle::Meshes.Triangle, t1, t2)
+    if (t1 < 0 || t1 > 1) || (t2 < 0 || t2 > 1)
+        msg = "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]^2."
+        throw(DomainError((t1, t2), msg))
+    end
+
+    # Form a line segment between sides
+    a = triangle(0, t2)
+    b = triangle(t2, 0)
+    segment = Meshes.Segment(a, b)
+
+    return segment(t1)
+end
