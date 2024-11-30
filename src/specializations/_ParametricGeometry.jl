@@ -11,12 +11,12 @@ for more types that span surfaces and volumes, at which time this custom type wi
 no longer be required.
 
 # Fields
-- `fun::Function` - a parametric function: (ts...) -> Meshes.Point
+- `fun` - anything callable representing a parametric function: (ts...) -> Meshes.Point
 
 # Type Structure
 - `M <: Meshes.Manifold` - same usage as in `Meshes.Geometry{M, C}`
 - `C <: CoordRefSystems.CRS` - same usage as in `Meshes.Geometry{M, C}`
-- `F` - type of the callable integrand function
+- `F` - type of the callable parametric function
 - `Dim` - number of parametric dimensions
 """
 struct _ParametricGeometry{M <: Meshes.Manifold, C <: CRS, F, Dim} <:
@@ -38,7 +38,7 @@ Construct a `_ParametricGeometry` using a provided parametric function `fun` for
 with `dims` parametric dimensions.
 
 # Arguments
-- `fun::Function` - parametric function mapping `(ts...) -> Meshes.Point`
+- `fun` - anything callable representing a parametric function mapping `(ts...) -> Meshes.Point`
 - `dims::Int64` - number of parametric dimensions, i.e. `length(ts)`
 """
 function _ParametricGeometry(
