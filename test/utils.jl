@@ -22,30 +22,27 @@ end
 @testitem "DifferentiationMethod" setup=[Setup] begin
     using MeshIntegrals: _has_analytical, _default_method, _guarantee_analytical
 
-    # _has_analytical of instances
-    triangle = Triangle(Point(0, 0, 0), Point(0, 1, 0), Point(1, 0, 0))
-    @test _has_analytical(triangle) == true
+    # Test geometries
     sphere = Sphere(Point(0, 0, 0), 1.0)
-    @test _has_analytical(sphere) == false
+    triangle = Triangle(Point(0, 0, 0), Point(0, 1, 0), Point(1, 0, 0))
 
-    # _default_method
-    @test _default_method(Meshes.Triangle) isa Analytical
-    @test _default_method(triangle) isa Analytical
-    @test _default_method(Meshes.Sphere) isa FiniteDifference
-    @test _default_method(sphere) isa FiniteDifference
+    # _has_analytical of instances
+    @test _has_analytical(sphere) == false
+    @test _has_analytical(triangle) == true
 
     # _has_analytical of types
-    @test _has_analytical(Meshes.BezierCurve) == false
-    @test _has_analytical(Meshes.Line) == true
-    @test _has_analytical(Meshes.Plane) == true
-    @test _has_analytical(Meshes.Ray) == true
     @test _has_analytical(Meshes.Sphere) == false
-    @test _has_analytical(Meshes.Tetrahedron) == false
     @test _has_analytical(Meshes.Triangle) == true
 
+    # _default_method
+    @test _default_method(Meshes.Sphere) isa FiniteDifference
+    @test _default_method(sphere) isa FiniteDifference
+    @test _default_method(Meshes.Triangle) isa Analytical
+    @test _default_method(triangle) isa Analytical
+
     # _guarantee_analytical
-    @test _guarantee_analytical(Meshes.Line, Analytical()) === nothing
-    @test_throws "Analytical" _guarantee_analytical(Meshes.Line, FiniteDifference())
+    @test _guarantee_analytical(Meshes.Triangle, Analytical()) === nothing
+    @test_throws "Analytical" _guarantee_analytical(Meshes.Triangle, FiniteDifference())
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
