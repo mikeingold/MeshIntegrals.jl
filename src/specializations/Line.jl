@@ -15,6 +15,7 @@ function integral(
 )
     # Generate a _ParametricGeometry whose parametric function spans the domain [0, 1]
     paramfunction(t) = _parametric(line, t)
+    param_line = _ParametricGeometry(paramfunction, Meshes.paramdim(line))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_line, rule; kwargs...)
