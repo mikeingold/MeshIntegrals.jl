@@ -55,7 +55,7 @@ end
 Meshes.paramdim(::_ParametricGeometry{M, C, F, Dim}) where {M, C, F, Dim} = Dim
 
 """
-    _parametric(geometry::G, ts...) where {G <: Meshes.Geometry}
+    _parametric(geometry::G) where {G <: Meshes.Geometry} -> Function
 
 Used in MeshIntegrals.jl for defining parametric functions that transform non-standard
 geometries into a form that can be integrated over the standard rectangular [0,1]^n limits.

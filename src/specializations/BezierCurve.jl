@@ -39,8 +39,7 @@ function integral(
         kwargs...
 )
     # Generate a _ParametricGeometry whose parametric function auto-applies the alg kwarg
-    paramfunction(t) = _parametric(curve, t, alg)
-    param_curve = _ParametricGeometry(paramfunction, Meshes.paramdim(curve))
+    param_curve = _ParametricGeometry(_parametric(curve, alg), Meshes.paramdim(curve))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_curve, rule; kwargs...)
@@ -51,6 +50,6 @@ end
 ################################################################################
 
 # Wrap (::BezierCurve)(t, ::BezierEvalMethod) into f(t) by embedding second argument
-function _parametric(curve::Meshes.BezierCurve, t, alg::Meshes.BezierEvalMethod)
-    return curve(t, alg)
+function _parametric(curve::Meshes.BezierCurve, alg::Meshes.BezierEvalMethod)
+    return t -> curve(t, alg)
 end

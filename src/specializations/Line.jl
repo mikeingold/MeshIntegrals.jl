@@ -14,8 +14,7 @@ function integral(
         kwargs...
 )
     # Generate a _ParametricGeometry whose parametric function spans the domain [0, 1]
-    paramfunction(t) = _parametric(line, t)
-    param_line = _ParametricGeometry(paramfunction, Meshes.paramdim(line))
+    param_line = _ParametricGeometry(_parametric(line), Meshes.paramdim(line))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_line, rule; kwargs...)
@@ -26,11 +25,11 @@ end
 ################################################################################
 
 # Map argument domain from [0, 1] to (-∞, ∞) for (::Line)(t)
-function _parametric(line::Meshes.Line, t)
+function _parametric(line::Meshes.Line)
     # [-1, 1] ↦ (-∞, ∞)
     f1(t) = t / (1 - t^2)
     # [0, 1] ↦ [-1, 1]
     f2(t) = 2t - 1
     # Compose the two transforms
-    return line((f1 ∘ f2)(t))
+    return t -> line((f1 ∘ f2)(t))
 end
