@@ -65,7 +65,7 @@ SUITE["Specializations/Scalar GaussLegendre"] = let s = BenchmarkGroup()
     s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule_gl)
     s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule_gl)
     s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule_gl)
-    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
+    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule_gl)
     s
 end
 
