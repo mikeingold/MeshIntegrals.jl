@@ -42,9 +42,9 @@ with `dims` parametric dimensions.
 - `dims::Int64` - number of parametric dimensions, i.e. `length(ts)`
 """
 function _ParametricGeometry(
-        fun::F,
+        fun,
         Dim::Int64
-) where {F <: Function}
+)
     p = fun(_zeros(Dim)...)
     return _ParametricGeometry{Meshes.manifold(p), Meshes.crs(p)}(fun, Dim)
 end
