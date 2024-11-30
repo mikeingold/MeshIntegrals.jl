@@ -50,6 +50,7 @@ end
 #                              Parametric
 ################################################################################
 
+# Wrap (::BezierCurve)(t, ::BezierEvalMethod) into f(t) by embedding second argument
 function _parametric(curve::Meshes.BezierCurve, t, alg::Meshes.BezierEvalMethod)
     return curve(t, alg)
 end

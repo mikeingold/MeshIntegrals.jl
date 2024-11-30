@@ -14,8 +14,10 @@ function integral(
         rule::IntegrationRule;
         kwargs...
 )
+    # Generate a _ParametricGeometry whose parametric function spans the domain [0, 1]
     paramfunction(t) = _parametric(ray, t)
-    param_ray = _ParametricGeometry(paramfunction, 1)
+
+    # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_ray, rule; kwargs...)
 end
 
@@ -23,7 +25,7 @@ end
 #                                     Parametric
 ############################################################################################
 
-# Map [0, 1] ↦ [0, ∞)
+# Map argument domain from [0, 1] to [0, ∞) for (::Ray)(t)
 function _parametric(ray::Meshes.Ray, t)
     f(t) = t / (1 - t^2)
     return ray(f(t))
