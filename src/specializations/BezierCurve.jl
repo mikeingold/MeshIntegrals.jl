@@ -40,7 +40,7 @@ function integral(
 )
     # Generate a _ParametricGeometry whose parametric function auto-applies the alg kwarg
     paramfunction(t) = _parametric(curve, t, alg)
-    param_curve = _ParametricGeometry(paramfunction, 1)
+    param_curve = _ParametricGeometry(paramfunction, Meshes.paramdim(curve))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_curve, rule; kwargs...)
