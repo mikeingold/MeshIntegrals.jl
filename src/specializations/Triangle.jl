@@ -111,16 +111,19 @@ _has_analytical(::Type{T}) where {T <: Meshes.Triangle} = true
 #                              Parametric
 ################################################################################
 
-function _parametric(triangle::Meshes.Triangle, t1, t2)
-    if (t1 < 0 || t1 > 1) || (t2 < 0 || t2 > 1)
-        msg = "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]^2."
-        throw(DomainError((t1, t2), msg))
+function _parametric(triangle::Meshes.Triangle)
+    function f(t1, t2)
+        if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2)))
+            msg = "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]^2."
+            throw(DomainError((t1, t2), msg))
+        end
+
+        # Form a line segment between sides
+        a = triangle(0, t2)
+        b = triangle(t2, 0)
+        segment = Meshes.Segment(a, b)
+
+        return segment(t1)
     end
-
-    # Form a line segment between sides
-    a = triangle(0, t2)
-    b = triangle(t2, 0)
-    segment = Meshes.Segment(a, b)
-
-    return segment(t1)
+    return f
 end
