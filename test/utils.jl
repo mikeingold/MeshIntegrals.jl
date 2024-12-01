@@ -55,18 +55,14 @@ end
     pt_w = Point(-7, 0, 0)
     pt_e = Point(8, 0, 0)
     ẑ = Vec(0, 0, 1)
-    triangle = Triangle(pt_n, pt_w, pt_e)
-    tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
+    triangle = _parametric(Triangle(pt_n, pt_w, pt_e))
+    tetrahedron = _parametric(Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ))
 
-    # Ensure error is thrown for an out-of-bounds coordinate
-    for ts in [(-0.5, 0.5), (0.5, -0.5), (1.5, 0.5), (0.5, 1.5)]
-        @test_throws "not defined" _parametric(triangle, ts...)
-        # Tetrahedron forwards t1 and t2 to _parametric(::Triangle, ts...)
-        @test_throws "not defined" _parametric(tetrahedron, ts..., 0)
+    # Ensure error is thrown for out-of-bounds coordinate
+    for ts in [(-1, 0), (0, -1), (2, 0), (0, 2)]
+        @test_throws "not defined" triangle(ts...)
     end
-
-    # Ensue error is thrown for an out-of-bounds third coordinate
-    for t3 in [-0.5, 1.5]
-        @test_throws "not defined" _parametric(tetrahedron, 0, 0, t3)
+    for ts in [(-1, 0, 0), (0, -1, 0), (0, 0, -1), (2, 0, 0), (0, 2, 0), (0, 0, 2)]
+        @test_throws "not defined" tetrahedron(ts...)
     end
 end
