@@ -20,7 +20,7 @@
 end
 
 @testitem "DifferentiationMethod" setup=[Setup] begin
-    using MeshIntegrals: _has_analytical, _default_method, _guarantee_analytical
+    using MeshIntegrals: _default_method
 
     # Test geometries
     sphere = Sphere(Point(0, 0, 0), 1.0)
