@@ -66,9 +66,7 @@ end
 end
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
-    curve = BezierCurve(
-        [Point(t * u"m", sin(t) * u"m", 0.0u"m") for t in range(-pi, pi, length = 361)]
-    )
+    curve = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)])
 
     function f(p::P) where {P <: Meshes.Point}
         ux = ustrip(p.coords.x)
