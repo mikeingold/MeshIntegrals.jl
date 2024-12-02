@@ -34,7 +34,8 @@ function _parametric(triangle::Meshes.Triangle)
             throw(DomainError((t1, t2), msg))
         end
 
-        return triangle(t1 * t2, t2 - (t1 * t2))
+        t1t2 = t1 * t2
+        return triangle(t1t2, t2 - t1t2)
     end
     return f
 end
