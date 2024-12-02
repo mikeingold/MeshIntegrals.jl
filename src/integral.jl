@@ -42,7 +42,7 @@ function _integral(
         geometry,
         rule::GaussKronrod;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     # Implementation depends on number of parametric dimensions over which to integrate
     N = Meshes.paramdim(geometry)
@@ -70,7 +70,7 @@ function _integral(
         geometry,
         rule::GaussLegendre;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
@@ -96,7 +96,7 @@ function _integral(
         geometry,
         rule::HAdaptiveCubature;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 

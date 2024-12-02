@@ -27,14 +27,14 @@ _ones(N::Int) = _ones(Float64, N)
 ################################################################################
 
 # Return the default DifferentiationMethod instance for a particular geometry type
-function _default_method(
+function _default_diff_method(
         g::Type{G}
 ) where {G <: Geometry}
     return FiniteDifference()
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
-_default_method(g::G) where {G <: Geometry} = _default_method(G)
+_default_diff_method(g::G) where {G <: Geometry} = _default_diff_method(G)
 
 ################################################################################
 #                        CliffordNumbers and Units
