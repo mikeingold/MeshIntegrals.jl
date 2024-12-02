@@ -74,10 +74,12 @@ function _integral(
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
-    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
-    xs, ws = _gausslegendre(FP, rule.n)
-    weights = Iterators.product(ntuple(Returns(ws), N)...)
-    nodes = Iterators.product(ntuple(Returns(xs), N)...)
+    # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
+    xs, ws = FastGaussQuadrature.gausslegendre(N)
+    xsT = Iterator.map(FP, xs)
+    wsT = Iterator.map(FP, ws)
+    weights = Iterators.product(ntuple(Returns(wsT), N)...)
+    nodes = Iterators.product(ntuple(Returns(xsT), N)...)
 
     # Domain transformation: x [-1,1] ↦ t [0,1]
     t(x) = (1 // 2) * x + (1 // 2)

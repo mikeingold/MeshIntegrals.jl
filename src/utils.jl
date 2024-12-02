@@ -26,17 +26,6 @@ _default_diff_method(g::G) where {G <: Geometry} = _default_diff_method(G)
 #                           Numerical Tools
 ################################################################################
 
-# Calculate Gauss-Legendre nodes/weights and convert to type T
-"""
-    _gausslegendre(T, n)
-
-Return FastGaussQuadrature.gausslegendre(n) in type T.
-"""
-function _gausslegendre(T, n)
-    xs, ws = FastGaussQuadrature.gausslegendre(n)
-    return T.(xs), T.(ws)
-end
-
 """
     _KVector(v::Meshes.Vec) -> Unitful.Quantity{CliffordNumbers.KVector}
 
