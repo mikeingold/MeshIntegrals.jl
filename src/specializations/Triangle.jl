@@ -16,7 +16,7 @@ function integral(
         kwargs...
 )
     # Generate a _ParametricGeometry whose parametric function domain spans [0,1]²
-    param_triangle = _ParametricGeometry(_parametric(triangle), 2)
+    param_triangle = _ParametricGeometry(_parametric(triangle), Meshes.paramdim(triangle))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, param_triangle, rule; kwargs...)
