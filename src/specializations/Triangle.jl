@@ -33,14 +33,6 @@ function _parametric(triangle::Meshes.Triangle)
             throw(DomainError((t1, t2), msg))
         end
 
-        #=
-        # Form a line segment between sides
-        a = triangle(0, t2)
-        b = triangle(t2, 0)
-        segment = Meshes.Segment(a, b)
-
-        return segment(t1)
-        =#
         return triangle(t1 * t2, t2 - (t1 * t2))
     end
     return f
