@@ -76,8 +76,8 @@ function _integral(
 
     # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
     xs, ws = FastGaussQuadrature.gausslegendre(rule.n)
-    xsFP = Iterator.map(FP, xs)
-    wsFP = Iterator.map(FP, ws)
+    xsFP = Iterators.map(FP, xs)
+    wsFP = Iterators.map(FP, ws)
     weight_grid = Iterators.product(ntuple(Returns(wsFP), N)...)
     node_grid = Iterators.product(ntuple(Returns(xsFP), N)...)
 
