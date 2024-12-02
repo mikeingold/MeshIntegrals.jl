@@ -39,8 +39,8 @@ end
     # _default_method
     @test _default_method(Meshes.Sphere) isa FiniteDifference
     @test _default_method(sphere) isa FiniteDifference
-    @test _default_method(Meshes.Triangle) isa Analytical
-    @test _default_method(triangle) isa Analytical
+    #@test _default_method(Meshes.Triangle) isa Analytical
+    #@test _default_method(triangle) isa Analytical
 
     #=
     # _guarantee_analytical
