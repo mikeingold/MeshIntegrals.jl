@@ -30,7 +30,7 @@ end
 function _parametric(tetrahedron::Meshes.Tetrahedron)
     function f(t1, t2, t3)
         if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2, t3)))
-            msg = "tetrahedron(t1, t2, t3) is not defined for t outside [0, 1]."
+            msg = "tetrahedron(t1, t2, t3) is not defined for (t1, t2, t3) outside [0, 1]³."
             throw(DomainError((t1, t2, t3), msg))
         end
 
