@@ -9,7 +9,7 @@ A category of types used to specify the desired method for calculating derivativ
 Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
 
-See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
+See also [`FiniteDifference`](@ref).
 """
 abstract type DifferentiationMethod end
 
