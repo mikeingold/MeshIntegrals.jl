@@ -76,8 +76,8 @@ function _integral(
 
     # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
     xs, ws = FastGaussQuadrature.gausslegendre(rule.n)
-    weights = Iterators.product(ntuple(Returns(FP.(ws)), N)...) # TODO Iterators
-    nodes = Iterators.product(ntuple(Returns(FP.(xs)), N)...) # TODO Iterators
+    weight_grid = Iterators.product(ntuple(Returns(FP.(ws)), N)...) # TODO Iterators
+    node_grid = Iterators.product(ntuple(Returns(FP.(xs)), N)...) # TODO Iterators
 
     # Domain transformation: x [-1,1] ↦ t [0,1]
     t(x) = (1 // 2) * x + (1 // 2)
@@ -89,7 +89,7 @@ function _integral(
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
 
-    return (1 // (2^N)) .* sum(integrand, zip(weights, nodes))
+    return (1 // (2^N)) .* sum(integrand, zip(weight_grid, node_grid))
 end
 
 # HAdaptiveCubature
