@@ -75,7 +75,7 @@ function _integral(
     N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
-    xs, ws = FastGaussQuadrature.gausslegendre(rule.N)
+    xs, ws = FastGaussQuadrature.gausslegendre(rule.n)
     weights = Iterators.product(ntuple(Returns(FP.(ws)), N)...) # TODO Iterators
     nodes = Iterators.product(ntuple(Returns(FP.(xs)), N)...) # TODO Iterators
 
@@ -83,7 +83,9 @@ function _integral(
     t(x) = (1 // 2) * x + (1 // 2)
 
     function integrand((weights, nodes))
-        ts = t.(nodes)  # TODO Iterators
+        # Transforms nodes/xs, store in an NTuple 
+        ts = ntuple(i -> t(nodes[i]), length(nodes))
+        # Integrand function
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
 
