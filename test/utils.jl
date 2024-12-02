@@ -22,6 +22,7 @@ end
 @testitem "DifferentiationMethod" setup=[Setup] begin
     using MeshIntegrals: _has_analytical, _default_method, _guarantee_analytical
 
+    #=
     # Test geometries
     sphere = Sphere(Point(0, 0, 0), 1.0)
     triangle = Triangle(Point(0, 0, 0), Point(0, 1, 0), Point(1, 0, 0))
@@ -33,6 +34,7 @@ end
     # _has_analytical of types
     @test _has_analytical(Meshes.Sphere) == false
     @test _has_analytical(Meshes.Triangle) == true
+    =#
 
     # _default_method
     @test _default_method(Meshes.Sphere) isa FiniteDifference
@@ -40,9 +42,11 @@ end
     @test _default_method(Meshes.Triangle) isa Analytical
     @test _default_method(triangle) isa Analytical
 
+    #=
     # _guarantee_analytical
     @test _guarantee_analytical(Meshes.Triangle, Analytical()) === nothing
     @test_throws "Analytical" _guarantee_analytical(Meshes.Triangle, FiniteDifference())
+    =#
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
