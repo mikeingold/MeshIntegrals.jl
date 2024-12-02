@@ -26,6 +26,7 @@ end
 #                               Parametric
 ################################################################################
 
+# Map argument domain from [0, 1]³ to Barycentric domain for (::Tetrahedron)(t1, t2, t3)
 function _parametric(tetrahedron::Meshes.Tetrahedron)
     function f(t1, t2, t3)
         if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2, t3)))
