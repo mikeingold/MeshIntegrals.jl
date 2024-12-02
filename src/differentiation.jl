@@ -9,7 +9,7 @@ A category of types used to specify the desired method for calculating derivativ
 Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
 
-See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
+See also [`FiniteDifference`](@ref).
 """
 abstract type DifferentiationMethod end
 
@@ -26,22 +26,6 @@ end
 # Default constructors
 FiniteDifference{T}() where {T <: AbstractFloat} = FiniteDifference{T}(T(1e-6))
 FiniteDifference() = FiniteDifference{Float64}()
-
-"""
-    Analytical()
-
-Use to specify use of analytically-derived solutions for calculating derivatives.
-These solutions are currently defined only for a subset of geometry types.
-
-# Supported Geometries:
-- `BezierCurve`
-- `Line`
-- `Plane`
-- `Ray`
-- `Tetrahedron`
-- `Triangle`
-"""
-struct Analytical <: DifferentiationMethod end
 
 # Future Support:
 #   struct AutoEnzyme <: DifferentiationMethod end

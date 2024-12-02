@@ -10,81 +10,26 @@
 function integral(
         f,
         line::Meshes.Line,
-        rule::GaussLegendre;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _guarantee_analytical(Meshes.Line, diff_method)
+        rule::IntegrationRule;
+        kwargs...
+)
+    # Generate a _ParametricGeometry whose parametric function spans the domain [0, 1]
+    param_line = _ParametricGeometry(_parametric(line), Meshes.paramdim(line))
 
-    # Compute Gauss-Legendre nodes/weights for x in interval [-1,1]
-    xs, ws = _gausslegendre(FP, rule.n)
-
-    # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
-
-    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
-    t(x) = x / (1 - x^2)
-    t′(x) = (1 + x^2) / (1 - x^2)^2
-
-    # Integrate f along the Line
-    differential(line, x) = t′(x) * _units(line(0))
-    integrand(x) = f(line(t(x))) * differential(line, x)
-    return sum(w .* integrand(x) for (w, x) in zip(ws, xs))
-end
-
-function integral(
-        f,
-        line::Meshes.Line,
-        rule::GaussKronrod;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _guarantee_analytical(Meshes.Line, diff_method)
-
-    # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
-
-    # Integrate f along the Line
-    domainunits = _units(line(0))
-    integrand(t) = f(line(t)) * domainunits
-    return QuadGK.quadgk(integrand, FP(-Inf), FP(Inf); rule.kwargs...)[1]
-end
-
-function integral(
-        f,
-        line::Meshes.Line,
-        rule::HAdaptiveCubature;
-        diff_method::DM = Analytical(),
-        FP::Type{T} = Float64
-) where {DM <: DifferentiationMethod, T <: AbstractFloat}
-    _guarantee_analytical(Meshes.Line, diff_method)
-
-    # Normalize the Line s.t. line(t) is distance t from origin point
-    line = Meshes.Line(line.a, line.a + Meshes.unormalize(line.b - line.a))
-
-    # Domain transformation: x ∈ [-1,1] ↦ t ∈ (-∞,∞)
-    t(x) = x / (1 - x^2)
-    t′(x) = (1 + x^2) / (1 - x^2)^2
-
-    # Integrate f along the Line
-    differential(line, x) = t′(x) * _units(line(0))
-    integrand(xs) = f(line(t(xs[1]))) * differential(line, xs[1])
-
-    # HCubature doesn't support functions that output Unitful Quantity types
-    # Establish the units that are output by f
-    testpoint_parametriccoord = (FP(0.5),)
-    integrandunits = Unitful.unit.(integrand(testpoint_parametriccoord))
-    # Create a wrapper that returns only the value component in those units
-    uintegrand(uv) = Unitful.ustrip.(integrandunits, integrand(uv))
-    # Integrate only the unitless values
-    value = HCubature.hcubature(uintegrand, (-one(FP),), (one(FP),); rule.kwargs...)[1]
-
-    # Reapply units
-    return value .* integrandunits
+    # Integrate the _ParametricGeometry using the standard methods
+    return _integral(f, param_line, rule; kwargs...)
 end
 
 ################################################################################
-#                               jacobian
+#                              Parametric
 ################################################################################
 
-_has_analytical(::Type{T}) where {T <: Meshes.Line} = true
+# Map argument domain from [0, 1] to (-∞, ∞) for (::Line)(t)
+function _parametric(line::Meshes.Line)
+    # [-1, 1] ↦ (-∞, ∞)
+    f1(t) = t / (1 - t^2)
+    # [0, 1] ↦ [-1, 1]
+    f2(t) = 2t - 1
+    # Compose the two transforms
+    return t -> line((f1 ∘ f2)(t))
+end

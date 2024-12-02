@@ -15,9 +15,8 @@ function integral(
         rule::IntegrationRule;
         kwargs...
 )
-    # Generate a _ParametricGeometry whose parametric function domain spans [0,1]^3
-    paramfunction(t1, t2, t3) = _parametric(tetrahedron, t1, t2, t3)
-    tetra = _ParametricGeometry(paramfunction, Meshes.paramdim(tetrahedron))
+    # Generate a _ParametricGeometry whose parametric function domain spans [0,1]³
+    tetra = _ParametricGeometry(_parametric(tetrahedron), Meshes.paramdim(tetrahedron))
 
     # Integrate the _ParametricGeometry using the standard methods
     return _integral(f, tetra, rule; kwargs...)
@@ -27,17 +26,21 @@ end
 #                               Parametric
 ################################################################################
 
-function _parametric(tetrahedron::Meshes.Tetrahedron, t1, t2, t3)
-    if (t3 < 0) || (t3 > 1)
-        msg = "tetrahedron(t1, t2, t3) is not defined for t3 outside [0, 1]."
-        throw(DomainError(t3, msg))
+# Map argument domain from [0, 1]³ to Barycentric domain for (::Tetrahedron)(t1, t2, t3)
+function _parametric(tetrahedron::Meshes.Tetrahedron)
+    function f(t1, t2, t3)
+        if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2, t3)))
+            msg = "tetrahedron(t1, t2, t3) is not defined for (t1, t2, t3) outside [0, 1]³."
+            throw(DomainError((t1, t2, t3), msg))
+        end
+
+        # Take a triangular cross-section at t3
+        a = tetrahedron(t3, 0, 0)
+        b = tetrahedron(0, t3, 0)
+        c = tetrahedron(0, 0, t3)
+        cross_section = _parametric(Meshes.Triangle(a, b, c))
+
+        return cross_section(t1, t2)
     end
-
-    # Take a triangular cross-section at t3
-    a = tetrahedron(t3, 0, 0)
-    b = tetrahedron(0, t3, 0)
-    c = tetrahedron(0, 0, t3)
-    cross_section = Meshes.Triangle(a, b, c)
-
-    return _parametric(cross_section, t1, t2)
+    return f
 end

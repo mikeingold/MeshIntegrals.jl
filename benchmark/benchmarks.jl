@@ -15,9 +15,9 @@ integrands = (
     (name = "Vector", f = p -> fill(norm(to(p)), 3))
 )
 rules = (
-    (name = "GaussLegendre", rule = GaussLegendre(100), N = 100),
-    (name = "GaussKronrod", rule = GaussKronrod(), N = 100),
-    (name = "HAdaptiveCubature", rule = HAdaptiveCubature(), N = 500)
+    (name = "GaussLegendre", rule = GaussLegendre(100)),
+    (name = "GaussKronrod", rule = GaussKronrod()),
+    (name = "HAdaptiveCubature", rule = HAdaptiveCubature())
 )
 geometries = (
     (name = "Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
@@ -26,7 +26,8 @@ geometries = (
 
 SUITE["Integrals"] = let s = BenchmarkGroup()
     for (int, rule, geometry) in Iterators.product(integrands, rules, geometries)
-        n1, n2, N = geometry.name, "$(int.name) $(rule.name)", rule.N
+        n1 = geometry.name
+        n2 = "$(int.name) $(rule.name)"
         s[n1][n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
     end
     s
@@ -64,8 +65,7 @@ SUITE["Specializations/Scalar GaussLegendre"] = let s = BenchmarkGroup()
     s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule_gl)
     s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule_gl)
     s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule_gl)
-    # s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule)
-    # TODO re-enable Tetrahedron-GaussLegendre test when supported by main branch
+    s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule_gl)
     s
 end
 
