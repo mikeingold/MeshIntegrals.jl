@@ -28,10 +28,12 @@ end
 
 function _parametric(triangle::Meshes.Triangle)
     function f(t1, t2)
+        #=
         if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2)))
             msg = "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]²."
             throw(DomainError((t1, t2), msg))
         end
+        =#
 
         # Form a line segment between sides
         a = triangle(0, t2)
