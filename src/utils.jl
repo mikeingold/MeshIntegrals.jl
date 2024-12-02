@@ -26,25 +26,11 @@ _ones(N::Int) = _ones(Float64, N)
 #                           DifferentiationMethod
 ################################################################################
 
-# Throw an ArgumentError if Analytical() jacobian not defined for this type
-function _guarantee_analytical(
-        ::Type{G},
-        ::DifferentiationMethod
-) where {G <: Geometry}
-    throw(ArgumentError("$G geometries require kwarg diff_method = Analytical()"))
-end
-
-_guarantee_analytical(::Type{G}, ::Analytical) where {G <: Geometry} = nothing
-
-# Return whether a geometry type has jacobian methods defined
-_has_analytical(::Type{G}) where {G <: Geometry} = false
-_has_analytical(g::G) where {G <: Geometry} = _has_analytical(G)
-
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_method(
         g::Type{G}
 ) where {G <: Geometry}
-    return _has_analytical(G) ? Analytical() : FiniteDifference()
+    return FiniteDifference()
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
