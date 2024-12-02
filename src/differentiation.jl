@@ -27,22 +27,6 @@ end
 FiniteDifference{T}() where {T <: AbstractFloat} = FiniteDifference{T}(T(1e-6))
 FiniteDifference() = FiniteDifference{Float64}()
 
-"""
-    Analytical()
-
-Use to specify use of analytically-derived solutions for calculating derivatives.
-These solutions are currently defined only for a subset of geometry types.
-
-# Supported Geometries:
-- `BezierCurve`
-- `Line`
-- `Plane`
-- `Ray`
-- `Tetrahedron`
-- `Triangle`
-"""
-struct Analytical <: DifferentiationMethod end
-
 # Future Support:
 #   struct AutoEnzyme <: DifferentiationMethod end
 #   struct AutoZygote <: DifferentiationMethod end
