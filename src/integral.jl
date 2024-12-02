@@ -86,7 +86,7 @@ function _integral(
 
     function integrand((weights, nodes))
         # Transforms nodes/xs, store in an NTuple 
-        ts = ntuple(i -> t(nodes[i]), rule.n)
+        ts = ntuple(i -> t(nodes[i]), N)
         # Integrand function
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
