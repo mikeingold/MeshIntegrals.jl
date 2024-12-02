@@ -10,10 +10,10 @@
 ################################################################################
 
 function integral(
-    f,
-    triangle::Meshes.Triangle,
-    rule::IntegrationRule;
-    kwargs...
+        f,
+        triangle::Meshes.Triangle,
+        rule::IntegrationRule;
+        kwargs...
 )
     # Generate a _ParametricGeometry whose parametric function domain spans [0,1]²
     param_triangle = _ParametricGeometry(_parametric(triangle), 2)

@@ -26,8 +26,6 @@ end
 ################################################################################
 
 # Map argument domain from [0, 1] to [0, ∞) for (::Ray)(t)
-# f(t) = t / 1 - t^2)
-# f'(t) = (t^2 + 1) / (1 - t^2)^2
 function _parametric(ray::Meshes.Ray)
     f(t) = t / (1 - t^2)
     return t -> ray(f(t))
