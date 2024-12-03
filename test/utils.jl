@@ -22,7 +22,7 @@ end
 @testitem "DifferentiationMethod" setup=[Setup] begin
     using MeshIntegrals: _default_diff_method
 
-    # _default_method
+    # _default_diff_method
     sphere = Sphere(Point(0, 0, 0), 1.0)
     @test _default_diff_method(Meshes.Sphere) isa FiniteDifference
     @test _default_diff_method(sphere) isa FiniteDifference
