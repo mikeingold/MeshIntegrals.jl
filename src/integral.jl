@@ -42,7 +42,7 @@ function _integral(
         geometry,
         rule::GaussKronrod;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     # Implementation depends on number of parametric dimensions over which to integrate
     N = Meshes.paramdim(geometry)
@@ -70,24 +70,28 @@ function _integral(
         geometry,
         rule::GaussLegendre;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 
-    # Get Gauss-Legendre nodes and weights for a region [-1,1]^N
-    xs, ws = _gausslegendre(FP, rule.n)
-    weights = Iterators.product(ntuple(Returns(ws), N)...)
-    nodes = Iterators.product(ntuple(Returns(xs), N)...)
+    # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
+    xs, ws = FastGaussQuadrature.gausslegendre(rule.n)
+    xsFP = Iterators.map(FP, xs)
+    wsFP = Iterators.map(FP, ws)
+    weight_grid = Iterators.product(ntuple(Returns(wsFP), N)...)
+    node_grid = Iterators.product(ntuple(Returns(xsFP), N)...)
 
     # Domain transformation: x [-1,1] ↦ t [0,1]
     t(x) = (1 // 2) * x + (1 // 2)
 
     function integrand((weights, nodes))
-        ts = t.(nodes)
+        # Transforms nodes/xs, store in an NTuple 
+        ts = ntuple(i -> t(nodes[i]), length(nodes))
+        # Integrand function
         prod(weights) * f(geometry(ts...)) * differential(geometry, ts, diff_method)
     end
 
-    return (1 // (2^N)) .* sum(integrand, zip(weights, nodes))
+    return (1 // (2^N)) .* sum(integrand, zip(weight_grid, node_grid))
 end
 
 # HAdaptiveCubature
@@ -96,7 +100,7 @@ function _integral(
         geometry,
         rule::HAdaptiveCubature;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_method(geometry)
+        diff_method::DM = _default_diff_method(geometry)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     N = Meshes.paramdim(geometry)
 

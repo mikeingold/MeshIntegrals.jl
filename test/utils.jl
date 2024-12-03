@@ -20,15 +20,12 @@
 end
 
 @testitem "DifferentiationMethod" setup=[Setup] begin
-    using MeshIntegrals: _default_method
+    using MeshIntegrals: _default_diff_method
 
-    # Test geometries
+    # _default_diff_method
     sphere = Sphere(Point(0, 0, 0), 1.0)
-    triangle = Triangle(Point(0, 0, 0), Point(0, 1, 0), Point(1, 0, 0))
-
-    # _default_method
-    @test _default_method(Meshes.Sphere) isa FiniteDifference
-    @test _default_method(sphere) isa FiniteDifference
+    @test _default_diff_method(Meshes.Sphere) isa FiniteDifference
+    @test _default_diff_method(sphere) isa FiniteDifference
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
