@@ -39,7 +39,7 @@ end
 """
     _units(geometry)
 
-Return the Unitful units associated with a particular `geometry`.
+Return the Unitful.jl units associated with a particular `geometry`.
 """
 _units(::Geometry{M, CRS}) where {M, CRS} = Unitful.unit(CoordRefSystems.lentype(CRS))
 _units(::Meshes.Vec{Dim, T}) where {Dim, T} = Unitful.unit(T)
