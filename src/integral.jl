@@ -84,7 +84,7 @@ function _integral(
     # Domain transformation: x [-1,1] ↦ t [0,1]
     t(x) = (1 // 2) * x + (1 // 2)
 
-    function integrand((weights, nodes))
+    function integrand((weights, nodes); N=N)
         # Transforms nodes/xs, store in an NTuple 
         ts = ntuple(i -> t(nodes[i]), N)
         # Integrand function
