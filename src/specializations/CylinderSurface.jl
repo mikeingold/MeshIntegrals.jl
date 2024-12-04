@@ -3,7 +3,7 @@
 #
 # Why Specialized?
 #   The parametric function that Meshes.jl currently implements for CylinderSurface
-#   only parameterizes the rounded walls, but this Geometry surface is defined as
+#   only parametrizes the rounded walls, but this Geometry surface is defined as
 #   including the top and bottom circular base surfaces as well. These methods
 #   simply integrate the base and walls and return the sum of the three integrals.
 ################################################################################
@@ -14,7 +14,7 @@ function integral(
         rule::I;
         kwargs...
 ) where {I <: IntegrationRule}
-    # The generic method only parameterizes the sides
+    # The generic method only parametrizes the sides
     sides = _integral(f, cyl, rule; kwargs...)
 
     # Integrate the Disk at the top
