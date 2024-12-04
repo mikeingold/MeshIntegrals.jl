@@ -54,35 +54,13 @@
     end
 
     function runtests(testable::TestableGeometry, supports::SupportStatus)
-        #=
-        for fname in ("lineintegral", "surfaceintegral", "volumeintegral")
-            if supports.$fname
-                @test $fname(testable.integrand, testable.geometry) ≈ testable.solution
+        for alias in (lineintegral, surfaceintegral, volumeintegral)
+            alias_symbol = first(methods(alias)).name
+            if getfield(supports, alias_symbol)
+                @test alias(testable.integrand, testable.geometry) ≈ testable.solution
             else
-                @test_throws "not supported" $fname(testable.integrand, testable.geometry)
+                @test_throws "not supported" alias(testable.integrand, testable.geometry)
             end
-        end
-        =#
-
-        # lineintegral
-        if supports.lineintegral
-            @test lineintegral(testable.integrand, testable.geometry) ≈ testable.solution
-        else
-            @test_throws "not supported" lineintegral(testable.integrand, testable.geometry)
-        end
-
-        # surfaceintegral
-        if supports.surfaceintegral
-            @test surfaceintegral(testable.integrand, testable.geometry) ≈ testable.solution
-        else
-            @test_throws "not supported" surfaceintegral(testable.integrand, testable.geometry)
-        end
-
-        # volumeintegral
-        if supports.volumeintegral
-            @test volumeintegral(testable.integrand, testable.geometry) ≈ testable.solution
-        else
-            @test_throws "not supported" volumeintegral(testable.integrand, testable.geometry)
         end
 
         if supports.gausskronrod
