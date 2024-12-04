@@ -545,7 +545,7 @@ end
     if pkgversion(Meshes) >= v"0.51.20"
         using CoordRefSystems: Polar
 
-        # Parameterize a circle centered on origin with specified radius
+        # Parametrize a circle centered on origin with specified radius
         radius = 4.4
         curve_cart = ParametrizedCurve(
             t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
