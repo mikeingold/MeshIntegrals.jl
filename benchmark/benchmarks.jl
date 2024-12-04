@@ -45,6 +45,7 @@ spec = (
         line = Line(Point(0, 0, 0), Point(1, 1, 1)),
         plane = Plane(Point(0, 0, 0), Vec(0, 0, 1)),
         ray = Ray(Point(0, 0, 0), Vec(0, 0, 1)),
+        rope = Rope([Point(t, t, t) for t in 1:32]...),
         triangle = Triangle(Point(1, 0, 0), Point(0, 1, 0), Point(0, 0, 1)),
         tetrahedron = let
             a = Point(0, 3, 0)
@@ -64,6 +65,7 @@ SUITE["Specializations/Scalar GaussLegendre"] = let s = BenchmarkGroup()
     s["Line"] = @benchmarkable integral($spec.f_exp, $spec.g.line, $spec.rule_gl)
     s["Plane"] = @benchmarkable integral($spec.f_exp, $spec.g.plane, $spec.rule_gl)
     s["Ray"] = @benchmarkable integral($spec.f_exp, $spec.g.ray, $spec.rule_gl)
+    s["Rope"] = @benchmarkable integral($spec.f, $spec.g.rope, $spec.rule_gl)
     s["Triangle"] = @benchmarkable integral($spec.f, $spec.g.triangle, $spec.rule_gl)
     s["Tetrahedron"] = @benchmarkable integral($spec.f, $spec.g.tetrahedron, $spec.rule_gl)
     s
@@ -79,6 +81,15 @@ differential = MeshIntegrals.differential
 SUITE["Differentials"] = let s = BenchmarkGroup()
     s["Jacobian"] = @benchmarkable jacobian($sphere, $(0.5, 0.5)) evals=10
     s["Differential"] = @benchmarkable differential($sphere, $(0.5, 0.5)) evals=10
+    s
+end
+
+############################################################################################
+#                                   Integration Rules
+###########################################################################################
+
+SUITE["Rules"] = let s = BenchmarkGroup()
+    s["GaussLegendre"] = @benchmarkable GaussLegendre($1000)
     s
 end
 
