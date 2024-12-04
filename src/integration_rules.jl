@@ -33,6 +33,10 @@ e.g. `length(geometry)/λ`.
 """
 struct GaussLegendre <: IntegrationRule
     n::Int64
+    nodes::Vector{Float64}
+    weights::Vector{Float64}
+
+    GaussLegendre(n::Int64) = new(n, FastGaussQuadrature.gausslegendre(n)...)
 end
 
 """
