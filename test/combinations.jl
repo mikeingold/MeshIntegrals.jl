@@ -2,33 +2,132 @@
 # - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
 # - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
 
-@testitem "Meshes.Ball 2D" setup=[Setup] begin
+#===============================================================================
+                        Test Generation Infrastructure
+===============================================================================#
+
+@testsnippet Combinations begin
+    using LinearAlgebra: norm
+    using Meshes
+    using MeshIntegrals
+    using Unitful
+
+    struct Callable{F <: Function}
+        f::F
+    end
+    (c::Callable)(p) = c.f(p)
+
+    # Stores a testable combination
+    struct TestableGeometry{F <: Function, G <: Geometry, U <: Unitful.Quantity}
+        integrand::F
+        geometry::G
+        solution::U
+    end
+
+    # Indicates which functions/rules are supported for a particular geometry
+    struct SupportStatus
+        lineintegral::Bool
+        surfaceintegral::Bool
+        volumeintegral::Bool
+        gausskronrod::Bool
+        gausslegendre::Bool
+        hadaptivecubature::Bool
+    end
+
+    # Shortcut constructor for geometries with typical support structure
+    function SupportStatus(sym::Symbol)
+        if sym == :line
+            aliases = Bool.((0, 0, 1))
+            rules = Bool.((1, 1, 1))
+            return SupportStatus(aliases..., rules...)     
+        elseif sym == :surface
+            aliases = Bool.((0, 1, 0))
+            rules = Bool.((1, 1, 1))
+            return SupportStatus(aliases..., rules...)
+        elseif sym == :volume
+            aliases = Bool.((0, 0, 1))
+            rules = Bool.((0, 1, 1))
+            return SupportStatus(aliases..., rules...)
+        else
+            error("Unrecognized SupportStatus shortcut $(string(sym))")
+        end
+    end
+
+    function runtests(testable::TestableGeometry, supports::SupportStatus)
+        #=
+        for fname in ("lineintegral", "surfaceintegral", "volumeintegral")
+            if supports.$fname
+                @test $fname(testable.integrand, testable.geometry) ≈ testable.solution
+            else
+                @test_throws "not supported" $fname(testable.integrand, testable.geometry)
+            end
+        end
+        =#
+
+        # lineintegral
+        if supports.lineintegral
+            @test lineintegral(testable.integrand, testable.geometry) ≈ testable.solution
+        else
+            @test_throws "not supported" lineintegral(testable.integrand, testable.geometry)
+        end
+
+        # surfaceintegral
+        if supports.surfaceintegral
+            @test surfaceintegral(testable.integrand, testable.geometry) ≈ testable.solution
+        else
+            @test_throws "not supported" surfaceintegral(testable.integrand, testable.geometry)
+        end
+
+        # volumeintegral
+        if supports.volumeintegral
+            @test volumeintegral(testable.integrand, testable.geometry) ≈ testable.solution
+        else
+            @test_throws "not supported" volumeintegral(testable.integrand, testable.geometry)
+        end
+
+        if supports.gausskronrod
+            # Scalar integrand
+            sol = testable.solution
+            @test integral(testable.integrand, testable.geometry, GaussKronrod()) ≈ sol
+
+            # Vector integrand
+            fv(p) = fill(testable.integrand(p), 3)
+            sol_v = fill(testable.solution, 3)
+            @test integral(fv, testable.geometry, GaussKronrod()) ≈ sol_v
+
+            # Callable integrand
+            f = Callable(testable.integrand)
+            @test integral(f, testable.geometry, GaussKronrod()) ≈ sol
+        else
+            @test_throws "not supported" integral(testable.integrand, testable.geometry, GaussKronrod())
+        end
+
+        # supports.gausslegendre, GaussLegendre(100)
+
+        # supports.hadaptivecubature, HAdaptiveCubature()
+    end
+
+end
+
+#===============================================================================
+                         Create and Test Geometries
+===============================================================================#
+
+@testitem "Meshes.Ball 2D" setup=[Combinations] begin
     origin = Point(0, 0)
     radius = 2.8
     ball = Ball(origin, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
-    fv(p) = fill(f(p), 3)
 
-    # Scalar integrand
-    sol = (π - π * exp(-radius^2)) * u"m^2"
-    @test integral(f, ball, GaussLegendre(100)) ≈ sol
-    @test integral(f, ball, GaussKronrod()) ≈ sol
-    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+    solution = (π - π * exp(-radius^2)) * u"m^2"
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, ball, GaussKronrod()) ≈ vsol
-    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, ball)
-    @test surfaceintegral(f, ball) ≈ sol
-    @test_throws "not supported" volumeintegral(f, ball)
+    support = SupportStatus(:surface)
+    testable = TestableGeometry(integrand, ball, solution)
+    runtests(testable, support)
 end
 
 @testitem "Meshes.Ball 3D" setup=[Setup] begin
