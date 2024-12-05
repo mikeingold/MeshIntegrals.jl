@@ -317,36 +317,25 @@ end
     runtests(testable, SupportStatus(:line))
 end
 
-@testitem "Meshes.Cone" setup=[Setup] begin
+@testitem "Meshes.Cone" setup=[Combinations] begin
+    # Geometry
     r = 2.5u"m"
-    h = 2.5u"m"
+    h = 3.5u"m"
     origin = Point(0, 0, 0)
     xy_plane = Plane(origin, Vec(0, 0, 1))
     base = Disk(xy_plane, r)
     apex = Point(0.0u"m", 0.0u"m", h)
     cone = Cone(base, apex)
 
-    f(p) = 1.0
-    fv(p) = fill(f(p), 3)
+    # Integrand
+    integrand(p) = 1.0u"A"
 
-    _volume_cone_rightcircular(h, r) = π * r^2 * h / 3
+    # Solution
+    solution = (π * r^2 * h / 3) * u"A"
 
-    # Scalar integrand
-    sol = _volume_cone_rightcircular(r, h)
-    @test integral(f, cone, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, cone, GaussKronrod())
-    @test integral(f, cone, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, cone, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, cone, GaussKronrod())
-    @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, cone)
-    @test_throws "not supported" surfaceintegral(f, cone)
-    @test volumeintegral(f, cone) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, cone, solution)
+    runtests(testable, SupportStatus(:volume))
 end
 
 @testitem "Meshes.ConeSurface" setup=[Setup] begin
