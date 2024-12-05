@@ -251,10 +251,10 @@ end
     runtests(testable, SupportStatus(:volume))
 end
 
-@testitem "Meshes.ConeSurface" setup=[Setup] begin
+@testitem "Meshes.ConeSurface" setup=[Combinations] begin
     # Geometry
     r = 2.5u"m"
-    h = 2.5u"m"
+    h = 3.5u"m"
     origin = Point(0, 0, 0)
     xy_plane = Plane(origin, Vec(0, 0, 1))
     base = Disk(xy_plane, r)
@@ -262,25 +262,12 @@ end
     cone = ConeSurface(base, apex)
 
     # Integrand & Solution
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
-    sol = ((π * r^2) + (π * r * hypot(h, r))) * u"A"
-    vsol = fill(sol, 3)
+    integrand(p) = 1.0u"A"
+    solution = ((π * r^2) + (π * r * hypot(h, r))) * u"A"
 
-    # Scalar integrand
-    @test integral(f, cone, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, cone, GaussKronrod())≈sol rtol=1e-6
-    @test integral(f, cone, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    @test integral(fv, cone, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, cone, GaussKronrod())≈vsol rtol=1e-6
-    @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, cone)
-    @test surfaceintegral(f, cone) ≈ sol
-    @test_throws "not supported" volumeintegral(f, cone)
+    # Package and run tests
+    testable = TestableGeometry(integrand, cone, solution)
+    runtests(testable, SupportStatus(:surface); rtol=1e-6)
 end
 
 @testitem "Meshes.Cylinder" setup=[Combinations] begin
@@ -334,33 +321,20 @@ end
     runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "Meshes.Ellipsoid" setup=[Setup] begin
+@testitem "Meshes.Ellipsoid" setup=[Combinations] begin
     # Geometry
     origin = Point(0, 0, 0)
     radii = (1.0, 2.0, 0.5)
     ellipsoid = Ellipsoid(radii, origin)
 
     # Integrand & Solution
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
-    sol = Meshes.measure(ellipsoid) * u"A"
-    vsol = fill(sol, 3)
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(ellipsoid) * u"A"
 
+    # Package and run tests
     # Tolerances are higher due to `measure` being only an approximation
-    # Scalar integrand
-    @test integral(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
-    @test integral(f, ellipsoid, GaussKronrod())≈sol rtol=1e-2
-    @test integral(f, ellipsoid, HAdaptiveCubature())≈sol rtol=1e-2
-
-    # Vector integrand
-    @test integral(fv, ellipsoid, GaussLegendre(100))≈vsol rtol=1e-2
-    @test integral(fv, ellipsoid, GaussKronrod())≈vsol rtol=1e-2
-    @test integral(fv, ellipsoid, HAdaptiveCubature())≈vsol rtol=1e-2
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, ellipsoid)
-    @test surfaceintegral(f, ellipsoid)≈sol rtol=1e-2
-    @test_throws "not supported" volumeintegral(f, ellipsoid)
+    testable = TestableGeometry(integrand, ellipsoid, solution)
+    runtests(testable, SupportStatus(:surface); rtol=1e-2)
 end
 
 @testitem "Meshes.FrustumSurface" setup=[Setup] begin
