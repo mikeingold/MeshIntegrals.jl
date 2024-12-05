@@ -39,7 +39,7 @@
         if sym == :line
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
-            return SupportStatus(aliases..., rules...)     
+            return SupportStatus(aliases..., rules...)
         elseif sym == :surface
             aliases = Bool.((0, 1, 0))
             rules = Bool.((1, 1, 1))
@@ -87,11 +87,10 @@
                 @test integral(fv, testable.geometry, rule) ≈ sol_v
             else
                 @test_throws "not supported" integral(testable.integrand, testable.geometry, rule)
-            end
-        end
-    end
-
-end
+            end # if
+        end # for
+    end # function
+end #testsnippet
 
 #===============================================================================
                          Create and Test Geometries
@@ -103,13 +102,11 @@ end
     radius = 2.8
     ball = Ball(origin, radius)
 
-    # Integrand
+    # Integrand & Solution
     function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
-
-    # Solution
     solution = (π - π * exp(-radius^2)) * u"m^2"
 
     # Package and run tests
@@ -125,15 +122,13 @@ end
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
-    # Integrand
+    # Integrand & Solution
     function integrand(p::P) where {P <: Meshes.Point}
         offset = p - center
         ur = norm(offset)
         r = ustrip(u"m", ur)
         exp(-r^2)
     end
-
-    # Solution
     solution = let r = ustrip(u"m", radius)
         (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
     end
