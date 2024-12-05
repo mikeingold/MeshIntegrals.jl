@@ -545,7 +545,7 @@ end
         using CoordRefSystems: Polar
 
         # Geometries
-        # Parameterize a circle centered on origin with specified radius
+        # Parametrize a circle centered on origin with specified radius
         radius = 4.4
         curve_cart = ParametrizedCurve(
             t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
