@@ -716,95 +716,62 @@ end
     @test_throws "not supported" volumeintegral(f, segment)
 end
 
-@testitem "Meshes.Sphere 2D" setup=[Setup] begin
+@testitem "Meshes.Sphere 2D" setup=[Combinations] begin
+    # Geometry
     origin = Point(0, 0)
     radius = 4.4
     sphere = Sphere(origin, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 2π * radius * exp(-radius^2) * u"m"
 
-    # Scalar integrand
-    sol = 2π * radius * exp(-radius^2) * u"m"
-    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
-    @test integral(f, sphere, GaussKronrod()) ≈ sol
-    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
-    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, sphere) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, sphere)
-    @test_throws "not supported" volumeintegral(f, sphere)
+    # Package and run tests
+    testable = TestableGeometry(integrand, sphere, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
-@testitem "Meshes.Sphere 3D" setup=[Setup] begin
+@testitem "Meshes.Sphere 3D" setup=[Combinations] begin
     using CoordRefSystems: Cartesian, Spherical
 
+    # Geometry
     center = Point(1, 2, 3)
     radius = 4.4u"m"
     sphere = Sphere(center, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         rθφ = convert(Spherical, Cartesian((p - center)...))
         r = ustrip(rθφ.r)
         θ = ustrip(rθφ.θ)
         φ = ustrip(rθφ.ϕ)
-        sin(φ)^2 + cos(θ)^2
+        (sin(φ)^2 + cos(θ)^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = ((2π * radius^2) + (4π / 3 * radius^2)) * u"A"
 
-    # Scalar integrand
-    sol = (2π * radius^2) + (4π / 3 * radius^2)
-    @test integral(f, sphere, GaussLegendre(100)) ≈ sol
-    @test integral(f, sphere, GaussKronrod()) ≈ sol
-    @test integral(f, sphere, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, sphere, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, sphere, GaussKronrod()) ≈ vsol
-    @test integral(fv, sphere, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, sphere)
-    @test surfaceintegral(f, sphere) ≈ sol
-    @test_throws "not supported" volumeintegral(f, sphere)
+    # Package and run tests
+    testable = TestableGeometry(integrand, sphere, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "Meshes.Tetrahedron" setup=[Setup] begin
+@testitem "Meshes.Tetrahedron" setup=[Combinations] begin
+    # Geometry
     pt_n = Point(0, 3, 0)
     pt_w = Point(-7, 0, 0)
     pt_e = Point(8, 0, 0)
     ẑ = Vec(0, 0, 1)
     tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
 
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
+    # Integrand & Solution
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(tetrahedron) * u"A"
 
-    # Scalar integrand
-    sol = Meshes.measure(tetrahedron) * u"A"
-    @test integral(f, tetrahedron, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, tetrahedron, GaussKronrod())
-    @test integral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, tetrahedron, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, tetrahedron, GaussKronrod())
-    @test integral(fv, tetrahedron, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, tetrahedron)
-    @test_throws "not supported" surfaceintegral(f, tetrahedron)
-    @test volumeintegral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, tetrahedron, solution)
+    runtests(testable, SupportStatus(:volume))
 end
 
 @testitem "Meshes.Torus" setup=[Combinations] begin
