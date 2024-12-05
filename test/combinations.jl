@@ -63,26 +63,31 @@
             end
         end
 
-        if supports.gausskronrod
-            # Scalar integrand
-            sol = testable.solution
-            @test integral(testable.integrand, testable.geometry, GaussKronrod()) ≈ sol
+        iter_rules = (
+            (supports.gausskronrod, GaussKronrod()),
+            (supports.gausslegendre, GaussLegendre(100)),
+            (supports.hadaptivecubature, HAdaptiveCubature())
+        )
 
-            # Vector integrand
-            fv(p) = fill(testable.integrand(p), 3)
-            sol_v = fill(testable.solution, 3)
-            @test integral(fv, testable.geometry, GaussKronrod()) ≈ sol_v
+        for (supported, rule) in iter_rules
+            if supported
+                # Scalar integrand
+                sol = testable.solution
+                @test integral(testable.integrand, testable.geometry, rule) ≈ sol
 
-            # Callable integrand
-            f = Callable(testable.integrand)
-            @test integral(f, testable.geometry, GaussKronrod()) ≈ sol
-        else
-            @test_throws "not supported" integral(testable.integrand, testable.geometry, GaussKronrod())
+                # Callable integrand
+                f = Callable(testable.integrand)
+                @test integral(f, testable.geometry, rule) ≈ sol
+
+                # Vector integrand
+                fv(p) = fill(testable.integrand(p), 3)
+                sol_v = fill(testable.solution, 3)
+                @test integral(fv, testable.geometry, rule) ≈ sol_v
+            else
+                @test_throws "not supported" integral(testable.integrand, testable.geometry, rule)
+            end
         end
 
-        # supports.gausslegendre, GaussLegendre(100)
-
-        # supports.hadaptivecubature, HAdaptiveCubature()
     end
 
 end
@@ -108,38 +113,27 @@ end
     runtests(testable, support)
 end
 
-@testitem "Meshes.Ball 3D" setup=[Setup] begin
+@testitem "Meshes.Ball 3D" setup=[Combinations] begin
     using SpecialFunctions: erf
 
     center = Point(1, 2, 3)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    function integrand(p::P) where {P <: Meshes.Point}
         offset = p - center
         ur = norm(offset)
         r = ustrip(u"m", ur)
         exp(-r^2)
     end
-    fv(p) = fill(f(p), 3)
 
-    # Scalar integrand
-    r = ustrip(u"m", radius)
-    sol = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
-    @test integral(f, ball, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, ball, GaussKronrod())≈sol
-    @test integral(f, ball, HAdaptiveCubature()) ≈ sol
+    solution = let r = ustrip(u"m", radius)
+        (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
+    end
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, ball, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, ball, GaussKronrod())≈vsol
-    @test integral(fv, ball, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, ball)
-    @test_throws "not supported" surfaceintegral(f, ball)
-    @test volumeintegral(f, ball) ≈ sol
+    support = SupportStatus(:volume)
+    testable = TestableGeometry(integrand, ball, solution)
+    runtests(testable, support)
 end
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
