@@ -452,20 +452,22 @@ end
 end
 
 @testitem "Meshes.Hexahedron" setup=[Setup] begin
+    # Geometry
     hexahedron = Hexahedron(Point(0, 0, 0), Point(2, 0, 0), Point(2, 2, 0),
         Point(0, 2, 0), Point(0, 0, 2), Point(1, 0, 2), Point(1, 1, 2), Point(0, 1, 2))
 
-    f(p) = 1.0
+    # Integrand & Solution
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
+    sol = Meshes.measure(hexahedron) * u"A"
+    vsol = fill(sol, 3)
 
     # Scalar integrand
-    sol = Meshes.measure(hexahedron)
     @test integral(f, hexahedron, GaussLegendre(100)) ≈ sol
     @test_throws "not supported" integral(f, hexahedron, GaussKronrod())≈sol
     @test integral(f, hexahedron, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, hexahedron, GaussLegendre(100)) ≈ vsol
     @test_throws "not supported" integral(fv, hexahedron, GaussKronrod())≈vsol
     @test integral(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
