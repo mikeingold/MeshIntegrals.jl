@@ -514,7 +514,7 @@ end
     line = Line(a, b)
 
     # Integrand & solution
-    function f(p::P) where {P <: Meshes.Point}
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
