@@ -833,29 +833,18 @@ end
     @test_throws "not supported" volumeintegral(f, torus)
 end
 
-@testitem "Meshes.Triangle" setup=[Setup] begin
+@testitem "Meshes.Triangle" setup=[Combinations] begin
+    # Geometry
     pt_n = Point(0, 1, 0)
     pt_w = Point(-1, 0, 0)
     pt_e = Point(1, 0, 0)
     triangle = Triangle(pt_e, pt_n, pt_w)
 
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
-
-    # Scalar integrand
+    # Integrand & Solution
+    integrand(p) = 1.0u"A"
     sol = Meshes.measure(triangle) * u"A"
-    @test integral(f, triangle, GaussLegendre(100)) ≈ sol
-    @test integral(f, triangle, GaussKronrod()) ≈ sol
-    @test integral(f, triangle, HAdaptiveCubature()) ≈ sol
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, triangle, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, triangle, GaussKronrod()) ≈ vsol
-    @test integral(fv, triangle, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, triangle)
-    @test surfaceintegral(f, triangle) ≈ sol
-    @test_throws "not supported" volumeintegral(f, triangle)
+    # Package and run tests
+    testable = TestableGeometry(integrand, triangle, solution)
+    runtests(testable, SupportStatus(:surface))
 end
