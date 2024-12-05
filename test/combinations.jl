@@ -174,65 +174,41 @@ end
     runtests(testable, SupportStatus(:line); rtol=1e-6)
 end
 
-@testitem "Meshes.Box 2D" setup=[Setup] begin
+@testitem "Meshes.Box 2D" setup=[Combinations] begin
     a = π
     box = Box(Point(0, 0), Point(a, a))
 
-    function f(p::Meshes.Point)
+    # Integrand & Solution
+    function integrand(p::Meshes.Point)
         x, y = ustrip.((p.coords.x, p.coords.y))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω/m^2"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 2a * (π * a^2 / 4) * u"Ω"
 
-    # Scalar integrand
-    sol = 2a * (π * a^2 / 4) * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, box, GaussKronrod()) ≈ sol
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, box, solution)
+    runtests(testable, SupportStatus(:surface); rtol=1e-6)
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, box, GaussKronrod()) ≈ vsol
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test surfaceintegral(f, box) ≈ sol
-    @test_throws "not supported" volumeintegral(f, box)
-
+    # TODO move this to Differentiation testitem
     # Test jacobian with wrong number of parametric coordinates
     @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
-@testitem "Meshes.Box 3D" setup=[Setup] begin
+@testitem "Meshes.Box 3D" setup=[Combinations] begin
     # Geometry
     a = π
     box = Box(Point(0, 0, 0), Point(a, a, a))
 
     # Integrand & Solution
-    function f(p::Meshes.Point)
+    function integrand(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
     end
-    fv(p) = fill(f(p), 3)
-    sol = 3a^2 * (π * a^2 / 4) * u"Ω"
-    vsol = fill(sol, 3)
+    solution = 3a^2 * (π * a^2 / 4) * u"Ω"
 
-    # Scalar integrand
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test_throws "not supported" integral(f, box, GaussKronrod())
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test_throws "not supported" integral(fv, box, GaussKronrod())
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test volumeintegral(f, box) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, box, solution)
+    runtests(testable, SupportStatus(:volume); rtol=1e-6)
 end
 
 @testitem "Meshes.Circle" setup=[Combinations] begin
