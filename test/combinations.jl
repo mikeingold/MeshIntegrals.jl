@@ -285,36 +285,27 @@ end
     @test_throws "not supported" volumeintegral(f, box)
 end
 
-@testitem "Meshes.Circle" setup=[Setup] begin
+@testitem "Meshes.Circle" setup=[Combinations] begin
+    # Geometry
     center = Point(1, 2, 3)
     n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
     plane = Plane(center, n̂)
     radius = 4.4
     circle = Circle(plane, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand
+    function integrand(p::P) where {P <: Meshes.Point}
         offset = p - center
         r = ustrip(u"m", norm(offset))
         exp(-r^2)
     end
-    fv(p) = fill(f(p), 3)
 
     # Scalar integrand
-    sol = 2π * radius * exp(-radius^2) * u"m"
-    @test integral(f, circle, GaussLegendre(100)) ≈ sol
-    @test integral(f, circle, GaussKronrod()) ≈ sol
-    @test integral(f, circle, HAdaptiveCubature()) ≈ sol
+    solution = 2π * radius * exp(-radius^2) * u"m"
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, circle, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, circle, GaussKronrod()) ≈ vsol
-    @test integral(fv, circle, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, circle) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, circle)
-    @test_throws "not supported" volumeintegral(f, circle)
+    # Package and run tests
+    testable = TestableGeometry(integrand, circle, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
 @testitem "Meshes.Cone" setup=[Setup] begin
