@@ -370,30 +370,21 @@ end
     @test_throws "not supported" volumeintegral(f, cone)
 end
 
-@testitem "Meshes.Cylinder" setup=[Setup] begin
+@testitem "Meshes.Cylinder" setup=[Combinations] begin
+    # Geometry
     pt_w = Point(-1, 0, 0)
     pt_e = Point(1, 0, 0)
     cyl = Cylinder(pt_e, pt_w, 2.5)
 
-    f(p) = 1.0
-    fv(p) = fill(f(p), 3)
+    # Integrand
+    integrand(p) = 1.0u"A"
 
-    # Scalar integrand
-    sol = Meshes.measure(cyl)
-    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, cyl, GaussKronrod())
-    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
+    # Solution
+    solution = Meshes.measure(cyl) * u"A"
 
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, cyl, GaussKronrod())
-    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, cyl)
-    @test_throws "not supported" surfaceintegral(f, cyl)
-    @test volumeintegral(f, cyl) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, cyl, solution)
+    runtests(testable, SupportStatus(:volume))
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Setup] begin
