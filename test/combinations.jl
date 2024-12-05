@@ -337,9 +337,9 @@ end
     runtests(testable, SupportStatus(:surface); rtol=1e-2)
 end
 
-@testitem "Meshes.FrustumSurface" setup=[Setup] begin
-    # Create a frustum whose radius halves at the top,
-    # i.e. the bottom half of a cone by height
+@testitem "Meshes.FrustumSurface" setup=[Combinations] begin
+    # Geometry
+    # Create a frustum whose radius halves at the top, i.e. the bottom half of a cone
     r_bot = 2.5u"m"
     r_top = 1.25u"m"
     cone_h = 2π * u"m"
@@ -353,55 +353,34 @@ end
     frustum = FrustumSurface(disk_bot, disk_top)
 
     # Integrand & Solution
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
+    integrand(p) = 1.0u"A"
     _area_base(r) = π * r^2
     _area_cone_walls(h, r) = π * r * hypot(h, r)
-    sol = let
+    solution = let
         area_walls_projected = _area_cone_walls(cone_h, r_bot)
         area_walls_missing = _area_cone_walls(0.5cone_h, r_top)
         area_walls = area_walls_projected - area_walls_missing
         area_total = area_walls + _area_base(r_top) + _area_base(r_bot)
         area_total * u"A"
     end
-    vsol = fill(sol, 3)
 
-    # Scalar integrand
-    @test integral(f, frustum, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, frustum, GaussKronrod())≈sol rtol=1e-6
-    @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    @test integral(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
-    @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
+    # Package and run tests
+    testable = TestableGeometry(integrand, frustum, solution)
+    runtests(testable, SupportStatus(:surface); rtol=1e-6)
 end
 
-@testitem "Meshes.Hexahedron" setup=[Setup] begin
+@testitem "Meshes.Hexahedron" setup=[Combinations] begin
     # Geometry
     hexahedron = Hexahedron(Point(0, 0, 0), Point(2, 0, 0), Point(2, 2, 0),
         Point(0, 2, 0), Point(0, 0, 2), Point(1, 0, 2), Point(1, 1, 2), Point(0, 1, 2))
 
     # Integrand & Solution
-    f(p) = 1.0u"A"
-    fv(p) = fill(f(p), 3)
-    sol = Meshes.measure(hexahedron) * u"A"
-    vsol = fill(sol, 3)
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(hexahedron) * u"A"
 
-    # Scalar integrand
-    @test integral(f, hexahedron, GaussLegendre(100)) ≈ sol
-    @test_throws "not supported" integral(f, hexahedron, GaussKronrod())≈sol
-    @test integral(f, hexahedron, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    @test integral(fv, hexahedron, GaussLegendre(100)) ≈ vsol
-    @test_throws "not supported" integral(fv, hexahedron, GaussKronrod())≈vsol
-    @test integral(fv, hexahedron, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, hexahedron)
-    @test_throws "not supported" surfaceintegral(f, hexahedron)
-    @test volumeintegral(f, hexahedron) ≈ sol
+    # Package and run tests
+    testable = TestableGeometry(integrand, hexahedron, solution)
+    runtests(testable, SupportStatus(:volume))
 end
 
 @testitem "Meshes.Line" setup=[Combinations] begin
