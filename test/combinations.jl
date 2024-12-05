@@ -807,30 +807,19 @@ end
     @test volumeintegral(f, tetrahedron, HAdaptiveCubature()) ≈ sol
 end
 
-@testitem "Meshes.Torus" setup=[Setup] begin
+@testitem "Meshes.Torus" setup=[Combinations] begin
+    # Geometry
     origin = Point(0, 0, 0)
     ẑ = Vec(0, 0, 1)
     torus = Torus(origin, ẑ, 3.5, 1.25)
 
-    f(p) = 1.0
-    fv(p) = fill(f(p), 3)
+    # Integrand & Solution
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(torus) * u"A"
 
-    # Scalar integrand
-    sol = Meshes.measure(torus)
-    @test integral(f, torus, GaussLegendre(100)) ≈ sol
-    @test integral(f, torus, GaussKronrod()) ≈ sol
-    @test integral(f, torus, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, torus, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, torus, GaussKronrod()) ≈ vsol
-    @test integral(fv, torus, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, torus)
-    @test surfaceintegral(f, torus) ≈ sol
-    @test_throws "not supported" volumeintegral(f, torus)
+    # Package and run tests
+    testable = TestableGeometry(integrand, torus, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
 @testitem "Meshes.Triangle" setup=[Combinations] begin
