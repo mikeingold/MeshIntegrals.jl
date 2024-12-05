@@ -567,90 +567,58 @@ end
     end
 end
 
-@testitem "Meshes.Plane" setup=[Setup] begin
+@testitem "Meshes.Plane" setup=[Combinations] begin
+    # Geometry
     p = Point(0.0u"m", 0.0u"m", 0.0u"m")
     v = Vec(0.0u"m", 0.0u"m", 1.0u"m")
     plane = Plane(p, v)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = π * u"A*m^2"
 
-    # Scalar integrand
-    sol = π * u"m^2"
-    @test integral(f, plane, GaussLegendre(100)) ≈ sol
-    @test integral(f, plane, GaussKronrod()) ≈ sol
-    @test integral(f, plane, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, plane, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, plane, GaussKronrod()) ≈ vsol
-    @test integral(fv, plane, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, plane)
-    @test surfaceintegral(f, plane) ≈ sol
-    @test_throws "not supported" volumeintegral(f, plane)
+    # Package and run tests
+    testable = TestableGeometry(integrand, plane, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "Meshes.Quadrangle" setup=[Setup] begin
+@testitem "Meshes.Quadrangle" setup=[Combinations] begin
     using SpecialFunctions: erf
+
+    # Geometry
     quadrangle = Quadrangle((-1.0, 0.0), (-1.0, 1.0), (1.0, 1.0), (1.0, 0.0))
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 0.5 * π * erf(1)^2 * u"A*m^2"
 
-    # Scalar integrand
-    sol = 0.5 * π * erf(1)^2 * u"m^2"
-    @test integral(f, quadrangle, GaussLegendre(100)) ≈ sol
-    @test integral(f, quadrangle, GaussKronrod()) ≈ sol
-    @test integral(f, quadrangle, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, quadrangle, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, quadrangle, GaussKronrod()) ≈ vsol
-    @test integral(fv, quadrangle, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, quadrangle)
-    @test surfaceintegral(f, quadrangle) ≈ sol
-    @test_throws "not supported" volumeintegral(f, quadrangle)
+    # Package and run tests
+    testable = TestableGeometry(integrand, quadrangle, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "Meshes.Ray" setup=[Setup] begin
-    a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    v = Vec(1.0u"m", 1.0u"m", 1.0u"m")
+@testitem "Meshes.Ray" setup=[Combinations] begin
+    # Geometry
+    a = Point(0, 0, 0)
+    v = Vec(1, 1, 1)
     ray = Ray(a, v)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = sqrt(π) / 2 * u"A*m"
 
-    # Scalar integrand
-    sol = sqrt(π) / 2 * u"m"
-    @test integral(f, ray, GaussLegendre(100)) ≈ sol
-    @test integral(f, ray, GaussKronrod()) ≈ sol
-    @test integral(f, ray, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, ray, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, ray, GaussKronrod()) ≈ vsol
-    @test integral(fv, ray, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, ray) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, ray)
-    @test_throws "not supported" volumeintegral(f, ray)
+    # Package and run tests
+    testable = TestableGeometry(integrand, ray, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
 @testitem "Meshes.Ring" setup=[Setup] begin
