@@ -37,7 +37,7 @@
     # Shortcut constructor for geometries with typical support structure
     function SupportStatus(sym::Symbol)
         if sym == :line
-            aliases = Bool.((0, 0, 1))
+            aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
             return SupportStatus(aliases..., rules...)     
         elseif sym == :surface
@@ -89,7 +89,6 @@
                 @test_throws "not supported" integral(testable.integrand, testable.geometry, rule)
             end
         end
-
     end
 
 end
