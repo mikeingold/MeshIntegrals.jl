@@ -508,103 +508,62 @@ end
 end
 
 @testitem "Meshes.Line" setup=[Setup] begin
-    a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    b = Point(1.0u"m", 1.0u"m", 1.0u"m")
+    # Geometry
+    a = Point(0, 0, 0)
+    b = Point(1, 1, 1)
     line = Line(a, b)
 
+    # Integrand & solution
     function f(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = sqrt(π) * u"A*m"
 
-    # Scalar integrand
-    sol = sqrt(π) * u"m"
-    @test integral(f, line, GaussLegendre(100)) ≈ sol
-    @test integral(f, line, GaussKronrod()) ≈ sol
-    @test integral(f, line, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, line, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, line, GaussKronrod()) ≈ vsol
-    @test integral(fv, line, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, line) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, line)
-    @test_throws "not supported" volumeintegral(f, line)
+    # Package and run tests
+    testable = TestableGeometry(integrand, line, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
-@testitem "Meshes.ParaboloidSurface" setup=[Setup] begin
+@testitem "Meshes.ParaboloidSurface" setup=[Combinations] begin
     origin = Point(0, 0, 0)
     parab = ParaboloidSurface(origin, 2.5, 4.15)
 
-    f(p) = 1.0
-    fv(p) = fill(f(p), 3)
+    # Integrand & Solution
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(parab) * u"A"
 
-    # Scalar integrand
-    sol = Meshes.measure(parab)
-    @test integral(f, parab, GaussLegendre(100)) ≈ sol
-    @test integral(f, parab, GaussKronrod()) ≈ sol
-    @test integral(f, parab, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, parab, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, parab, GaussKronrod()) ≈ vsol
-    @test integral(fv, parab, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, parab)
-    @test surfaceintegral(f, parab) ≈ sol
-    @test_throws "not supported" volumeintegral(f, parab)
+    # Package and run tests
+    testable = TestableGeometry(integrand, parab, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "ParametrizedCurve" setup=[Setup] begin
+@testitem "ParametrizedCurve" setup=[Combinations] begin
     # ParametrizedCurve has been added in Meshes v0.51.20
     # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
     if pkgversion(Meshes) >= v"0.51.20"
         using CoordRefSystems: Polar
 
+        # Geometries
         # Parameterize a circle centered on origin with specified radius
         radius = 4.4
         curve_cart = ParametrizedCurve(
             t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
         curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
-        function f(p::P) where {P <: Meshes.Point}
+        # Integrand & Solution
+        function integrand(p::P) where {P <: Meshes.Point}
             ur = norm(to(p))
             r = ustrip(u"m", ur)
-            exp(-r^2)
+            exp(-r^2) * u"A"
         end
-        fv(p) = fill(f(p), 3)
+        solution = 2π * radius * exp(-radius^2) * u"A*m"
 
-        # Scalar integrand
-        sol = 2π * radius * exp(-radius^2) * u"m"
-        @test integral(f, curve_cart, GaussLegendre(100)) ≈ sol
-        @test integral(f, curve_cart, GaussKronrod()) ≈ sol
-        @test integral(f, curve_cart, HAdaptiveCubature()) ≈ sol
-        @test integral(f, curve_polar, GaussLegendre(100)) ≈ sol
-        @test integral(f, curve_polar, GaussKronrod()) ≈ sol
-        @test integral(f, curve_polar, HAdaptiveCubature()) ≈ sol
-
-        # Vector integrand
-        vsol = fill(sol, 3)
-        @test integral(fv, curve_cart, GaussLegendre(100)) ≈ vsol
-        @test integral(fv, curve_cart, GaussKronrod()) ≈ vsol
-        @test integral(fv, curve_cart, HAdaptiveCubature()) ≈ vsol
-        @test integral(fv, curve_polar, GaussLegendre(100)) ≈ vsol
-        @test integral(fv, curve_polar, GaussKronrod()) ≈ vsol
-        @test integral(fv, curve_polar, HAdaptiveCubature()) ≈ vsol
-
-        # Integral aliases
-        @test lineintegral(f, curve_cart) ≈ sol
-        @test_throws "not supported" surfaceintegral(f, curve_cart)
-        @test_throws "not supported" volumeintegral(f, curve_cart)
-        @test lineintegral(f, curve_polar) ≈ sol
-        @test_throws "not supported" surfaceintegral(f, curve_polar)
-        @test_throws "not supported" volumeintegral(f, curve_polar)
+        # Package and run tests
+        testable_cart = TestableGeometry(integrand, curve_cart, solution)
+        runtests(testable_cart, SupportStatus(:line))
+        testable_polar = TestableGeometry(integrand, curve_cart, solution)
+        runtests(testable_polar, SupportStatus(:line))
     end
 end
 
