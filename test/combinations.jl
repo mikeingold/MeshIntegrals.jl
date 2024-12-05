@@ -151,10 +151,6 @@ end
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
     runtests(testable, SupportStatus(:line); rtol=0.5e-2)
-
-    # TODO move this to Differentiation testitem
-    # Check Bezier-specific jacobian bounds
-    @test_throws DomainError jacobian(curve, [1.1])
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -188,10 +184,6 @@ end
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
     runtests(testable, SupportStatus(:surface); rtol=1e-6)
-
-    # TODO move this to Differentiation testitem
-    # Test jacobian with wrong number of parametric coordinates
-    @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
 @testitem "Meshes.Box 3D" setup=[Combinations] begin

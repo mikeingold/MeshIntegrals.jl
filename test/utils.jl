@@ -19,7 +19,7 @@
     @test _ones(Float32, 2) == (1.0f0, 1.0f0)
 end
 
-@testitem "DifferentiationMethod" setup=[Setup] begin
+@testitem "Differentiation" setup=[Setup] begin
     using MeshIntegrals: _default_diff_method
 
     # _default_diff_method
@@ -29,6 +29,10 @@ end
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
+
+    # Test jacobian with wrong number of parametric coordinates
+    box = Box(Point(0, 0), Point(a, a))    
+    @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
 @testitem "_ParametricGeometry" setup=[Setup] begin
