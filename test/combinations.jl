@@ -105,9 +105,9 @@ end #testsnippet
     # Integrand & Solution
     function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    solution = (π - π * exp(-radius^2)) * u"m^2"
+    solution = (π - π * exp(-radius^2)) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
@@ -128,9 +128,9 @@ end
         offset = p - center
         ur = norm(offset)
         r = ustrip(u"m", ur)
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    solution = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
+    solution = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
@@ -267,15 +267,13 @@ end
     radius = 4.4
     circle = Circle(plane, radius)
 
-    # Integrand
+    # Integrand & Solution
     function integrand(p::Meshes.Point)
         offset = p - center
         r = ustrip(u"m", norm(offset))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-
-    # Scalar integrand
-    solution = 2π * radius * exp(-radius^2) * u"m"
+    solution = 2π * radius * exp(-radius^2) * u"A*m"
 
     # Package and run tests
     testable = TestableGeometry(integrand, circle, solution)
@@ -292,10 +290,8 @@ end
     apex = Point(0.0u"m", 0.0u"m", h)
     cone = Cone(base, apex)
 
-    # Integrand
+    # Integrand & Solution
     integrand(p) = 1.0u"A"
-
-    # Solution
     solution = (π * r^2 * h / 3) * u"A"
 
     # Package and run tests
@@ -304,6 +300,7 @@ end
 end
 
 @testitem "Meshes.ConeSurface" setup=[Setup] begin
+    # Geometry
     r = 2.5u"m"
     h = 2.5u"m"
     origin = Point(0, 0, 0)
@@ -312,19 +309,18 @@ end
     apex = Point(0.0u"m", 0.0u"m", h)
     cone = ConeSurface(base, apex)
 
-    f(p) = 1.0
+    # Integrand & Solution
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
-
-    _area_cone_rightcircular(h, r) = (π * r^2) + (π * r * hypot(h, r))
+    sol = ((π * r^2) + (π * r * hypot(h, r))) * u"A"
+    vsol = fill(sol, 3)
 
     # Scalar integrand
-    sol = _area_cone_rightcircular(h, r)
     @test integral(f, cone, GaussLegendre(100))≈sol rtol=1e-6
     @test integral(f, cone, GaussKronrod())≈sol rtol=1e-6
     @test integral(f, cone, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, cone, GaussLegendre(100))≈vsol rtol=1e-6
     @test integral(fv, cone, GaussKronrod())≈vsol rtol=1e-6
     @test integral(fv, cone, HAdaptiveCubature()) ≈ vsol
@@ -387,22 +383,24 @@ end
 end
 
 @testitem "Meshes.Ellipsoid" setup=[Setup] begin
+    # Geometry
     origin = Point(0, 0, 0)
     radii = (1.0, 2.0, 0.5)
     ellipsoid = Ellipsoid(radii, origin)
 
-    f(p) = 1.0
+    # Integrand & Solution
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
+    sol = Meshes.measure(ellipsoid) * u"A"
+    vsol = fill(sol, 3)
 
     # Tolerances are higher due to `measure` being only an approximation
     # Scalar integrand
-    sol = Meshes.measure(ellipsoid)
     @test integral(f, ellipsoid, GaussLegendre(100))≈sol rtol=1e-2
     @test integral(f, ellipsoid, GaussKronrod())≈sol rtol=1e-2
     @test integral(f, ellipsoid, HAdaptiveCubature())≈sol rtol=1e-2
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, ellipsoid, GaussLegendre(100))≈vsol rtol=1e-2
     @test integral(fv, ellipsoid, GaussKronrod())≈vsol rtol=1e-2
     @test integral(fv, ellipsoid, HAdaptiveCubature())≈vsol rtol=1e-2
@@ -428,25 +426,26 @@ end
     disk_top = Disk(plane_top, r_top)
     frustum = FrustumSurface(disk_bot, disk_top)
 
-    f(p) = 1.0
+    # Integrand & Solution
+    f(p) = 1.0u"A"
     fv(p) = fill(f(p), 3)
-
     _area_base(r) = π * r^2
     _area_cone_walls(h, r) = π * r * hypot(h, r)
-
-    # Scalar integrand
     sol = let
         area_walls_projected = _area_cone_walls(cone_h, r_bot)
         area_walls_missing = _area_cone_walls(0.5cone_h, r_top)
         area_walls = area_walls_projected - area_walls_missing
-        area_walls + _area_base(r_top) + _area_base(r_bot)
+        area_total = area_walls + _area_base(r_top) + _area_base(r_bot)
+        area_total * u"A"
     end
+    vsol = fill(sol, 3)
+
+    # Scalar integrand
     @test integral(f, frustum, GaussLegendre(100))≈sol rtol=1e-6
     @test integral(f, frustum, GaussKronrod())≈sol rtol=1e-6
     @test integral(f, frustum, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, frustum, GaussLegendre(100))≈vsol rtol=1e-6
     @test integral(fv, frustum, GaussKronrod())≈vsol rtol=1e-6
     @test integral(fv, frustum, HAdaptiveCubature()) ≈ vsol
