@@ -652,68 +652,44 @@ end
     @test_throws "not supported" volumeintegral(f, rope)
 end
 
-@testitem "Meshes.Rope" setup=[Setup] begin
-    pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
-    pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
-    pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
+@testitem "Meshes.Rope" setup=[Combinations] begin
+    # Geometry
+    pt_a = Point(0, 0, 0)
+    pt_b = Point(1, 0, 0)
+    pt_c = Point(1, 1, 0)
+    pt_d = Point(1, 1, 1)
     rope = Rope(pt_a, pt_b, pt_c, pt_d)
 
-    function f(p::P) where {P <: Meshes.Point}
-        x, y, z = (p.coords.x, p.coords.y, p.coords.z)
-        (x + 2y + 3z) * u"A/m^2"
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
+        x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
+        (x + 2y + 3z) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 7.0u"A*m"
 
-    # Scalar integrand
-    sol = 7.0u"A"
-    @test integral(f, rope, GaussLegendre(100)) ≈ sol
-    @test integral(f, rope, GaussKronrod()) ≈ sol
-    @test integral(f, rope, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, rope, GaussKronrod()) ≈ vsol
-    @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, rope) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, rope)
-    @test_throws "not supported" volumeintegral(f, rope)
+    # Package and run tests
+    testable = TestableGeometry(integrand, rope, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
-@testitem "Meshes.Segment" setup=[Setup] begin
+@testitem "Meshes.Segment" setup=[Combinations] begin
     # Connect a line segment from the origin to an arbitrary point on the unit sphere
     φ, θ = (7pi / 6, pi / 3)  # Arbitrary spherical angles
-    pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    pt_b = Point(sin(θ) * cos(φ) * u"m", sin(θ) * sin(φ) * u"m", cos(θ) * u"m")
+    pt_a = Point(0, 0, 0)
+    pt_b = Point(sin(θ) * cos(φ), sin(θ) * sin(φ), cos(θ))
     segment = Segment(pt_a, pt_b)
 
+    # Integrand & Solution
     a, b = (7.1, 4.6)  # arbitrary constants > 0
-
-    function f(p::P) where {P <: Meshes.Point}
+    function integrand(p::P; a = a, b = b) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(r * log(a) + (1 - r) * log(b))
+        exp(r * log(a) + (1 - r) * log(b)) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = ((a - b) / (log(a) - log(b))) * u"A*m"
 
-    # Scalar integrand
-    sol = (a - b) / (log(a) - log(b)) * u"m"
-    @test integral(f, segment, GaussLegendre(100)) ≈ sol
-    @test integral(f, segment, GaussKronrod()) ≈ sol
-    @test integral(f, segment, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, segment, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, segment, GaussKronrod()) ≈ vsol
-    @test integral(fv, segment, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, segment) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, segment)
-    @test_throws "not supported" volumeintegral(f, segment)
+    # Package and run tests
+    testable = TestableGeometry(integrand, segment, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
 @testitem "Meshes.Sphere 2D" setup=[Combinations] begin
