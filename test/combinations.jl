@@ -376,10 +376,8 @@ end
     pt_e = Point(1, 0, 0)
     cyl = Cylinder(pt_e, pt_w, 2.5)
 
-    # Integrand
+    # Integrand & Solution
     integrand(p) = 1.0u"A"
-
-    # Solution
     solution = Meshes.measure(cyl) * u"A"
 
     # Package and run tests
@@ -387,62 +385,40 @@ end
     runtests(testable, SupportStatus(:volume))
 end
 
-@testitem "Meshes.CylinderSurface" setup=[Setup] begin
+@testitem "Meshes.CylinderSurface" setup=[Combinations] begin
+    # Geometry
     pt_w = Point(-1, 0, 0)
     pt_e = Point(1, 0, 0)
     cyl = CylinderSurface(pt_e, pt_w, 2.5)
 
-    f(p) = 1.0
-    fv(p) = fill(f(p), 3)
+    # Integrand & Solution
+    integrand(p) = 1.0u"A"
+    solution = Meshes.measure(cyl) * u"A"
 
-    # Scalar integrand
-    sol = Meshes.measure(cyl)
-    @test integral(f, cyl, GaussLegendre(100)) ≈ sol
-    @test integral(f, cyl, GaussKronrod()) ≈ sol
-    @test integral(f, cyl, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, cyl, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, cyl, GaussKronrod()) ≈ vsol
-    @test integral(fv, cyl, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, cyl)
-    @test surfaceintegral(f, cyl) ≈ sol
-    @test_throws "not supported" volumeintegral(f, cyl)
+    # Package and run tests
+    testable = TestableGeometry(integrand, cyl, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
-@testitem "Meshes.Disk" setup=[Setup] begin
+@testitem "Meshes.Disk" setup=[Combinations] begin
+    # Geometry
     center = Point(1, 2, 3)
     n̂ = Vec(1 / 2, 1 / 2, sqrt(2) / 2)
     plane = Plane(center, n̂)
     radius = 2.5
     disk = Disk(plane, radius)
 
-    function f(p::P) where {P <: Meshes.Point}
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
         offset = p - center
         r = ustrip(u"m", norm(offset))
-        exp(-r^2)
+        exp(-r^2) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = (π - π * exp(-radius^2)) * u"A*m^2"
 
-    # Scalar integrand
-    sol = (π - π * exp(-radius^2)) * u"m^2"
-    @test integral(f, disk, GaussLegendre(100)) ≈ sol
-    @test integral(f, disk, GaussKronrod()) ≈ sol
-    @test integral(f, disk, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, disk, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, disk, GaussKronrod()) ≈ vsol
-    @test integral(fv, disk, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, disk)
-    @test surfaceintegral(f, disk) ≈ sol
-    @test_throws "not supported" volumeintegral(f, disk)
+    # Package and run tests
+    testable = TestableGeometry(integrand, disk, solution)
+    runtests(testable, SupportStatus(:surface))
 end
 
 @testitem "Meshes.Ellipsoid" setup=[Setup] begin
