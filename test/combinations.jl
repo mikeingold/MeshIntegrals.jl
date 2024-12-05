@@ -621,44 +621,33 @@ end
     runtests(testable, SupportStatus(:line))
 end
 
-@testitem "Meshes.Ring" setup=[Setup] begin
-    pt_a = Point(0.0u"m", 0.0u"m", 0.0u"m")
-    pt_b = Point(1.0u"m", 0.0u"m", 0.0u"m")
-    pt_c = Point(1.0u"m", 1.0u"m", 0.0u"m")
-    pt_d = Point(1.0u"m", 1.0u"m", 1.0u"m")
-    rope = Ring(pt_a, pt_b, pt_c, pt_d, pt_c, pt_b)
+@testitem "Meshes.Ring" setup=[Combinations] begin
+    # Geometry
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(1, 1, 0)
+    d = Point(1, 1, 1)
+    ring = Ring(a, b, c, d, c, b)
 
-    function f(p::P) where {P <: Meshes.Point}
-        x, y, z = (p.coords.x, p.coords.y, p.coords.z)
-        (x + 2y + 3z) * u"A/m^2"
+    # Integrand & Solution
+    function integrand(p::P) where {P <: Meshes.Point}
+        x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
+        (x + 2y + 3z) * u"A"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 14.0u"A*m"
 
-    # Scalar integrand
-    sol = 14.0u"A"
-    @test integral(f, rope, GaussLegendre(100)) ≈ sol
-    @test integral(f, rope, GaussKronrod()) ≈ sol
-    @test integral(f, rope, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, rope, GaussLegendre(100)) ≈ vsol
-    @test integral(fv, rope, GaussKronrod()) ≈ vsol
-    @test integral(fv, rope, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, rope) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, rope)
-    @test_throws "not supported" volumeintegral(f, rope)
+    # Package and run tests
+    testable = TestableGeometry(integrand, ring, solution)
+    runtests(testable, SupportStatus(:line))
 end
 
 @testitem "Meshes.Rope" setup=[Combinations] begin
     # Geometry
-    pt_a = Point(0, 0, 0)
-    pt_b = Point(1, 0, 0)
-    pt_c = Point(1, 1, 0)
-    pt_d = Point(1, 1, 1)
-    rope = Rope(pt_a, pt_b, pt_c, pt_d)
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(1, 1, 0)
+    d = Point(1, 1, 1)
+    rope = Rope(a, b, c, d)
 
     # Integrand & Solution
     function integrand(p::P) where {P <: Meshes.Point}
