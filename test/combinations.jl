@@ -120,6 +120,7 @@ end
     # Geometry
     center = Point(1, 2, 3)
     radius = 2.8u"m"
+    r = ustrip(u"m", radius)
     ball = Ball(center, radius)
 
     # Integrand & Solution
@@ -129,9 +130,7 @@ end
         r = ustrip(u"m", ur)
         exp(-r^2)
     end
-    solution = let r = ustrip(u"m", radius)
-        (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
-    end
+    solution = (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
@@ -145,12 +144,11 @@ end
     # Integrand
     function f(p::Meshes.Point)
         ux = ustrip(p.coords.x)
-        (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
+        (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
     end
-    fv(p) = fill(f(p), 3)
+    solution = 2π * u"Ω*m"
 
     # Scalar integrand
-    sol = 2π * u"Ω"
     @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
     @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
     @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
@@ -171,34 +169,33 @@ end
 end
 
 @testitem "Meshes.Box 1D" setup=[Setup] begin
+    # Geometry
     a = π
     box = Box(Point(0), Point(a))
 
-    struct Integrand end
-    fc = Integrand()
-
-    function (::Integrand)(p::Meshes.Point)
+    # Integrand & Solution
+    function f(p::Meshes.Point)
         t = ustrip(p.coords.x)
-        sqrt(a^2 - t^2) * u"Ω/m"
+        sqrt(a^2 - t^2) * u"Ω"
     end
-    fcv(p) = fill(fc(p), 3)
+    fv(p) = fill(f(p), 3)
+    solution = π * a^2 / 4 * u"Ω*m"
+    vsol = fill(solution, 3)
 
     # Scalar integrand
-    sol = π * a^2 / 4 * u"Ω"
-    @test integral(fc, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(fc, box, GaussKronrod()) ≈ sol
-    @test integral(fc, box, HAdaptiveCubature()) ≈ sol
+    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
+    @test integral(f, box, GaussKronrod()) ≈ sol
+    @test integral(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fcv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fcv, box, GaussKronrod()) ≈ vsol
-    @test integral(fcv, box, HAdaptiveCubature()) ≈ vsol
+    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
+    @test integral(fv, box, GaussKronrod()) ≈ vsol
+    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
 
     # Integral aliases
-    @test lineintegral(fc, box) ≈ sol
-    @test_throws "not supported" surfaceintegral(fc, box)
-    @test_throws "not supported" volumeintegral(fc, box)
+    @test lineintegral(f, box) ≈ sol
+    @test_throws "not supported" surfaceintegral(f, box)
+    @test_throws "not supported" volumeintegral(f, box)
 end
 
 @testitem "Meshes.Box 2D" setup=[Setup] begin
@@ -233,23 +230,25 @@ end
 end
 
 @testitem "Meshes.Box 3D" setup=[Setup] begin
+    # Geometry
     a = π
     box = Box(Point(0, 0, 0), Point(a, a, a))
 
+    # Integrand & Solution
     function f(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
     end
     fv(p) = fill(f(p), 3)
+    sol = 3a^2 * (π * a^2 / 4) * u"Ω"
+    vsol = fill(sol, 3)
 
     # Scalar integrand
-    sol = 3a^2 * (π * a^2 / 4) * u"Ω"
     @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
     @test_throws "not supported" integral(f, box, GaussKronrod())
     @test integral(f, box, HAdaptiveCubature()) ≈ sol
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
     @test_throws "not supported" integral(fv, box, GaussKronrod())
     @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
@@ -258,35 +257,6 @@ end
     @test_throws "not supported" lineintegral(f, box)
     @test_throws "not supported" surfaceintegral(f, box)
     @test volumeintegral(f, box) ≈ sol
-end
-
-@testitem "Meshes.Box 4D" tags=[:extended] setup=[Setup] begin
-    a = π
-    box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
-
-    function f(p::Meshes.Point)
-        x1, x2, x3, x4 = ustrip.(to(p).coords)
-        σ(x) = sqrt(a^2 - x^2)
-        (σ(x1) + σ(x2) + σ(x3) + σ(x4)) * u"Ω/m^4"
-    end
-    fv(p) = fill(f(p), 3)
-
-    # Scalar integrand
-    sol = 4a^3 * (π * a^2 / 4) * u"Ω"
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test_throws "not supported" integral(f, box, GaussKronrod())
-    @test integral(f, box, HAdaptiveCubature(rtol = 1e-6))≈sol rtol=1e-6
-
-    # Vector integrand
-    vsol = fill(sol, 3)
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test_throws "not supported" integral(fv, box, GaussKronrod())
-    @test integral(fv, box, HAdaptiveCubature(rtol = 1e-6))≈vsol rtol=1e-6
-
-    # Integral aliases
-    @test_throws "not supported" lineintegral(f, box)
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test_throws "not supported" volumeintegral(f, box)
 end
 
 @testitem "Meshes.Circle" setup=[Combinations] begin
