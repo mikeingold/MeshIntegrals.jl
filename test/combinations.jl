@@ -137,66 +137,41 @@ end
     runtests(testable, SupportStatus(:volume))
 end
 
-@testitem "Meshes.BezierCurve" setup=[Setup] begin
+@testitem "Meshes.BezierCurve" setup=[Combinations] begin
     # Geometry
     curve = BezierCurve([Point(t, sin(t), 0) for t in range(-π, π, length = 361)])
 
     # Integrand
-    function f(p::Meshes.Point)
+    function integrand(p::Meshes.Point)
         ux = ustrip(p.coords.x)
         (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
     end
-    fv(p) = fill(f(p), 3)
-    sol = 2π * u"Ω*m"
-    vsol = fill(sol, 3)
+    solution = 2π * u"Ω*m"
 
-    # Scalar integrand
-    @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
-    @test integral(f, curve, GaussKronrod())≈sol rtol=0.5e-2
-    @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
+    # Package and run tests
+    testable = TestableGeometry(integrand, curve, solution)
+    runtests(testable, SupportStatus(:line); rtol=0.5e-2)
 
-    # Vector integrand
-    @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
-    @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
-    @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
-
-    # Integral aliases
-    @test lineintegral(f, curve)≈sol rtol=0.5e-2
-    @test_throws "not supported" surfaceintegral(f, curve)
-    @test_throws "not supported" volumeintegral(f, curve)
-
+    # TODO move this to Differentiation testitem
     # Check Bezier-specific jacobian bounds
     @test_throws DomainError jacobian(curve, [1.1])
 end
 
-@testitem "Meshes.Box 1D" setup=[Setup] begin
+@testitem "Meshes.Box 1D" setup=[Combinations] begin
     # Geometry
     a = π
     box = Box(Point(0), Point(a))
 
     # Integrand & Solution
-    function f(p::Meshes.Point)
+    function integrand(p::Meshes.Point)
         t = ustrip(p.coords.x)
         sqrt(a^2 - t^2) * u"Ω"
     end
-    fv(p) = fill(f(p), 3)
-    sol = π * a^2 / 4 * u"Ω*m"
-    vsol = fill(sol, 3)
+    solution = π * a^2 / 4 * u"Ω*m"
 
-    # Scalar integrand
-    @test integral(f, box, GaussLegendre(100))≈sol rtol=1e-6
-    @test integral(f, box, GaussKronrod()) ≈ sol
-    @test integral(f, box, HAdaptiveCubature()) ≈ sol
-
-    # Vector integrand
-    @test integral(fv, box, GaussLegendre(100))≈vsol rtol=1e-6
-    @test integral(fv, box, GaussKronrod()) ≈ vsol
-    @test integral(fv, box, HAdaptiveCubature()) ≈ vsol
-
-    # Integral aliases
-    @test lineintegral(f, box) ≈ sol
-    @test_throws "not supported" surfaceintegral(f, box)
-    @test_throws "not supported" volumeintegral(f, box)
+    # Package and run tests
+    testable = TestableGeometry(integrand, box, solution)
+    runtests(testable, SupportStatus(:line); rtol=1e-6)
 end
 
 @testitem "Meshes.Box 2D" setup=[Setup] begin
