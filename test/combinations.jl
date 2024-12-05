@@ -1,6 +1,6 @@
-# This section tests for:
-# - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm) produce accurate results
-# - Invalid applications of integral aliases (e.g. lineintegral) produce a descriptive error
+# This section tests:
+# - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm)
+# - Invalid applications of integral aliases produce a descriptive error
 
 #===============================================================================
                         Test Generation Infrastructure
@@ -54,6 +54,7 @@
     end
 
     function runtests(testable::TestableGeometry, supports::SupportStatus)
+        # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             alias_symbol = first(methods(alias)).name
             if getfield(supports, alias_symbol)
@@ -69,6 +70,7 @@
             (supports.hadaptivecubature, HAdaptiveCubature())
         )
 
+        # Test rules
         for (supported, rule) in iter_rules
             if supported
                 # Scalar integrand
@@ -97,29 +99,34 @@ end
 ===============================================================================#
 
 @testitem "Meshes.Ball 2D" setup=[Combinations] begin
+    # Geometry
     origin = Point(0, 0)
     radius = 2.8
     ball = Ball(origin, radius)
 
+    # Integrand
     function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
 
+    # Solution
     solution = (π - π * exp(-radius^2)) * u"m^2"
 
-    support = SupportStatus(:surface)
+    # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
-    runtests(testable, support)
+    runtests(testable, SupportStatus(:surface))
 end
 
 @testitem "Meshes.Ball 3D" setup=[Combinations] begin
     using SpecialFunctions: erf
 
+    # Geometry
     center = Point(1, 2, 3)
     radius = 2.8u"m"
     ball = Ball(center, radius)
 
+    # Integrand
     function integrand(p::P) where {P <: Meshes.Point}
         offset = p - center
         ur = norm(offset)
@@ -127,18 +134,21 @@ end
         exp(-r^2)
     end
 
+    # Solution
     solution = let r = ustrip(u"m", radius)
         (π^(3 / 2) * erf(r) - 2π * exp(-r^2) * r) * u"m^3"
     end
 
-    support = SupportStatus(:volume)
+    # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
-    runtests(testable, support)
+    runtests(testable, SupportStatus(:volume))
 end
 
 @testitem "Meshes.BezierCurve" setup=[Setup] begin
-    curve = BezierCurve([Point(t, sin(t), 0) for t in range(-pi, pi, length = 361)])
+    # Geometry
+    curve = BezierCurve([Point(t, sin(t), 0) for t in range(-π, π, length = 361)])
 
+    # Integrand
     function f(p::P) where {P <: Meshes.Point}
         ux = ustrip(p.coords.x)
         (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
