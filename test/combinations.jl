@@ -146,7 +146,8 @@ end
         ux = ustrip(p.coords.x)
         (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
     end
-    solution = 2π * u"Ω*m"
+    sol = 2π * u"Ω*m"
+    vsol = fill(sol, 3)
 
     # Scalar integrand
     @test integral(f, curve, GaussLegendre(100))≈sol rtol=0.5e-2
@@ -154,7 +155,6 @@ end
     @test integral(f, curve, HAdaptiveCubature())≈sol rtol=0.5e-2
 
     # Vector integrand
-    vsol = fill(sol, 3)
     @test integral(fv, curve, GaussLegendre(100))≈vsol rtol=0.5e-2
     @test integral(fv, curve, GaussKronrod())≈vsol rtol=0.5e-2
     @test integral(fv, curve, HAdaptiveCubature())≈vsol rtol=0.5e-2
