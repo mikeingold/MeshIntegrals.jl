@@ -103,7 +103,7 @@ end #testsnippet
     ball = Ball(origin, radius)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2)
     end
@@ -123,7 +123,7 @@ end
     ball = Ball(center, radius)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         offset = p - center
         ur = norm(offset)
         r = ustrip(u"m", ur)
@@ -143,7 +143,7 @@ end
     curve = BezierCurve([Point(t, sin(t), 0) for t in range(-π, π, length = 361)])
 
     # Integrand
-    function f(p::P) where {P <: Meshes.Point}
+    function f(p::Meshes.Point)
         ux = ustrip(p.coords.x)
         (1 / sqrt(1 + cos(ux)^2)) * u"Ω/m"
     end
@@ -205,7 +205,7 @@ end
     a = π
     box = Box(Point(0, 0), Point(a, a))
 
-    function f(p::P) where {P <: Meshes.Point}
+    function f(p::Meshes.Point)
         x, y = ustrip.((p.coords.x, p.coords.y))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω/m^2"
     end
@@ -236,7 +236,7 @@ end
     a = π
     box = Box(Point(0, 0, 0), Point(a, a, a))
 
-    function f(p::P) where {P <: Meshes.Point}
+    function f(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
         (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
     end
@@ -264,7 +264,7 @@ end
     a = π
     box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
 
-    function f(p::P) where {P <: Meshes.Point}
+    function f(p::Meshes.Point)
         x1, x2, x3, x4 = ustrip.(to(p).coords)
         σ(x) = sqrt(a^2 - x^2)
         (σ(x1) + σ(x2) + σ(x3) + σ(x4)) * u"Ω/m^4"
@@ -298,7 +298,7 @@ end
     circle = Circle(plane, radius)
 
     # Integrand
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         offset = p - center
         r = ustrip(u"m", norm(offset))
         exp(-r^2)
@@ -404,7 +404,7 @@ end
     disk = Disk(plane, radius)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         offset = p - center
         r = ustrip(u"m", norm(offset))
         exp(-r^2) * u"A"
@@ -514,7 +514,7 @@ end
     line = Line(a, b)
 
     # Integrand & solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
@@ -552,7 +552,7 @@ end
         curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
         # Integrand & Solution
-        function integrand(p::P) where {P <: Meshes.Point}
+        function integrand(p::Meshes.Point)
             ur = norm(to(p))
             r = ustrip(u"m", ur)
             exp(-r^2) * u"A"
@@ -574,7 +574,7 @@ end
     plane = Plane(p, v)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
@@ -592,7 +592,7 @@ end
     quadrangle = Quadrangle((-1.0, 0.0), (-1.0, 1.0), (1.0, 1.0), (1.0, 0.0))
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
@@ -610,7 +610,7 @@ end
     ray = Ray(a, v)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
@@ -630,7 +630,7 @@ end
     ring = Ring(a, b, c, d, c, b)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
         (x + 2y + 3z) * u"A"
     end
@@ -650,7 +650,7 @@ end
     rope = Rope(a, b, c, d)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
         (x + 2y + 3z) * u"A"
     end
@@ -688,7 +688,7 @@ end
     sphere = Sphere(origin, radius)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
@@ -708,7 +708,7 @@ end
     sphere = Sphere(center, radius)
 
     # Integrand & Solution
-    function integrand(p::P) where {P <: Meshes.Point}
+    function integrand(p::Meshes.Point)
         rθφ = convert(Spherical, Cartesian((p - center)...))
         r = ustrip(rθφ.r)
         θ = ustrip(rθφ.θ)
