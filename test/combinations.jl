@@ -703,7 +703,7 @@ end
         r = ustrip(u"m", norm(to(p)))
         exp(-r^2) * u"A"
     end
-    solution = 2π * radius * exp(-radius^2) * u"m"
+    solution = 2π * radius * exp(-radius^2) * u"A*m"
 
     # Package and run tests
     testable = TestableGeometry(integrand, sphere, solution)
