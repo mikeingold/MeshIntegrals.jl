@@ -507,7 +507,7 @@ end
     @test volumeintegral(f, hexahedron) ≈ sol
 end
 
-@testitem "Meshes.Line" setup=[Setup] begin
+@testitem "Meshes.Line" setup=[Combinations] begin
     # Geometry
     a = Point(0, 0, 0)
     b = Point(1, 1, 1)
