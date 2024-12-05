@@ -27,7 +27,7 @@ Like [`integral`](@ref) but integrates along the domain defined by `curve`.
 - `diff_method::DifferentiationMethod = Analytical()`: the method to use for
 calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired
-- `alg = Meshes.Horner()`:  the method to use for parameterizing `curve`. Alternatively,
+- `alg = Meshes.Horner()`:  the method to use for parametrizing `curve`. Alternatively,
 `alg=Meshes.DeCasteljau()` can be specified for increased accuracy, but comes with a
 steep performance cost, especially for curves with a large number of control points.
 """
