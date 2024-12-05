@@ -725,7 +725,7 @@ end
     # Integrand & Solution
     function integrand(p::P) where {P <: Meshes.Point}
         r = ustrip(u"m", norm(to(p)))
-        exp(-r^2) * u"
+        exp(-r^2) * u"A"
     end
     solution = 2π * radius * exp(-radius^2) * u"m"
 
@@ -798,7 +798,7 @@ end
 
     # Integrand & Solution
     integrand(p) = 1.0u"A"
-    sol = Meshes.measure(triangle) * u"A"
+    solution = Meshes.measure(triangle) * u"A"
 
     # Package and run tests
     testable = TestableGeometry(integrand, triangle, solution)
