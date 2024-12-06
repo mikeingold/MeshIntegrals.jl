@@ -66,15 +66,15 @@ This file includes tests for:
     end
 
     function runtests(
-        testable::TestableGeometry,
-        supports::SupportStatus;
-        rtol = sqrt(eps())
+            testable::TestableGeometry,
+            supports::SupportStatus;
+            rtol = sqrt(eps())
     )
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
             if getfield(supports, first(methods(alias)).name)
-                @test alias(testable.integrand, testable.geometry) ≈ testable.solution rtol=rtol
+                @test alias(testable.integrand, testable.geometry)≈testable.solution rtol=rtol
             else
                 @test_throws "not supported" alias(testable.integrand, testable.geometry)
             end
