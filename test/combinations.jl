@@ -65,7 +65,11 @@ This file includes tests for:
         end
     end
 
-    function runtests(testable::TestableGeometry, supports::SupportStatus; rtol=sqrt(eps()))
+    function runtests(
+        testable::TestableGeometry,
+        supports::SupportStatus;
+        rtol = sqrt(eps())
+    )
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
@@ -87,20 +91,32 @@ This file includes tests for:
             if supported
                 # Scalar integrand
                 sol = testable.solution
-                @test integral(testable.integrand, testable.geometry, rule) ≈ sol rtol=rtol
+                @test integral(testable.integrand, testable.geometry, rule)≈sol rtol=rtol
 
                 # Callable integrand
                 f = Callable(testable.integrand)
-                @test integral(f, testable.geometry, rule) ≈ sol rtol=rtol
+                @test integral(f, testable.geometry, rule)≈sol rtol=rtol
 
                 # Vector integrand
                 fv(p) = fill(testable.integrand(p), 3)
                 sol_v = fill(testable.solution, 3)
-                @test integral(fv, testable.geometry, rule) ≈ sol_v rtol=rtol
+                @test integral(fv, testable.geometry, rule)≈sol_v rtol=rtol
             else
-                @test_throws "not supported" integral(testable.integrand, testable.geometry, rule)
-            end # if
+                f = testable.integrand
+                geometry = testable.geometry
+                @test_throws "not supported" integral(f, geometry, rule)
+            end
         end # for
+
+        #=
+        iter_diff_methods = (
+            (supports.autoenzyme, AutoEnzyme()),
+        )
+
+        for (supported, diff_method) in iter_diff_methods
+            @test integral(testable.integrand, testable.geometry; diff_method=diff_method)≈sol rtol=rtol
+        end
+        =#
     end # function
 end #testsnippet
 
@@ -162,7 +178,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    runtests(testable, SupportStatus(:line); rtol=0.5e-2)
+    runtests(testable, SupportStatus(:line); rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -179,7 +195,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:line); rtol=1e-6)
+    runtests(testable, SupportStatus(:line); rtol = 1e-6)
 end
 
 @testitem "Meshes.Box 2D" setup=[Combinations] begin
@@ -195,7 +211,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:surface); rtol=1e-6)
+    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
 end
 
 @testitem "Meshes.Box 3D" setup=[Combinations] begin
@@ -212,7 +228,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:volume); rtol=1e-6)
+    runtests(testable, SupportStatus(:volume); rtol = 1e-6)
 end
 
 @testitem "Meshes.Circle" setup=[Combinations] begin
@@ -271,7 +287,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cone, solution)
-    runtests(testable, SupportStatus(:surface); rtol=1e-6)
+    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
 end
 
 @testitem "Meshes.Cylinder" setup=[Combinations] begin
@@ -338,7 +354,7 @@ end
     # Package and run tests
     # Tolerances are higher due to `measure` being only an approximation
     testable = TestableGeometry(integrand, ellipsoid, solution)
-    runtests(testable, SupportStatus(:surface); rtol=1e-2)
+    runtests(testable, SupportStatus(:surface); rtol = 1e-2)
 end
 
 @testitem "Meshes.FrustumSurface" setup=[Combinations] begin
@@ -370,7 +386,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, frustum, solution)
-    runtests(testable, SupportStatus(:surface); rtol=1e-6)
+    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
 end
 
 @testitem "Meshes.Hexahedron" setup=[Combinations] begin

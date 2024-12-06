@@ -31,7 +31,7 @@ end
     @test FiniteDifference().ε ≈ 1e-6
 
     # Test jacobian with wrong number of parametric coordinates
-    box = Box(Point(0, 0), Point(1, 1))    
+    box = Box(Point(0, 0), Point(1, 1))
     @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
