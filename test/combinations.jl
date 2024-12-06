@@ -89,8 +89,18 @@
             else
                 @test_throws "not supported" integral(
                     testable.integrand, testable.geometry, rule)
-            end # if
+            end
         end # for
+
+        #=
+        iter_diff_methods = (
+            (supports.autoenzyme, AutoEnzyme()),
+        )
+
+        for (supported, diff_method) in iter_diff_methods
+            @test integral(testable.integrand, testable.geometry; diff_method=diff_method)≈sol rtol=rtol
+        end
+        =#
     end # function
 end #testsnippet
 
