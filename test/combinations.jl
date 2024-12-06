@@ -1,6 +1,13 @@
-# This section tests:
-# - All supported combinations of integral(f, ::Geometry, ::IntegrationAlgorithm)
-# - Invalid applications of integral aliases produce a descriptive error
+"""
+This file includes tests for:
+- Supported combinations {::Geometry, ::IntegrationRule} for `integral(f, geometry, rule)`.
+- Integrand functions returning a `Unitful.Quantity` or a `Vector{Unitful.Quantity}`.
+- Callable objects in place of an integrand function.
+- Unsupported combinations produce a descriptive and useful error message.
+- The appropriate alias function, e.g. `lineintegral` for 1D geometries, works.
+- Invalid applications of integral aliases produce a descriptive and useful error message.
+- (Planned) Usage of non-default DifferentiationMethods.
+"""
 
 #===============================================================================
                         Test Generation Infrastructure
@@ -12,10 +19,11 @@
     using MeshIntegrals
     using Unitful
 
+    # Used for testing callable objects as integrand functions
     struct Callable{F <: Function}
         f::F
     end
-    (c::Callable)(p) = c.f(p)
+    (c::Callable)(p::Meshes.Point) = c.f(p)
 
     # Stores a testable combination
     struct TestableGeometry{F <: Function, G <: Geometry, U <: Unitful.Quantity}
@@ -24,14 +32,18 @@
         solution::U
     end
 
-    # Indicates which functions/rules are supported for a particular geometry
+    # Used to indicate which features are supported for a particular geometry
     struct SupportStatus
+        # Alias Functions
         lineintegral::Bool
         surfaceintegral::Bool
         volumeintegral::Bool
+        # IntegrationRules
         gausskronrod::Bool
         gausslegendre::Bool
         hadaptivecubature::Bool
+        # DifferentiationMethods
+        # autoenzyme::Bool
     end
 
     # Shortcut constructor for geometries with typical support structure
@@ -56,8 +68,8 @@
     function runtests(testable::TestableGeometry, supports::SupportStatus; rtol=sqrt(eps()))
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
-            alias_symbol = first(methods(alias)).name
-            if getfield(supports, alias_symbol)
+            # if supports.alias
+            if getfield(supports, first(methods(alias)).name)
                 @test alias(testable.integrand, testable.geometry) ≈ testable.solution rtol=rtol
             else
                 @test_throws "not supported" alias(testable.integrand, testable.geometry)
@@ -177,9 +189,9 @@ end
     # Integrand & Solution
     function integrand(p::Meshes.Point)
         x, y = ustrip.((p.coords.x, p.coords.y))
-        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω/m^2"
+        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω"
     end
-    solution = 2a * (π * a^2 / 4) * u"Ω"
+    solution = 2a * (π * a^2 / 4) * u"Ω*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
@@ -194,9 +206,9 @@ end
     # Integrand & Solution
     function integrand(p::Meshes.Point)
         x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
-        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω/m^3"
+        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω"
     end
-    solution = 3a^2 * (π * a^2 / 4) * u"Ω"
+    solution = 3a^2 * (π * a^2 / 4) * u"Ω*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
