@@ -73,7 +73,7 @@ This file includes tests for:
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
-            if getfield(supports, first(methods(alias)).name)
+            if getfield(supports, nameof(alias))
                 @test alias(testable.integrand, testable.geometry)≈testable.solution rtol=rtol
             else
                 @test_throws "not supported" alias(testable.integrand, testable.geometry)
@@ -458,7 +458,7 @@ end
         # Package and run tests
         testable_cart = TestableGeometry(integrand, curve_cart, solution)
         runtests(testable_cart, SupportStatus(:line))
-        testable_polar = TestableGeometry(integrand, curve_cart, solution)
+        testable_polar = TestableGeometry(integrand, curve_polar, solution)
         runtests(testable_polar, SupportStatus(:line))
     end
 end
