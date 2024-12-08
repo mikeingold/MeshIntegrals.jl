@@ -1,7 +1,11 @@
-@testitem "Utilities" setup=[Setup] begin
+@testsnippet Utils begin
     using LinearAlgebra: norm
-    using MeshIntegrals: _units, _zeros, _ones
+    using Meshes
+    using MeshIntegrals: _default_diff_method, _parametric, _units, _zeros, _ones
+    using Unitful
+end
 
+@testitem "Utilities" setup=[Utils] begin
     # _KVector
     v = Meshes.Vec(3, 4)
     @test norm(MeshIntegrals._KVector(v)) ≈ 5.0u"m"
@@ -19,9 +23,7 @@
     @test _ones(Float32, 2) == (1.0f0, 1.0f0)
 end
 
-@testitem "Differentiation" setup=[Setup] begin
-    using MeshIntegrals: _default_diff_method
-
+@testitem "Differentiation" setup=[Utils] begin
     # _default_diff_method
     sphere = Sphere(Point(0, 0, 0), 1.0)
     @test _default_diff_method(Meshes.Sphere) isa FiniteDifference
@@ -35,9 +37,7 @@ end
     @test_throws ArgumentError jacobian(box, zeros(3))
 end
 
-@testitem "_ParametricGeometry" setup=[Setup] begin
-    using MeshIntegrals: _parametric
-
+@testitem "_ParametricGeometry" setup=[Utils] begin
     pt_n = Point(0, 3, 0)
     pt_w = Point(-7, 0, 0)
     pt_e = Point(8, 0, 0)
