@@ -47,21 +47,23 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(sym::Symbol)
-        if sym == :line
+    function SupportStatus(geometry::Geometry)
+        if paramdim(geometry) == 1
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
             return SupportStatus(aliases..., rules...)
-        elseif sym == :surface
+        elseif paramdim(geometry) == 2
             aliases = Bool.((0, 1, 0))
             rules = Bool.((1, 1, 1))
             return SupportStatus(aliases..., rules...)
-        elseif sym == :volume
+        elseif paramdim(geometry) == 3
             aliases = Bool.((0, 0, 1))
             rules = Bool.((0, 1, 1))
             return SupportStatus(aliases..., rules...)
         else
-            error("Unrecognized SupportStatus shortcut $(string(sym))")
+            aliases = Bool.((0, 0, 0))
+            rules = Bool.((0, 1, 1))
+            return SupportStatus(aliases..., rules...)
         end
     end
 
