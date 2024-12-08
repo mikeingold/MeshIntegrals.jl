@@ -190,10 +190,10 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        t = ustrip(p.coords.x)
-        sqrt(a^2 - t^2) * u"Ω"
+        x₁ = ustrip.((to(p)))
+        √(a^2 - x₁^2) * u"A"
     end
-    solution = π * a^2 / 4 * u"Ω*m"
+    solution = π * a^2 / 4 * u"A*m"
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
@@ -206,10 +206,10 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x, y = ustrip.((p.coords.x, p.coords.y))
-        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2)) * u"Ω"
+        x₁, x₂ = ustrip.((to(p)))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
     end
-    solution = 2a * (π * a^2 / 4) * u"Ω*m^2"
+    solution = 2a * (π * a^2 / 4) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
@@ -223,10 +223,27 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x, y, z = ustrip.((p.coords.x, p.coords.y, p.coords.z))
-        (sqrt(a^2 - x^2) + sqrt(a^2 - y^2) + sqrt(a^2 - z^2)) * u"Ω"
+        x₁, x₂, x₃ = ustrip.((to(p)))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
     end
-    solution = 3a^2 * (π * a^2 / 4) * u"Ω*m^3"
+    solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
+
+    # Package and run tests
+    testable = TestableGeometry(integrand, box, solution)
+    runtests(testable; rtol = 1e-6)
+end
+
+@testitem "Meshes.Box 4D" setup=[Combinations] begin
+    # Geometry
+    a = π
+    box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
+
+    # Integrand & Solution
+    function integrand(p::Meshes.Point)
+        x₁, x₂, x₃, x₄ = ustrip.((to(p)))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2) + √(a^2 - x₄^2)) * u"A"
+    end
+    solution = 4a^3 * (π * a^2 / 4) * u"A*m^4"
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
