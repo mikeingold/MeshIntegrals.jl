@@ -180,7 +180,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    runtests(testable, SupportStatus(:line); rtol = 0.5e-2)
+    runtests(testable; rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -197,7 +197,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:line); rtol = 1e-6)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Box 2D" setup=[Combinations] begin
@@ -213,7 +213,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Box 3D" setup=[Combinations] begin
@@ -230,7 +230,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, box, solution)
-    runtests(testable, SupportStatus(:volume); rtol = 1e-6)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Circle" setup=[Combinations] begin
@@ -289,7 +289,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cone, solution)
-    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Cylinder" setup=[Combinations] begin
@@ -356,7 +356,7 @@ end
     # Package and run tests
     # Tolerances are higher due to `measure` being only an approximation
     testable = TestableGeometry(integrand, ellipsoid, solution)
-    runtests(testable, SupportStatus(:surface); rtol = 1e-2)
+    runtests(testable; rtol = 1e-2)
 end
 
 @testitem "Meshes.FrustumSurface" setup=[Combinations] begin
@@ -388,7 +388,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, frustum, solution)
-    runtests(testable, SupportStatus(:surface); rtol = 1e-6)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Hexahedron" setup=[Combinations] begin
