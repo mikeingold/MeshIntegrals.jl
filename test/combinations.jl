@@ -233,7 +233,7 @@ end
     runtests(testable; rtol = 1e-6)
 end
 
-@testitem "Meshes.Box 4D" setup=[Combinations] begin
+@testitem "Meshes.Box 4D" tags=[:extended] setup=[Combinations] begin
     # Geometry
     a = π
     box = Box(Point(0, 0, 0, 0), Point(a, a, a, a))
