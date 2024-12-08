@@ -2,14 +2,19 @@
 # have expected level of accuracy and are produce results in appropriate type
 
 # Base value for atol when integrating with a particular FP type
-@testsnippet BaseAtol begin
+
+@testsnippet FP_Types begin
+    using LinearAlgebra: norm
+    using Meshes
+    using Unitful
+
     baseatol = Dict(
         Float32 => 0.01f0,
         BigFloat => BigFloat(0.001)
     )
 end
 
-@testitem "Alternate floating types" setup=[Setup, BaseAtol] begin
+@testitem "Alternate floating types" setup=[FP_Types] begin
     @testset "$FP" for FP in (Float32, BigFloat)
         # Rectangular volume with unit integrand
         f = p -> one(FP)
@@ -41,7 +46,7 @@ end
     end
 end
 
-@testitem "Integral Aliases" setup=[Setup] begin
+@testitem "Integral Aliases" setup=[FP_Types] begin
     f = p -> one(Float32)
     box1d = Box(Point(fill(0.0f0u"m", 1)...), Point(fill(1.0f0u"m", 1)...))
     box2d = Box(Point(fill(0.0f0u"m", 2)...), Point(fill(1.0f0u"m", 2)...))
