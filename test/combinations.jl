@@ -190,7 +190,7 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁ = ustrip.((to(p)))
+        x₁ = only(ustrip.((to(p))))
         √(a^2 - x₁^2) * u"A"
     end
     solution = π * a^2 / 4 * u"A*m"
