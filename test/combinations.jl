@@ -69,7 +69,7 @@ This file includes tests for:
 
     function runtests(
             testable::TestableGeometry,
-            supports::SupportStatus;
+            supports::SupportStatus = SupportStatus(testable.geometry);
             rtol = sqrt(eps())
     )
         # Test alias functions
@@ -141,7 +141,7 @@ end #testsnippet
 
     # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Ball 3D" setup=[Combinations] begin
@@ -164,7 +164,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, ball, solution)
-    runtests(testable, SupportStatus(:volume))
+    runtests(testable)
 end
 
 @testitem "Meshes.BezierCurve" setup=[Combinations] begin
@@ -251,7 +251,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, circle, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Cone" setup=[Combinations] begin
@@ -270,7 +270,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cone, solution)
-    runtests(testable, SupportStatus(:volume))
+    runtests(testable)
 end
 
 @testitem "Meshes.ConeSurface" setup=[Combinations] begin
@@ -304,7 +304,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable, SupportStatus(:volume))
+    runtests(testable)
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Combinations] begin
@@ -319,7 +319,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Disk" setup=[Combinations] begin
@@ -340,7 +340,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, disk, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Ellipsoid" setup=[Combinations] begin
@@ -402,7 +402,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, hexahedron, solution)
-    runtests(testable, SupportStatus(:volume))
+    runtests(testable)
 end
 
 @testitem "Meshes.Line" setup=[Combinations] begin
@@ -420,7 +420,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, line, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.ParaboloidSurface" setup=[Combinations] begin
@@ -433,7 +433,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, parab, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "ParametrizedCurve" setup=[Combinations] begin
@@ -459,9 +459,9 @@ end
 
         # Package and run tests
         testable_cart = TestableGeometry(integrand, curve_cart, solution)
-        runtests(testable_cart, SupportStatus(:line))
+        runtests(testable_cart)
         testable_polar = TestableGeometry(integrand, curve_polar, solution)
-        runtests(testable_polar, SupportStatus(:line))
+        runtests(testable_polar)
     end
 end
 
@@ -480,7 +480,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, plane, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Quadrangle" setup=[Combinations] begin
@@ -498,7 +498,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, quadrangle, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Ray" setup=[Combinations] begin
@@ -516,7 +516,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, ray, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Ring" setup=[Combinations] begin
@@ -536,7 +536,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, ring, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Rope" setup=[Combinations] begin
@@ -556,7 +556,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, rope, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Segment" setup=[Combinations] begin
@@ -576,7 +576,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, segment, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Sphere 2D" setup=[Combinations] begin
@@ -594,7 +594,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, sphere, solution)
-    runtests(testable, SupportStatus(:line))
+    runtests(testable)
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Combinations] begin
@@ -617,7 +617,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, sphere, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Tetrahedron" setup=[Combinations] begin
@@ -634,7 +634,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, tetrahedron, solution)
-    runtests(testable, SupportStatus(:volume))
+    runtests(testable)
 end
 
 @testitem "Meshes.Torus" setup=[Combinations] begin
@@ -649,7 +649,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, torus, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
 
 @testitem "Meshes.Triangle" setup=[Combinations] begin
@@ -665,5 +665,5 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, triangle, solution)
-    runtests(testable, SupportStatus(:surface))
+    runtests(testable)
 end
