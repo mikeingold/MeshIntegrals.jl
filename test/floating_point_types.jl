@@ -7,6 +7,7 @@
     using LinearAlgebra: norm
     using Meshes
     using Unitful
+    using Enzyme
 
     baseatol = Dict(
         Float32 => 0.01f0,

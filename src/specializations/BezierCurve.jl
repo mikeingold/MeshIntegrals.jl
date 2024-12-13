@@ -36,16 +36,17 @@ function integral(
         curve::Meshes.BezierCurve,
         rule::IntegrationRule;
         alg::Meshes.BezierEvalMethod = Meshes.Horner(),
-        diff_method::DM = _default_diff_method(curve),
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_diff_method(curve, FP),
         kwargs...
-) where {DM <: DifferentiationMethod}
+) where {DM <: DifferentiationMethod, T <: AbstractFloat}
     _check_diff_method_support(curve, diff_method)
 
     # Generate a _ParametricGeometry whose parametric function auto-applies the alg kwarg
     param_curve = _ParametricGeometry(_parametric(curve, alg), Meshes.paramdim(curve))
 
     # Integrate the _ParametricGeometry using the standard methods
-    return _integral(f, param_curve, rule; diff_method = diff_method, kwargs...)
+    return _integral(f, param_curve, rule; diff_method = diff_method, FP = FP, kwargs...)
 end
 
 ################################################################################

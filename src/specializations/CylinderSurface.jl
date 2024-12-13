@@ -12,21 +12,22 @@ function integral(
         f,
         cyl::Meshes.CylinderSurface,
         rule::I;
-        diff_method::DM = _default_diff_method(cyl),
+        FP::Type{T} = Float64,
+        diff_method::DM = _default_diff_method(cyl, FP),
         kwargs...
-) where {I <: IntegrationRule, DM <: DifferentiationMethod}
+) where {I <: IntegrationRule, DM <: DifferentiationMethod, T <: AbstractFloat}
     _check_diff_method_support(cyl, diff_method)
 
     # The generic method only parametrizes the sides
-    sides = _integral(f, cyl, rule; diff_method = diff_method, kwargs...)
+    sides = _integral(f, cyl, rule; diff_method = diff_method, FP = FP, kwargs...)
 
     # Integrate the Disk at the top
     disk_top = Meshes.Disk(cyl.top, cyl.radius)
-    top = _integral(f, disk_top, rule; diff_method = diff_method, kwargs...)
+    top = _integral(f, disk_top, rule; diff_method = diff_method, FP = FP, kwargs...)
 
     # Integrate the Disk at the bottom
     disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
-    bottom = _integral(f, disk_bottom, rule; diff_method = diff_method, kwargs...)
+    bottom = _integral(f, disk_bottom, rule; diff_method = diff_method, FP = FP, kwargs...)
 
     return sides + top + bottom
 end

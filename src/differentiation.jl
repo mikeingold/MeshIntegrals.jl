@@ -57,7 +57,7 @@ function jacobian(
         geometry::G,
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}}
 ) where {G <: Geometry, T <: AbstractFloat}
-    return jacobian(geometry, ts, _default_diff_method(G))
+    return jacobian(geometry, ts, _default_diff_method(G, T))
 end
 
 function jacobian(
@@ -112,7 +112,7 @@ possible and finite difference approximations otherwise.
 function differential(
         geometry::G,
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
-        diff_method::DifferentiationMethod = _default_diff_method(G)
+        diff_method::DifferentiationMethod = _default_diff_method(G, T)
 ) where {G <: Geometry, T <: AbstractFloat}
     J = Iterators.map(_KVector, jacobian(geometry, ts, diff_method))
     return LinearAlgebra.norm(foldl(∧, J))

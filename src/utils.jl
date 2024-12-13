@@ -28,13 +28,19 @@ end
 
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_diff_method(
-        g::Type{G}
-) where {G <: Geometry}
-    supports_autoenzyme(g) ? AutoEnzyme() : FiniteDifference()
+        g::Type{G}, FP::Type{T}
+) where {G <: Geometry, T <: AbstractFloat}
+    if supports_autoenzyme(g) && FP <: Union{Float32, Float64}
+        AutoEnzyme()
+    else
+        FiniteDifference()
+    end
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
-_default_diff_method(::G) where {G <: Geometry} = _default_diff_method(G)
+function _default_diff_method(::G, ::Type{T}) where {G <: Geometry, T <: AbstractFloat}
+    _default_diff_method(G, T)
+end
 
 ################################################################################
 #                           Numerical Tools
