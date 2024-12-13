@@ -12,6 +12,8 @@ end
 #                           DifferentiationMethod
 ################################################################################
 
+_check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
+
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_diff_method(
         g::Type{G}
@@ -20,7 +22,14 @@ function _default_diff_method(
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
-_default_diff_method(g::G) where {G <: Geometry} = _default_diff_method(G)
+_default_diff_method(::G) where {G <: Geometry} = _default_diff_method(G)
+
+non_enzyme_types = (:BezierCurve, :CylinderSurface, :Cylinder, :ParametrizedCurve)
+for geometry_type in non_enzyme_types
+    @eval function _check_diff_method_support(::Meshes.$geometry_type, ::AutoEnzyme)
+        throw(ArgumentError("Differentiation method AutoEnzyme not supported for $(string(Meshes.$geometry_type))."))
+    end
+end
 
 ################################################################################
 #                           Numerical Tools

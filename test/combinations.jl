@@ -18,6 +18,7 @@ This file includes tests for:
     using Meshes
     using MeshIntegrals
     using Unitful
+    using Enzyme
 
     # Used for testing callable objects as integrand functions
     struct Callable{F <: Function}
@@ -43,27 +44,27 @@ This file includes tests for:
         gausslegendre::Bool
         hadaptivecubature::Bool
         # DifferentiationMethods
-        # autoenzyme::Bool
+        autoenzyme::Bool
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(geometry::Geometry)
+    function SupportStatus(geometry::Geometry, autoenzyme = true)
         if paramdim(geometry) == 1
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         elseif paramdim(geometry) == 2
             aliases = Bool.((0, 1, 0))
             rules = Bool.((1, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         elseif paramdim(geometry) == 3
             aliases = Bool.((0, 0, 1))
             rules = Bool.((0, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         else
             aliases = Bool.((0, 0, 0))
             rules = Bool.((0, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         end
     end
 
@@ -110,15 +111,19 @@ This file includes tests for:
             end
         end # for
 
-        #=
         iter_diff_methods = (
             (supports.autoenzyme, AutoEnzyme()),
         )
 
         for (supported, diff_method) in iter_diff_methods
-            @test integral(testable.integrand, testable.geometry; diff_method=diff_method)≈sol rtol=rtol
-        end
-        =#
+            if supported
+                @test integral(
+                    testable.integrand, testable.geometry; diff_method = diff_method)≈testable.solution rtol=rtol
+            else
+                @test_throws "not supported" integral(
+                    testable.integrand, testable.geometry; diff_method = diff_method)
+            end
+        end # for
     end # function
 end #testsnippet
 
@@ -180,7 +185,8 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    runtests(testable; rtol = 0.5e-2)
+    supports = SupportStatus(curve, false)
+    runtests(testable, supports; rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -321,7 +327,8 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable)
+    supports = SupportStatus(cyl, false)
+    runtests(testable, supports)
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Combinations] begin
@@ -336,7 +343,8 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable)
+    supports = SupportStatus(cyl, false)
+    runtests(testable, supports)
 end
 
 @testitem "Meshes.Disk" setup=[Combinations] begin
@@ -476,9 +484,12 @@ end
 
         # Package and run tests
         testable_cart = TestableGeometry(integrand, curve_cart, solution)
-        runtests(testable_cart)
+        supports_cart = SupportStatus(curve_cart, false)
+        runtests(testable_cart, supports_cart)
+
         testable_polar = TestableGeometry(integrand, curve_polar, solution)
-        runtests(testable_polar)
+        supports_polar = SupportStatus(curve_polar, false)
+        runtests(testable_polar, supports_polar)
     end
 end
 

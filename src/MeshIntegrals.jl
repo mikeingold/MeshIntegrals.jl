@@ -10,7 +10,7 @@ import QuadGK
 import Unitful
 
 include("differentiation.jl")
-export DifferentiationMethod, FiniteDifference, jacobian
+export DifferentiationMethod, FiniteDifference, AutoEnzyme, jacobian
 
 include("utils.jl")
 

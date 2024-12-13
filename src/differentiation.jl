@@ -9,7 +9,7 @@ A category of types used to specify the desired method for calculating derivativ
 Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
 
-See also [`FiniteDifference`](@ref).
+See also [`FiniteDifference`](@ref), [`Analytical`](@ref).
 """
 abstract type DifferentiationMethod end
 
@@ -23,12 +23,33 @@ struct FiniteDifference{T <: AbstractFloat} <: DifferentiationMethod
     ε::T
 end
 
-# Default constructors
-FiniteDifference{T}() where {T <: AbstractFloat} = FiniteDifference{T}(T(1e-6))
-FiniteDifference() = FiniteDifference{Float64}()
+# If ε not specified, default to 1e-6
+FiniteDifference() = FiniteDifference(1e-6)
+
+"""
+    Analytical()
+
+Use to specify use of analytically-derived solutions for calculating derivatives.
+These solutions are currently defined only for a subset of geometry types.
+
+# Supported Geometries:
+- `BezierCurve`
+- `Line`
+- `Plane`
+- `Ray`
+- `Tetrahedron`
+- `Triangle`
+"""
+struct Analytical <: DifferentiationMethod end
+
+"""
+    AutoEnzyme()
+
+Use to specify use of the Enzyme.jl for calculating derivatives.
+"""
+struct AutoEnzyme <: DifferentiationMethod end
 
 # Future Support:
-#   struct AutoEnzyme <: DifferentiationMethod end
 #   struct AutoZygote <: DifferentiationMethod end
 
 ################################################################################
@@ -68,7 +89,7 @@ function jacobian(
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n, ε)
-        # Build left/right parametric coordinates with non-allocating iterators 
+        # Build left/right parametric coordinates with non-allocating iterators
         left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
         right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
         # Select orientation of finite-diff
