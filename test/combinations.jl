@@ -492,7 +492,6 @@ end
     # Package and run tests
     testable_cart = TestableGeometry(integrand, curve_cart, solution)
     runtests(testable_cart)
-    
     testable_polar = TestableGeometry(integrand, curve_polar, solution)
     runtests(testable_polar)
 end
