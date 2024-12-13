@@ -469,36 +469,32 @@ end
 end
 
 @testitem "ParametrizedCurve" setup=[Combinations] begin
-    # ParametrizedCurve has been added in Meshes v0.51.20
-    # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
-    if pkgversion(Meshes) >= v"0.51.20"
-        using CoordRefSystems: Polar
+    using CoordRefSystems: Polar
 
-        # Geometries
-        # Parametrize a circle centered on origin with specified radius
-        radius = 4.4
-        curve_cart = ParametrizedCurve(
-            t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
-        curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
+    # Geometries
+    # Parametrize a circle centered on origin with specified radius
+    radius = 4.4
+    curve_cart = ParametrizedCurve(
+        t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
+    curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
-        # Integrand & Solution
-        function integrand(p::Meshes.Point)
-            ur = norm(to(p))
-            r = ustrip(u"m", ur)
-            exp(-r^2) * u"A"
-        end
-        solution = 2π * radius * exp(-radius^2) * u"A*m"
-
-        # Enzyme support
-        @test MeshIntegrals.supports_autoenzyme(curve_cart) == false
-
-        # Package and run tests
-        testable_cart = TestableGeometry(integrand, curve_cart, solution)
-        runtests(testable_cart)
-
-        testable_polar = TestableGeometry(integrand, curve_polar, solution)
-        runtests(testable_polar)
+    # Integrand & Solution
+    function integrand(p::Meshes.Point)
+        ur = norm(to(p))
+        r = ustrip(u"m", ur)
+        exp(-r^2) * u"A"
     end
+    solution = 2π * radius * exp(-radius^2) * u"A*m"
+
+    # Enzyme support
+    @test MeshIntegrals.supports_autoenzyme(curve_cart) == false
+
+    # Package and run tests
+    testable_cart = TestableGeometry(integrand, curve_cart, solution)
+    runtests(testable_cart)
+    
+    testable_polar = TestableGeometry(integrand, curve_polar, solution)
+    runtests(testable_polar)
 end
 
 @testitem "Meshes.Plane" setup=[Combinations] begin
