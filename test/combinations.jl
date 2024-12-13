@@ -48,7 +48,8 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(geometry::Geometry, autoenzyme = true)
+    function SupportStatus(
+            geometry::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(geometry))
         if paramdim(geometry) == 1
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
@@ -183,10 +184,12 @@ end
     end
     solution = 2π * u"Ω*m"
 
+    # Enzyme support
+    @test MeshIntegrals.supports_autoenzyme(curve) == false
+
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    supports = SupportStatus(curve, false)
-    runtests(testable, supports; rtol = 0.5e-2)
+    runtests(testable; rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -325,10 +328,12 @@ end
     integrand(p) = 1.0u"A"
     solution = Meshes.measure(cyl) * u"A"
 
+    # Enzyme support
+    @test MeshIntegrals.supports_autoenzyme(cyl) == false
+
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    supports = SupportStatus(cyl, false)
-    runtests(testable, supports)
+    runtests(testable)
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Combinations] begin
@@ -341,10 +346,12 @@ end
     integrand(p) = 1.0u"A"
     solution = Meshes.measure(cyl) * u"A"
 
+    # Enzyme support
+    @test MeshIntegrals.supports_autoenzyme(cyl) == false
+
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    supports = SupportStatus(cyl, false)
-    runtests(testable, supports)
+    runtests(testable)
 end
 
 @testitem "Meshes.Disk" setup=[Combinations] begin
@@ -482,14 +489,15 @@ end
         end
         solution = 2π * radius * exp(-radius^2) * u"A*m"
 
+        # Enzyme support
+        @test MeshIntegrals.supports_autoenzyme(curve_cart) == false
+
         # Package and run tests
         testable_cart = TestableGeometry(integrand, curve_cart, solution)
-        supports_cart = SupportStatus(curve_cart, false)
-        runtests(testable_cart, supports_cart)
+        runtests(testable_cart)
 
         testable_polar = TestableGeometry(integrand, curve_polar, solution)
-        supports_polar = SupportStatus(curve_polar, false)
-        runtests(testable_polar, supports_polar)
+        runtests(testable_polar)
     end
 end
 

@@ -26,8 +26,8 @@ end
 @testitem "Differentiation" setup=[Utils] begin
     # _default_diff_method
     sphere = Sphere(Point(0, 0, 0), 1.0)
-    @test _default_diff_method(Meshes.Sphere) isa FiniteDifference
-    @test _default_diff_method(sphere) isa FiniteDifference
+    @test _default_diff_method(Meshes.Sphere) isa AutoEnzyme
+    @test _default_diff_method(sphere) isa AutoEnzyme
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6

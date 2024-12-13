@@ -12,24 +12,29 @@ end
 #                           DifferentiationMethod
 ################################################################################
 
+supports_autoenzyme(::Type{<:Meshes.Geometry}) = true
+supports_autoenzyme(::Type{<:Meshes.BezierCurve}) = false
+supports_autoenzyme(::Type{<:Meshes.CylinderSurface}) = false
+supports_autoenzyme(::Type{<:Meshes.Cylinder}) = false
+supports_autoenzyme(::Type{<:Meshes.ParametrizedCurve}) = false
+supports_autoenzyme(::G) where {G <: Geometry} = supports_autoenzyme(G)
+
 _check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
+function _check_diff_method_support(geometry::Geometry, ::AutoEnzyme)
+    if !supports_autoenzyme(geometry)
+        throw(ArgumentError("Differentiation method AutoEnzyme not supported for this geometry."))
+    end
+end
 
 # Return the default DifferentiationMethod instance for a particular geometry type
 function _default_diff_method(
         g::Type{G}
 ) where {G <: Geometry}
-    return FiniteDifference()
+    supports_autoenzyme(g) ? AutoEnzyme() : FiniteDifference()
 end
 
 # Return the default DifferentiationMethod instance for a particular geometry instance
 _default_diff_method(::G) where {G <: Geometry} = _default_diff_method(G)
-
-non_enzyme_types = (:BezierCurve, :CylinderSurface, :Cylinder, :ParametrizedCurve)
-for geometry_type in non_enzyme_types
-    @eval function _check_diff_method_support(::Meshes.$geometry_type, ::AutoEnzyme)
-        throw(ArgumentError("Differentiation method AutoEnzyme not supported for $(string(Meshes.$geometry_type))."))
-    end
-end
 
 ################################################################################
 #                           Numerical Tools
