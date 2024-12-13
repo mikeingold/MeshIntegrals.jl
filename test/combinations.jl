@@ -120,9 +120,11 @@ This file includes tests for:
             if supported
                 @test integral(
                     testable.integrand, testable.geometry; diff_method = diff_method)≈testable.solution rtol=rtol
+                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == true
             else
                 @test_throws "not supported" integral(
                     testable.integrand, testable.geometry; diff_method = diff_method)
+                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == false
             end
         end # for
     end # function
@@ -183,9 +185,6 @@ end
         (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
     end
     solution = 2π * u"Ω*m"
-
-    # Enzyme support
-    @test MeshIntegrals.supports_autoenzyme(curve) == false
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
@@ -328,9 +327,6 @@ end
     integrand(p) = 1.0u"A"
     solution = Meshes.measure(cyl) * u"A"
 
-    # Enzyme support
-    @test MeshIntegrals.supports_autoenzyme(cyl) == false
-
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
     runtests(testable)
@@ -345,9 +341,6 @@ end
     # Integrand & Solution
     integrand(p) = 1.0u"A"
     solution = Meshes.measure(cyl) * u"A"
-
-    # Enzyme support
-    @test MeshIntegrals.supports_autoenzyme(cyl) == false
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
@@ -485,9 +478,6 @@ end
         exp(-r^2) * u"A"
     end
     solution = 2π * radius * exp(-radius^2) * u"A*m"
-
-    # Enzyme support
-    @test MeshIntegrals.supports_autoenzyme(curve_cart) == false
 
     # Package and run tests
     testable_cart = TestableGeometry(integrand, curve_cart, solution)

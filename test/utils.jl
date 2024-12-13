@@ -3,6 +3,7 @@
     using Meshes
     using MeshIntegrals: _default_diff_method, _parametric, _units, _zeros, _ones
     using Unitful
+    using Enzyme
 end
 
 @testitem "Utilities" setup=[Utils] begin
@@ -35,7 +36,8 @@ end
 
     # Test jacobian with wrong number of parametric coordinates
     box = Box(Point(0, 0), Point(1, 1))
-    @test_throws ArgumentError jacobian(box, zeros(3))
+    @test_throws ArgumentError MeshIntegrals.jacobian(box, zeros(3), FiniteDifference())
+    @test_throws ArgumentError MeshIntegrals.jacobian(box, zeros(3), AutoEnzyme())
 end
 
 @testitem "_ParametricGeometry" setup=[Utils] begin
