@@ -7,7 +7,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 BenchmarkTools = "1.5"
-Enzyme = "0.13"
+Enzyme = "0.13.19"
 LinearAlgebra = "1"
 Meshes = "0.51.20, 0.52"
 Unitful = "1.19"
