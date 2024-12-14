@@ -1,6 +1,7 @@
 @testsnippet Utils begin
     using LinearAlgebra: norm
     using Meshes
+    using MeshIntegrals
     using MeshIntegrals: _default_diff_method, _parametric, _units, _zeros, _ones
     using Unitful
     using Enzyme
