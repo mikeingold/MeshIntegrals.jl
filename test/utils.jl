@@ -34,6 +34,10 @@ end
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
 
+    # Two-argument jacobian
+    segment = Segment(Point(0), Point(1))
+    @test jacobian(segment, (0.5,)) == Vec(1)
+
     # Test jacobian with wrong number of parametric coordinates
     box = Box(Point(0, 0), Point(1, 1))
     @test_throws ArgumentError MeshIntegrals.jacobian(box, zeros(3), FiniteDifference())
