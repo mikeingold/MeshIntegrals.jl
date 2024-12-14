@@ -37,7 +37,7 @@ end
 
     # Two-argument jacobian
     segment = Segment(Point(0), Point(1))
-    @test jacobian(segment, (0.5,)) == Vec(1)
+    @test MeshIntegrals.jacobian(segment, (0.5,)) == Vec(1)
 
     # Test jacobian with wrong number of parametric coordinates
     box = Box(Point(0, 0), Point(1, 1))
