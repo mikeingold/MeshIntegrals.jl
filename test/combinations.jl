@@ -18,6 +18,7 @@ This file includes tests for:
     using Meshes
     using MeshIntegrals
     using Unitful
+    import Enzyme
 
     # Used for testing callable objects as integrand functions
     struct Callable{F <: Function}
@@ -43,27 +44,32 @@ This file includes tests for:
         gausslegendre::Bool
         hadaptivecubature::Bool
         # DifferentiationMethods
-        # autoenzyme::Bool
+        autoenzyme::Bool
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(geometry::Geometry)
-        if paramdim(geometry) == 1
+    function SupportStatus(g::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(g))
+        N = Meshes.paramdim(g)
+        if N == 1
+            # line/curve
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
-            return SupportStatus(aliases..., rules...)
-        elseif paramdim(geometry) == 2
+            return SupportStatus(aliases..., rules..., autoenzyme)
+        elseif N == 2
+            # surface
             aliases = Bool.((0, 1, 0))
             rules = Bool.((1, 1, 1))
-            return SupportStatus(aliases..., rules...)
-        elseif paramdim(geometry) == 3
+            return SupportStatus(aliases..., rules..., autoenzyme)
+        elseif N == 3
+            # volume
             aliases = Bool.((0, 0, 1))
             rules = Bool.((0, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         else
+            # ≥4D
             aliases = Bool.((0, 0, 0))
             rules = Bool.((0, 1, 1))
-            return SupportStatus(aliases..., rules...)
+            return SupportStatus(aliases..., rules..., autoenzyme)
         end
     end
 
@@ -110,15 +116,21 @@ This file includes tests for:
             end
         end # for
 
-        #=
         iter_diff_methods = (
             (supports.autoenzyme, AutoEnzyme()),
         )
 
         for (supported, diff_method) in iter_diff_methods
-            @test integral(testable.integrand, testable.geometry; diff_method=diff_method)≈sol rtol=rtol
-        end
-        =#
+            if supported
+                @test integral(
+                    testable.integrand, testable.geometry; diff_method = diff_method)≈testable.solution rtol=rtol
+                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == true
+            else
+                @test_throws "not supported" integral(
+                    testable.integrand, testable.geometry; diff_method = diff_method)
+                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == false
+            end
+        end # for
     end # function
 end #testsnippet
 
@@ -454,32 +466,28 @@ end
 end
 
 @testitem "ParametrizedCurve" setup=[Combinations] begin
-    # ParametrizedCurve has been added in Meshes v0.51.20
-    # If the version is specified as minimal compat bound in the Project.toml, the downgrade test fails
-    if pkgversion(Meshes) >= v"0.51.20"
-        using CoordRefSystems: Polar
+    using CoordRefSystems: Polar
 
-        # Geometries
-        # Parametrize a circle centered on origin with specified radius
-        radius = 4.4
-        curve_cart = ParametrizedCurve(
-            t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
-        curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
+    # Geometries
+    # Parametrize a circle centered on origin with specified radius
+    radius = 4.4
+    curve_cart = ParametrizedCurve(
+        t -> Point(radius * cos(t), radius * sin(t)), (0.0, 2π))
+    curve_polar = ParametrizedCurve(t -> Point(Polar(radius, t)), (0.0, 2π))
 
-        # Integrand & Solution
-        function integrand(p::Meshes.Point)
-            ur = norm(to(p))
-            r = ustrip(u"m", ur)
-            exp(-r^2) * u"A"
-        end
-        solution = 2π * radius * exp(-radius^2) * u"A*m"
-
-        # Package and run tests
-        testable_cart = TestableGeometry(integrand, curve_cart, solution)
-        runtests(testable_cart)
-        testable_polar = TestableGeometry(integrand, curve_polar, solution)
-        runtests(testable_polar)
+    # Integrand & Solution
+    function integrand(p::Meshes.Point)
+        ur = norm(to(p))
+        r = ustrip(u"m", ur)
+        exp(-r^2) * u"A"
     end
+    solution = 2π * radius * exp(-radius^2) * u"A*m"
+
+    # Package and run tests
+    testable_cart = TestableGeometry(integrand, curve_cart, solution)
+    runtests(testable_cart)
+    testable_polar = TestableGeometry(integrand, curve_polar, solution)
+    runtests(testable_polar)
 end
 
 @testitem "Meshes.Plane" setup=[Combinations] begin

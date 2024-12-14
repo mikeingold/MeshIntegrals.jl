@@ -9,7 +9,7 @@ A category of types used to specify the desired method for calculating derivativ
 Derivatives are used to form Jacobian matrices when calculating the differential
 element size throughout the integration region.
 
-See also [`FiniteDifference`](@ref).
+See also [`FiniteDifference`](@ref), [`AutoEnzyme`](@ref).
 """
 abstract type DifferentiationMethod end
 
@@ -27,8 +27,14 @@ end
 FiniteDifference{T}() where {T <: AbstractFloat} = FiniteDifference{T}(T(1e-6))
 FiniteDifference() = FiniteDifference{Float64}()
 
+"""
+    AutoEnzyme()
+
+Use to specify use of the Enzyme.jl for calculating derivatives.
+"""
+struct AutoEnzyme <: DifferentiationMethod end
+
 # Future Support:
-#   struct AutoEnzyme <: DifferentiationMethod end
 #   struct AutoZygote <: DifferentiationMethod end
 
 ################################################################################
@@ -52,7 +58,7 @@ function jacobian(
         geometry::G,
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}}
 ) where {G <: Geometry, T <: AbstractFloat}
-    return jacobian(geometry, ts, _default_diff_method(G))
+    return jacobian(geometry, ts, _default_diff_method(G, T))
 end
 
 function jacobian(
@@ -68,7 +74,7 @@ function jacobian(
     # Get the partial derivative along the n'th axis via finite difference
     #   approximation, where ts is the current parametric position
     function ∂ₙr(ts, n, ε)
-        # Build left/right parametric coordinates with non-allocating iterators 
+        # Build left/right parametric coordinates with non-allocating iterators
         left = Iterators.map(((i, t),) -> i == n ? t - ε : t, enumerate(ts))
         right = Iterators.map(((i, t),) -> i == n ? t + ε : t, enumerate(ts))
         # Select orientation of finite-diff
@@ -107,7 +113,7 @@ possible and finite difference approximations otherwise.
 function differential(
         geometry::G,
         ts::Union{AbstractVector{T}, Tuple{T, Vararg{T}}},
-        diff_method::DifferentiationMethod = _default_diff_method(G)
+        diff_method::DifferentiationMethod = _default_diff_method(G, T)
 ) where {G <: Geometry, T <: AbstractFloat}
     J = Iterators.map(_KVector, jacobian(geometry, ts, diff_method))
     return LinearAlgebra.norm(foldl(∧, J))

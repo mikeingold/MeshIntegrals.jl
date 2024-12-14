@@ -3,7 +3,7 @@
 ################################################################################
 
 """
-    integral(f, geometry[, rule]; diff_method=_default_method(geometry), FP=Float64)
+    integral(f, geometry[, rule]; diff_method=_default_diff_method(geometry, FP), FP=Float64)
 
 Numerically integrate a given function `f(::Point)` over the domain defined by
 a `geometry` using a particular numerical integration `rule` with floating point
@@ -16,7 +16,7 @@ precision of type `FP`.
 `GaussKronrod()` in 1D and `HAdaptiveCubature()` else)
 
 # Keyword Arguments
-- `diff_method::DifferentiationMethod = _default_method(geometry)`: the method to
+- `diff_method::DifferentiationMethod = _default_diff_method(geometry, FP)`: the method to
 use for calculating Jacobians that are used to calculate differential elements
 - `FP = Float64`: the floating point precision desired.
 """
@@ -42,8 +42,10 @@ function _integral(
         geometry,
         rule::GaussKronrod;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_diff_method(geometry)
+        diff_method::DM = _default_diff_method(geometry, FP)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
+    _check_diff_method_support(geometry, diff_method)
+
     # Implementation depends on number of parametric dimensions over which to integrate
     N = Meshes.paramdim(geometry)
     if N == 1
@@ -70,8 +72,10 @@ function _integral(
         geometry,
         rule::GaussLegendre;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_diff_method(geometry)
+        diff_method::DM = _default_diff_method(geometry, FP)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
+    _check_diff_method_support(geometry, diff_method)
+
     N = Meshes.paramdim(geometry)
 
     # Get Gauss-Legendre nodes and weights of type FP for a region [-1,1]ᴺ
@@ -99,8 +103,10 @@ function _integral(
         geometry,
         rule::HAdaptiveCubature;
         FP::Type{T} = Float64,
-        diff_method::DM = _default_diff_method(geometry)
+        diff_method::DM = _default_diff_method(geometry, FP)
 ) where {DM <: DifferentiationMethod, T <: AbstractFloat}
+    _check_diff_method_support(geometry, diff_method)
+
     N = Meshes.paramdim(geometry)
 
     integrand(ts) = f(geometry(ts...)) * differential(geometry, ts, diff_method)

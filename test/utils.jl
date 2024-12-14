@@ -1,8 +1,10 @@
 @testsnippet Utils begin
     using LinearAlgebra: norm
     using Meshes
+    using MeshIntegrals
     using MeshIntegrals: _default_diff_method, _parametric, _units, _zeros, _ones
     using Unitful
+    import Enzyme
 end
 
 @testitem "Utilities" setup=[Utils] begin
@@ -26,15 +28,21 @@ end
 @testitem "Differentiation" setup=[Utils] begin
     # _default_diff_method
     sphere = Sphere(Point(0, 0, 0), 1.0)
-    @test _default_diff_method(Meshes.Sphere) isa FiniteDifference
-    @test _default_diff_method(sphere) isa FiniteDifference
+    @test _default_diff_method(Meshes.Sphere, Float64) isa AutoEnzyme
+    @test _default_diff_method(sphere, Float64) isa AutoEnzyme
+    @test _default_diff_method(sphere, BigFloat) isa FiniteDifference
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
 
+    # Two-argument jacobian
+    segment = Segment(Point(0), Point(1))
+    @test MeshIntegrals.jacobian(segment, (0.5,)) == (Vec(1),)
+
     # Test jacobian with wrong number of parametric coordinates
     box = Box(Point(0, 0), Point(1, 1))
-    @test_throws ArgumentError jacobian(box, zeros(3))
+    @test_throws ArgumentError jacobian(box, zeros(3), FiniteDifference())
+    @test_throws ArgumentError jacobian(box, zeros(3), AutoEnzyme())
 end
 
 @testitem "_ParametricGeometry" setup=[Utils] begin

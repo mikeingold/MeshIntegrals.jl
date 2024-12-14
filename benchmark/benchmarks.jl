@@ -3,6 +3,7 @@ using LinearAlgebra
 using Meshes
 using MeshIntegrals
 using Unitful
+import Enzyme
 
 const SUITE = BenchmarkGroup()
 

@@ -12,15 +12,50 @@ end
 #                           DifferentiationMethod
 ################################################################################
 
-# Return the default DifferentiationMethod instance for a particular geometry type
-function _default_diff_method(
-        g::Type{G}
-) where {G <: Geometry}
-    return FiniteDifference()
+"""
+    supports_autoenzyme(geometry)
+
+Return whether a geometry (or geometry type) has a parametric function that can be
+differentiated with Enzyme. See GitHub Issue #154 for more information.
+"""
+supports_autoenzyme(::Type{<:Meshes.Geometry}) = true
+supports_autoenzyme(::Type{<:Meshes.BezierCurve}) = false
+supports_autoenzyme(::Type{<:Meshes.CylinderSurface}) = false
+supports_autoenzyme(::Type{<:Meshes.Cylinder}) = false
+supports_autoenzyme(::Type{<:Meshes.ParametrizedCurve}) = false
+supports_autoenzyme(::G) where {G <: Geometry} = supports_autoenzyme(G)
+
+"""
+    _check_diff_method_support(::Geometry, ::DifferentiationMethod) -> nothing
+
+Throw an error if incompatible geometry-diff_method combination detected.
+"""
+_check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
+function _check_diff_method_support(geometry::Geometry, ::AutoEnzyme)
+    if !supports_autoenzyme(geometry)
+        throw(ArgumentError("AutoEnzyme not supported for this geometry."))
+    end
 end
 
-# Return the default DifferentiationMethod instance for a particular geometry instance
-_default_diff_method(g::G) where {G <: Geometry} = _default_diff_method(G)
+"""
+    _default_diff_method(geometry, FP)
+
+Return an instance of the default DifferentiationMethod for a particular geometry
+(or geometry type) and floating point type.
+"""
+function _default_diff_method(
+        g::Type{G}, FP::Type{T}
+) where {G <: Geometry, T <: AbstractFloat}
+    if supports_autoenzyme(g) && FP <: Union{Float32, Float64}
+        AutoEnzyme()
+    else
+        FiniteDifference()
+    end
+end
+
+function _default_diff_method(::G, ::Type{T}) where {G <: Geometry, T <: AbstractFloat}
+    _default_diff_method(G, T)
+end
 
 ################################################################################
 #                           Numerical Tools
