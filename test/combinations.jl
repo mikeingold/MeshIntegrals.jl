@@ -48,21 +48,25 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(
-            geometry::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(geometry))
-        if paramdim(geometry) == 1
+    function SupportStatus(g::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(g))
+        N = Meshes.paramdim(g)
+        if N == 1
+            # line/curve
             aliases = Bool.((1, 0, 0))
             rules = Bool.((1, 1, 1))
             return SupportStatus(aliases..., rules..., autoenzyme)
-        elseif paramdim(geometry) == 2
+        elseif N == 2
+            # surface
             aliases = Bool.((0, 1, 0))
             rules = Bool.((1, 1, 1))
             return SupportStatus(aliases..., rules..., autoenzyme)
-        elseif paramdim(geometry) == 3
+        elseif N == 3
+            # volume
             aliases = Bool.((0, 0, 1))
             rules = Bool.((0, 1, 1))
             return SupportStatus(aliases..., rules..., autoenzyme)
         else
+            # ≥4D
             aliases = Bool.((0, 0, 0))
             rules = Bool.((0, 1, 1))
             return SupportStatus(aliases..., rules..., autoenzyme)
