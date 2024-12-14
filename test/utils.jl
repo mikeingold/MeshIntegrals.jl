@@ -41,8 +41,8 @@ end
 
     # Test jacobian with wrong number of parametric coordinates
     box = Box(Point(0, 0), Point(1, 1))
-    @test_throws ArgumentError MeshIntegrals.jacobian(box, zeros(3), FiniteDifference())
-    @test_throws ArgumentError MeshIntegrals.jacobian(box, zeros(3), AutoEnzyme())
+    @test_throws ArgumentError jacobian(box, zeros(3), FiniteDifference())
+    @test_throws ArgumentError jacobian(box, zeros(3), AutoEnzyme())
 end
 
 @testitem "_ParametricGeometry" setup=[Utils] begin
