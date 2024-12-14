@@ -18,7 +18,7 @@ This file includes tests for:
     using Meshes
     using MeshIntegrals
     using Unitful
-    using Enzyme
+    import Enzyme
 
     # Used for testing callable objects as integrand functions
     struct Callable{F <: Function}
