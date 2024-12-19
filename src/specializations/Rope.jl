@@ -36,6 +36,7 @@ function integral(
     return sum(segment -> integral(f, segment, rule; kwargs...), Meshes.segments(rope))
 end
 
+# Use HCubature.hcubature_buffer to reduce allocations
 function integral(
     f,
     rope::Meshes.Rope,
@@ -44,7 +45,7 @@ function integral(
     kwargs...
 ) where {T <: AbstractFloat}
     # Geometry information
-    N = Meshes.paramdim(geometry)
+    N = Meshes.paramdim(rope)
     segments = Meshes.segments(rope)
 
     # Use a sample integrand to develop and append a buffer to the given rule
