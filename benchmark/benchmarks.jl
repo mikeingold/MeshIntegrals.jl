@@ -28,7 +28,7 @@ geometries = (
 SUITE["Integrals"] = let s = BenchmarkGroup()
     for (int, rule, geometry) in Iterators.product(integrands, rules, geometries)
         name = "$(nameof(typeof(geometry))), $(int.name), $(nameof(typeof(rule)))"
-        s[name] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
+        s[name] = @benchmarkable integral($int.f, $geometry, $rule)
     end
     s
 end
