@@ -16,20 +16,19 @@ integrands = (
     (name = "Vector", f = p -> fill(norm(to(p)), 3))
 )
 rules = (
-    (name = "GaussLegendre", rule = GaussLegendre(100)),
-    (name = "GaussKronrod", rule = GaussKronrod()),
-    (name = "HAdaptiveCubature", rule = HAdaptiveCubature())
+    GaussLegendre(100),
+    GaussKronrod(),
+    HAdaptiveCubature()
 )
 geometries = (
-    (name = "Segment", item = Segment(Point(0, 0, 0), Point(1, 1, 1))),
-    (name = "Sphere", item = Sphere(Point(0, 0, 0), 1.0))
+    Segment(Point(0, 0, 0), Point(1, 1, 1)),
+    Sphere(Point(0, 0, 0), 1.0)
 )
 
 SUITE["Integrals"] = let s = BenchmarkGroup()
     for (int, rule, geometry) in Iterators.product(integrands, rules, geometries)
-        n1 = geometry.name
-        n2 = "$(int.name) $(rule.name)"
-        s[n1][n2] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
+        name = "$(nameof(typeof(geometry))), $(int.name), $(nameof(typeof(rule)))"
+        s[name] = @benchmarkable integral($int.f, $geometry.item, $rule.rule)
     end
     s
 end
@@ -65,16 +64,16 @@ spec = (
 )
 
 SUITE["Specializations"] = let s = BenchmarkGroup()
-    #=
-    for r in spec.rules, geometry in spec.geometries
-        geometry_name = nameof(typeof(geometry))
-        s[geometry_name, r.name] = @benchmarkable integral($spec.f, geometry, r.rule)
+    # Benchmark most specialization geometries
+    for rule in spec.rules, geometry in spec.geometries
+        name = "$(nameof(typeof(geometry))), Scalar, $(nameof(typeof(rule)))"
+        s[name] = @benchmarkable integral($spec.f, $geometry, $rule)
     end
-    =#
+
+    # Geometries that span an infinite domain use exp function instead
     for rule in spec.rules, geometry in spec.geometries_exp
-        geometry_name = nameof(typeof(geometry))
-        rule_name = nameof(typeof(rule))
-        s[geometry_name, rule_name] = @benchmarkable integral($spec.f_exp, $geometry, $rule)
+        name = "$(nameof(typeof(geometry))), Scalar, $(nameof(typeof(rule)))"
+        s[name] = @benchmarkable integral($spec.f_exp, $geometry, $rule)
     end
     s
 end
