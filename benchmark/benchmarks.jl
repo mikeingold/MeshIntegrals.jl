@@ -67,10 +67,12 @@ spec = (
 SUITE["Specializations"] = let s = BenchmarkGroup()
     s[]
     for r in spec.rules, geometry in spec.geometries
-        s[geometry.name, r.name] = @benchmarkable integral($spec.f, geometry, r.rule)
+        geometry_name = nameof(typeof(geometry.name))
+        s[geometry_name, r.name] = @benchmarkable integral($spec.f, geometry, r.rule)
     end
     for r in spec.rules, geometry in spec.geometries_exp
-        s[geometry.name, r.name] = @benchmarkable integral($spec.f_exp, geometry, r.rule)
+        geometry_name = nameof(typeof(geometry.name))
+        s[geometry_name, r.name] = @benchmarkable integral($spec.f_exp, geometry, r.rule)
     end
     s
 end
