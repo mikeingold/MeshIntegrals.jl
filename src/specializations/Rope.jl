@@ -35,3 +35,19 @@ function integral(
     # Convert the Rope into Segments, sum the integrals of those
     return sum(segment -> integral(f, segment, rule; kwargs...), Meshes.segments(rope))
 end
+
+function integral(
+    f,
+    rope::Meshes.Rope,
+    rule::HAdaptiveCubature;
+    FP::Type{T} = Float64,
+    kwargs...
+)
+    # Append a buffer to the given rule
+    buffer = HCubature.hcubature_buffer(f, _zeros(FP, 1), _ones(FP, 2))
+    rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
+
+    # Convert the Rope into Segments, sum the integrals of those
+    _subintegral(seg) = _integral(f, seg, rule; FP = FP, rule.kwargs...)
+    return sum(_subintegral, Meshes.segments(rope))
+end
