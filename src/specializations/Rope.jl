@@ -43,11 +43,17 @@ function integral(
     FP::Type{T} = Float64,
     kwargs...
 ) where {T <: AbstractFloat}
-    # Append a buffer to the given rule
-    buffer = HCubature.hcubature_buffer(f, _zeros(FP, 1), _ones(FP, 1))
+    # Geometry information
+    N = Meshes.paramdim(geometry)
+    segments = Meshes.segments(rope)
+
+    # Use a sample integrand to develop and append a buffer to the given rule
+    integrand(ts) = f(segments[1](ts...)) * differential(segments[1], ts)
+    uintegrand(ts) = Unitful.ustrip.(integrand(ts))
+    buffer = HCubature.hcubature_buffer(uintegrand, _zeros(FP, N), _ones(FP, N))
     rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
 
     # Convert the Rope into Segments, sum the integrals of those
     _subintegral(seg) = _integral(f, seg, rule; FP = FP, kwargs...)
-    return sum(_subintegral, Meshes.segments(rope))
+    return sum(_subintegral, segments)
 end
