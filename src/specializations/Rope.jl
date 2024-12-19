@@ -44,7 +44,7 @@ function integral(
     kwargs...
 ) where {T <: AbstractFloat}
     # Append a buffer to the given rule
-    buffer = HCubature.hcubature_buffer(f, _zeros(FP, 1), _ones(FP, 2))
+    buffer = HCubature.hcubature_buffer(f, _zeros(FP, 1), _ones(FP, 1))
     rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
 
     # Convert the Rope into Segments, sum the integrals of those
