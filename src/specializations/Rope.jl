@@ -49,7 +49,8 @@ function integral(
     segments = Meshes.segments(rope)
 
     # Use a sample integrand to develop and append a buffer to the given rule
-    integrand(ts) = f(segments[1](ts...)) * differential(segments[1], ts)
+    sample = first(segments)
+    integrand(ts) = f(sample(ts...)) * differential(sample, ts)
     uintegrand(ts) = Unitful.ustrip.(integrand(ts))
     buffer = HCubature.hcubature_buffer(uintegrand, _zeros(FP, N), _ones(FP, N))
     rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
