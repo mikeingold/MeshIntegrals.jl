@@ -59,19 +59,22 @@ spec = (
         ray = Ray(Point(0, 0, 0), Vec(0, 0, 1))
     ),
     rules = (
-            ( name = "GaussLegendre", rule = GaussLegendre(100) ),
-            ( name = "HAdaptiveCubature", rule = HAdaptiveCubature() )
+        GaussLegendre(100),
+        HAdaptiveCubature()
     )
 )
 
 SUITE["Specializations"] = let s = BenchmarkGroup()
-    s[]
+    #=
     for r in spec.rules, geometry in spec.geometries
         geometry_name = nameof(typeof(geometry))
         s[geometry_name, r.name] = @benchmarkable integral($spec.f, geometry, r.rule)
     end
-    for r in spec.rules, geometry in spec.geometries_exp
+    =#
+    for rule in spec.rules, geometry in spec.geometries_exp
+        @info (rule, geometry)
         geometry_name = nameof(typeof(geometry))
+        rule_name = nameof(typeof(rule))
         s[geometry_name, r.name] = @benchmarkable integral($spec.f_exp, geometry, r.rule)
     end
     s
