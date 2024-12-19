@@ -42,12 +42,12 @@ function integral(
     rule::HAdaptiveCubature;
     FP::Type{T} = Float64,
     kwargs...
-)
+) where {T <: AbstractFloat}
     # Append a buffer to the given rule
     buffer = HCubature.hcubature_buffer(f, _zeros(FP, 1), _ones(FP, 2))
     rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
 
     # Convert the Rope into Segments, sum the integrals of those
-    _subintegral(seg) = _integral(f, seg, rule; FP = FP, rule.kwargs...)
+    _subintegral(seg) = _integral(f, seg, rule; FP = FP, kwargs...)
     return sum(_subintegral, Meshes.segments(rope))
 end
