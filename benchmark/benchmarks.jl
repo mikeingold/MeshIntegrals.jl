@@ -21,6 +21,9 @@ rules = (
     HAdaptiveCubature()
 )
 geometries = (
+    let ẑ = Vec(0, 0, 1)
+        CylinderSurface(Plane(Point(0, 0, 0), ẑ), Plane(Point(0, 0, 3), ẑ), 2.5)
+    end,
     Segment(Point(0, 0, 0), Point(1, 1, 1)),
     Sphere(Point(0, 0, 0), 1.0)
 )

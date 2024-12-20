@@ -31,3 +31,33 @@ function integral(
 
     return sides + top + bottom
 end
+
+function integral(
+    f,
+    cyl::Meshes.CylinderSurface,
+    rule::HAdaptiveCubature;
+    FP::Type{T} = Float64,
+    diff_method::DM = _default_diff_method(cyl, FP),
+    kwargs...
+) where {T <: AbstractFloat, DM <: DifferentiationMethod}
+    _check_diff_method_support(cyl, diff_method)
+
+    # Use a sample integrand to develop and append a buffer to the given rule
+    f_sample(ts) = Unitful.ustrip.(f(cyl(ts...)) * differential(cyl, ts))
+    N = Meshes.paramdim(cyl)
+    buffer = HCubature.hcubature_buffer(f_sample, _zeros(FP, N), _ones(FP, N))
+    rule = HAdaptiveCubature(rule.kwargs..., buffer = buffer)
+
+    # The generic method only parametrizes the sides
+    sides = _integral(f, cyl, rule; diff_method = diff_method, FP = FP, kwargs...)
+
+    # Integrate the Disk at the top
+    disk_top = Meshes.Disk(cyl.top, cyl.radius)
+    top = _integral(f, disk_top, rule; diff_method = diff_method, FP = FP, kwargs...)
+
+    # Integrate the Disk at the bottom
+    disk_bottom = Meshes.Disk(cyl.bot, cyl.radius)
+    bottom = _integral(f, disk_bottom, rule; diff_method = diff_method, FP = FP, kwargs...)
+
+    return sides + top + bottom
+end
