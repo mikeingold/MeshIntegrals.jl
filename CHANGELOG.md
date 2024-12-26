@@ -38,6 +38,7 @@ No changes yet since v0.16.0.
   - Reorganized `@testsnippet`s to exist in same source file as relevant tests.
   - Removed `:extended` tag from `Tetrahedron` now that performance is significantly improved.
 
+
 ## [0.15.2] - 2024-10-25
 
 MeshIntegrals.jl is now owned by the JuliaGeometry organization!
@@ -50,3 +51,23 @@ MeshIntegrals.jl is now owned by the JuliaGeometry organization!
 ### Changed
 
 - Tagged unit tests for `Meshes.Box` (4D) and `Tetrahedron` as `:extended`, removing them from automatic CI testing due to lengthy compute times.
+
+
+## [0.15.1] - 2024-10-11
+
+### Added
+
+- Adds official support and unit testing for integrating new `Meshes.ParametrizedCurve` geometries.
+
+## [0.15.0] - 2024-10-10
+
+### Added
+
+- Adds support for integrating geometries with any number of parametric dimensions by generalizing `differential` to n-dimensions via geometric algebra.
+- Adds official support and unit testing for integrating `Meshes.Ellipsoid` and `Meshes.Hexahedron` geometries.
+
+### Changed
+
+- Refactored the unit test system.
+    - Moved away from previous `@test` generation system which only tested unit integrands (i.e. `f(point) = 1.0`) using `Meshes.measure` as a benchmark.
+    - Used TestItems.jl to define independent `@testitem` packages, many with analytically-derived solutions.
