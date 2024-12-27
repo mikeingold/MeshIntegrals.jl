@@ -59,6 +59,7 @@ MeshIntegrals.jl is now owned by the JuliaGeometry organization!
 
 - Adds official support and unit testing for integrating new `Meshes.ParametrizedCurve` geometries.
 
+
 ## [0.15.0] - 2024-10-10
 
 ### Added
@@ -69,5 +70,34 @@ MeshIntegrals.jl is now owned by the JuliaGeometry organization!
 ### Changed
 
 - Refactored the unit test system.
-    - Moved away from previous `@test` generation system which only tested unit integrands (i.e. `f(point) = 1.0`) using `Meshes.measure` as a benchmark.
+    - Completed transition away from previous `@test` generation system which only tested unit integrands (i.e. `f(point) = 1.0`) using `Meshes.measure` as a benchmark.
     - Used TestItems.jl to define independent `@testitem` packages, many with analytically-derived solutions.
+
+
+## [0.14.1] - 2024-10-04
+
+### Added
+
+- Adds official support and unit testing for integrating `Meshes.Quadrangle` geometries.
+
+### Changed
+
+- Continued work transitioning away from previous `@test` generation system.
+
+### Fixed
+
+- Fixed a bug in `differential` finite-difference approximation that may have reduced accuracy of some integral calculations.
+- Made improvements to type stability with floating point type keyword argument `FP`.
+
+
+## [0.14.0] - 2024-09-28
+
+### Changed
+
+- Rename `IntegrationAlgorithm` to `IntegrationRule` and consolidate terminology around integration rules (versus "algorithms", "settings", etc).
+- Convert floating point precision option `FP` from an optional argument to a keyword argument.
+- Continued work transitioning away from previous `@test` generation system.
+
+### Removed
+
+- Remove `derivative` and `unitdirection` functions. All `derivative` functionality was merged into `jacobian`.
