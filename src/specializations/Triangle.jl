@@ -26,7 +26,7 @@ end
 #                              Parametric
 ################################################################################
 
-# Map argument domain from [0, 1]² to Barycentric domain for (::Triangle)(t1, t2)
+# Map argument domain from [0, 1]² to Barycentric domain for (::Triangle)(t₁, t₂)
 function _parametric(triangle::Meshes.Triangle)
     function f(t₁, t₂)
         if any(Iterators.map(n -> (n < 0) || (n > 1), (t₁, t₂)))
