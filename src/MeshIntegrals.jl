@@ -34,6 +34,7 @@ include("specializations/Plane.jl")
 include("specializations/Ray.jl")
 include("specializations/Ring.jl")
 include("specializations/Rope.jl")
+include("specializations/SimpleMesh.jl")
 include("specializations/Tetrahedron.jl")
 include("specializations/Triangle.jl")
 end
