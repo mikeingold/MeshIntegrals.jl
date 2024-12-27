@@ -17,6 +17,7 @@ This file includes tests for:
     using LinearAlgebra: norm
     using Meshes
     using MeshIntegrals
+    using MeshIntegrals: supports_autoenzyme
     using Unitful
     import Enzyme
 
@@ -27,7 +28,7 @@ This file includes tests for:
     (c::Callable)(p::Meshes.Point) = c.f(p)
 
     # Stores a testable combination
-    struct TestableGeometry{F <: Function, G <: Geometry, U <: Unitful.Quantity}
+    struct TestableGeometry{F <: Function, G, U <: Unitful.Quantity}
         integrand::F
         geometry::G
         solution::U
@@ -48,8 +49,8 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(g::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(g))
-        N = Meshes.paramdim(g)
+    function SupportStatus(geometry, autoenzyme = supports_autoenzyme(geometry))
+        N = Meshes.paramdim(geometry)
         if N == 1
             # line/curve
             aliases = Bool.((1, 0, 0))
@@ -602,6 +603,26 @@ end
     # Package and run tests
     testable = TestableGeometry(integrand, segment, solution)
     runtests(testable)
+end
+
+@testitem "Meshes.SimpleMesh" setup=[Combinations] begin
+    # Geometry
+    points = [(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)]
+    tris  = connect.([(1, 5, 3), (4, 6, 2)], Triangle)
+    quads = connect.([(1, 2, 6, 5), (4, 3, 5, 6)], Quadrangle)
+    mesh = SimpleMesh(points, [tris; quads])
+
+    # Integrand & Solution
+    a = π
+    function integrand(p::Meshes.Point; a = a)
+        x₁, x₂ = ustrip.((to(p)))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
+    end
+    solution = 2a * (π * a^2 / 4) * u"A*m^2"
+
+    # Package and run tests
+    testable = TestableGeometry(integrand, mesh, solution)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Sphere 2D" setup=[Combinations] begin
