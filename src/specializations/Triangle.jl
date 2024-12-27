@@ -26,16 +26,24 @@ end
 #                              Parametric
 ################################################################################
 
-# Map argument domain from [0, 1]² to Barycentric domain for (::Triangle)(t1, t2)
+# Map argument domain from [0, 1]² to Barycentric domain for (::Triangle)(t₁, t₂)
 function _parametric(triangle::Meshes.Triangle)
-    function f(t1, t2)
-        if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2)))
-            msg = "triangle(t1, t2) is not defined for (t1, t2) outside [0, 1]²."
-            throw(DomainError((t1, t2), msg))
+    function f(t₁, t₂)
+        if any(Iterators.map(n -> (n < 0) || (n > 1), (t₁, t₂)))
+            msg = "triangle(t₁, t₂) is not defined for (t₁, t₂) outside [0, 1]²."
+            throw(DomainError((t₁, t₂), msg))
         end
 
-        t1t2 = t1 * t2
-        return triangle(t1t2, t2 - t1t2)
+        #=
+        Algorithm:
+        - Form a barycentric triangle bounded by the points [0, 0], [1, 0], and [0, 1].
+        - Use t₂ to take a line segment cross-section of the triangle between points
+            [0, t₂] and [t₂, 0].
+        - Use t₁ to select a point along this line segment, i.e. ā + t₁(b̄ - ā).
+        =#
+        u₁ = t₁ * t₂
+        u₂ = t₂ - (t₁ * t₂)
+        return triangle(u₁, u₂)
     end
     return f
 end

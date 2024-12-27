@@ -26,21 +26,28 @@ end
 #                               Parametric
 ################################################################################
 
-# Map argument domain from [0, 1]³ to Barycentric domain for (::Tetrahedron)(t1, t2, t3)
+# Map argument domain from [0, 1]³ to Barycentric domain for (::Tetrahedron)(t₁, t₂, t₃)
 function _parametric(tetrahedron::Meshes.Tetrahedron)
-    function f(t1, t2, t3)
-        if any(Iterators.map(n -> (n < 0) || (n > 1), (t1, t2, t3)))
-            msg = "tetrahedron(t1, t2, t3) is not defined for (t1, t2, t3) outside [0, 1]³."
-            throw(DomainError((t1, t2, t3), msg))
+    function f(t₁, t₂, t₃)
+        if any(Iterators.map(n -> (n < 0) || (n > 1), (t₁, t₂, t₃)))
+            msg = "tetrahedron(t₁, t₂, t₃) is not defined for (t₁, t₂, t₃) outside [0, 1]³."
+            throw(DomainError((t₁, t₂, t₃), msg))
         end
 
-        # Take a triangular cross-section at t3
-        a = tetrahedron(t3, 0, 0)
-        b = tetrahedron(0, t3, 0)
-        c = tetrahedron(0, 0, t3)
-        cross_section = _parametric(Meshes.Triangle(a, b, c))
-
-        return cross_section(t1, t2)
+        #=
+        Algorithm:
+        - Form a barycentric tetrahedron bounded by the points [0, 0, 0], [1, 0, 0],
+            [0, 1, 0], and [0, 0, 1].
+        - Use t₃ to take a triangular cross-section of the tetrahedron at points
+            [t₃, 0, 0], [0, t₃, 0], and [0, 0, t₃].
+        - Use t₂ to take a line segment cross-section of the triangle between
+            points [t₂t₃, 0, t₃ - t₂t₃] and [0, t₂t₃, t₃ - t₂t₃].
+        - Use t₁ to select a point along this line segment, i.e. ā + t₁(b̄ - ā).
+        =#
+        u₁ = (t₂ * t₃) - (t₁ * t₂ * t₃)
+        u₂ = t₁ * t₂ * t₃
+        u₃ = t₃ - (t₂ * t₃)
+        return tetrahedron(u₁, u₂, u₃)
     end
     return f
 end
