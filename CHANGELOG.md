@@ -18,7 +18,7 @@ No changes yet since v0.16.0.
 - Added a `diff_method` keyword argument to the `integral` API, allowing the user to specify which differentiation method should be used when calculating differential element magnitudes throughout the integration domain.
 - Implemented `DifferentiationMethod` types:
     - `FiniteDifference` for finite-difference approximation.
-    - `AutoEnzyme` for using Enzyme.jl automatic differentiation (AD) via a package extension.
+    - `AutoEnzyme` for using [Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) automatic differentiation (AD) via a package extension.
 - Added `diff_method` as an optional third argument to the `jacobian` and `differential` API.
 - Adds standardized support for integrating over `Tetrahedron` volumes.
 - Generalizes integrand functions to support any `f::Any` with a method defined for `f(::Point)`.
@@ -45,7 +45,7 @@ MeshIntegrals.jl is now owned by the JuliaGeometry organization!
 
 ### Added
 
-- Added a benchmarking suite using AirspeedVelocity.jl.
+- Added a benchmarking suite using [AirspeedVelocity.jl](https://github.com/MilesCranmer/AirspeedVelocity.jl).
 - Implemented more unit tests with analytical solutions.
 
 ### Changed
@@ -71,7 +71,7 @@ MeshIntegrals.jl is now owned by the JuliaGeometry organization!
 
 - Refactored the unit test system.
     - Completed transition away from previous `@test` generation system which only tested unit integrands (i.e. `f(point) = 1.0`) using `Meshes.measure` as a benchmark.
-    - Used TestItems.jl to define independent `@testitem` packages, many with analytically-derived solutions.
+    - Used [TestItems.jl](https://github.com/julia-vscode/TestItems.jl) to define independent `@testitem` packages, many with analytically-derived solutions.
 
 
 ## [0.14.1] - 2024-10-04
