@@ -34,13 +34,13 @@ function _parametric(triangle::Meshes.Triangle)
             throw(DomainError((t₁, t₂), msg))
         end
 
-        """
-        # Algorithm:
+        #=
+        Algorithm:
         - Form a barycentric triangle bounded by the points [0, 0], [1, 0], and [0, 1].
         - Use t₂ to take a line segment cross-section of the triangle between points
             [0, t₂] and [t₂, 0].
         - Use t₁ to select a point along this line segment, i.e. ā + t₁(b̄ - ā).
-        """
+        =#
         u₁ = t₁ * t₂
         u₂ = t₂ - (t₁ * t₂)
         return triangle(u₁, u₂)

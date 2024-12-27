@@ -34,8 +34,8 @@ function _parametric(tetrahedron::Meshes.Tetrahedron)
             throw(DomainError((t₁, t₂, t₃), msg))
         end
 
-        """
-        # Algorithm:
+        #=
+        Algorithm:
         - Form a barycentric tetrahedron bounded by the points [0, 0, 0], [1, 0, 0],
             [0, 1, 0], and [0, 0, 1].
         - Use t₃ to take a triangular cross-section of the tetrahedron at points
@@ -43,7 +43,7 @@ function _parametric(tetrahedron::Meshes.Tetrahedron)
         - Use t₂ to take a line segment cross-section of the triangle between
             points [t₂t₃, 0, t₃ - t₂t₃] and [0, t₂t₃, t₃ - t₂t₃].
         - Use t₁ to select a point along this line segment, i.e. ā + t₁(b̄ - ā).
-        """
+        =#
         u₁ = (t₂ * t₃) - (t₁ * t₂ * t₃)
         u₂ = t₁ * t₂ * t₃
         u₃ = t₃ - (t₂ * t₃)
