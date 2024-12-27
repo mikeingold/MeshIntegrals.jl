@@ -34,7 +34,6 @@ function _parametric(triangle::Meshes.Triangle)
             throw(DomainError((t₁, t₂), msg))
         end
 
-        # Use t₂ to take a line segment cross-section between points
         """
         # Algorithm:
         - Form a barycentric triangle bounded by the points [0, 0], [1, 0], and [0, 1].
