@@ -23,6 +23,7 @@ supports_autoenzyme(::Type{<:Meshes.BezierCurve}) = false
 supports_autoenzyme(::Type{<:Meshes.CylinderSurface}) = false
 supports_autoenzyme(::Type{<:Meshes.Cylinder}) = false
 supports_autoenzyme(::Type{<:Meshes.ParametrizedCurve}) = false
+supports_autoenzyme(::Type{<:Meshes.SimpleMesh}) = true
 supports_autoenzyme(::G) where {G <: Geometry} = supports_autoenzyme(G)
 
 """
