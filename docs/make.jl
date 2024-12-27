@@ -15,6 +15,7 @@ makedocs(
             "Example Usage" => "usage.md"
         ],
         "Developer Notes" => [
+            "Changelog" => "CHANGELOG.md",
             "How it Works" => "how_it_works.md",
             "Specializations" => "specializations.md"
         ],
