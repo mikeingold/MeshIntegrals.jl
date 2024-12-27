@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No changes yet since v0.16.0.
+### Changed
+
+- Implemented a more efficient internal parametric transformation for `Meshes.Tetrahedron`, resulting in about an 80% integral performance improvement.
 
 
 ## [0.16.0] - 2024-12-14
