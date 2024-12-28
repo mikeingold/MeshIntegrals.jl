@@ -55,7 +55,7 @@ end
     @test_throws ArgumentError jacobian(box, zeros(3), AutoEnzyme())
 end
 
-@testitem "Differentiation (Enzyme extension not loaded)" setup=[Utils] begin
+@testitem "Differentiation (Enzyme extension not loaded)" begin
     using Meshes
     using MeshIntegrals
     using MeshIntegrals: _default_diff_method
