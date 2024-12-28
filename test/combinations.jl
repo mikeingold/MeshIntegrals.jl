@@ -607,13 +607,13 @@ end
 
 @testitem "Meshes.SimpleMesh" setup=[Combinations] begin
     # Geometry
-    points = [(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)]
+    a = π
+    points = [(0, 0), (a, 0), (0, a), (a, a), (0.25a, 0.5a), (0.75a, 0.5a)]
     tris  = connect.([(1, 5, 3), (4, 6, 2)], Triangle)
     quads = connect.([(1, 2, 6, 5), (4, 3, 5, 6)], Quadrangle)
     mesh = SimpleMesh(points, [tris; quads])
 
     # Integrand & Solution
-    a = π
     function integrand(p::Meshes.Point; a = a)
         x₁, x₂ = ustrip.((to(p)))
         (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
