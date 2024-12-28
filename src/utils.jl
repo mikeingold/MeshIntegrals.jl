@@ -13,21 +13,24 @@ end
 ################################################################################
 
 """
-    supports_autoenzyme(geometry)
+    supports_autoenzyme(geometry::Geometry)
+    supports_autoenzyme(type::Type{<:Geometry})
 
 Return whether a geometry (or geometry type) has a parametric function that can be
 differentiated with Enzyme. See GitHub Issue #154 for more information.
 """
 function supports_autoenzyme end
 
-# Returns false on all geometries when Enzyme extension not loaded
-supports_autoenzyme(::Any) = false
+# Returns false for all geometries when Enzyme extension is not loaded
+supports_autoenzyme(::Type{<:Any}) = false
+
+# If provided a geometry instance, re-run with the type as argument
 supports_autoenzyme(::G) where {G <: Geometry} = supports_autoenzyme(G)
 
 """
     _check_diff_method_support(::Geometry, ::DifferentiationMethod) -> nothing
 
-Throw an error if incompatible geometry-diff_method combination detected.
+Throw an error if incompatible combination {geometry, diff_method} detected.
 """
 _check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
 function _check_diff_method_support(geometry::Geometry, ::AutoEnzyme)
@@ -47,21 +50,21 @@ function _default_diff_method(
     FP::Type{T}
 ) where {G <: Geometry, T <: AbstractFloat}
     # Enzyme only works with these FP types
-    EnzymeSupportedFPs = Union{Float32, Float64}
+    uses_Enzyme_supported_FP_type = (FP <: Union{Float32, Float64})
 
-    if supports_autoenzyme(G) && (FP <: EnzymeSupportedFPs)
-        AutoEnzyme()
+    if supports_autoenzyme(G) && uses_Enzyme_supported_FP_type
+        return AutoEnzyme()
     else
-        FiniteDifference()
+        return FiniteDifference()
     end
 end
 
-# Re-run with the Geometry type as first argument
+# If provided a geometry instance, re-run with the type as argument
 function _default_diff_method(
     ::G,
     ::Type{T}
 ) where {G <: Geometry, T <: AbstractFloat}
-    _default_diff_method(G, T)
+    return _default_diff_method(G, T)
 end
 
 ################################################################################
