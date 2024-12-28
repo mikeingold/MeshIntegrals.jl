@@ -117,17 +117,20 @@ This file includes tests for:
         end # for
 
         iter_diff_methods = (
+            (true, FiniteDifference()),
             (supports.autoenzyme, AutoEnzyme()),
         )
 
-        for (supported, diff_method) in iter_diff_methods
+        for (supported, method) in iter_diff_methods
+            f = testable.integrand
+            geometry = testable.geometry
+            sol = testable.solution
+
             if supported
-                @test integral(
-                    testable.integrand, testable.geometry; diff_method = diff_method)≈testable.solution rtol=rtol
+                @test integral(f, geometry; diff_method = method)≈sol rtol=rtol
                 @test MeshIntegrals.supports_autoenzyme(testable.geometry) == true
             else
-                @test_throws "not supported" integral(
-                    testable.integrand, testable.geometry; diff_method = diff_method)
+                @test_throws "not supported" integral(f, geometry; diff_method = method)
                 @test MeshIntegrals.supports_autoenzyme(testable.geometry) == false
             end
         end # for
