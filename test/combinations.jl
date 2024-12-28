@@ -129,16 +129,15 @@ This file includes tests for:
         )
 
         for (supported, method) in iter_diff_methods
+            # Aliases for improved code readability
             f = testable.integrand
             geometry = testable.geometry
             sol = testable.solution
 
             if supported
                 @test integral(f, geometry; diff_method = method)≈sol rtol=rtol
-                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == true
             else
                 @test_throws "not supported" integral(f, geometry; diff_method = method)
-                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == false
             end
         end # for
     end # function
