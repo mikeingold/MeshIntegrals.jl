@@ -468,7 +468,7 @@ end
     runtests(testable)
 end
 
-@testitem "ParametrizedCurve" setup=[Combinations] begin
+@testitem "Meshes.ParametrizedCurve" setup=[Combinations] begin
     using CoordRefSystems: Polar
 
     # Geometries
