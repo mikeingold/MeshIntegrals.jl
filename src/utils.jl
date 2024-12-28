@@ -32,12 +32,17 @@ supports_autoenzyme(::G) where {G <: Geometry} = supports_autoenzyme(G)
 
 Throw an error if incompatible combination {geometry, diff_method} detected.
 """
-_check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
+function _check_diff_method_support end
+
+# If diff_method == Enzyme, then perform check
 function _check_diff_method_support(geometry::Geometry, ::AutoEnzyme)
     if !supports_autoenzyme(geometry)
         throw(ArgumentError("AutoEnzyme not supported for this geometry."))
     end
 end
+
+# If diff_method != AutoEnzyme, then do nothing
+_check_diff_method_support(::Geometry, ::DifferentiationMethod) = nothing
 
 """
     _default_diff_method(geometry, FP)
