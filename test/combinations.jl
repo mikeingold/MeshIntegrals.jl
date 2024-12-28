@@ -85,6 +85,9 @@ This file includes tests for:
         # Determine support matrix for this geometry
         supports = SupportStatus(testable.geometry; autoenzyme = autoenzyme)
 
+        # Ensure consistency of SupportStatus with supports_autoenzyme
+        @test MeshIntegrals.supports_autoenzyme(testable.geometry) == supports.autoenzyme
+
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
@@ -93,15 +96,14 @@ This file includes tests for:
             else
                 @test_throws "not supported" alias(testable.integrand, testable.geometry)
             end
-        end
+        end # for
 
+        # Iteratively test all IntegrationRules
         iter_rules = (
             (supports.gausskronrod, GaussKronrod()),
             (supports.gausslegendre, GaussLegendre(100)),
             (supports.hadaptivecubature, HAdaptiveCubature())
         )
-
-        # Test rules
         for (supported, rule) in iter_rules
             if supported
                 # Scalar integrand
@@ -123,11 +125,11 @@ This file includes tests for:
             end
         end # for
 
+        # Iteratively test all DifferentiationMethods
         iter_diff_methods = (
             (true, FiniteDifference()),
             (supports.autoenzyme, AutoEnzyme())
         )
-
         for (supported, method) in iter_diff_methods
             # Aliases for improved code readability
             f = testable.integrand
