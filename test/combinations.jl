@@ -48,7 +48,10 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(g::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(g))
+    function SupportStatus(
+            g::Geometry;
+            autoenzyme = true # Assume supported unless explicitly flagged
+    )
         N = Meshes.paramdim(g)
         if N == 1
             # line/curve
@@ -73,11 +76,15 @@ This file includes tests for:
         end
     end
 
+    # Generate applicable tests for this geometry
     function runtests(
-            testable::TestableGeometry,
-            supports::SupportStatus = SupportStatus(testable.geometry);
+            testable::TestableGeometry;
+            autoenzyme = true, # Assume supported unless explicitly flagged
             rtol = sqrt(eps())
     )
+        # Determine support matrix for this geometry
+        supports = SupportStatus(testable.geometry; autoenzyme = autoenzyme)
+
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
@@ -195,7 +202,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    runtests(testable; rtol = 0.5e-2)
+    runtests(testable; autoenzyme = false, rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
@@ -336,7 +343,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable)
+    runtests(testable; autoenzyme = false)
 end
 
 @testitem "Meshes.CylinderSurface" setup=[Combinations] begin
@@ -351,7 +358,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
-    runtests(testable)
+    runtests(testable; autoenzyme = false)
 end
 
 @testitem "Meshes.Disk" setup=[Combinations] begin
@@ -488,9 +495,9 @@ end
 
     # Package and run tests
     testable_cart = TestableGeometry(integrand, curve_cart, solution)
-    runtests(testable_cart)
+    runtests(testable_cart; autoenzyme = false)
     testable_polar = TestableGeometry(integrand, curve_polar, solution)
-    runtests(testable_polar)
+    runtests(testable_polar; autoenzyme = false)
 end
 
 @testitem "Meshes.Plane" setup=[Combinations] begin
