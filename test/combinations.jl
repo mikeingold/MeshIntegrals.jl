@@ -118,7 +118,7 @@ This file includes tests for:
 
         iter_diff_methods = (
             (true, FiniteDifference()),
-            (supports.autoenzyme, AutoEnzyme()),
+            (supports.autoenzyme, AutoEnzyme())
         )
 
         for (supported, method) in iter_diff_methods

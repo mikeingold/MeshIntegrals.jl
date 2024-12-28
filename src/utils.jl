@@ -46,8 +46,8 @@ Return an instance of the default DifferentiationMethod for a particular geometr
 (or geometry type) and floating point type.
 """
 function _default_diff_method(
-    ::Type{G},
-    FP::Type{T}
+        ::Type{G},
+        FP::Type{T}
 ) where {G <: Geometry, T <: AbstractFloat}
     # Enzyme only works with these FP types
     uses_Enzyme_supported_FP_type = (FP <: Union{Float32, Float64})
@@ -61,8 +61,8 @@ end
 
 # If provided a geometry instance, re-run with the type as argument
 function _default_diff_method(
-    ::G,
-    ::Type{T}
+        ::G,
+        ::Type{T}
 ) where {G <: Geometry, T <: AbstractFloat}
     return _default_diff_method(G, T)
 end
