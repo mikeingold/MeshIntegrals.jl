@@ -25,12 +25,22 @@ end
     @test _ones(Float32, 2) == (1.0f0, 1.0f0)
 end
 
-@testitem "Differentiation" setup=[Utils] begin
-    # _default_diff_method
-    sphere = Sphere(Point(0, 0, 0), 1.0)
-    @test _default_diff_method(Meshes.Sphere, Float64) isa AutoEnzyme
-    @test _default_diff_method(sphere, Float64) isa AutoEnzyme
-    @test _default_diff_method(sphere, BigFloat) isa FiniteDifference
+@testitem "Differentiation (Enzyme extension loaded)" setup=[Utils] begin
+    # _default_diff_method -- using type or instance, Enzyme-supported combination
+    let sphere = Sphere(Point(0, 0, 0), 1.0)
+        @test _default_diff_method(Meshes.Sphere, Float64) isa AutoEnzyme
+        @test _default_diff_method(sphere, Float64) isa AutoEnzyme
+    end
+
+    # _default_diff_method -- Enzyme-unsupported FP types
+    @test _default_diff_method(Meshes.Sphere, Float32) isa FiniteDifference
+    @test _default_diff_method(Meshes.Sphere, BigFloat) isa FiniteDifference
+
+    # _default_diff_method -- geometries that currently error with AutoEnzyme
+    @test _default_diff_method(Meshes.BezierCurve, Float64) isa FiniteDifference
+    @test _default_diff_method(Meshes.CylinderSurface, Float64) isa FiniteDifference
+    @test _default_diff_method(Meshes.Cylinder, Float64) isa FiniteDifference
+    @test _default_diff_method(Meshes.ParametrizedCurve, Float64) isa FiniteDifference
 
     # FiniteDifference
     @test FiniteDifference().ε ≈ 1e-6
@@ -43,6 +53,18 @@ end
     box = Box(Point(0, 0), Point(1, 1))
     @test_throws ArgumentError jacobian(box, zeros(3), FiniteDifference())
     @test_throws ArgumentError jacobian(box, zeros(3), AutoEnzyme())
+end
+
+@testitem "Differentiation (Enzyme extension not loaded)" setup=[Utils] begin
+    using Meshes
+    using MeshIntegrals
+    using MeshIntegrals: _default_diff_method
+
+    # _default_diff_method -- using type or instance, Enzyme-supported combination
+    let sphere = Sphere(Point(0, 0, 0), 1.0)
+        @test _default_diff_method(Meshes.Sphere, Float64) isa FiniteDifference
+        @test _default_diff_method(sphere, Float64) isa FiniteDifference
+    end
 end
 
 @testitem "_ParametricGeometry" setup=[Utils] begin
