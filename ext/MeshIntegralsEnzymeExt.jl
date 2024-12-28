@@ -16,4 +16,12 @@ function MeshIntegrals.jacobian(
     return Meshes.to.(Enzyme.jacobian(Enzyme.Forward, geometry, ts...))
 end
 
+# Supports all geometries except for a few
+# See GitHub Issue #154 for more information.
+supports_autoenzyme(::Type{<:Meshes.Geometry}) = true
+supports_autoenzyme(::Type{<:Meshes.BezierCurve}) = false
+supports_autoenzyme(::Type{<:Meshes.CylinderSurface}) = false
+supports_autoenzyme(::Type{<:Meshes.Cylinder}) = false
+supports_autoenzyme(::Type{<:Meshes.ParametrizedCurve}) = false
+
 end
