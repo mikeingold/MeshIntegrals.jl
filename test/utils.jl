@@ -33,7 +33,7 @@ end
     end
 
     # _default_diff_method -- Enzyme-unsupported FP types
-    @test _default_diff_method(Meshes.Sphere, Float32) isa FiniteDifference
+    @test _default_diff_method(Meshes.Sphere, Float16) isa FiniteDifference
     @test _default_diff_method(Meshes.Sphere, BigFloat) isa FiniteDifference
 
     # _default_diff_method -- geometries that currently error with AutoEnzyme
