@@ -26,6 +26,9 @@ end
 end
 
 @testitem "Differentiation (EnzymeExt loaded)" setup=[Utils] begin
+    # supports_autoenzyme(::Type{<:Any})
+    @test MeshIntegrals.supports_autoenzyme(Nothing) == false
+
     # _default_diff_method -- using type or instance, Enzyme-supported combination
     let sphere = Sphere(Point(0, 0, 0), 1.0)
         @test _default_diff_method(Meshes.Sphere, Float64) isa AutoEnzyme
