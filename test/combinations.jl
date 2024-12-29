@@ -48,8 +48,12 @@ This file includes tests for:
     end
 
     # Shortcut constructor for geometries with typical support structure
-    function SupportStatus(g::Geometry, autoenzyme = MeshIntegrals.supports_autoenzyme(g))
-        N = Meshes.paramdim(g)
+    function SupportStatus(geometry::G;) where {G <: Geometry}
+        # Check whether AutoEnzyme should be supported, i.e. not on blacklist
+        unsupported_Gs = Union{BezierCurve, Cylinder, CylinderSurface, ParametrizedCurve}
+        autoenzyme = !(G <: unsupported_Gs)
+
+        N = Meshes.paramdim(geometry)
         if N == 1
             # line/curve
             aliases = Bool.((1, 0, 0))
@@ -70,14 +74,17 @@ This file includes tests for:
             aliases = Bool.((0, 0, 0))
             rules = Bool.((0, 1, 1))
             return SupportStatus(aliases..., rules..., autoenzyme)
-        end
-    end
+        end #if
+    end # function
 
-    function runtests(
-            testable::TestableGeometry,
-            supports::SupportStatus = SupportStatus(testable.geometry);
-            rtol = sqrt(eps())
-    )
+    # Generate applicable tests for this geometry
+    function runtests(testable::TestableGeometry; rtol = sqrt(eps()))
+        # Determine support matrix for this geometry
+        supports = SupportStatus(testable.geometry)
+
+        # Ensure consistency of SupportStatus with supports_autoenzyme
+        @test MeshIntegrals.supports_autoenzyme(testable.geometry) == supports.autoenzyme
+
         # Test alias functions
         for alias in (lineintegral, surfaceintegral, volumeintegral)
             # if supports.alias
@@ -86,15 +93,14 @@ This file includes tests for:
             else
                 @test_throws "not supported" alias(testable.integrand, testable.geometry)
             end
-        end
+        end # for
 
+        # Iteratively test all IntegrationRules
         iter_rules = (
             (supports.gausskronrod, GaussKronrod()),
             (supports.gausslegendre, GaussLegendre(100)),
             (supports.hadaptivecubature, HAdaptiveCubature())
         )
-
-        # Test rules
         for (supported, rule) in iter_rules
             if supported
                 # Scalar integrand
@@ -116,19 +122,21 @@ This file includes tests for:
             end
         end # for
 
+        # Iteratively test all DifferentiationMethods
         iter_diff_methods = (
-            (supports.autoenzyme, AutoEnzyme()),
+            (true, FiniteDifference()),
+            (supports.autoenzyme, AutoEnzyme())
         )
+        for (supported, method) in iter_diff_methods
+            # Aliases for improved code readability
+            f = testable.integrand
+            geometry = testable.geometry
+            sol = testable.solution
 
-        for (supported, diff_method) in iter_diff_methods
             if supported
-                @test integral(
-                    testable.integrand, testable.geometry; diff_method = diff_method)≈testable.solution rtol=rtol
-                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == true
+                @test integral(f, geometry; diff_method = method)≈sol rtol=rtol
             else
-                @test_throws "not supported" integral(
-                    testable.integrand, testable.geometry; diff_method = diff_method)
-                @test MeshIntegrals.supports_autoenzyme(testable.geometry) == false
+                @test_throws "not supported" integral(f, geometry; diff_method = method)
             end
         end # for
     end # function
@@ -465,7 +473,7 @@ end
     runtests(testable)
 end
 
-@testitem "ParametrizedCurve" setup=[Combinations] begin
+@testitem "Meshes.ParametrizedCurve" setup=[Combinations] begin
     using CoordRefSystems: Polar
 
     # Geometries
