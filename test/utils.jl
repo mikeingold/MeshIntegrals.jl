@@ -25,7 +25,7 @@ end
     @test _ones(Float32, 2) == (1.0f0, 1.0f0)
 end
 
-@testitem "Differentiation (Enzyme extension loaded)" setup=[Utils] begin
+@testitem "Differentiation (EnzymeExt loaded)" setup=[Utils] begin
     # _default_diff_method -- using type or instance, Enzyme-supported combination
     let sphere = Sphere(Point(0, 0, 0), 1.0)
         @test _default_diff_method(Meshes.Sphere, Float64) isa AutoEnzyme
@@ -53,18 +53,6 @@ end
     box = Box(Point(0, 0), Point(1, 1))
     @test_throws ArgumentError jacobian(box, zeros(3), FiniteDifference())
     @test_throws ArgumentError jacobian(box, zeros(3), AutoEnzyme())
-end
-
-@testitem "Differentiation (Enzyme extension not loaded)" begin
-    using Meshes
-    using MeshIntegrals
-    using MeshIntegrals: _default_diff_method
-
-    # _default_diff_method -- using type or instance, Enzyme-supported combination
-    let sphere = Sphere(Point(0, 0, 0), 1.0)
-        @test _default_diff_method(Meshes.Sphere, Float64) isa FiniteDifference
-        @test _default_diff_method(sphere, Float64) isa FiniteDifference
-    end
 end
 
 @testitem "_ParametricGeometry" setup=[Utils] begin
