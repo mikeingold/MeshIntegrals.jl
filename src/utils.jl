@@ -16,7 +16,7 @@ end
     supports_autoenzyme(geometry::Geometry)
     supports_autoenzyme(type::Type{<:Geometry})
 
-Return whether a geometry (or geometry type) has a parametric function that can be
+Return whether a geometry or geometry type has a parametric function that can be
 differentiated with Enzyme. See GitHub Issue #154 for more information.
 """
 function supports_autoenzyme end
@@ -52,8 +52,8 @@ Return an instance of the default DifferentiationMethod for a particular geometr
 """
 function _default_diff_method(
         ::Type{G},
-        FP::Type{T}
-) where {G <: Geometry, T <: AbstractFloat}
+        ::Type{FP}
+) where {G <: Geometry, FP <: AbstractFloat}
     # Enzyme only works with these FP types
     uses_Enzyme_supported_FP_type = (FP <: Union{Float32, Float64})
 
@@ -67,9 +67,9 @@ end
 # If provided a geometry instance, re-run with the type as argument
 function _default_diff_method(
         ::G,
-        ::Type{T}
-) where {G <: Geometry, T <: AbstractFloat}
-    return _default_diff_method(G, T)
+        ::Type{FP}
+) where {G <: Geometry, FP <: AbstractFloat}
+    return _default_diff_method(G, FP)
 end
 
 ################################################################################

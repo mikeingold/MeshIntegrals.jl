@@ -200,7 +200,7 @@ end
 
     # Package and run tests
     testable = TestableGeometry(integrand, curve, solution)
-    runtests(testable; autoenzyme = false, rtol = 0.5e-2)
+    runtests(testable; rtol = 0.5e-2)
 end
 
 @testitem "Meshes.Box 1D" setup=[Combinations] begin
