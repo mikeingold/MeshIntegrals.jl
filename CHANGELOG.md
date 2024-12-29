@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Implemented a more efficient internal parametric transformation for `Meshes.Tetrahedron`, resulting in about an 80% integral performance improvement.
 
+### Fixed
+
+- Fixed a bug where `integral` would default to `diff_method=AutoEnzyme()` even when the Enzyme extension isn't loaded.
+
 
 ## [0.16.0] - 2024-12-14
 
