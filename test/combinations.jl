@@ -346,7 +346,7 @@ end
         z = p_cyl.z
         ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
     end
-    solution = π * h * ρ₀ * (ρ₀ + h + 2π * u"m") * u"A"
+    solution = ((π * h * ρ₀^2) + (π * h^2 * ρ₀) + (2π * π * u"m" * h * ρ₀)) * u"A"
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
