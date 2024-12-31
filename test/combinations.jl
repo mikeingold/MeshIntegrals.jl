@@ -640,8 +640,6 @@ end
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Combinations] begin
-    using CoordRefSystems: Cartesian, Spherical
-
     # Geometry
     center = Point(1, 2, 3)
     radius = 4.4u"m"
