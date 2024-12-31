@@ -369,7 +369,7 @@ end
         z = p_cyl.z
         ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
     end
-    solution = let 
+    solution = let
         disk_a = (2π * h * ρ₀) + (π * ρ₀^2) + (π * u"m" * ρ₀ * 2π)
         disk_b = (π * ρ₀^2) + (π * u"m" * ρ₀ * 2π)
         walls = (2π * h * ρ₀) + (2π^2 * u"m" * h) + (π * h^2)
