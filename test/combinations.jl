@@ -14,6 +14,7 @@ This file includes tests for:
 ===============================================================================#
 
 @testsnippet Combinations begin
+    using CoordRefSystems
     using LinearAlgebra: norm
     using Meshes
     using MeshIntegrals
@@ -331,13 +332,21 @@ end
 
 @testitem "Meshes.Cylinder" setup=[Combinations] begin
     # Geometry
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
-    cyl = Cylinder(pt_e, pt_w, 2.5)
+    h = 8.5u"m"
+    ρ₀ = 1.3u"m"
+    pt_a = Point(0u"m", 0u"m", 0u"m")
+    pt_b = Point(0u"m", 0u"m", h)
+    cyl = Cylinder(pt_a, pt_b, ρ₀)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(cyl) * u"A"
+    function integrand(p::Meshes.Point)
+        p_cyl = convert(Cylindrical, Cartesian(to(p)...))
+        ρ = p_cyl.ρ
+        φ = p_cyl.ϕ
+        z = p_cyl.z
+        ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+    end
+    solution = ((π * h * ρ₀^2) + (π * h^2 * ρ₀) + (2π * π * u"m" * h * ρ₀)) * u"A"
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
@@ -346,13 +355,26 @@ end
 
 @testitem "Meshes.CylinderSurface" setup=[Combinations] begin
     # Geometry
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
-    cyl = CylinderSurface(pt_e, pt_w, 2.5)
+    h = 8.5u"m"
+    ρ₀ = 1.3u"m"
+    pt_a = Point(0u"m", 0u"m", 0u"m")
+    pt_b = Point(0u"m", 0u"m", h)
+    cyl = CylinderSurface(pt_a, pt_b, ρ₀)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(cyl) * u"A"
+    function integrand(p::Meshes.Point)
+        p_cyl = convert(Cylindrical, Cartesian(to(p)...))
+        ρ = p_cyl.ρ
+        φ = p_cyl.ϕ
+        z = p_cyl.z
+        ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+    end
+    solution = let
+        disk_a = (2π * h * ρ₀) + (π * ρ₀^2) + (π * u"m" * ρ₀ * 2π)
+        disk_b = (π * ρ₀^2) + (π * u"m" * ρ₀ * 2π)
+        walls = (2π * h * ρ₀) + (2π^2 * u"m" * h) + (π * h^2)
+        (disk_a + disk_b + walls) * u"A"
+    end
 
     # Package and run tests
     testable = TestableGeometry(integrand, cyl, solution)
@@ -631,8 +653,6 @@ end
 end
 
 @testitem "Meshes.Sphere 3D" setup=[Combinations] begin
-    using CoordRefSystems: Cartesian, Spherical
-
     # Geometry
     center = Point(1, 2, 3)
     radius = 4.4u"m"
