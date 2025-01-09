@@ -10,7 +10,7 @@ installed using Julia on an internet-connected computer.
 [**Unitful.jl**](https://github.com/PainterQubits/Unitful.jl) which provide
 support for geometries and physical units, respectively.
 
-**MeshIntegrals.jl** can be installed while using Julia by entering `pkg` mode
+**MeshIntegrals.jl** can be installed from the Julia REPL by entering `pkg` mode
 with the `]` key and `add`ing it by name
 ```julia-repl
 pkg> add MeshIntegrals
@@ -24,7 +24,7 @@ Pkg.add("MeshIntegrals")
 
 ## Basic Usage
 
-Usage of **MeshIntegrals** typically also involves using **Meshes** and **Unitful**,
+Usage of **MeshIntegrals.jl** typically also involves using **Meshes.jl** and **Unitful.jl**,
 so all three packages will be used in this example.
 
 ```julia
@@ -40,7 +40,7 @@ curve whose path approximates a sine-wave on the xy-plane.
 
 ```julia
 N = 361  # number of control points
-xs = range(-π, π, length=N)  # x will be bounded [-π, π] meters
+xs = range(-π, π, length=N)  # x will be bounded in [-π, π] meters
 curve = Meshes.BezierCurve([Point(x * u"m", sin(x) * u"m", 0.0u"m") for x in xs])
 ```
 
