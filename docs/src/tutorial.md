@@ -38,7 +38,7 @@ using Unitful
 Here, representing the domain being integrated over, we will define a Bezier
 curve whose path approximates a sine-wave on the xy-plane.
 
-```julia
+```@example tutorial
 N = 361  # number of control points
 xs = range(-π, π, length=N)  # x will be bounded in [-π, π] meters
 curve = Meshes.BezierCurve([Point(x * u"m", sin(x) * u"m", 0.0u"m") for x in xs])
