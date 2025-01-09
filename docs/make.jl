@@ -11,8 +11,8 @@ makedocs(
     pages = [
         "Home" => [
             "About" => "index.md",
-            "Support Matrix" => "supportmatrix.md",
-            "Example Usage" => "usage.md"
+            "Example Usage" => "usage.md",
+            "Support Status" => "support.md"
         ],
         "Developer Notes" => [
             "Changelog" => "CHANGELOG.md",
