@@ -81,14 +81,15 @@ integral(f, curve)  # -> Approximately 2π Ω
 The alias function `lineintegral` works for this geometry since it has one
 parametric dimension. However, the aliases `surfaceintegral` and `volumeintegral`
 will throw an `ArgumentError` since the geometry is not a surface or volume.
-```jldoctest tutorial
-julia> lineintegral(f, curve)  # -> Approximately 2π Ω
+```julia
+lineintegral(f, curve)
+# -> Approximately 2π Ω
 
-julia> surfaceintegral(f, curve)  # -> throws ArgumentError
-ERROR: ArgumentError: Performing a surface integral on a geometry with 1 parametric dimensions not supported.
+surfaceintegral(f, curve)
+# -> ERROR: ArgumentError: Performing a surface integral on a geometry with 1 parametric dimensions not supported.
 
-julia> volumeintegral(f, curve)  # -> throws ArgumentError
-ERROR: ArgumentError: Performing a volume integral on a geometry with 1 parametric dimensions not supported.
+volumeintegral(f, curve)
+# -> ERROR: ArgumentError: Performing a volume integral on a geometry with 1 parametric dimensions not supported.
 ```
 
 An `IntegrationRule` with settings can also be manually specified. The following
