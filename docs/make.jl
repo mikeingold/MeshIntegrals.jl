@@ -12,7 +12,8 @@ makedocs(
         "Home" => [
             "About" => "index.md",
             "Tutorial" => "tutorial.md",
-            "Support Status" => "support.md"
+            "Support Status" => "support.md",
+            "Integration Rules" => "integration_rules.md"
         ],
         "Developer Notes" => [
             "Changelog" => "developer/CHANGELOG.md",
