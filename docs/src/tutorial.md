@@ -97,9 +97,10 @@ accuracy.
 integral(f, curve, GaussKronrod(atol = 1e-4u"Ω")) # -> Approximately (2π ± 1e-4) Ω
 ```
 
-The `integral` function and its aliases also support Julia's do-syntax, which
-provides a code block to define a single-use anonymous function and then injects
-it as a first argument to the preceding call. This can be useful if the integrand
+The `integral` function and its aliases also support Julia's
+[do-syntax](https://docs.julialang.org/en/v1/base/base/#do), which provides a
+code block to define a single-use anonymous function and then injects it as a
+first argument to the preceding call. This can be useful if the integrand
 function will not be used outside this integration call.
 ```julia
 integral(curve) do p
