@@ -15,9 +15,9 @@ makedocs(
             "Support Status" => "support.md"
         ],
         "Developer Notes" => [
-            "Changelog" => "CHANGELOG.md",
-            "How it Works" => "how_it_works.md",
-            "Specializations" => "specializations.md"
+            "Changelog" => "developer/CHANGELOG.md",
+            "How it Works" => "developer/how_it_works.md",
+            "Specializations" => "developer/specializations.md"
         ],
         "Public API" => "api.md"
     ]
