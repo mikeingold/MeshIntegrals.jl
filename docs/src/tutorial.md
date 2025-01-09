@@ -27,7 +27,7 @@ Pkg.add("MeshIntegrals")
 Usage of **MeshIntegrals.jl** typically also involves using **Meshes.jl** and **Unitful.jl**,
 so all three packages will be used in this example.
 
-```julia
+```@example tutorial
 using Meshes
 using MeshIntegrals
 using Unitful
@@ -56,7 +56,7 @@ f(x, y, z) = \frac{1}{\sqrt{1 + \cos^2(x/\text{m})}} ~ \Omega/\text{m}
 Integrand functions are expected to provide a method that takes a single
 `Meshes.Point` argument, so this can be written in Julia as
 
-```julia
+```@example tutorial
 # Integrand function that outputs in units of Ohms/meter
 function f(p::Meshes.Point)
     x, y, z = Meshes.to(p)
@@ -65,7 +65,7 @@ end
 ```
 
 Alternatively, this could be written in the user-friendly notation
-```julia
+```@example tutorial
 f(x, y, z) = (1 / sqrt(1 + cos(x / u"m")^2)) * u"Ω/m"
 f(p::Meshes.Point) = f(Meshes.to(p)...)
 ```
@@ -74,14 +74,14 @@ where the required `f(Meshes.Point)` method simply maps to the method `f(x, y, z
 ### Integrating
 
 This function can be integrated using recommended defaults simply by calling
-```julia
+```@example tutorial
 integral(f, curve)  # -> Approximately 2π Ω
 ```
 
 The alias function `lineintegral` works for this geometry since it has one
 parametric dimension. However, the aliases `surfaceintegral` and `volumeintegral`
 will throw an `ArgumentError` since the geometry is not a surface or volume.
-```julia
+```@example tutorial
 lineintegral(f, curve)  # -> Approximately 2π Ω
 
 surfaceintegral(f, curve)  # -> throws ArgumentError
@@ -93,7 +93,7 @@ An `IntegrationRule` with settings can also be manually specified. The following
 example uses the adaptive Gauss-Kronrod method with a loosened absolute tolerance
 setting of $10^{-4}~\Omega$, which speeds up integration by sacrificing some
 accuracy.
-```julia
+```@example tutorial
 integral(f, curve, GaussKronrod(atol = 1e-4u"Ω")) # -> Approximately (2π ± 1e-4) Ω
 ```
 
@@ -102,7 +102,7 @@ The `integral` function and its aliases also support Julia's
 code block to define a single-use anonymous function and then injects it as a
 first argument to the preceding call. This can be useful if the integrand
 function will not be used outside this integration call.
-```julia
+```@example tutorial
 integral(curve) do p
     x, y, z = Meshes.to(p)
     (1 / sqrt(1 + cos(x / u"m")^2)) * u"Ω/m"
