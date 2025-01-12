@@ -13,7 +13,8 @@ makedocs(
             "About" => "index.md",
             "Tutorial" => "tutorial.md",
             "Support Status" => "support.md",
-            "Integration Rules" => "integration_rules.md"
+            "Integration Rules" => "integration_rules.md",
+            "Tips" => "tips.md"
         ],
         "Developer Notes" => [
             "Changelog" => "developer/CHANGELOG.md",
