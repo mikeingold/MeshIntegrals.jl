@@ -4,7 +4,7 @@
 
 ### Use an `atol` setting for integrals with near-zero solutions
 
-By default, `QuadGK.quadgk` uses a relative tolerance (`rtol`) setting to determine when a solution is sufficiently accurate. For integrals whose true solution equal exactly or very nearly zero, the solver can struggle to meet this relative error tolerance and significantly lengthen compute times. In such a case, performance can often be improved by providing an absolute tolerance setting (`atol`).
+By default, `QuadGK.quadgk` uses a relative tolerance (`rtol`) setting to determine when a solution is sufficiently accurate. For integrals whose true solution equal exactly or very nearly zero, the solver can struggle to meet this relative error tolerance and significantly lengthen compute times. In such a case, performance can often be improved by explicitly providing an absolute tolerance setting (`atol`).
 
 ```julia
 julia> using BenchmarkTools, Meshes, MeshIntegrals, Unitful
