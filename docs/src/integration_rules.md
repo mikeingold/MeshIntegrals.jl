@@ -20,7 +20,7 @@ All standard `QuadGK.quadgk` keyword-argument options are supported. These can b
 rule = GaussKronrod(order = 5, rtol = 1e-4)
 ```
 
-## [Gauss-Legendre]](@id gausslegendre)
+## [Gauss-Legendre](@id gausslegendre)
 
 The `GaussLegendre` type is used to specify a [Gauss-Legendre quadrature](https://en.wikipedia.org/wiki/Gauss%E2%80%93Legendre_quadrature) rule. Gauss-Legendre quadrature rules of order $N$ are used to approximate definite integrals by sampling the integrand on a fixed grid with corresponding nodes $x_i$ and weights $w_i$.
 ```math
