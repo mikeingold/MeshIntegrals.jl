@@ -55,9 +55,7 @@ f(x, y, z) = \frac{1}{\sqrt{1 + \cos^2(x/\text{m})}} ~ \Omega/\text{m}
 
 Integrand functions are expected to provide a method that takes a single
 `Meshes.Point` argument, so this can be written in Julia as
-
 ```@example tutorial
-# Integrand function that outputs in units of Ohms/meter
 function f(p::Meshes.Point)
     x, y, z = Meshes.to(p)
     return (1 / sqrt(1 + cos(x / u"m")^2)) * u"Ω/m"
