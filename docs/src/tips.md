@@ -2,9 +2,12 @@
 
 ## Performance
 
-### Use an `atol` setting for integrals with near-zero solutions
+### Using explicit tolerance settings with adaptive integration rules
 
-By default, the solvers used for `GaussKronrod` and `HAdaptiveCuabture` integration use a relative tolerance (`rtol`) setting to determine when a solution is sufficiently accurate. For integrals whose true solution equal exactly or very nearly zero, the solver can struggle to meet this relative error tolerance and significantly lengthen compute times. In such a case, performance can often be improved by explicitly providing an absolute tolerance setting (`atol`).
+!!! note
+    This tip is applicable to the use of `GaussKronrod` and `HAdaptiveCubature` integration rules.
+
+The `GaussKronrod` and `HAdaptiveCuabture` integration rules both make use of adaptive solvers that use relative tolerance (`rtol`) settings to determine when the result is sufficiently precise to return a solution. Under some circumstances these solvers may struggle to converge on a precise enough solution, resulting in extended compute times. This commonly occurs for integrand functions that are numerically unstable or whose solution is zero or near-zero. In such a case, performance can often be improved by explicitly providing an absolute tolerance setting (`atol`).
 
 This can be observed by benchmarking the integration of an integral problem whose true solution is exactly zero.
 ```math
