@@ -36,28 +36,18 @@ This can be observed by benchmarking the integration of an integral problem whos
 = 0 \,\text{Nm}
 ```
 
-```julia
-julia> using BenchmarkTools, Meshes, MeshIntegrals, Unitful
-
-julia> segment = Segment(Point(-1u"m"), Point(1u"m"))
-Segment
-├─ Point(x: -1.0 m)
-└─ Point(x: 1.0 m)
-
-julia> f(p::Meshes.Point) = p.coords.x * u"N/m"
-f (generic function with 1 method)
+```@repl tip_tolerances
+using BenchmarkTools, Meshes, MeshIntegrals, Unitful
+segment = Segment(Point(-1u"m"), Point(1u"m"))
+f(p::Meshes.Point) = p.coords.x * u"N/m"
 ```
 
 Calculating this problem with a default `GaussKronrod()` rule produces a solution that is very close to zero, on the order of $10^{-11}$. However, the result took a non-trivial amount of time due to a large number of memory allocatons for such a trivial problem.
-```julia
-julia> @btime integral(f, segment, GaussKronrod())
-  154.285 ms (28 allocations: 33.70 MiB)
-2.3298940582252377e-11 m N
+```@repl tip_tolerances
+@btime integral(f, segment, GaussKronrod())
 ```
 
 Providing an explicit `atol` setting produces a solution that happens to be just as accurate but returns much faster.
-```julia
-julia> @btime integral(f, segment, GaussKronrod(atol = 1e-8u"N*m"))
-  846.377 ns (9 allocations: 208 bytes)
-1.1316035800104648e-11 m N
+```@repl tip_tolerances
+@btime integral(f, segment, GaussKronrod(atol = 1e-8u"N*m"))
 ```
