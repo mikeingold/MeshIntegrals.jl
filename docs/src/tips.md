@@ -14,7 +14,7 @@ The default/fallback `jacobian` method uses a finite-difference approximation me
 integral(f, geometry; diff_method = FiniteDifference())
 ```
 
-**MeshIntegrals.jl** includes an extension for [**Enzyme.jl**](https://github.com/EnzymeAD/Enzyme.jl), using it to implement an [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation)-based `jacobian` method. This method is typically faster and more accurate, but it is not currently compatible with all geometries. This extension will automatically be loaded when **Enzyme.jl** is present in the active Julia environment. When loaded, this method will automatically be used by `integral` whenever it is compatible with the given geometry. This method can be explicitly selected via the keyword argument:
+**MeshIntegrals.jl** includes an extension for [**Enzyme.jl**](https://github.com/EnzymeAD/Enzyme.jl), using it to implement an [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation)-based `jacobian` method. This method is typically faster and more accurate, but it is not currently compatible with all geometries. This extension will automatically be loaded when **Enzyme.jl** is present in the active Julia environment. When loaded, this method will automatically be used by `integral` whenever it is compatible with the given geometry. This method can also be explicitly selected via the keyword argument:
 ```julia
 using Enzyme
 
