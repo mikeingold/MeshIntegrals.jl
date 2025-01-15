@@ -1,5 +1,26 @@
 # Tips
 
+## General Usage
+
+### Make use of the Enzyme extension
+
+!!! note
+    See [How it Works](@ref howitworks) for a more thorough explanation of how **MeshIntegrals.jl** uses differential forms to solve integral problems.
+
+**MeshIntegrals.jl** uses differential forms to solve integral problems. At every sampled point in the geometry that forms the integration domain a differential element magnitude must be calculated, which involves calculating the `jacobian` of the geometry's parametric function. **MeshIntegrals.jl** includes multiple method options for calculating this `jacobian` which are selectable via `integral`s keyword argument `diff_method`.
+
+The default/fallback `jacobian` method uses a finite-difference approximation method, which is reasonably performant and compatible with all geometry types. However, this method can potentially introduce a small amount of approximation error into solutions. This method can be explicitly selected via the keyword argument:
+```julia
+integral(f, geometry; diff_method = FiniteDifference())
+```
+
+**MeshIntegrals.jl** includes an extension for [**Enzyme.jl**](https://github.com/EnzymeAD/Enzyme.jl), using it to implement an [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation)-based `jacobian` method. This method is typically faster and more accurate, but it is not currently compatible with all geometries. This extension will automatically be loaded when **Enzyme.jl** is present in the active Julia environment. When loaded, this method will automatically be used by `integral` whenever it is compatible with the given geometry. This method can be explicitly selected via the keyword argument:
+```julia
+using Enzyme
+
+integral(f, geometry; diff_method = AutoEnzyme())
+```
+
 ## Performance
 
 ### Using explicit tolerance settings with adaptive integration rules
