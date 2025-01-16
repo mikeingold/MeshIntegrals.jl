@@ -1,4 +1,4 @@
-# How it Works (By Example)
+# [How it Works](@id howitworks)
 
 ## Example Problem
 
