@@ -4,3 +4,9 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 MeshIntegrals = "dadec2fd-bbe0-4da4-9dbe-476c782c8e47"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
+[compat]
+BenchmarkTools = "1"
+Meshes = "0.51.20, 0.52"
+Unitful = "1.19"
+julia = "1.9"
