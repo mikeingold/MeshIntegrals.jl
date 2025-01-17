@@ -687,7 +687,7 @@ end
         x, y, z = ustrip.(u"m", to(p))
         (x + 2y + 3z) * u"A"
     end
-    solution = (1//4) * u"A*m^3"
+    solution = (1 // 4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, tetrahedron, solution)
@@ -721,7 +721,7 @@ end
         x, y, z = ustrip.(u"m", to(p))
         (x + 2y + 3z) * u"A"
     end
-    solution = (1//2) * u"A*m^2"
+    solution = (1 // 2) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, triangle, solution)
