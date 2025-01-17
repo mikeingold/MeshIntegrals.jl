@@ -211,7 +211,7 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁ = only(ustrip.((to(p))))
+        x₁ = only(ustrip.(to(p)))
         √(a^2 - x₁^2) * u"A"
     end
     solution = π * a^2 / 4 * u"A*m"
@@ -222,12 +222,13 @@ end
 end
 
 @testitem "Meshes.Box 2D" setup=[Combinations] begin
+    # Geometry
     a = π
     box = Box(Point(0, 0), Point(a, a))
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁, x₂ = ustrip.((to(p)))
+        x₁, x₂ = ustrip.(to(p))
         (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
     end
     solution = 2a * (π * a^2 / 4) * u"A*m^2"
@@ -244,7 +245,7 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁, x₂, x₃ = ustrip.((to(p)))
+        x₁, x₂, x₃ = ustrip.(to(p))
         (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
     end
     solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
