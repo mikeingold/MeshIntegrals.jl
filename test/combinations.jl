@@ -675,15 +675,18 @@ end
 
 @testitem "Meshes.Tetrahedron" setup=[Combinations] begin
     # Geometry
-    pt_n = Point(0, 3, 0)
-    pt_w = Point(-7, 0, 0)
-    pt_e = Point(8, 0, 0)
-    ẑ = Vec(0, 0, 1)
-    tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(0, 1, 0)
+    d = Point(0, 0, 1)
+    tetrahedron = Tetrahedron(a, b, c, d)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(tetrahedron) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x + 2y + 3z) * u"A"
+    end
+    solution = (1/4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, tetrahedron, solution)
