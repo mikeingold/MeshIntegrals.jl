@@ -687,7 +687,7 @@ end
         x, y, z = ustrip.(u"m", to(p))
         (x + 2y + 3z) * u"A"
     end
-    solution = (1/4) * u"A*m^3"
+    solution = (1//4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, tetrahedron, solution)
@@ -711,14 +711,17 @@ end
 
 @testitem "Meshes.Triangle" setup=[Combinations] begin
     # Geometry
-    pt_n = Point(0, 1, 0)
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
-    triangle = Triangle(pt_e, pt_n, pt_w)
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(0, 1, 0)
+    triangle = Triangle(a, b, c)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(triangle) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x + 2y + 3z) * u"A"
+    end
+    solution = (1//2) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, triangle, solution)
