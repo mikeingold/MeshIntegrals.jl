@@ -456,16 +456,20 @@ end
 
 @testitem "Meshes.Hexahedron" setup=[Combinations] begin
     # Geometry
-    hexahedron = Hexahedron(Point(0, 0, 0), Point(2, 0, 0), Point(2, 2, 0),
-        Point(0, 2, 0), Point(0, 0, 2), Point(1, 0, 2), Point(1, 1, 2), Point(0, 1, 2))
+    a = π
+    box = Box(Point(0, 0, 0), Point(a, a, a))
+    hexahedron = Hexahedron(discretize(box).vertices...)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(hexahedron) * u"A"
+    function integrand(p::Meshes.Point)
+        x₁, x₂, x₃ = ustrip.(to(p))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
+    end
+    solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, hexahedron, solution)
-    runtests(testable)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Line" setup=[Combinations] begin
