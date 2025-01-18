@@ -696,13 +696,18 @@ end
 
 @testitem "Meshes.Torus" setup=[Combinations] begin
     # Geometry
-    origin = Point(0, 0, 0)
+    center = Point(0, 0, 0)
     ẑ = Vec(0, 0, 1)
-    torus = Torus(origin, ẑ, 3.5, 1.25)
+    R = 3.5 # radius from axis-of-revolution to center of circle being revolved
+    r = 1.2 # radius of circle being revolved
+    torus = Torus(center, ẑ, R, r)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(torus) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x^2 + y^2) * u"A"
+    end
+    solution = (2π^2 * r * R * (2R^2 + 3r^2)) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, torus, solution)
