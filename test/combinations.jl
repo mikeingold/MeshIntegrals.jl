@@ -406,12 +406,15 @@ end
 @testitem "Meshes.Ellipsoid" setup=[Combinations] begin
     # Geometry
     origin = Point(0, 0, 0)
-    radii = (1.0, 2.0, 0.5)
-    ellipsoid = Ellipsoid(radii, origin)
+    R = r₁ = r₂ = r₃ = 4.1
+    ellipsoid = Ellipsoid((r₁, r₂, r₃), origin)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(ellipsoid) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (z^2) * u"A"
+    end
+    solution = (4π * R^4 / 3) * u"A*m^2"
 
     # Package and run tests
     # Tolerances are higher due to `measure` being only an approximation
