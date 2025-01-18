@@ -211,7 +211,7 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁ = only(ustrip.((to(p))))
+        x₁ = only(ustrip.(to(p)))
         √(a^2 - x₁^2) * u"A"
     end
     solution = π * a^2 / 4 * u"A*m"
@@ -222,12 +222,13 @@ end
 end
 
 @testitem "Meshes.Box 2D" setup=[Combinations] begin
+    # Geometry
     a = π
     box = Box(Point(0, 0), Point(a, a))
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁, x₂ = ustrip.((to(p)))
+        x₁, x₂ = ustrip.(to(p))
         (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
     end
     solution = 2a * (π * a^2 / 4) * u"A*m^2"
@@ -244,7 +245,7 @@ end
 
     # Integrand & Solution
     function integrand(p::Meshes.Point)
-        x₁, x₂, x₃ = ustrip.((to(p)))
+        x₁, x₂, x₃ = ustrip.(to(p))
         (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
     end
     solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
@@ -405,12 +406,15 @@ end
 @testitem "Meshes.Ellipsoid" setup=[Combinations] begin
     # Geometry
     origin = Point(0, 0, 0)
-    radii = (1.0, 2.0, 0.5)
-    ellipsoid = Ellipsoid(radii, origin)
+    R = r₁ = r₂ = r₃ = 4.1
+    ellipsoid = Ellipsoid((r₁, r₂, r₃), origin)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(ellipsoid) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (z^2) * u"A"
+    end
+    solution = (4π * R^4 / 3) * u"A*m^2"
 
     # Package and run tests
     # Tolerances are higher due to `measure` being only an approximation
@@ -452,16 +456,20 @@ end
 
 @testitem "Meshes.Hexahedron" setup=[Combinations] begin
     # Geometry
-    hexahedron = Hexahedron(Point(0, 0, 0), Point(2, 0, 0), Point(2, 2, 0),
-        Point(0, 2, 0), Point(0, 0, 2), Point(1, 0, 2), Point(1, 1, 2), Point(0, 1, 2))
+    a = π
+    box = Box(Point(0, 0, 0), Point(a, a, a))
+    hexahedron = Hexahedron(discretize(box).vertices...)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(hexahedron) * u"A"
+    function integrand(p::Meshes.Point)
+        x₁, x₂, x₃ = ustrip.(to(p))
+        (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
+    end
+    solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, hexahedron, solution)
-    runtests(testable)
+    runtests(testable; rtol = 1e-6)
 end
 
 @testitem "Meshes.Line" setup=[Combinations] begin
@@ -675,15 +683,18 @@ end
 
 @testitem "Meshes.Tetrahedron" setup=[Combinations] begin
     # Geometry
-    pt_n = Point(0, 3, 0)
-    pt_w = Point(-7, 0, 0)
-    pt_e = Point(8, 0, 0)
-    ẑ = Vec(0, 0, 1)
-    tetrahedron = Tetrahedron(pt_n, pt_w, pt_e, pt_n + ẑ)
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(0, 1, 0)
+    d = Point(0, 0, 1)
+    tetrahedron = Tetrahedron(a, b, c, d)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(tetrahedron) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x + 2y + 3z) * u"A"
+    end
+    solution = (1 // 4) * u"A*m^3"
 
     # Package and run tests
     testable = TestableGeometry(integrand, tetrahedron, solution)
@@ -692,13 +703,18 @@ end
 
 @testitem "Meshes.Torus" setup=[Combinations] begin
     # Geometry
-    origin = Point(0, 0, 0)
+    center = Point(0, 0, 0)
     ẑ = Vec(0, 0, 1)
-    torus = Torus(origin, ẑ, 3.5, 1.25)
+    R = 3.5 # radius from axis-of-revolution to center of circle being revolved
+    r = 1.2 # radius of circle being revolved
+    torus = Torus(center, ẑ, R, r)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(torus) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x^2 + y^2) * u"A"
+    end
+    solution = (2π^2 * r * R * (2R^2 + 3r^2)) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, torus, solution)
@@ -707,14 +723,17 @@ end
 
 @testitem "Meshes.Triangle" setup=[Combinations] begin
     # Geometry
-    pt_n = Point(0, 1, 0)
-    pt_w = Point(-1, 0, 0)
-    pt_e = Point(1, 0, 0)
-    triangle = Triangle(pt_e, pt_n, pt_w)
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(0, 1, 0)
+    triangle = Triangle(a, b, c)
 
     # Integrand & Solution
-    integrand(p) = 1.0u"A"
-    solution = Meshes.measure(triangle) * u"A"
+    function integrand(p::Meshes.Point)
+        x, y, z = ustrip.(u"m", to(p))
+        (x + 2y + 3z) * u"A"
+    end
+    solution = (1 // 2) * u"A*m^2"
 
     # Package and run tests
     testable = TestableGeometry(integrand, triangle, solution)
