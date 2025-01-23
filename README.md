@@ -1,3 +1,9 @@
+# Branch TODO
+
+- Add official support/tests for `Frustum`, `Pyramid`, and `Wedge`
+  - Add `@testitem`s conditional upon having Meshes >=v0.52.12 installed
+  - Update the Support Matrix in docs
+
 # MeshIntegrals.jl
 
 [![Docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaGeometry.github.io/MeshIntegrals.jl/stable/)
